@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore.MoreInformation
     {
         public MiranaArrowMenu(Menu.Items.Menu moreInformationMenu)
         {
-            var miranaArrowMenu = moreInformationMenu.CreateMenu("Mirana Arrow").SetTexture(@"spells\mirana_arrow.png");
+            var miranaArrowMenu = moreInformationMenu.CreateMenu("Mirana Arrow").SetAbilityTexture(AbilityId.mirana_arrow);
             EnableItem = miranaArrowMenu.CreateSwitcher("Enable");
             RedItem = miranaArrowMenu.CreateSlider("Red:", 255, 0, 255);
             GreenItem = miranaArrowMenu.CreateSlider("Green:", 0, 0, 255);

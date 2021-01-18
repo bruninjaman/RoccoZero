@@ -2,18 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
 
@@ -21,8 +18,6 @@
 
     internal class Courier : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly IMinimap minimap;
 
         private readonly MenuSwitcher showOnMap;
@@ -33,10 +28,8 @@
 
         private Team ownerTeam;
 
-        [ImportingConstructor]
-        public Courier(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public Courier(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var predictionsMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Predictions"));
@@ -62,29 +55,29 @@
 
         public void Activate()
         {
-            if (Game.GameMode == GameMode.Turbo)
+            if (GameManager.GameMode == GameMode.Turbo)
             {
                 return;
             }
 
-            this.context.Renderer.TextureManager.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.courier",
                 @"panorama\images\hud\reborn\icon_courier_standard_psd.vtex_c");
             this.ownerTeam = EntityManager9.Owner.Team;
 
             EntityManager9.UnitAdded += this.OnUnitAdded;
             EntityManager9.UnitRemoved += this.OnUnitRemoved;
-            this.context.Renderer.Draw += this.OnDraw;
+            RendererManager.Draw += this.OnDraw;
         }
 
         public void Dispose()
         {
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -105,7 +98,7 @@
                             continue;
                         }
 
-                        renderer.DrawTexture("o9k.courier", minimapPosition);
+                        RendererManager.DrawTexture("o9k.courier", minimapPosition);
                     }
 
                     if (this.showOnMap && !courier.IsVisible)
@@ -116,7 +109,7 @@
                             continue;
                         }
 
-                        renderer.DrawTexture("o9k.courier", mapPosition);
+                        RendererManager.DrawTexture("o9k.courier", mapPosition);
                     }
                 }
             }

@@ -1,24 +1,19 @@
 ﻿namespace O9K.Hud.Helpers
 {
-    using System.ComponentModel.Composition;
 
     using Core.Helpers;
-    using Core.Managers.Context;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using MainMenu;
 
     using Modules;
 
     using SharpDX;
-
-    using Color = System.Drawing.Color;
 
     internal interface ITopPanel
     {
@@ -33,7 +28,6 @@
         Rectangle9 GetTimePosition();
     }
 
-    [Export(typeof(ITopPanel))]
     internal class TopPanel : IHudModule, ITopPanel
     {
         private const int PlayersPerPanel = 5;
@@ -41,8 +35,6 @@
         private readonly MenuSlider botPosition;
 
         private readonly MenuSlider centerPosition;
-
-        private readonly IContext9 context;
 
         private readonly MenuSwitcher debug;
 
@@ -56,11 +48,8 @@
 
         private float widthPerPlayer;
 
-        [ImportingConstructor]
-        public TopPanel(IContext9 context, IHudMenu hudMenu)
+        public TopPanel(IHudMenu hudMenu)
         {
-            this.context = context;
-
             var centerIndent = Hud.Info.ScreenSize.X * 0.053f;
             var size = new Size2F(Hud.Info.ScreenSize.X * 0.165f, Hud.Info.ScreenSize.Y * 0.037f);
 
@@ -98,7 +87,7 @@
 
         public void Dispose()
         {
-            this.context.Renderer.Draw -= this.OnDrawDebug;
+            RendererManager.Draw -= this.OnDrawDebug;
             this.debug.ValueChange -= this.DebugOnValueChange;
             this.sidePosition.ValueChange -= this.SidePositionOnValueChange;
             this.centerPosition.ValueChange -= this.CenterPositionOnValueChange;
@@ -196,21 +185,21 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDrawDebug;
+                RendererManager.Draw += this.OnDrawDebug;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDrawDebug;
+                RendererManager.Draw -= this.OnDrawDebug;
             }
         }
 
-        private void OnDrawDebug(IRenderer renderer)
+        private void OnDrawDebug()
         {
             try
             {
-                renderer.DrawRectangle(this.leftPanel, Color.White, 2);
-                renderer.DrawRectangle(this.rightPanel, Color.White, 2);
-                renderer.DrawRectangle(this.centerPanel, Color.White, 2);
+                RendererManager.DrawRectangle(this.leftPanel, Color.White, 2);
+                RendererManager.DrawRectangle(this.rightPanel, Color.White, 2);
+                RendererManager.DrawRectangle(this.centerPanel, Color.White, 2);
             }
             catch
             {

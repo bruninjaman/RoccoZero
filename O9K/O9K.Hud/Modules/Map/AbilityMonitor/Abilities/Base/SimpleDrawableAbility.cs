@@ -2,13 +2,13 @@
 {
     using Core.Helpers;
 
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
 
     internal class SimpleDrawableAbility : DrawableAbility
     {
-        public override void DrawOnMap(IRenderer renderer, IMinimap minimap)
+        public override void DrawOnMap(IMinimap minimap)
         {
             var position = minimap.WorldToScreen(this.Position, 35 * Hud.Info.ScreenRatio);
             if (position.IsZero)
@@ -16,11 +16,11 @@
                 return;
             }
 
-            renderer.DrawTexture("o9k.outline_red", position * 1.12f);
-            renderer.DrawTexture(this.AbilityTexture, position);
+            RendererManager.DrawTexture("o9k.outline_red", position * 1.12f);
+            RendererManager.DrawTexture(this.AbilityTexture, position, TextureType.RoundAbility);
         }
 
-        public override void DrawOnMinimap(IRenderer renderer, IMinimap minimap)
+        public override void DrawOnMinimap(IMinimap minimap)
         {
             var position = minimap.WorldToMinimap(this.Position, 25 * Hud.Info.ScreenRatio);
             if (position.IsZero)
@@ -28,8 +28,8 @@
                 return;
             }
 
-            renderer.DrawTexture("o9k.outline_red", position * 1.08f);
-            renderer.DrawTexture(this.AbilityTexture, position);
+            RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
+            RendererManager.DrawTexture(this.AbilityTexture, position, TextureType.RoundAbility);
         }
     }
 }

@@ -1,22 +1,18 @@
 ﻿namespace O9K.Hud.MainMenu
 {
-    using System.ComponentModel.Composition;
-
-    using Core.Managers.Context;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
+    using Divine;
+
     using Modules;
 
-    [Export(typeof(IHudMenu))]
+    using O9K.Core.Managers.Context;
+
     internal class HudMenu : IHudModule, IHudMenu
     {
-        private readonly IContext9 context;
-
-        [ImportingConstructor]
-        public HudMenu(IContext9 context)
+        public HudMenu()
         {
-            this.context = context;
             this.RootMenu = new Menu("Hud", "O9K.Hud").SetTexture("o9k.me");
 
             this.UnitsMenu = this.RootMenu.Add(new Menu("Units"));
@@ -84,13 +80,13 @@
 
         public void Activate()
         {
-            this.context.Renderer.TextureManager.LoadFromDota("o9k.me", @"panorama\images\textures\minimap_hero_self_psd.vtex_c");
-            this.context.MenuManager.AddRootMenu(this.RootMenu);
+            RendererManager.LoadTexture("o9k.me", @"panorama\images\textures\minimap_hero_self_psd.vtex_c");
+            Context9.MenuManager.AddRootMenu(this.RootMenu);
         }
 
         public void Dispose()
         {
-            this.context.MenuManager.RemoveRootMenu(this.RootMenu);
+            Context9.MenuManager.RemoveRootMenu(this.RootMenu);
         }
     }
 }

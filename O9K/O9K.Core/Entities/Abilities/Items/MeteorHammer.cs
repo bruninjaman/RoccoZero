@@ -16,7 +16,7 @@
         public MeteorHammer(Ability baseAbility)
             : base(baseAbility)
         {
-            this.ChannelTime = baseAbility.GetChannelTime(0);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
             this.RadiusData = new SpecialData(baseAbility, "impact_radius");
             this.ActivationDelayData = new SpecialData(baseAbility, "land_time");
         }

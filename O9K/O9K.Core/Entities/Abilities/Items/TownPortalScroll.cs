@@ -13,7 +13,7 @@
         public TownPortalScroll(Ability baseAbility)
             : base(baseAbility)
         {
-            this.ChannelTime = baseAbility.GetChannelTime(0);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
         }
 
         public override float CastRange { get; } = 9999999;

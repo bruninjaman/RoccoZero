@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Core.Logger;
     using Core.Managers.Entity;
@@ -10,19 +9,18 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     using MainMenu;
 
     internal class TrueSight : IHudModule
     {
-        private readonly Dictionary<uint, ParticleEffect> effects = new Dictionary<uint, ParticleEffect>();
+        private readonly Dictionary<uint, Particle> effects = new Dictionary<uint, Particle>();
 
         private readonly MenuSwitcher show;
 
         private Team ownerTeam;
 
-        [ImportingConstructor]
         public TrueSight(IHudMenu hudMenu)
         {
             this.show = hudMenu.ParticlesMenu.Add(new MenuSwitcher("True sight", "trueSight"));
@@ -38,8 +36,8 @@
         public void Dispose()
         {
             this.show.ValueChange -= this.ShowOnValueChange;
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Unit.OnModifierRemoved -= this.OnModifierRemoved;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
 
             foreach (var effect in this.effects)
             {
@@ -49,10 +47,12 @@
             this.effects.Clear();
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Team != this.ownerTeam)
                 {
                     return;
@@ -63,7 +63,7 @@
                     return;
                 }
 
-                if (args.Modifier.Name != "modifier_truesight" && args.Modifier.Name != "modifier_item_dustofappearance")
+                if (modifier.Name != "modifier_truesight" && modifier.Name != "modifier_item_dustofappearance")
                 {
                     return;
                 }
@@ -73,19 +73,21 @@
                     return;
                 }
 
-                var effect = new ParticleEffect("particles/items2_fx/ward_true_sight.vpcf", sender, ParticleAttachment.CenterFollow);
+                var effect = ParticleManager.CreateParticle("particles/items2_fx/ward_true_sight.vpcf", ParticleAttachment.CenterFollow, sender);
                 this.effects.Add(sender.Handle, effect);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierRemoved(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Team != this.ownerTeam)
                 {
                     return;
@@ -96,7 +98,7 @@
                     return;
                 }
 
-                if (args.Modifier.Name != "modifier_truesight" && args.Modifier.Name != "modifier_item_dustofappearance")
+                if (modifier.Name != "modifier_truesight" && modifier.Name != "modifier_item_dustofappearance")
                 {
                     return;
                 }
@@ -109,9 +111,9 @@
                 effect.Dispose();
                 this.effects.Remove(sender.Handle);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
@@ -119,13 +121,13 @@
         {
             if (e.NewValue)
             {
-                Unit.OnModifierAdded += this.OnModifierAdded;
-                Unit.OnModifierRemoved += this.OnModifierRemoved;
+                ModifierManager.ModifierAdded += this.OnModifierAdded;
+                ModifierManager.ModifierRemoved += this.OnModifierRemoved;
             }
             else
             {
-                Unit.OnModifierAdded -= this.OnModifierAdded;
-                Unit.OnModifierRemoved -= this.OnModifierRemoved;
+                ModifierManager.ModifierAdded -= this.OnModifierAdded;
+                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
 
                 foreach (var effect in this.effects)
                 {

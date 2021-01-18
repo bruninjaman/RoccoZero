@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Helpers;
@@ -13,10 +12,9 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Extensions;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -24,12 +22,8 @@
 
     using SharpDX;
 
-    using Color = System.Drawing.Color;
-
     internal class JungleStacks : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly HashSet<string> doubleCreeps = new HashSet<string>
         {
             "npc_dota_neutral_satyr_soulstealer",
@@ -63,10 +57,8 @@
 
         private Vector3[] campPositions;
 
-        [ImportingConstructor]
-        public JungleStacks(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public JungleStacks(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var predictionsMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Predictions"));
@@ -86,7 +78,7 @@
 
         public void Activate()
         {
-            this.campPositions = this.context.JungleManager.JungleCamps.Select(x => x.CreepsPosition).ToArray();
+            this.campPositions = Context9.JungleManager.JungleCamps.Select(x => x.CreepsPosition).ToArray();
 
             this.showOnMinimap.ValueChange += this.ShowOnMinimapOnValueChange;
         }
@@ -94,11 +86,11 @@
         public void Dispose()
         {
             this.showOnMinimap.ValueChange -= this.ShowOnMinimapOnValueChange;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             UpdateManager.Unsubscribe(this.OnUpdate);
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -112,11 +104,11 @@
                     var size = 16 * Hud.Info.ScreenRatio;
                     var minimapPosition = this.minimap.WorldToMinimap(stack.Key, size);
 
-                    renderer.DrawText(
-                        minimapPosition + new Size2F(size, 0),
+                    RendererManager.DrawText(
                         stack.Value.ToString(),
+                        minimapPosition + new Size2F(size, 0),
                         Color.Orange,
-                        RendererFontFlags.Left,
+                        FontFlags.Left,
                         size);
                 }
             }
@@ -138,7 +130,7 @@
 
                 foreach (var camp in this.campPositions)
                 {
-                    var units = neutrals.Where(x => x.Position.Distance2D(camp) < 500).ToList();
+                    var units = neutrals.Where(x => x.Position.Distance(camp) < 500).ToList();
                     var count = units.Count(x => this.singleCreeps.Contains(x.Name))
                                 + (units.Count(x => this.doubleCreeps.Contains(x.Name)) / 2);
 
@@ -155,13 +147,13 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(this.OnUpdate, 5000);
-                this.context.Renderer.Draw += this.OnDraw;
+                UpdateManager.Subscribe(5000, this.OnUpdate);
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
                 UpdateManager.Unsubscribe(this.OnUpdate);
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
     }

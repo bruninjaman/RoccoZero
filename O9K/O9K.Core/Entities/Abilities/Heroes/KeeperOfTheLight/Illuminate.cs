@@ -22,7 +22,7 @@
             //todo spirit form illuminate
             this.RadiusData = new SpecialData(baseAbility, "radius");
             this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.channelTimeData = new SpecialData(baseAbility, (Func<uint, float>)baseAbility.GetChannelTime);
+            this.channelTimeData = new SpecialData(baseAbility, baseAbility.AbilityData.GetChannelMaximumTime);
         }
 
         public float ChannelTime

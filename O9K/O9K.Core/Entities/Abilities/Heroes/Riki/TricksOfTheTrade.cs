@@ -44,7 +44,7 @@
             this.damageMultiplierData = new SpecialData(baseAbility, "damage_pct");
             this.channelScepterTimeData = new SpecialData(baseAbility, "scepter_duration");
             this.castRangeScepterTimeData = new SpecialData(baseAbility, "scepter_cast_range");
-            this.channelTimeData = new SpecialData(baseAbility, (Func<uint, float>)baseAbility.GetChannelTime);
+            this.channelTimeData = new SpecialData(baseAbility, baseAbility.AbilityData.GetChannelMaximumTime);
         }
 
         public UnitState AppliesUnitState { get; } = UnitState.Invulnerable;

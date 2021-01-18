@@ -7,8 +7,8 @@
 
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Helpers.Notificator;
 
@@ -16,7 +16,7 @@
     {
         public override void AddDrawableAbility(
             List<IDrawableAbility> drawableAbilities,
-            ParticleEffect particle,
+            Particle particle,
             Team allyTeam,
             INotificator notificator)
         {
@@ -50,8 +50,8 @@
                     AbilityTexture = this.AbilityId + "_rounded",
                     HeroTexture = owner.Name + "_rounded",
                     MinimapHeroTexture = owner.Name + "_icon",
-                    ShowUntil = Game.RawGameTime + this.TimeToShow,
-                    Position = Game.RawGameTime - owner.LastVisibleTime < 0.5f
+                    ShowUntil = GameManager.RawGameTime + this.TimeToShow,
+                    Position = GameManager.RawGameTime - owner.LastVisibleTime < 0.5f
                                    ? owner.InFront(enemyBlinks[0].Range - 200)
                                    : position.SetZ(350)
                 };
@@ -61,7 +61,7 @@
             }
             else
             {
-                var owner = enemyBlinks.Find(x => x.Owner.Distance(position) < 100 && Game.RawGameTime - x.Owner.LastVisibleTime < 0.5f)
+                var owner = enemyBlinks.Find(x => x.Owner.Distance(position) < 100 && GameManager.RawGameTime - x.Owner.LastVisibleTime < 0.5f)
                     ?.Owner;
 
                 if (owner != null)
@@ -71,7 +71,7 @@
                         AbilityTexture = this.AbilityId + "_rounded",
                         HeroTexture = owner.Name + "_rounded",
                         MinimapHeroTexture = owner.Name + "_icon",
-                        ShowUntil = Game.RawGameTime + this.TimeToShow,
+                        ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                         Position = owner.InFront(enemyBlinks[0].Range - 200)
                     };
 
@@ -83,7 +83,7 @@
                     var drawableAbility = new SimpleDrawableAbility
                     {
                         AbilityTexture = this.AbilityId + "_rounded",
-                        ShowUntil = Game.RawGameTime + this.TimeToShow,
+                        ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                         Position = (this.RawParticlePosition ? particle.Position : particle.GetControlPoint(this.ControlPoint)).SetZ(350)
                     };
 

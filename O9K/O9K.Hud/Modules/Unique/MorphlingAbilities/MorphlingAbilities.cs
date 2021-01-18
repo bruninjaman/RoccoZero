@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Abilities;
@@ -11,16 +10,15 @@
     using Core.Entities.Heroes;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Localization;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -38,8 +36,6 @@
 
         private readonly MenuSlider abilitiesTextSize;
 
-        private readonly IContext9 context;
-
         private readonly List<IMorphlingAbility> morphedAbilities = new List<IMorphlingAbility>();
 
         private readonly HashSet<AbilityId> morphlingAbilityIds = new HashSet<AbilityId>
@@ -55,10 +51,8 @@
 
         private Owner owner;
 
-        [ImportingConstructor]
-        public MorphlingAbilities(IContext9 context, IHudMenu hudMenu)
+        public MorphlingAbilities(IHudMenu hudMenu)
         {
-            this.context = context;
 
             var abilitiesMenu = hudMenu.UniqueMenu
                 .Add(new Menu(LocalizationHelper.LocalizeName(HeroId.npc_dota_hero_morphling), "Morphling"))
@@ -100,14 +94,14 @@
         public void Dispose()
         {
             this.abilitiesEnabled.ValueChange -= this.EnabledOnValueChange;
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Unit.OnModifierRemoved -= this.OnModifierRemoved;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityMonitor.AbilityCasted -= this.OnAbilityCasted;
             EntityManager9.AbilityMonitor.AbilityCastChange -= this.OnAbilityCastChange;
             UpdateManager.Unsubscribe(this.OnUpdate);
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
-            this.context.Renderer.Draw -= this.OnDraw;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
+            RendererManager.Draw -= this.OnDraw;
             this.abilitiesPosition.Dispose();
             this.morphedAbilities.Clear();
         }
@@ -116,24 +110,24 @@
         {
             if (e.NewValue)
             {
-                Player.OnExecuteOrder += this.OnExecuteOrder;
-                Unit.OnModifierAdded += this.OnModifierAdded;
-                Unit.OnModifierRemoved += this.OnModifierRemoved;
+                OrderManager.OrderAdding += this.OnOrderAdding;
+                ModifierManager.ModifierAdded += this.OnModifierAdded;
+                ModifierManager.ModifierRemoved += this.OnModifierRemoved;
                 EntityManager9.AbilityAdded += this.OnAbilityAdded;
                 EntityManager9.AbilityMonitor.AbilityCasted += this.OnAbilityCasted;
                 EntityManager9.AbilityMonitor.AbilityCastChange += this.OnAbilityCastChange;
-                UpdateManager.Subscribe(this.OnUpdate, 500);
+                UpdateManager.Subscribe(500, this.OnUpdate);
             }
             else
             {
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
-                Unit.OnModifierAdded -= this.OnModifierAdded;
-                Unit.OnModifierRemoved -= this.OnModifierRemoved;
+                OrderManager.OrderAdding -= this.OnOrderAdding;
+                ModifierManager.ModifierAdded += this.OnModifierAdded;
+                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
                 EntityManager9.AbilityAdded -= this.OnAbilityAdded;
                 EntityManager9.AbilityMonitor.AbilityCasted -= this.OnAbilityCasted;
                 EntityManager9.AbilityMonitor.AbilityCastChange -= this.OnAbilityCastChange;
                 UpdateManager.Unsubscribe(this.OnUpdate);
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
                 this.morphedAbilities.Clear();
             }
         }
@@ -207,7 +201,7 @@
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -227,7 +221,6 @@
                     var ability = abilities[i];
 
                     ability.Draw(
-                        renderer,
                         new Rectangle9(start + new Vector2(i * this.abilitiesSize, 0), this.abilitiesSize, this.abilitiesSize),
                         this.abilitiesTextSize);
                 }
@@ -242,73 +235,77 @@
             }
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (args.OrderId != OrderId.Ability || args.Ability.Id != AbilityId.morphling_morph_replicate)
+                if (e.OrderId != OrderId.Ability || e.Ability.Id != AbilityId.morphling_morph_replicate)
                 {
                     return;
                 }
 
                 this.sleeper.Sleep(0.2f);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Handle != this.owner.HeroHandle)
                 {
                     return;
                 }
 
-                var name = args.Modifier.Name;
+                var name = modifier.Name;
 
                 if (name == "modifier_morphling_replicate_manager")
                 {
-                    this.morphedAbilities.Add(new ReplicateTimer(args.Modifier.RemainingTime));
-                    this.context.Renderer.Draw += this.OnDraw;
+                    this.morphedAbilities.Add(new ReplicateTimer(modifier.RemainingTime));
+                    RendererManager.Draw += this.OnDraw;
                 }
                 else if (name == "modifier_morphling_replicate")
                 {
                     this.isMorphed = true;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierRemoved(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Handle != this.owner.HeroHandle)
                 {
                     return;
                 }
 
-                var name = args.Modifier.Name;
+                var name = modifier.Name;
 
                 if (name == "modifier_morphling_replicate_manager")
                 {
-                    this.context.Renderer.Draw -= this.OnDraw;
+                    RendererManager.Draw -= this.OnDraw;
                 }
                 else if (name == "modifier_morphling_replicate")
                 {
                     this.isMorphed = false;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 

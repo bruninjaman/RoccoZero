@@ -46,10 +46,10 @@ namespace Divine.BeAware.Helpers
             for (var i = 0; i <= 10; i++)
             {
                 var heroColor = $"Divine.BeAware.Resources.Textures.HeroColors.{i}.png";
-                RendererManager.LoadTextureFromResource(heroColor);
+                RendererManager.LoadTextureFromAssembly(heroColor);
             }
 
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.HeroColors.red.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.HeroColors.red.png");
 
             /*if (Drawing.RenderMode == RenderMode.Dx9)
             {
@@ -64,7 +64,6 @@ namespace Divine.BeAware.Helpers
                 IconSize = 21;
             }
 
-            RendererManager.GameRenderer.Draw += OnGameRendererDraw;
             RendererManager.Draw += OnRendererDraw;
         }
 
@@ -274,20 +273,6 @@ namespace Divine.BeAware.Helpers
             }
         }
 
-        private void OnGameRendererDraw()
-        {
-            foreach (var data in DrawingData)
-            {
-                var worldPosition = data.GetWorldPos;
-                if (worldPosition.IsZero)
-                {
-                    continue;
-                }
-
-                data.ScreenPosition = RendererManager.WorldToScreen(worldPosition);
-            }
-        }
-
         private void OnRendererDraw()
         {
             /*if (!Menu.PartialMapHackMenu.OnMinimapItem)
@@ -319,10 +304,7 @@ namespace Divine.BeAware.Helpers
                 if (heroTexturName != "npc_dota_hero_default")
                 {
                     RendererManager.DrawTexture($"Divine.BeAware.Resources.Textures.HeroColors.{playerId}.png", new RectangleF((pos.X - 2.5f) - HeroIconExtraPos.X, (pos.Y - 2.5f) - HeroIconExtraPos.Y, 23, 23), 1);
-
-                    var texture = $@"mini_heroes\{heroTexturName}.png";
-                    RendererManager.LoadTextureFromResource(texture);
-                    RendererManager.DrawTexture(texture, new RectangleF(pos.X - HeroIconExtraPos.X, pos.Y - HeroIconExtraPos.Y, 18, 18), 1);
+                    RendererManager.DrawTexture(heroTexturName, new RectangleF(pos.X - HeroIconExtraPos.X, pos.Y - HeroIconExtraPos.Y, 18, 18), TextureType.MiniUnit, true);
                 }
                 else
                 {
@@ -338,21 +320,15 @@ namespace Divine.BeAware.Helpers
                     continue;
                 }
 
-                var pos = data.ScreenPosition;
+                var pos = RendererManager.WorldToScreen(worldPosition);
                 if (pos.IsZero)
                 {
                     continue;
                 }
 
                 RendererManager.DrawTexture("Divine.BeAware.Resources.Textures.beawareplus_screen.png", new RectangleF(pos.X + 18, pos.Y - 35, 64, 128));
-
-                var texture = $@"round_heroes\{data.GetHeroTexturName}.png";
-                RendererManager.LoadTextureFromResource(texture);
-                RendererManager.DrawTexture(texture, new RectangleF(pos.X + 25, pos.Y - 20, 50, 50), 1);
-
-                texture = $@"{(data.IsItem ? "round_items" : "round_spells")}\{data.GetAbilityTexturName}.png";
-                RendererManager.LoadTextureFromResource(texture);
-                RendererManager.DrawTexture($@"{(data.IsItem ? "round_items" : "round_spells")}\{data.GetAbilityTexturName}.png", new RectangleF(pos.X + 34, pos.Y + 40, 35, 35), 1);
+                RendererManager.DrawTexture(data.GetHeroTexturName, new RectangleF(pos.X + 25, pos.Y - 20, 50, 50), TextureType.RoundUnit, true);
+                RendererManager.DrawTexture(data.GetAbilityTexturName, new RectangleF(pos.X + 34, pos.Y + 40, 35, 35), TextureType.RoundAbility, true);
             }
         }
 
@@ -363,8 +339,6 @@ namespace Divine.BeAware.Helpers
             public string GetParticleName { get; }
 
             public Vector3 GetWorldPos { get; }
-
-            public Vector2 ScreenPosition { get; set; }
 
             public Vector2 GetMinimapPos { get; }
 

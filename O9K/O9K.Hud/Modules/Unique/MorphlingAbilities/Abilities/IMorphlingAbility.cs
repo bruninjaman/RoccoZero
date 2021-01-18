@@ -2,8 +2,7 @@
 {
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     internal interface IMorphlingAbility
     {
@@ -13,7 +12,7 @@
 
         bool Display(bool isMorphed);
 
-        void Draw(IRenderer renderer, Rectangle9 position, float textSize);
+        void Draw(Rectangle9 position, float textSize);
 
         bool Update(bool isMorphed);
     }

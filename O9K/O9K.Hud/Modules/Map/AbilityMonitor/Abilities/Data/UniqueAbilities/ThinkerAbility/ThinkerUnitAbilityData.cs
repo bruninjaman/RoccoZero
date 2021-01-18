@@ -6,7 +6,7 @@
 
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using Helpers.Notificator;
 
@@ -41,8 +41,8 @@
                 Position = unit.Position,
                 Unit = unit,
                 Duration = this.Duration,
-                ShowUntil = Game.RawGameTime + this.Duration,
-                ShowHeroUntil = Game.RawGameTime + this.TimeToShow,
+                ShowUntil = GameManager.RawGameTime + this.Duration,
+                ShowHeroUntil = GameManager.RawGameTime + this.TimeToShow,
                 ShowTimer = this.ShowTimer,
                 Owner = owner,
             };

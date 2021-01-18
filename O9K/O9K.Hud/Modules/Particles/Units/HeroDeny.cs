@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Abilities.Base;
@@ -14,9 +13,8 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
@@ -40,15 +38,14 @@
 
         private readonly MenuSwitcher show;
 
-        private readonly Dictionary<Unit9, ParticleEffect> units = new Dictionary<Unit9, ParticleEffect>();
+        private readonly Dictionary<Unit9, Particle> units = new Dictionary<Unit9, Particle>();
 
         private bool added;
 
-        private IUpdateHandler handler;
+        private UpdateHandler handler;
 
         private Owner owner;
 
-        [ImportingConstructor]
         public HeroDeny(IHudMenu hudMenu)
         {
             //todo delete?
@@ -64,15 +61,15 @@
         public void Activate()
         {
             this.owner = EntityManager9.Owner;
-            this.handler = UpdateManager.Subscribe(this.OnUpdate, 100, false);
+            this.handler = UpdateManager.Subscribe(100, false, this.OnUpdate);
             this.show.ValueChange += this.ShowOnValueChanging;
         }
 
         public void Dispose()
         {
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Unit.OnModifierRemoved -= this.OnModifierRemoved;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
             UpdateManager.Unsubscribe(this.handler);
             this.added = false;
 
@@ -99,8 +96,8 @@
                 }
 
                 EntityManager9.AbilityAdded -= this.OnAbilityAdded;
-                Unit.OnModifierAdded += this.OnModifierAdded;
-                Unit.OnModifierRemoved += this.OnModifierRemoved;
+                ModifierManager.ModifierAdded += this.OnModifierAdded;
+                ModifierManager.ModifierRemoved += this.OnModifierRemoved;
                 this.added = true;
             }
             catch (Exception e)
@@ -109,11 +106,13 @@
             }
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
+            var modifier = e.Modifier;
+            var sender = modifier.Owner;
             try
             {
-                if (sender.Team != this.owner.Team || args.Modifier.IsHidden || !this.denyModifiers.Contains(args.Modifier.Name))
+                if (sender.Team != this.owner.Team || modifier.IsHidden || !this.denyModifiers.Contains(modifier.Name))
                 {
                     return;
                 }
@@ -127,17 +126,19 @@
                 this.units[unit] = null;
                 this.handler.IsEnabled = true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e, sender);
+                Logger.Error(ex, sender);
             }
         }
 
-        private void OnModifierRemoved(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
         {
+            var modifier = e.Modifier;
+            var sender = modifier.Owner;
             try
             {
-                if (sender.Team != this.owner.Team || args.Modifier.IsHidden || !this.denyModifiers.Contains(args.Modifier.Name))
+                if (sender.Team != this.owner.Team || modifier.IsHidden || !this.denyModifiers.Contains(modifier.Name))
                 {
                     return;
                 }
@@ -151,9 +152,9 @@
                 effect?.Dispose();
                 this.units.Remove(unit);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e, sender);
+                Logger.Error(ex, sender);
             }
         }
 
@@ -195,10 +196,10 @@
                         continue;
                     }
 
-                    effect = new ParticleEffect(
+                    effect = ParticleManager.CreateParticle(
                         "materials/ensage_ui/particles/illusions_mod_v2.vpcf",
-                        unit.BaseUnit,
-                        ParticleAttachment.CenterFollow);
+                        ParticleAttachment.CenterFollow,
+                        unit.BaseUnit);
 
                     effect.SetControlPoint(1, new Vector3(255));
                     effect.SetControlPoint(2, new Vector3(0, 255, 128));
@@ -226,8 +227,8 @@
             else
             {
                 EntityManager9.AbilityAdded -= this.OnAbilityAdded;
-                Unit.OnModifierAdded -= this.OnModifierAdded;
-                Unit.OnModifierRemoved -= this.OnModifierRemoved;
+                ModifierManager.ModifierAdded -= this.OnModifierAdded;
+                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
                 this.handler.IsEnabled = false;
                 this.added = false;
                 foreach (var effect in this.units.Values.Where(x => x?.IsValid == true))

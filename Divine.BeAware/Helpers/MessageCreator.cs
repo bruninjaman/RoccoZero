@@ -45,76 +45,68 @@ namespace Divine.BeAware.Helpers
 
         public void MessageAllyCreator(string heroTextureName, string spellTextureName)
         {
-            var heroTextureKey = $@"horizontal_heroes\{heroTextureName}.png";
-            var spellTextureKey = $@"spells\{spellTextureName}.png";
             var msg0TextureKey = $"{Textures}.msg0_{Lang.ToLower()}.png";
 
-            RendererManager.LoadTextureFromResource(heroTextureKey);
-            RendererManager.LoadTextureFromResource(spellTextureKey);
-            RendererManager.LoadTextureFromResource(msg0TextureKey);
+            RendererManager.LoadTexture(heroTextureName, TextureType.Unit);
+            RendererManager.LoadTexture(spellTextureName, TextureType.Ability);
+            RendererManager.LoadTextureFromAssembly(msg0TextureKey);
 
             var sideMessage = new SideMessage(random.Next(99999999).ToString(), new Vector2(MsgX, MsgY), stayTime: 5000);
             sideMessage.AddElement(new Vector2(0, 0), new Vector2(MsgX, MsgY), msg0TextureKey);
-            sideMessage.AddElement(new Vector2(HeroAllyX, HeroSpellY), new Vector2(HeroSizeX, HeroSpellSizeY), heroTextureKey);
-            sideMessage.AddElement(new Vector2(HeroX, HeroSpellY), new Vector2(HeroSpellSizeY, HeroSpellSizeY), spellTextureKey);
+            sideMessage.AddElement(new Vector2(HeroAllyX, HeroSpellY), new Vector2(HeroSizeX, HeroSpellSizeY), heroTextureName, TextureType.Unit);
+            sideMessage.AddElement(new Vector2(HeroX, HeroSpellY), new Vector2(HeroSpellSizeY, HeroSpellSizeY), spellTextureName, TextureType.Ability);
             sideMessage.CreateMessage();
         }
 
         public void MessageEnemyCreator(string heroTextureName, string spellTextureName)
         {
-            var heroTextureKey = $@"horizontal_heroes\{heroTextureName}.png";
-            var spellTextureKey = $@"spells\{spellTextureName}.png";
             var msg1TextureKey = $"{Textures}.msg1_{Lang.ToLower()}.png";
 
-            RendererManager.LoadTextureFromResource(heroTextureKey);
-            RendererManager.LoadTextureFromResource(spellTextureKey);
-            RendererManager.LoadTextureFromResource(msg1TextureKey);
+            RendererManager.LoadTexture(heroTextureName, TextureType.Unit);
+            RendererManager.LoadTexture(spellTextureName, TextureType.Ability);
+            RendererManager.LoadTextureFromAssembly(msg1TextureKey);
 
             var sideMessage = new SideMessage(random.Next(99999999).ToString(), new Vector2(MsgX, MsgY), stayTime: 5000);
             sideMessage.AddElement(new Vector2(0, 0), new Vector2(MsgX, MsgY), msg1TextureKey);
-            sideMessage.AddElement(new Vector2(HeroX, HeroSpellY), new Vector2(HeroSizeX, HeroSpellSizeY), heroTextureKey);
-            sideMessage.AddElement(new Vector2(SpellX, HeroSpellY), new Vector2(HeroSpellSizeY, HeroSpellSizeY), spellTextureKey);
+            sideMessage.AddElement(new Vector2(HeroX, HeroSpellY), new Vector2(HeroSizeX, HeroSpellSizeY), heroTextureName, TextureType.Unit);
+            sideMessage.AddElement(new Vector2(SpellX, HeroSpellY), new Vector2(HeroSpellSizeY, HeroSpellSizeY), spellTextureName, TextureType.Ability);
             sideMessage.CreateMessage();
         }
 
         public void MessageRuneCreator(string heroTextureName, string runeTextureName)
         {
-            var heroTextureKey = $@"horizontal_heroes\{heroTextureName}.png";
-            var runeTextureKey = $@"spells\{runeTextureName}.png";
             var msg2TextureKey = $"{Textures}.msg2_{Lang.ToLower()}.png";
 
-            RendererManager.LoadTextureFromResource(heroTextureKey);
-            RendererManager.LoadTextureFromResource(runeTextureKey);
-            RendererManager.LoadTextureFromResource(msg2TextureKey);
+            RendererManager.LoadTexture(heroTextureName, TextureType.Unit);
+            RendererManager.LoadTexture(runeTextureName, TextureType.Ability);
+            RendererManager.LoadTextureFromAssembly(msg2TextureKey);
 
             var sideMessage = new SideMessage(random.Next(99999999).ToString(), new Vector2(MsgX, MsgY), stayTime: 5000);
             sideMessage.AddElement(new Vector2(0, 0), new Vector2(MsgX, MsgY), msg2TextureKey);
-            sideMessage.AddElement(new Vector2(HeroX, HeroSpellY), new Vector2(HeroSizeX, HeroSpellSizeY), heroTextureKey);
-            sideMessage.AddElement(new Vector2(SpellX, HeroSpellY), new Vector2(HeroSpellSizeY, HeroSpellSizeY), runeTextureKey);
+            sideMessage.AddElement(new Vector2(HeroX, HeroSpellY), new Vector2(HeroSizeX, HeroSpellSizeY), heroTextureName, TextureType.Unit);
+            sideMessage.AddElement(new Vector2(SpellX, HeroSpellY), new Vector2(HeroSpellSizeY, HeroSpellSizeY), runeTextureName, TextureType.Ability);
             sideMessage.CreateMessage();
         }
 
         public void MessageItemCreator(string heroTextureName, string itemTextureName)
         {
-            var heroTextureKey = $@"horizontal_heroes\{heroTextureName}.png";
-            var itemTextureKey = $@"items\{itemTextureName}.png";
             var msg3TextureKey = $"{Textures}.msg3_{Lang.ToLower()}.png";
 
-            RendererManager.LoadTextureFromResource(heroTextureKey);
-            RendererManager.LoadTextureFromResource(itemTextureKey);
-            RendererManager.LoadTextureFromResource(msg3TextureKey);
+            RendererManager.LoadTexture(heroTextureName, TextureType.Unit);
+            RendererManager.LoadTexture(itemTextureName, TextureType.Item);
+            RendererManager.LoadTextureFromAssembly(msg3TextureKey);
 
             var sideMessage = new SideMessage(random.Next(99999999).ToString(), new Vector2(MsgX, MsgY), stayTime: 5000);
             sideMessage.AddElement(new Vector2(0, 0), new Vector2(MsgX, MsgY), msg3TextureKey);
-            sideMessage.AddElement(new Vector2(HeroX, HeroSpellY), new Vector2(HeroSizeX, HeroSpellSizeY), heroTextureKey);
-            sideMessage.AddElement(new Vector2(ItemX, HeroSpellY), new Vector2(ItemSizeX, HeroSpellSizeY), itemTextureKey);
+            sideMessage.AddElement(new Vector2(HeroX, HeroSpellY), new Vector2(HeroSizeX, HeroSpellSizeY), heroTextureName, TextureType.Unit);
+            sideMessage.AddElement(new Vector2(ItemX, HeroSpellY), new Vector2(ItemSizeX, HeroSpellSizeY), itemTextureName, TextureType.Item);
             sideMessage.CreateMessage();
         }
 
         public void MessageCheckRuneCreator()
         {
             var msg4TextureKey = $"{Textures}.msg4_{Lang.ToLower()}.png";
-            RendererManager.LoadTextureFromResource(msg4TextureKey);
+            RendererManager.LoadTextureFromAssembly(msg4TextureKey);
 
             var sideMessage = new SideMessage("check_rune", new Vector2(MsgX, MsgY), stayTime: 5000);
             sideMessage.AddElement(new Vector2(0, 0), new Vector2(MsgX, MsgY), msg4TextureKey);
@@ -123,7 +115,7 @@ namespace Divine.BeAware.Helpers
         public void MessageUseMidasCreator()
         {
             var msg5TextureKey = $"{Textures}.msg5_{Lang.ToLower()}.png";
-            RendererManager.LoadTextureFromResource(msg5TextureKey);
+            RendererManager.LoadTextureFromAssembly(msg5TextureKey);
 
             var sideMessage = new SideMessage("use_midas", new Vector2(MsgX, MsgY), stayTime: 5000);
             sideMessage.AddElement(new Vector2(0, 0), new Vector2(MsgX, MsgY), msg5TextureKey);
@@ -133,7 +125,7 @@ namespace Divine.BeAware.Helpers
         public void MessageRoshanAliveCreator()
         {
             var msg6TextureKey = $"{Textures}.msg6_{Lang.ToLower()}.png";
-            RendererManager.LoadTextureFromResource(msg6TextureKey);
+            RendererManager.LoadTextureFromAssembly(msg6TextureKey);
 
             var sideMessage = new SideMessage("roshan_alive", new Vector2(MsgX, MsgY), stayTime: 5000);
             sideMessage.AddElement(new Vector2(0, 0), new Vector2(MsgX, MsgY), msg6TextureKey);
@@ -143,7 +135,7 @@ namespace Divine.BeAware.Helpers
         public void MessageRoshanMBAliveCreator()
         {
             var msg7TextureKey = $"{Textures}.msg7_{Lang.ToLower()}.png";
-            RendererManager.LoadTextureFromResource(msg7TextureKey);
+            RendererManager.LoadTextureFromAssembly(msg7TextureKey);
 
             var sideMessage = new SideMessage("roshan_mb_alive", new Vector2(MsgX, MsgY), stayTime: 5000);
             sideMessage.AddElement(new Vector2(0, 0), new Vector2(MsgX, MsgY), msg7TextureKey);

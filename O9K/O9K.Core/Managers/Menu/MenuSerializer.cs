@@ -6,6 +6,8 @@
     using System.Linq;
     using System.Text;
 
+    using Divine.Zero.Helpers;
+
     using Items;
 
     using Logger;
@@ -28,7 +30,7 @@
             };
 
             this.JsonSerializer = JsonSerializer.Create(this.Settings);
-            this.ConfigDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "game", "O9K");
+            this.ConfigDirectory = Path.Combine(Directories.Config, "Plugins", "O9K");
 
             try
             {

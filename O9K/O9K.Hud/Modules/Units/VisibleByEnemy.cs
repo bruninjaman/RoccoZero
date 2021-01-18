@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Mines;
@@ -14,8 +13,8 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
@@ -44,13 +43,12 @@
 
         private readonly MenuSwitcher other;
 
-        private readonly Dictionary<Unit9, ParticleEffect> particles = new Dictionary<Unit9, ParticleEffect>();
+        private readonly Dictionary<Unit9, Particle> particles = new Dictionary<Unit9, Particle>();
 
         private readonly List<Unit9> units = new List<Unit9>();
 
         private Team enemyTeam;
 
-        [ImportingConstructor]
         public VisibleByEnemy(IHudMenu hudMenu)
         {
             var menu = hudMenu.UnitsMenu.Add(new Menu("Visible by enemy"));
@@ -153,7 +151,7 @@
                 this.effectName.ValueChange += this.EffectNameOnValueChange;
                 EntityManager9.UnitAdded += this.OnUnitAdded;
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
-                UpdateManager.Subscribe(this.OnUpdate, 300);
+                UpdateManager.Subscribe(300, this.OnUpdate);
                 this.heroes.ValueChange += this.OptionOnValueChange;
                 this.creeps.ValueChange += this.OptionOnValueChange;
                 this.buildings.ValueChange += this.OptionOnValueChange;
@@ -288,7 +286,7 @@
                             }
                             else
                             {
-                                this.particles.Add(unit, new ParticleEffect(this.effects[this.effectName], unit.Position));
+                                this.particles.Add(unit, ParticleManager.CreateParticle(this.effects[this.effectName], unit.Position));
                             }
                         }
                         else
@@ -300,7 +298,7 @@
 
                             this.particles.Add(
                                 unit,
-                                new ParticleEffect(this.effects[this.effectName], unit.BaseUnit, ParticleAttachment.AbsOriginFollow));
+                                ParticleManager.CreateParticle(this.effects[this.effectName], ParticleAttachment.AbsOriginFollow, unit.BaseUnit));
                         }
                     }
                 }

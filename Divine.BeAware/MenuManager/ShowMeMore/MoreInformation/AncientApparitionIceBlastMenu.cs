@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore.MoreInformation
     {
         public AncientApparitionIceBlastMenu(Menu.Items.Menu moreInformationMenu)
         {
-            var ancientApparitionIceBlastMenu = moreInformationMenu.CreateMenu("Ancient Apparition Ice Blast").SetTexture(@"spells\ancient_apparition_ice_blast.png");
+            var ancientApparitionIceBlastMenu = moreInformationMenu.CreateMenu("Ancient Apparition Ice Blast").SetAbilityTexture(AbilityId.ancient_apparition_ice_blast);
             EnableItem = ancientApparitionIceBlastMenu.CreateSwitcher("Enable");
             RedItem = ancientApparitionIceBlastMenu.CreateSlider("Red:", 255, 0, 255);
             GreenItem = ancientApparitionIceBlastMenu.CreateSlider("Green:", 0, 0, 255);

@@ -57,13 +57,13 @@ namespace Divine.BeAware.Overlay
             TownPortalScrollMenu = common.MenuConfig.OverlayMenu.TownPortalScrollMenu;
             EmemyItemPanelMenu = common.MenuConfig.OverlayMenu.EmemyItemPanelMenu;
 
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.spell_phase.png");
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.hero_visible_left.png");
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.hero_visible_right.png");
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.topbar_health.png");
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.topbar_mana.png");
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.topbar_ulti.png");
-            RendererManager.LoadTextureFromResource(@"items\item_tpscroll.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.spell_phase.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.hero_visible_left.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.hero_visible_right.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.topbar_health.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.topbar_mana.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.topbar_ulti.png");
+            RendererManager.LoadTexture(AbilityId.item_tpscroll, AbilityTextureType.Item);
 
             SpellMode = SpellModes[SpellsMenu.ModeItem.Value];
 
@@ -153,16 +153,9 @@ namespace Divine.BeAware.Overlay
                                 var cooldown = ultimate.CooldownInFog;
                                 if (cooldown > 0)
                                 {
-                                    var textureKey = $@"round_spells\{ultimate.Name}.png";
-
-                                    if (!RendererManager.LoadTextureFromResource(textureKey))
-                                    {
-                                        RendererManager.LoadTextureFromResource(textureKey, @"spells\empty.png");
-                                    }
-
                                     var ultimateSpellPosition = topPanel.UltimateSpellPosition;
                                     var ultimateSpellSize = topPanel.UltimateSpellSize;
-                                    RendererManager.DrawTexture(textureKey, new RectangleF(ultimateSpellPosition.X, ultimateSpellPosition.Y, ultimateSpellSize.X, ultimateSpellSize.Y));
+                                    RendererManager.DrawTexture(ultimate.Name, new RectangleF(ultimateSpellPosition.X, ultimateSpellPosition.Y, ultimateSpellSize.X, ultimateSpellSize.Y), TextureType.RoundAbility, true);
 
                                     var ultimateBackPosition = topPanel.UltimateBackPosition;
                                     var ultimateBackSize = topPanel.UltimateBackSize;
@@ -262,14 +255,7 @@ namespace Divine.BeAware.Overlay
         {
             try
             {
-                var textureKey = $@"items\{item.Name}.png";
-
-                if (!RendererManager.LoadTextureFromResource(textureKey))
-                {
-                    RendererManager.LoadTextureFromResource(textureKey, @"items\item_emptyitembg.png");
-                }
-
-                RendererManager.DrawTexture(textureKey, new RectangleF(position.X + 1, position.Y, (float)(ItemExtraSizeX), ItemExtraSizeY));
+                RendererManager.DrawTexture(item.Name, new RectangleF(position.X + 1, position.Y, (float)(ItemExtraSizeX), ItemExtraSizeY), TextureType.Item, true);
 
                 var ratio = HUDInfo.RatioPercentage;
                 var manaCost = item.ManaCost;

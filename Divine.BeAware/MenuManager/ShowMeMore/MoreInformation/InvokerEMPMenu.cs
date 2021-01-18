@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore.MoreInformation
     {
         public InvokerEMPMenu(Menu.Items.Menu moreInformationMenu)
         {
-            var invokerEMPMenu = moreInformationMenu.CreateMenu("Invoker EMP").SetTexture(@"spells\invoker_emp.png");
+            var invokerEMPMenu = moreInformationMenu.CreateMenu("Invoker EMP").SetAbilityTexture(AbilityId.invoker_emp);
             EnableItem = invokerEMPMenu.CreateSwitcher("Enable");
             RedItem = invokerEMPMenu.CreateSlider("Red:", 255, 0, 255);
             GreenItem = invokerEMPMenu.CreateSlider("Green:", 0, 0, 255);

@@ -2,22 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Camp;
 
     using Data;
 
-    using Divine;
-
-    using Helpers;
-
-    using SharpDX;
-
-    [Export(typeof(IJungleManager))]
     public class JungleManager : IJungleManager
     {
-        [ImportingConstructor]
         public JungleManager()
         {
             var data = new JungleCampsData();

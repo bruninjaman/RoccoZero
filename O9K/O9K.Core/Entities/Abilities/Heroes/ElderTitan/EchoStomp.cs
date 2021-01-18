@@ -19,7 +19,7 @@
             this.RadiusData = new SpecialData(baseAbility, "radius");
             this.ActivationDelayData = new SpecialData(baseAbility, "cast_time");
             this.DamageData = new SpecialData(baseAbility, "stomp_damage");
-            this.ChannelTime = baseAbility.GetChannelTime(0);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
         }
 
         public override float ActivationDelay

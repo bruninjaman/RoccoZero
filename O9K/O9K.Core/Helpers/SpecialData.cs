@@ -241,7 +241,7 @@
 
                 for (var i = 0u; i < this.value.Length; i++)
                 {
-                    this.value[i] = baseData(i);
+                    this.value[i] = baseData(i + 1);
                 }
 
                 this.getDataFunc = this.GetValueDefault;

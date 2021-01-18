@@ -35,27 +35,38 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Divine">
-      <HintPath>..\..\..\Divine\Output\Divine.dll</HintPath>
+    <Reference Include="Divine, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\Divine.dll</HintPath>
     </Reference>
-    <Reference Include="Divine.SDK">
-      <HintPath>..\..\..\Divine\Output\Divine.SDK.dll</HintPath>
+    <Reference Include="Divine.Menu, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\Divine.Menu.dll</HintPath>
+    </Reference>
+    <Reference Include="Divine.SDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\Divine.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Divine.Zero, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\Divine.Zero.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Divine\Output\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX">
-      <HintPath>..\..\..\Divine\Output\SharpDX.dll</HintPath>
+    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\SharpDX.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\..\..\Divine\Output\SharpDX.Mathematics.dll</HintPath>
+    <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -996,7 +1007,6 @@
     <Compile Include="Logger\Logger.cs" />
     <Compile Include="Managers\Assembly\AssemblyEventManager9.cs" />
     <Compile Include="Managers\Assembly\IAssemblyEventManager9.cs" />
-    <Compile Include="Managers\Context\IContext9.cs" />
     <Compile Include="Managers\Context\Context9.cs" />
     <Compile Include="Managers\Entity\EntityManager9.cs" />
     <Compile Include="Managers\Entity\Monitors\AbilityMonitor.cs" />
@@ -1044,6 +1054,7 @@
     <Compile Include="Plugins\OrderBlocker\Modules\OutOfScreenBlock.cs" />
     <Compile Include="Plugins\OrderBlocker\Modules\SpamBlock.cs" />
     <Compile Include="Plugins\OrderBlocker\Modules\ZoomBlock.cs" />
+    <Compile Include="Plugins\TestPlugin\TestPlugin.cs" />
     <Compile Include="Prediction\Collision\Collision.cs" />
     <Compile Include="Prediction\Collision\CollisionObject.cs" />
     <Compile Include="Prediction\Collision\CollisionResult.cs" />

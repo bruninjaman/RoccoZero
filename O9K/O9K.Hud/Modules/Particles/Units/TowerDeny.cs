@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Units;
@@ -13,7 +12,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     using MainMenu;
 
@@ -21,9 +20,8 @@
     {
         private readonly MenuSwitcher show;
 
-        private readonly Dictionary<Unit9, ParticleEffect> towers = new Dictionary<Unit9, ParticleEffect>();
+        private readonly Dictionary<Unit9, Particle> towers = new Dictionary<Unit9, Particle>();
 
-        [ImportingConstructor]
         public TowerDeny(IHudMenu hudMenu)
         {
             this.show = hudMenu.ParticlesMenu.Add(new MenuSwitcher("Tower deny").SetTooltip("Show when ally/enemy tower can be denied"));
@@ -127,7 +125,7 @@
                         return;
                     }
 
-                    this.towers[unit] = new ParticleEffect("particles/msg_fx/msg_deniable.vpcf", unit.Position.IncreaseZ(125));
+                    this.towers[unit] = ParticleManager.CreateParticle("particles/msg_fx/msg_deniable.vpcf", unit.Position.IncreaseZ(125));
                 }
             }
             catch (Exception e)

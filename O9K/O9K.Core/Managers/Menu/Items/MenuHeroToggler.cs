@@ -160,7 +160,7 @@
 
             foreach (var texture in this.loadTextures)
             {
-                //this.Renderer.TextureManager.LoadHeroFromDota(texture); TODO
+                RendererManager.LoadTexture(texture);
             }
 
             EntityManager9.UnitAdded += this.OnUnitAdded;
@@ -204,14 +204,14 @@
                 return;
             }
 
-            /*if (this.Renderer == null)
+            if (this.Renderer == null)
             {
                 this.loadTextures.Add(id);
             }
             else
             {
-                this.Renderer.TextureManager.LoadHeroFromDota(id);
-            }*/
+                RendererManager.LoadTexture(id);
+            }
 
             if (this.savedHeroes.TryGetValue(name, out var savedValue))
             {

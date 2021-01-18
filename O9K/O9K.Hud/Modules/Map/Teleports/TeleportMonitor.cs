@@ -2,30 +2,25 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Heroes;
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Extensions;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
     using MainMenu;
 
     using SharpDX;
-
-    using Color = System.Drawing.Color;
 
     internal class TeleportMonitor : IHudModule
     {
@@ -35,19 +30,17 @@
 
         private readonly Dictionary<Color, uint> colors = new Dictionary<Color, uint>
         {
-            { Color.FromArgb((int)(255 * 0.2f), (int)(255 * 0.46f), (int)(255 * 1f)), 0 },
-            { Color.FromArgb((int)(255 * 0.4f), (int)(255 * 1f), (int)(255 * 0.75f)), 1 },
-            { Color.FromArgb((int)(255 * 0.75f), (int)(255 * 0f), (int)(255 * 0.75f)), 2 },
-            { Color.FromArgb((int)(255 * 0.95f), (int)(255 * 0.94f), (int)(255 * 0.04f)), 3 },
-            { Color.FromArgb((int)(255 * 1f), (int)(255 * 0.42f), (int)(255 * 0f)), 4 },
-            { Color.FromArgb((int)(255 * 1f), (int)(255 * 0.53f), (int)(255 * 0.76f)), 5 },
-            { Color.FromArgb((int)(255 * 0.63f), (int)(255 * 0.71f), (int)(255 * 0.28f)), 6 },
-            { Color.FromArgb((int)(255 * 0.4f), (int)(255 * 0.85f), (int)(255 * 0.97f)), 7 },
-            { Color.FromArgb((int)(255 * 0f), (int)(255 * 0.51f), (int)(255 * 0.13f)), 8 },
-            { Color.FromArgb((int)(255 * 0.64f), (int)(255 * 0.41f), (int)(255 * 0f)), 9 }
+            { new Color((int)(255 * 0.2f), (int)(255 * 0.46f), (int)(255 * 1f)), 0 },
+            { new Color((int)(255 * 0.4f), (int)(255 * 1f), (int)(255 * 0.75f)), 1 },
+            { new Color((int)(255 * 0.75f), (int)(255 * 0f), (int)(255 * 0.75f)), 2 },
+            { new Color((int)(255 * 0.95f), (int)(255 * 0.94f), (int)(255 * 0.04f)), 3 },
+            { new Color((int)(255 * 1f), (int)(255 * 0.42f), (int)(255 * 0f)), 4 },
+            { new Color((int)(255 * 1f), (int)(255 * 0.53f), (int)(255 * 0.76f)), 5 },
+            { new Color((int)(255 * 0.63f), (int)(255 * 0.71f), (int)(255 * 0.28f)), 6 },
+            { new Color((int)(255 * 0.4f), (int)(255 * 0.85f), (int)(255 * 0.97f)), 7 },
+            { new Color((int)(255 * 0f), (int)(255 * 0.51f), (int)(255 * 0.13f)), 8 },
+            { new Color((int)(255 * 0.64f), (int)(255 * 0.41f), (int)(255 * 0f)), 9 }
         };
-
-        private readonly IContext9 context;
 
         private readonly IMinimap minimap;
 
@@ -61,12 +54,8 @@
 
         private Team ownerTeam;
 
-        private IRenderManager renderManager;
-
-        [ImportingConstructor]
-        public TeleportMonitor(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public TeleportMonitor(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var menu = hudMenu.MapMenu.Add(new Menu("Teleports"));
@@ -89,13 +78,12 @@
         public void Activate()
         {
             this.ownerTeam = EntityManager9.Owner.Team;
-            this.renderManager = this.context.Renderer;
-            Entity.OnParticleEffectAdded += this.OnParticleEffectAdded;
+            ParticleManager.ParticleAdded += this.OnParticleAdded;
         }
 
         public void Dispose()
         {
-            Entity.OnParticleEffectAdded -= this.OnParticleEffectAdded;
+            ParticleManager.ParticleAdded -= this.OnParticleAdded;
         }
 
         private void AddTeleport(Teleport tp)
@@ -107,13 +95,13 @@
 
             if (this.teleports.Count == 0)
             {
-                this.renderManager.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
 
             this.teleports.Add(tp);
         }
 
-        private void CheckTeleport(ParticleEffect particle, bool start)
+        private void CheckTeleport(Particle particle, bool start)
         {
             try
             {
@@ -123,7 +111,7 @@
                 }
 
                 var colorCp = particle.GetControlPoint(2);
-                var color = Color.FromArgb(
+                var color = new Color(
                     (int)(255 * Math.Round(colorCp.X, 2)),
                     (int)(255 * Math.Round(colorCp.Y, 2)),
                     (int)(255 * Math.Round(colorCp.Z, 2)));
@@ -133,7 +121,7 @@
                     return;
                 }
 
-                var player = ObjectManager.GetPlayerById(id);
+                var player = EntityManager.GetPlayerById(id);
                 if (player == null || player.Hero == null || player.Team == this.ownerTeam)
                 {
                     return;
@@ -162,7 +150,7 @@
                 }
                 else
                 {
-                    UpdateManager.BeginInvoke(() => this.SetPosition(particle, position, hero), (int)(duration * 1000) - 200);
+                    UpdateManager.BeginInvoke((uint)(duration * 1000) - 200, () => this.SetPosition(particle, position, hero));
                 }
             }
             catch (Exception e)
@@ -186,17 +174,17 @@
 
             var duration = 3f;
 
-            if (EntityManager9.EnemyFountain.Distance2D(position) < 1000)
+            if (EntityManager9.EnemyFountain.Distance(position) < 1000)
             {
                 return duration;
             }
 
-            if (EntityManager9.RadiantOutpost.Distance2D(position) < 1000 || EntityManager9.DireOutpost.Distance2D(position) < 1000)
+            if (EntityManager9.RadiantOutpost.Distance(position) < 1000 || EntityManager9.DireOutpost.Distance(position) < 1000)
             {
                 duration = 6f;
             }
 
-            var sleepers = this.teleportSleeper.Count(x => x.Value.IsSleeping && x.Key.Distance2D(position) < TeleportCheckRadius);
+            var sleepers = this.teleportSleeper.Count(x => x.Value.IsSleeping && x.Key.Distance(position) < TeleportCheckRadius);
             if (sleepers > 0)
             {
                 duration += (sleepers * 0.5f) + 1.5f;
@@ -207,7 +195,7 @@
             return duration;
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -221,7 +209,7 @@
 
                         if (this.teleports.Count == 0)
                         {
-                            this.renderManager.Draw -= this.OnDraw;
+                            RendererManager.Draw -= this.OnDraw;
                         }
 
                         continue;
@@ -229,12 +217,12 @@
 
                     if (this.showOnMinimap)
                     {
-                        teleport.DrawOnMinimap(renderer, this.minimap);
+                        teleport.DrawOnMinimap(this.minimap);
                     }
 
                     if (this.showOnMap)
                     {
-                        teleport.DrawOnMap(renderer, this.minimap);
+                        teleport.DrawOnMap(this.minimap);
                     }
                 }
             }
@@ -248,27 +236,28 @@
             }
         }
 
-        private void OnParticleEffectAdded(Entity sender, ParticleEffectAddedEventArgs args)
+        private void OnParticleAdded(ParticleAddedEventArgs e)
         {
-            switch (args.Name)
+            var particle = e.Particle;
+            switch (particle.Name)
             {
                 case "particles/items2_fx/teleport_start.vpcf":
                 case "particles/econ/items/tinker/boots_of_travel/teleport_start_bots.vpcf":
                 case "particles/econ/events/ti10/teleport/teleport_start_ti10.vpcf":
                 case "particles/econ/events/ti10/teleport/teleport_start_ti10_lvl2.vpcf":
                 case "particles/econ/events/ti10/teleport/teleport_start_ti10_lvl3.vpcf":
-                    UpdateManager.BeginInvoke(() => this.CheckTeleport(args.ParticleEffect, true), 100);
+                    UpdateManager.BeginInvoke(100, () => this.CheckTeleport(particle, true));
                     break;
                 case "particles/items2_fx/teleport_end.vpcf":
                 case "particles/econ/items/tinker/boots_of_travel/teleport_end_bots.vpcf":
                 case "particles/econ/events/ti10/teleport/teleport_end_ti10.vpcf":
                 case "particles/econ/events/ti10/teleport/teleport_end_ti10_lvl2.vpcf":
                 case "particles/econ/events/ti10/teleport/teleport_end_ti10_lvl3.vpcf":
-                    UpdateManager.BeginInvoke(() => this.CheckTeleport(args.ParticleEffect, false));
+                    UpdateManager.BeginInvoke(() => this.CheckTeleport(particle, false));
                     break;
                 //default:
                 //{
-                //    var name = args.ParticleEffect.Name;
+                //    var name = args.Particle.Name;
                 //    if ((name.Contains("teleport_start") || name.Contains("teleport_end")) && !name.Contains("furion"))
                 //    {
                 //        Logger.Error("TP Particle", name);
@@ -278,7 +267,7 @@
             }
         }
 
-        private void SetPosition(ParticleEffect particle, Vector3 position, Unit9 unit)
+        private void SetPosition(Particle particle, Vector3 position, Unit9 unit)
         {
             if (!particle.IsValid)
             {
@@ -286,7 +275,7 @@
             }
 
             // delay position update to make sure hero is teleported
-            UpdateManager.BeginInvoke(() => unit.ChangeBasePosition(position), 500);
+            UpdateManager.BeginInvoke(500, () => unit.ChangeBasePosition(position));
         }
     }
 }

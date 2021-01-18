@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore.MoreInformation
     {
         public BloodseekerRuptureMenu(Menu.Items.Menu moreInformationMenu)
         {
-            var bloodseekerRuptureMenu = moreInformationMenu.CreateMenu("Bloodseeker Rupture").SetTexture(@"spells\bloodseeker_rupture.png");
+            var bloodseekerRuptureMenu = moreInformationMenu.CreateMenu("Bloodseeker Rupture").SetAbilityTexture(AbilityId.bloodseeker_rupture);
             EnableItem = bloodseekerRuptureMenu.CreateSwitcher("Enable");
             AutoStopItem = bloodseekerRuptureMenu.CreateSwitcher("Auto Stop");
             RedItem = bloodseekerRuptureMenu.CreateSlider("Red:", 255, 0, 255);

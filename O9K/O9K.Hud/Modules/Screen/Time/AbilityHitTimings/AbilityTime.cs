@@ -3,11 +3,9 @@
     using Core.Entities.Abilities.Base;
     using Core.Extensions;
 
-    using Ensage.SDK.Geometry;
+    using Divine.SDK.Extensions;
 
     using SharpDX;
-
-    using Color = System.Drawing.Color;
 
     internal class AbilityTime
     {
@@ -43,7 +41,7 @@
                 }
 
                 var maxCastPosition = this.ability.Owner.Position.Extend2D(position, this.ability.CastRange);
-                var moveTime = maxCastPosition.Distance2D(position) / speed;
+                var moveTime = maxCastPosition.Distance(position) / speed;
                 var time = this.ability.GetHitTime(maxCastPosition) + moveTime;
 
                 this.Time = time.ToString("N2") + "s";

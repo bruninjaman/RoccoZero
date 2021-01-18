@@ -13,7 +13,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     using Helpers.Notificator;
 
@@ -27,10 +27,9 @@
 
         private bool active;
 
-        protected AbilityModule(IContext9 context, INotificator notificator, IHudMenu hudMenu)
+        protected AbilityModule(INotificator notificator, IHudMenu hudMenu)
         {
             this.Notificator = notificator;
-            this.Context = context;
             this.Owner = EntityManager9.Owner;
             this.OwnerTeam = this.Owner.Team;
 
@@ -40,8 +39,6 @@
             this.toggler.AddTranslation(Lang.Ru, "Способности");
             this.toggler.AddTranslation(Lang.Cn, "播放声音");
         }
-
-        protected IContext9 Context { get; }
 
         protected bool EnemyOnly { get; set; } = true;
 

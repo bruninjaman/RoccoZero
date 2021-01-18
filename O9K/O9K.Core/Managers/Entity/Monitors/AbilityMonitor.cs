@@ -478,7 +478,7 @@
                     break;
                 case "m_iParity":
                     {
-                        if (e.NewValue.GetSingle() == e.OldValue.GetSingle())
+                        if (e.NewValue.GetInt32() == e.OldValue.GetInt32())
                         {
                             break;
                         }
@@ -486,6 +486,7 @@
                         UpdateManager.BeginInvoke(() =>
                         {
                             var owner = EntityManager9.GetUnitFast(sender.Handle);
+                            
                             if (owner == null)
                             {
                                 return;

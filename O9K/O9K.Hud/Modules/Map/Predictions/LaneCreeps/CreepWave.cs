@@ -8,8 +8,8 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using LaneData;
 
@@ -46,7 +46,7 @@
         {
             get
             {
-                return this.Creeps.Any(x => x.IsValid && x.BaseUnit.IsAlive) && this.PredictedPosition.Distance2D(this.endPosition) > 300;
+                return this.Creeps.Any(x => x.IsValid && x.BaseUnit.IsAlive) && this.PredictedPosition.Distance(this.endPosition) > 300;
             }
         }
 
@@ -76,7 +76,7 @@
                 //}
 
                 this.lastVisiblePosition = creeps.Aggregate(new Vector3(), (position, creep) => position + creep.Position) / creeps.Count;
-                this.LastVisibleTime = Game.RawGameTime;
+                this.LastVisibleTime = GameManager.RawGameTime;
                 this.remainingPath = null;
 
                 return this.lastVisiblePosition;
@@ -93,7 +93,7 @@
             {
                 this.predictedPosition = value;
 
-                if (this.predictedPosition.Distance2D(this.Path[this.lastPoint]) < 500)
+                if (this.predictedPosition.Distance(this.Path[this.lastPoint]) < 500)
                 {
                     this.lastPoint = Math.Min(this.lastPoint + 1, this.pathLength - 1);
                 }
@@ -132,14 +132,14 @@
         public void Spawn()
         {
             this.IsSpawned = true;
-            this.SpawnTime = Game.RawGameTime + 0.4f;
+            this.SpawnTime = GameManager.RawGameTime + 0.4f;
         }
 
         public void Update()
         {
             if (!this.WasVisible)
             {
-                this.PredictedPosition = this.Path.PositionAfter(Game.RawGameTime - this.SpawnTime, GameData.CreepSpeed);
+                this.PredictedPosition = this.Path.PositionAfter(GameManager.RawGameTime - this.SpawnTime, GameData.CreepSpeed);
             }
             else if (this.IsVisible)
             {
@@ -149,10 +149,10 @@
             {
                 if (this.LastVisibleTime <= 0)
                 {
-                    this.LastVisibleTime = Game.RawGameTime;
+                    this.LastVisibleTime = GameManager.RawGameTime;
                 }
 
-                this.PredictedPosition = this.RemainingPath.PositionAfter(Game.RawGameTime - this.LastVisibleTime, GameData.CreepSpeed);
+                this.PredictedPosition = this.RemainingPath.PositionAfter(GameManager.RawGameTime - this.LastVisibleTime, GameData.CreepSpeed);
             }
         }
     }

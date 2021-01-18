@@ -8,8 +8,8 @@
     using Core.Managers.Context;
     using Core.Managers.Particle;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
 
@@ -22,30 +22,30 @@
     {
         private readonly Vector3 color;
 
-        private readonly int duration;
+        private readonly uint duration;
 
         private readonly Vector3 radius;
 
-        public EMP(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public EMP(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
             var radiusData = new SpecialData(AbilityId.invoker_emp, "area_of_effect").GetValue(1);
             this.radius = new Vector3(radiusData, 100, 0);
-            this.duration = (int)(new SpecialData(AbilityId.invoker_emp, "delay").GetValue(1) * 1000);
+            this.duration = (uint)(new SpecialData(AbilityId.invoker_emp, "delay").GetValue(1) * 1000);
             this.color = new Vector3(255, 192, 200);
         }
 
         protected override void Disable()
         {
-            this.Context.ParticleManger.ParticleAdded -= this.OnParticleAdded;
+            Context9.ParticleManger.ParticleAdded -= this.OnParticleAdded;
         }
 
         protected override void Enable()
         {
-            this.Context.ParticleManger.ParticleAdded += this.OnParticleAdded;
+            Context9.ParticleManger.ParticleAdded += this.OnParticleAdded;
         }
 
-        private void OnParticleAdded(Particle particle)
+        private void OnParticleAdded(Particle9 particle)
         {
             try
             {
@@ -55,13 +55,13 @@
                 }
 
                 var position = particle.GetControlPoint(0);
-                var effect = new ParticleEffect("particles/ui_mouseactions/range_finder_tower_aoe.vpcf", position);
+                var effect = ParticleManager.CreateParticle("particles/ui_mouseactions/range_finder_tower_aoe.vpcf", position);
 
                 effect.SetControlPoint(2, position);
                 effect.SetControlPoint(3, this.radius);
                 effect.SetControlPoint(4, this.color);
 
-                UpdateManager.BeginInvoke(() => effect.Dispose(), this.duration);
+                UpdateManager.BeginInvoke(this.duration, () => effect.Dispose());
             }
             catch (Exception e)
             {

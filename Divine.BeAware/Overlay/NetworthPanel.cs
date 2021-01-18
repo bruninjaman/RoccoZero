@@ -26,7 +26,7 @@ namespace Divine.BeAware.Overlay
 
         public NetworthPanel(Common common)
         {
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.item_panel.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.item_panel.png");
 
             NetworthPanelMenu = common.MenuConfig.OverlayMenu.NetworthPanelMenu;
 
@@ -197,15 +197,8 @@ namespace Divine.BeAware.Overlay
                 var hero = pair.Key;
                 var netWorth = pair.Value;
 
-                var textureKey = $@"horizontal_heroes\{hero.Name}.png";
-
-                if (!RendererManager.LoadTextureFromResource(textureKey))
-                {
-                    RendererManager.LoadTextureFromResource(textureKey, @"horizontal_heroes\npc_dota_hero_default.png");
-                }
-
                 heroPosition += new Vector2(0, 2);
-                RendererManager.DrawTexture(textureKey, new RectangleF(heroPosition.X, heroPosition.Y, heroSize.X, heroSize.Y));
+                RendererManager.DrawTexture(hero.Name, new RectangleF(heroPosition.X, heroPosition.Y, heroSize.X, heroSize.Y), TextureType.Unit, true);
                 heroPosition += new Vector2(sizeX * 1.4f, 0);
 
                 var lineMaxSize = panelSize.X - (heroSize.X + 7);

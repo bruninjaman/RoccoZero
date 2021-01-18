@@ -113,14 +113,14 @@
 
         public void AddAbility(AbilityId id, bool? value = null, int priority = 0)
         {
-            /*if (this.Renderer == null)
+            if (this.Renderer == null)
             {
                 this.loadTextures.Add(id);
             }
             else
             {
-                this.Renderer.TextureManager.LoadAbilityFromDota(id);
-            }*/
+                RendererManager.LoadTexture(id);
+            }
 
             this.AddAbility(id.ToString(), value, priority);
         }
@@ -132,14 +132,14 @@
                 return;
             }
 
-            /*if (this.Renderer == null)
+            if (this.Renderer == null)
             {
                 this.loadTextures2.Add(name);
             }
             else
             {
-                this.Renderer.TextureManager.LoadAbilityFromDota(name);
-            }*/
+                RendererManager.LoadTexture(name, TextureType.Ability);
+            }
 
             if (this.savedAbilities.TryGetValue(name, out var savedValue))
             {
@@ -414,12 +414,12 @@
 
             foreach (var texture in this.loadTextures)
             {
-                //this.Renderer.TextureManager.LoadAbilityFromDota(texture);
+                RendererManager.LoadTexture(texture);
             }
 
             foreach (var texture in this.loadTextures2)
             {
-                //this.Renderer.TextureManager.LoadAbilityFromDota(texture);
+                RendererManager.LoadTexture(texture, TextureType.Ability);
             }
         }
 

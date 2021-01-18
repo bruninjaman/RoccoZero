@@ -11,16 +11,13 @@
     using Core.Managers.Particle;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers.Notificator;
 
     using MainMenu;
 
     using SharpDX;
-
-    using Color = System.Drawing.Color;
 
     [AbilityId(AbilityId.abyssal_underlord_dark_rift)]
     internal class DarkRift : AbilityModule
@@ -33,34 +30,34 @@
 
         private Unit9 unit;
 
-        public DarkRift(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public DarkRift(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
             this.EnemyOnly = false;
         }
 
         protected override void Disable()
         {
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Unit.OnModifierRemoved -= this.OnModifierRemoved;
-            this.Context.ParticleManger.ParticleAdded -= this.OnParticleAdded;
-            this.Context.Renderer.Draw -= this.OnDraw;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
+            Context9.ParticleManger.ParticleAdded -= this.OnParticleAdded;
+            RendererManager.Draw -= this.OnDraw;
         }
 
         protected override void Enable()
         {
-            Unit.OnModifierAdded += this.OnModifierAdded;
-            Unit.OnModifierRemoved += this.OnModifierRemoved;
-            this.Context.ParticleManger.ParticleAdded += this.OnParticleAdded;
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
+            ModifierManager.ModifierRemoved += this.OnModifierRemoved;
+            Context9.ParticleManger.ParticleAdded += this.OnParticleAdded;
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
                 if (this.modifier?.IsValid != true)
                 {
-                    this.Context.Renderer.Draw -= this.OnDraw;
+                    RendererManager.Draw -= this.OnDraw;
                     return;
                 }
 
@@ -69,25 +66,25 @@
                     return;
                 }
 
-                var position = Drawing.WorldToScreen(this.unit.Position);
+                var position = RendererManager.WorldToScreen(this.unit.Position);
                 if (position.IsZero)
                 {
                     return;
                 }
 
                 var ratio = Hud.Info.ScreenRatio;
-                var remainingTime = this.endTime - Game.RawGameTime;
+                var remainingTime = this.endTime - GameManager.RawGameTime;
                 var time = Math.Ceiling(remainingTime).ToString("N0");
                 var pct = (int)(100 - ((remainingTime / this.duration) * 100));
 
                 var rec = new Rectangle9(position, new Vector2(30 * ratio));
                 var outlinePosition = rec * 1.17f;
 
-                renderer.DrawTexture(nameof(AbilityId.abyssal_underlord_dark_rift) + "_rounded", rec);
-                renderer.DrawTexture("o9k.modifier_bg", rec);
-                renderer.DrawTexture("o9k.outline_green", outlinePosition);
-                renderer.DrawTexture("o9k.outline_black" + pct, outlinePosition);
-                renderer.DrawText(rec, time, Color.White, RendererFontFlags.Center | RendererFontFlags.VerticalCenter, 22 * ratio);
+                RendererManager.DrawTexture(nameof(AbilityId.abyssal_underlord_dark_rift) + "_rounded", rec);
+                RendererManager.DrawTexture("o9k.modifier_bg", rec);
+                RendererManager.DrawTexture("o9k.outline_green", outlinePosition);
+                RendererManager.DrawTexture("o9k.outline_black" + pct, outlinePosition);
+                RendererManager.DrawText(time, rec, Color.White, FontFlags.Center | FontFlags.VerticalCenter, 22 * ratio);
             }
             catch (Exception e)
             {
@@ -95,45 +92,45 @@
             }
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
             try
             {
-                if (args.Modifier.Name != "modifier_abyssal_underlord_dark_rift")
+                var modifier = e.Modifier;
+                if (modifier.Name != "modifier_abyssal_underlord_dark_rift")
                 {
                     return;
                 }
 
-                this.modifier = args.Modifier;
                 this.endTime = this.modifier.DieTime;
                 this.duration = this.modifier.Duration;
 
-                this.Context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierRemoved(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
         {
             try
             {
-                if (args.Modifier.Name != "modifier_abyssal_underlord_dark_rift")
+                if (e.Modifier.Name != "modifier_abyssal_underlord_dark_rift")
                 {
                     return;
                 }
 
-                this.Context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnParticleAdded(Particle particle)
+        private void OnParticleAdded(Particle9 particle)
         {
             try
             {

@@ -1,7 +1,6 @@
 ﻿namespace O9K.Hud.Modules.Map.AbilityMonitor.Abilities.Base
 {
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
 
@@ -23,9 +22,9 @@
 
         Vector3 Position { get; set; }
 
-        void DrawOnMap(IRenderer renderer, IMinimap minimap);
+        void DrawOnMap(IMinimap minimap);
 
-        void DrawOnMinimap(IRenderer renderer, IMinimap minimap);
+        void DrawOnMinimap(IMinimap minimap);
 
         void RemoveRange();
     }

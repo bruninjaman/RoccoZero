@@ -13,11 +13,11 @@ namespace DotaMapPlus
 
         private MenuSlider ZoomSliderItem { get; }
 
-        private int DefaultZoomValue { get; } = 1200;
+        private int DefaultZoomValue { get; }
 
-        private int MaxZoomValue { get; } = 9000;
+        private int MaxZoomValue { get; }
 
-        private int MinZoomValue { get; } = 1134;
+        private int MinZoomValue { get; }
 
         public ZoomHack(RootMenu rootMenu)
         {

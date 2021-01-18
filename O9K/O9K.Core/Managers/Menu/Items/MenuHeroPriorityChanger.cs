@@ -111,14 +111,14 @@
 
         public void AddHero(HeroId id, bool? value = null, int priority = 0)
         {
-            /*if (this.Renderer == null)
+            if (this.Renderer == null)
             {
                 this.loadTextures.Add(id);
             }
             else
             {
-                this.Renderer.TextureManager.LoadHeroFromDota(id);
-            }*/
+                RendererManager.LoadTexture(id);
+            }
 
             this.AddHero(id.ToString(), value, priority);
         }
@@ -408,7 +408,7 @@
 
             foreach (var texture in this.loadTextures)
             {
-                //this.Renderer.TextureManager.LoadHeroFromDota(texture);
+                RendererManager.LoadTexture(texture);
             }
 
             EntityManager9.UnitAdded += this.OnUnitAdded;

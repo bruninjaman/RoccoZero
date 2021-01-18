@@ -1,7 +1,6 @@
 ﻿namespace O9K.Core.Managers.Context
 {
     using System;
-    using System.ComponentModel.Composition;
 
     using Assembly;
 
@@ -13,45 +12,51 @@
 
     using Menu;
 
-    //using Particle;
+    using Particle;
 
-    [Export(typeof(IContext9))]
-    public sealed class Context9 : IContext9
+    public static class Context9
     {
-        private readonly Lazy<IAssemblyEventManager9> assemblyEventManager;
+        private static readonly Lazy<IAssemblyEventManager9> assemblyEventManager;
 
         //private readonly Lazy<IInputManager9> inputManager;
 
-        private readonly Lazy<IJungleManager> jungleManager;
+        private static readonly Lazy<IJungleManager> jungleManager;
 
-        private readonly Lazy<IMenuManager9> menuManager;
+        private static readonly Lazy<IMenuManager9> menuManager;
 
-        //private readonly Lazy<IParticleManager9> particleManger;
+        private static readonly Lazy<IParticleManager9> particleManger;
 
         //private readonly Lazy<IRenderManager> renderer;
 
-        [ImportingConstructor]
-        public Context9(
-            Lazy<IAssemblyEventManager9> assemblyEventManager,
-            //Lazy<IRenderManager> renderer,
-            Lazy<IMenuManager9> menuManager,
-            //Lazy<IInputManager9> inputManager,
-            Lazy<IJungleManager> jungleManager
-            /*Lazy<IParticleManager9> particleManger*/)
+        //public Context9(
+        //    Lazy<IAssemblyEventManager9> assemblyEventManager,
+        //    Lazy<IRenderManager> renderer,
+        //    Lazy<IMenuManager9> menuManager,
+        //    Lazy<IInputManager9> inputManager,
+        //    Lazy<IJungleManager> jungleManager
+        //    Lazy<IParticleManager9> particleManger)
+        //{
+        //    this.assemblyEventManager = assemblyEventManager;
+        //    this.renderer = renderer;
+        //    this.menuManager = menuManager;
+        //    this.inputManager = inputManager;
+        //    this.jungleManager = jungleManager;
+        //    this.particleManger = particleManger;
+        //}
+
+        static Context9()
         {
-            this.assemblyEventManager = assemblyEventManager;
-            //this.renderer = renderer;
-            this.menuManager = menuManager;
-            //this.inputManager = inputManager;
-            this.jungleManager = jungleManager;
-            //this.particleManger = particleManger;
+            assemblyEventManager = new Lazy<IAssemblyEventManager9>(() => new AssemblyEventManager9());
+            jungleManager = new Lazy<IJungleManager>(() => new JungleManager());
+            menuManager = new Lazy<IMenuManager9>(() => new MenuManager9());
+            particleManger = new Lazy<IParticleManager9>(() => new ParticleManager9());
         }
 
-        public IAssemblyEventManager9 AssemblyEventManager
+        public static IAssemblyEventManager9 AssemblyEventManager
         {
             get
             {
-                return this.assemblyEventManager.Value;
+                return assemblyEventManager.Value;
             }
         }
 
@@ -63,29 +68,29 @@
             }
         }*/
 
-        public IJungleManager JungleManager
+        public static IJungleManager JungleManager
         {
             get
             {
-                return this.jungleManager.Value;
+                return jungleManager.Value;
             }
         }
 
-        public IMenuManager9 MenuManager
+        public static IMenuManager9 MenuManager
         {
             get
             {
-                return this.menuManager.Value;
+                return menuManager.Value;
             }
         }
 
-        /*public IParticleManager9 ParticleManger
+        public static IParticleManager9 ParticleManger
         {
             get
             {
-                return this.particleManger.Value;
+                return particleManger.Value;
             }
-        }*/
+        }
 
         /*public IRenderManager Renderer
         {

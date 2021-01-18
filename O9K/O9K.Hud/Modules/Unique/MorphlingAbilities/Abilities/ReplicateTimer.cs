@@ -1,13 +1,13 @@
 ﻿namespace O9K.Hud.Modules.Unique.MorphlingAbilities.Abilities
 {
     using System;
-    using System.Drawing;
 
     using Core.Logger;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
+
+    using SharpDX;
 
     internal class ReplicateTimer : IMorphlingAbility
     {
@@ -23,7 +23,7 @@
             this.Handle = uint.MaxValue;
             this.texture = nameof(AbilityId.morphling_morph_replicate);
             this.cooldown = cooldown;
-            this.updateTime = Game.RawGameTime;
+            this.updateTime = GameManager.RawGameTime;
         }
 
         public AbilitySlot AbilitySlot { get; }
@@ -34,7 +34,7 @@
         {
             get
             {
-                return (this.updateTime + this.cooldown) - Game.RawGameTime;
+                return (this.updateTime + this.cooldown) - GameManager.RawGameTime;
             }
         }
 
@@ -43,18 +43,18 @@
             return true;
         }
 
-        public void Draw(IRenderer renderer, Rectangle9 position, float textSize)
+        public void Draw(Rectangle9 position, float textSize)
         {
             try
             {
-                renderer.DrawTexture(this.texture, position);
-                renderer.DrawRectangle(position - 1, Color.Black);
-                renderer.DrawTexture("o9k.ability_cd_bg", position);
-                renderer.DrawText(
-                    position,
+                RendererManager.DrawTexture(this.texture, position);
+                RendererManager.DrawRectangle(position - 1, Color.Black);
+                RendererManager.DrawTexture("o9k.ability_cd_bg", position);
+                RendererManager.DrawText(
                     Math.Ceiling(this.RemainingCooldown).ToString("N0"),
+                    position,
                     Color.White,
-                    RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                    FontFlags.Center | FontFlags.VerticalCenter,
                     textSize);
             }
             catch (Exception e)

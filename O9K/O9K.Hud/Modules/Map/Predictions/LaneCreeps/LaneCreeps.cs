@@ -2,22 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Extensions;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -27,12 +24,8 @@
 
     using SharpDX;
 
-    using Color = System.Drawing.Color;
-
     internal class LaneCreeps : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly List<CreepWave> creepWaves = new List<CreepWave>();
 
         private readonly MenuSwitcher enabled;
@@ -51,10 +44,8 @@
 
         private Team ownerTeam;
 
-        [ImportingConstructor]
-        public LaneCreeps(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public LaneCreeps(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var predictionsMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Predictions"));
@@ -89,17 +80,17 @@
 
             this.enabled.ValueChange += this.EnabledOnValueChange;
 
-            this.spawnSleeper.Sleep(Math.Abs(Math.Min(Game.GameTime, 0)) - 0.5f);
+            this.spawnSleeper.Sleep(Math.Abs(Math.Min(GameManager.GameTime, 0)) - 0.5f);
         }
 
         public void Dispose()
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             EntityManager9.UnitMonitor.UnitDied -= this.OnUnitRemoved;
-            Entity.OnBoolPropertyChange -= this.OnBoolPropertyChange;
+            Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
             UpdateManager.Unsubscribe(this.OnUpdate);
             this.creepWaves.Clear();
         }
@@ -122,13 +113,13 @@
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
                 EntityManager9.UnitMonitor.UnitDied += this.OnUnitRemoved;
                 //Entity.OnBoolPropertyChange += this.OnBoolPropertyChange;
-                UpdateManager.Subscribe(this.OnUpdateTime, 300);
+                UpdateManager.Subscribe(300, this.OnUpdateTime);
                 UpdateManager.Subscribe(this.OnUpdate);
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
                 EntityManager9.UnitMonitor.UnitDied -= this.OnUnitRemoved;
@@ -150,7 +141,7 @@
                     return;
                 }
 
-                if (Game.GameTime % 30 < 1)
+                if (GameManager.GameTime % 30 < 1)
                 {
                     foreach (var creepWave in this.creepWaves.Where(x => !x.IsSpawned))
                     {
@@ -166,40 +157,50 @@
             }
         }
 
-        private void OnBoolPropertyChange(Entity sender, BoolPropertyChangeEventArgs args)
+        private void OnNetworkPropertyChanged(Entity sender, NetworkPropertyChangedEventArgs e)
         {
-            try
+            if (e.PropertyName != "m_bIsWaitingToSpawn")
             {
-                if (args.OldValue == args.NewValue || (!args.OldValue && args.NewValue) || args.PropertyName != "m_bIsWaitingToSpawn")
-                {
-                    return;
-                }
-
-                if (this.spawnSleeper)
-                {
-                    return;
-                }
-
-                var unit = EntityManager9.GetUnit(sender.Handle);
-                if (unit == null || !unit.IsLaneCreep || unit.Team != this.ownerTeam)
-                {
-                    return;
-                }
-
-                foreach (var creepWave in this.creepWaves.Where(x => !x.IsSpawned))
-                {
-                    creepWave.Spawn();
-                }
-
-                this.spawnSleeper.Sleep(25);
+                return;
             }
-            catch (Exception e)
+
+            var newValue = e.NewValue.GetBoolean();
+            var oldValue = e.OldValue.GetBoolean();
+            if (newValue == oldValue || (!oldValue && newValue))
             {
-                Logger.Error(e);
+                return;
             }
+
+            UpdateManager.BeginInvoke(() =>
+            {
+                try
+                {
+                    if (this.spawnSleeper)
+                    {
+                        return;
+                    }
+
+                    var unit = EntityManager9.GetUnit(sender.Handle);
+                    if (unit == null || !unit.IsLaneCreep || unit.Team != this.ownerTeam)
+                    {
+                        return;
+                    }
+
+                    foreach (var creepWave in this.creepWaves.Where(x => !x.IsSpawned))
+                    {
+                        creepWave.Spawn();
+                    }
+
+                    this.spawnSleeper.Sleep(25);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            });
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -218,7 +219,7 @@
                         var size = 19 * Hud.Info.ScreenRatio;
                         var minimapPosition = this.minimap.WorldToMinimap(position, size);
 
-                        renderer.DrawText(minimapPosition + new Size2F(size, 0), count, Color.OrangeRed, RendererFontFlags.Left, size);
+                        RendererManager.DrawText(count, minimapPosition + new Size2F(size, 0), Color.OrangeRed, FontFlags.Left, size);
                     }
 
                     if (this.showOnMap)
@@ -231,7 +232,7 @@
                             continue;
                         }
 
-                        renderer.DrawText(mapPosition + new Size2F(size, 0), count, Color.OrangeRed, RendererFontFlags.Left, size);
+                        RendererManager.DrawText(count, mapPosition + new Size2F(size, 0), Color.OrangeRed, FontFlags.Left, size);
                     }
                 }
             }
@@ -334,7 +335,7 @@
                     {
                         var merge = this.creepWaves.Find(
                             x => x.IsSpawned && x.Lane == wave.Lane && !x.Equals(wave)
-                                 && x.PredictedPosition.Distance2D(wave.PredictedPosition) < 500);
+                                 && x.PredictedPosition.Distance(wave.PredictedPosition) < 500);
 
                         if (merge != null)
                         {

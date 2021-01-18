@@ -20,6 +20,8 @@
 
         private string textureKey;
 
+        private TextureType textureType;
+
         private Vector2 textureSize;
 
         public Menu(string displayName)
@@ -72,7 +74,10 @@
             {
                 this.textureKey = value;
 
-                this.LoadTexture();
+                if (this.Renderer != null)
+                {
+                    this.LoadTexture();
+                }
             }
         }
 
@@ -100,6 +105,7 @@
             {
                 item.SetLanguage(this.Language);
                 item.SetStyle(this.MenuStyle);
+                item.SetRenderer();
                 item.SetInputManager();
                 item.CalculateSize();
 
@@ -301,6 +307,8 @@
 
         internal override void SetRenderer()
         {
+            base.SetRenderer();
+
             foreach (var item in this.MenuItems)
             {
                 item.SetRenderer();
@@ -335,7 +343,8 @@
                         this.Position.X + this.MenuStyle.LeftIndent,
                         this.Position.Y + ((this.Size.Y - this.textureSize.Y) / 2),
                         this.textureSize.X,
-                        this.textureSize.Y));
+                        this.textureSize.Y),
+                    this.textureType);
             }
 
             //arrow
@@ -372,14 +381,16 @@
         {
             if (this.textureKey.Contains("npc_dota"))
             {
-                //this.Renderer.TextureManager.LoadUnitFromDota(this.textureKey); //TODO
+                textureType = TextureType.Unit;
+                RendererManager.LoadTexture(this.textureKey, textureType);
                 this.textureSize = this.MenuStyle.TextureHeroSize * new Vector2(1.4f, 1.2f);
             }
             else
             {
                 if (Enum.TryParse<AbilityId>(this.textureKey, out var id))
                 {
-                    //this.Renderer.TextureManager.LoadAbilityFromDota(id); //TODO
+                    textureType = TextureType.Ability;
+                    RendererManager.LoadTexture(id);
                 }
 
                 this.textureSize = new Vector2(this.MenuStyle.TextureAbilitySize) * 1.2f;

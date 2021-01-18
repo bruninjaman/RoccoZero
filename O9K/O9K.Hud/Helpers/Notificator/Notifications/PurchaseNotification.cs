@@ -2,8 +2,7 @@
 {
     using Core.Entities.Abilities.Base;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using SharpDX;
 
@@ -25,17 +24,17 @@
             this.item = ability.BaseItem;
         }
 
-        public override void Draw(IRenderer renderer, RectangleF position, IMinimap minimap)
+        public override void Draw(RectangleF position, IMinimap minimap)
         {
             var heroPosition = GetHeroPosition(position);
             var itemPosition = GetItemPosition(position, heroPosition);
             var goldPosition = GetGoldPosition(position, heroPosition, itemPosition);
             var opacity = this.GetOpacity();
 
-            renderer.DrawTexture("o9k.notification_bg", position, 0, opacity);
-            renderer.DrawTexture(this.heroName, heroPosition, 0, opacity);
-            renderer.DrawTexture("o9k.gold", goldPosition, 0, opacity);
-            renderer.DrawTexture(this.itemName, itemPosition, 0, opacity);
+            RendererManager.DrawTexture("o9k.notification_bg", position, opacity);
+            RendererManager.DrawTexture(this.heroName, heroPosition, UnitTextureType.Default, opacity);
+            RendererManager.DrawTexture("o9k.gold", goldPosition, opacity);
+            RendererManager.DrawTexture(this.itemName, itemPosition, TextureType.Ability, opacity);
         }
 
         public override bool OnClick()

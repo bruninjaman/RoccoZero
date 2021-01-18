@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Abilities.Base;
@@ -11,15 +10,12 @@
     using Core.Entities.Units.Unique;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
-    using Ensage.SDK.Renderer.Texture;
+    using Divine;
 
     using Helpers;
 
@@ -27,13 +23,9 @@
 
     using SharpDX;
 
-    using Color = System.Drawing.Color;
-
     internal class NetWorthPanel : IHudModule
     {
         private readonly MenuSwitcher allies;
-
-        private readonly IContext9 context;
 
         private readonly MenuSwitcher enemies;
 
@@ -57,11 +49,8 @@
 
         private float textSize;
 
-        [ImportingConstructor]
-        public NetWorthPanel(IContext9 context, IHudMenu hudMenu)
+        public NetWorthPanel(IHudMenu hudMenu)
         {
-            this.context = context;
-
             var panelsMenu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Panels"));
             panelsMenu.AddTranslation(Lang.Ru, "Панели");
             panelsMenu.AddTranslation(Lang.Cn, "面板");
@@ -113,7 +102,7 @@
 
         public void Activate()
         {
-            this.context.Renderer.TextureManager.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.net_worth_bg_ally",
                 @"panorama\images\masks\gradient_leftright_png.vtex_c",
                 new TextureProperties
@@ -121,7 +110,7 @@
                     Brightness = -80,
                     ColorRatio = new Vector4(0f, 1f, 0f, 0.9f)
                 });
-            this.context.Renderer.TextureManager.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.net_worth_bg_enemy",
                 @"panorama\images\masks\gradient_leftright_png.vtex_c",
                 new TextureProperties
@@ -142,7 +131,7 @@
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             this.show.ValueChange -= this.ShowOnValueChange;
             this.size.ValueChange -= this.SizeOnValueChange;
             this.toggleKey.ValueChange -= this.ToggleKeyOnValueChange;
@@ -150,7 +139,7 @@
             this.position.Dispose();
         }
 
-        private void HoldKeyOnValueChange(object sender, KeyEventArgs e)
+        private void HoldKeyOnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             this.toggleKey.IsActive = e.NewValue;
         }
@@ -219,7 +208,7 @@
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -240,7 +229,7 @@
                             continue;
                         }
 
-                        renderer.DrawTexture("o9k.net_worth_bg_ally", heroPosition, this.lineSize);
+                        RendererManager.DrawTexture("o9k.net_worth_bg_ally", new RectangleF(heroPosition.X, heroPosition.Y, this.lineSize.X, this.lineSize.Y));
                     }
                     else
                     {
@@ -249,13 +238,13 @@
                             continue;
                         }
 
-                        renderer.DrawTexture("o9k.net_worth_bg_enemy", heroPosition, this.lineSize);
+                        RendererManager.DrawTexture("o9k.net_worth_bg_enemy", new RectangleF(heroPosition.X, heroPosition.Y, this.lineSize.X, this.lineSize.Y));
                     }
 
-                    renderer.DrawTexture(unit.Name, heroPosition, this.heroSize);
-                    renderer.DrawText(
-                        heroPosition + new Vector2(this.heroSize.X + 5, (this.lineSize.Y - this.textSize) / 5),
+                    RendererManager.DrawTexture(unit.Name, new RectangleF(heroPosition.X, heroPosition.Y, this.heroSize.X, this.heroSize.Y), UnitTextureType.Default);
+                    RendererManager.DrawText(
                         pair.Value.ToString("N0"),
+                        heroPosition + new Vector2(this.heroSize.X + 5, (this.lineSize.Y - this.textSize) / 5),
                         Color.White,
                         this.textSize);
                     heroPosition += new Vector2(0, this.heroSize.Y + 1);
@@ -329,7 +318,7 @@
                 EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
                 this.toggleKey.ValueChange -= this.ToggleKeyOnValueChange;
                 this.holdKey.ValueChange -= this.HoldKeyOnValueChange;
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
                 this.units.Clear();
             }
         }
@@ -341,15 +330,15 @@
             this.textSize = e.NewValue * 0.7f;
         }
 
-        private void ToggleKeyOnValueChange(object sender, KeyEventArgs e)
+        private void ToggleKeyOnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
     }

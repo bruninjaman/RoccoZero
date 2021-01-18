@@ -5,12 +5,10 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
 
@@ -19,40 +17,42 @@
     [AbilityId(AbilityId.slark_dark_pact)]
     internal class DarkPact : AbilityModule
     {
-        private ParticleEffect effect;
+        private Particle effect;
 
-        private IUpdateHandler handler;
+        private UpdateHandler handler;
 
         private Unit9 unit;
 
-        public DarkPact(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public DarkPact(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
         }
 
         protected override void Disable()
         {
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Unit.OnModifierRemoved -= this.OnModifierRemoved;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
             UpdateManager.Unsubscribe(this.handler);
         }
 
         protected override void Enable()
         {
-            this.handler = UpdateManager.Subscribe(this.OnUpdate, 0, false);
-            Unit.OnModifierAdded += this.OnModifierAdded;
+            this.handler = UpdateManager.Subscribe(0, false, this.OnUpdate);
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Team == this.OwnerTeam)
                 {
                     return;
                 }
 
-                if (args.Modifier.Name != "modifier_slark_dark_pact")
+                if (modifier.Name != "modifier_slark_dark_pact")
                 {
                     return;
                 }
@@ -63,41 +63,43 @@
                     return;
                 }
 
-                this.effect = new ParticleEffect(
+                this.effect = ParticleManager.CreateParticle(
                     "particles/units/heroes/hero_slark/slark_dark_pact_start.vpcf",
-                    sender,
-                    ParticleAttachment.AbsOriginFollow);
+                    ParticleAttachment.AbsOriginFollow,
+                    sender);
 
-                Unit.OnModifierRemoved += this.OnModifierRemoved;
+                ModifierManager.ModifierRemoved += this.OnModifierRemoved;
                 this.handler.IsEnabled = true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierRemoved(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Team == this.OwnerTeam)
                 {
                     return;
                 }
 
-                if (args.Modifier.Name != "modifier_slark_dark_pact")
+                if (modifier.Name != "modifier_slark_dark_pact")
                 {
                     return;
                 }
 
                 this.handler.IsEnabled = false;
-                Unit.OnModifierRemoved -= this.OnModifierRemoved;
+                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
                 this.effect.Dispose();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 

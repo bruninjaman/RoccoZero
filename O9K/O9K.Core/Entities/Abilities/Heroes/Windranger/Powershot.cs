@@ -19,7 +19,7 @@
         public Powershot(Ability baseAbility)
             : base(baseAbility)
         {
-            this.ChannelTime = baseAbility.GetChannelTime(0);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
             this.RadiusData = new SpecialData(baseAbility, "arrow_width");
             this.SpeedData = new SpecialData(baseAbility, "arrow_speed");
             this.DamageData = new SpecialData(baseAbility, "powershot_damage");

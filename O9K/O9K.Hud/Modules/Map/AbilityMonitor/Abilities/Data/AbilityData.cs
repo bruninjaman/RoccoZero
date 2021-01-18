@@ -5,7 +5,7 @@
     using Core.Data;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using SharpDX;
 

@@ -4,9 +4,8 @@
 
     using Core.Entities.Metadata;
     using Core.Logger;
-    using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Helpers.Notificator;
 
@@ -15,71 +14,75 @@
     [AbilityId(AbilityId.tusk_snowball)]
     internal class Snowball : AbilityModule
     {
-        private ParticleEffect effect;
+        private Particle effect;
 
-        public Snowball(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public Snowball(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
         }
 
         protected override void Disable()
         {
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Unit.OnModifierRemoved -= this.OnModifierRemoved;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
         }
 
         protected override void Enable()
         {
-            Unit.OnModifierAdded += this.OnModifierAdded;
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Team != this.OwnerTeam)
                 {
                     return;
                 }
 
-                if (args.Modifier.Name != "modifier_tusk_snowball_target")
+                if (modifier.Name != "modifier_tusk_snowball_target")
                 {
                     return;
                 }
 
-                this.effect = new ParticleEffect(
+                this.effect = ParticleManager.CreateParticle(
                     "particles/units/heroes/hero_tusk/tusk_snowball_target.vpcf",
-                    sender,
-                    ParticleAttachment.OverheadFollow);
+                    ParticleAttachment.OverheadFollow,
+                    sender);
 
-                Unit.OnModifierRemoved += this.OnModifierRemoved;
+                ModifierManager.ModifierRemoved += this.OnModifierRemoved;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierRemoved(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Team != this.OwnerTeam)
                 {
                     return;
                 }
 
-                if (args.Modifier.Name != "modifier_tusk_snowball_target")
+                if (modifier.Name != "modifier_tusk_snowball_target")
                 {
                     return;
                 }
 
                 this.effect.Dispose();
-                Unit.OnModifierRemoved -= this.OnModifierRemoved;
+                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
     }

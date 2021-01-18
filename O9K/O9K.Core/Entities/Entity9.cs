@@ -3,7 +3,7 @@
     using System;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
+    using Divine.SDK.Localization;
 
     using Extensions;
 
@@ -46,11 +46,11 @@
             {
                 if (this.displayName == null)
                 {
-                    /*try
+                    try
                     {
                         this.displayName = LocalizationHelper.LocalizeName(this.Name);
                     }
-                    catch*/
+                    catch
                     {
                         this.displayName = this.Name;
                     }

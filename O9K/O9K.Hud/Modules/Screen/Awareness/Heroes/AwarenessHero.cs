@@ -8,8 +8,8 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using SharpDX;
 
@@ -32,7 +32,7 @@
         {
             this.unit = unit;
             this.Handle = unit.Handle;
-            this.TextureName = unit.Name + "_icon";
+            this.TextureName = unit.Name;
         }
 
         public uint Handle { get; }
@@ -124,7 +124,7 @@
 
             var heroPosition = myHero.Position;
             var enemyPosition = this.unit.BasePosition;
-            var distance = heroPosition.Distance2D(enemyPosition);
+            var distance = heroPosition.Distance(enemyPosition);
 
             if (!this.unit.IsVisible)
             {
@@ -135,10 +135,10 @@
                 }
 
                 var maxTime = distance / speed;
-                var invisTime = Math.Min(maxTime, Game.RawGameTime - this.unit.LastPositionUpdateTime);
+                var invisTime = Math.Min(maxTime, GameManager.RawGameTime - this.unit.LastPositionUpdateTime);
                 var predictedPosition = enemyPosition.Extend2D(heroPosition, invisTime * speed);
 
-                distance = heroPosition.Distance2D(predictedPosition);
+                distance = heroPosition.Distance(predictedPosition);
             }
 
             if (distance < 2000)

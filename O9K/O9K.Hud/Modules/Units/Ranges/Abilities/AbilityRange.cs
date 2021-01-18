@@ -7,8 +7,8 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using SharpDX;
 
@@ -24,7 +24,7 @@
 
         private MenuSlider green;
 
-        private ParticleEffect particleEffect;
+        private Particle particleEffect;
 
         private MenuSlider red;
 
@@ -137,10 +137,10 @@
         {
             if (this.particleEffect == null)
             {
-                this.particleEffect = new ParticleEffect(
+                this.particleEffect = ParticleManager.CreateParticle(
                     @"particles\ui_mouseactions\drag_selected_ring.vpcf",
-                    this.ability.Owner.BaseUnit,
-                    ParticleAttachment.AbsOriginFollow);
+                    ParticleAttachment.AbsOriginFollow,
+                    this.ability.Owner.BaseUnit);
             }
 
             this.particleEffect.SetControlPoint(1, new Vector3(this.red, this.green, this.blue));

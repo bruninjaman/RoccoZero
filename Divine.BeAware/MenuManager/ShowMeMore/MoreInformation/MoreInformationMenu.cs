@@ -20,8 +20,8 @@ namespace Divine.BeAware.MenuManager.ShowMeMore
             LinaLightStrikeArrayMenu = new LinaLightStrikeArrayMenu(moreInformationMenu);
             BloodseekerRuptureMenu = new BloodseekerRuptureMenu(moreInformationMenu);
 
-            PhantomAssassinBlurItem = moreInformationMenu.CreateSwitcher("Phantom Assassin Blur").SetTexture(@"spells\phantom_assassin_blur.png");
-            LifeStealerInfestItem = moreInformationMenu.CreateSwitcher("Life Stealer Infest").SetTexture(@"spells\life_stealer_infest.png");
+            PhantomAssassinBlurItem = moreInformationMenu.CreateSwitcher("Phantom Assassin Blur").SetAbilityTexture(AbilityId.phantom_assassin_blur);
+            LifeStealerInfestItem = moreInformationMenu.CreateSwitcher("Life Stealer Infest").SetAbilityTexture(AbilityId.life_stealer_infest);
             DrawTimerItem = moreInformationMenu.CreateSlider("Draw Timer", 5, 1, 9);
         }
 

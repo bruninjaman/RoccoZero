@@ -1,21 +1,18 @@
 ﻿namespace O9K.Hud.Modules.Screen.Timers
 {
     using System;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Data;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -27,8 +24,6 @@
 
     internal class ScanTimer : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher enabled;
 
         private readonly MenuSwitcher hide;
@@ -49,16 +44,14 @@
 
         private Vector3 scanPosition;
 
-        private ParticleEffect scanRadius;
+        private Particle scanRadius;
 
         private bool showEnabled = false;
 
         private Sleeper sleeper;
 
-        [ImportingConstructor]
-        public ScanTimer(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public ScanTimer(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var timersMenu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Timers"));
@@ -114,9 +107,9 @@
 
         public void Activate()
         {
-            this.context.Renderer.TextureManager.LoadFromDota("o9k.scan", @"panorama\images\hud\reborn\icon_scan_on_dire_psd.vtex_c");
+            RendererManager.LoadTexture("o9k.scan", @"panorama\images\hud\reborn\icon_scan_on_dire_psd.vtex_c");
             this.ownerTeam = EntityManager9.Owner.Team;
-            this.sleeper = new Sleeper(this.ownerTeam == Team.Radiant ? Game.ScanCooldownDire : Game.ScanCooldownRadiant);
+            this.sleeper = new Sleeper(this.ownerTeam == Team.Radiant ? GameManager.ScanCooldownDire : GameManager.ScanCooldownRadiant);
 
             this.enabled.ValueChange += this.EnabledOnValueChange;
             this.showOnMap.ValueChange += this.ShowOnMapOnValueChange;
@@ -126,11 +119,11 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
-            this.context.Renderer.Draw -= this.OnDrawTimer;
-            this.context.Renderer.Draw -= this.OnDrawPosition;
+            RendererManager.Draw -= this.OnDrawTimer;
+            RendererManager.Draw -= this.OnDrawPosition;
             this.showOnMap.ValueChange -= this.ShowOnMapOnValueChange;
             this.showOnMinimap.ValueChange -= this.ShowOnMinimapOnValueChange;
-            ObjectManager.OnAddEntity -= this.OnAddEntity;
+            EntityManager.EntityAdded -= this.OnAddEntity;
             this.textPosition.Dispose();
         }
 
@@ -138,15 +131,15 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDrawTimer;
+                RendererManager.Draw += this.OnDrawTimer;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDrawTimer;
+                RendererManager.Draw -= this.OnDrawTimer;
             }
         }
 
-        private void OnAddEntity(EntityEventArgs args)
+        private void OnAddEntity(EntityAddedEventArgs e)
         {
             try
             {
@@ -155,7 +148,7 @@
                     return;
                 }
 
-                var unit = args.Entity as Unit;
+                var unit = e.Entity as Unit;
                 if (unit == null || unit.Team == this.ownerTeam || unit.DayVision != 0 || unit.Name != "npc_dota_thinker")
                 {
                     return;
@@ -170,37 +163,36 @@
 
                 if (this.showOnMap)
                 {
-                    this.scanRadius = new ParticleEffect("particles/ui_mouseactions/drag_selected_ring.vpcf", this.scanPosition);
+                    this.scanRadius = ParticleManager.CreateParticle("particles/ui_mouseactions/drag_selected_ring.vpcf", this.scanPosition);
                     this.scanRadius.SetControlPoint(1, new Vector3(255, 0, 0));
                     this.scanRadius.SetControlPoint(2, new Vector3(-GameData.ScanRadius, 255, 0));
                 }
 
-                this.sleeper.Sleep(this.ownerTeam == Team.Radiant ? Game.ScanCooldownDire : Game.ScanCooldownRadiant);
+                this.sleeper.Sleep(this.ownerTeam == Team.Radiant ? GameManager.ScanCooldownDire : GameManager.ScanCooldownRadiant);
 
-                this.context.Renderer.Draw += this.OnDrawPosition;
+                RendererManager.Draw += this.OnDrawPosition;
 
-                UpdateManager.BeginInvoke(
+                UpdateManager.BeginInvoke(GameData.ScanActiveTime * 1000,
                     () =>
                         {
-                            this.context.Renderer.Draw -= this.OnDrawPosition;
+                            RendererManager.Draw -= this.OnDrawPosition;
                             this.scanRadius?.Dispose();
-                        },
-                    GameData.ScanActiveTime * 1000);
+                        });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnDrawPosition(IRenderer renderer)
+        private void OnDrawPosition()
         {
             try
             {
                 if (this.showOnMinimap)
                 {
                     var minimapPosition = this.minimap.WorldToMinimap(this.scanPosition, 25 * Hud.Info.ScreenRatio);
-                    renderer.DrawTexture("o9k.scan", minimapPosition);
+                    RendererManager.DrawTexture("o9k.scan", minimapPosition);
                 }
 
                 if (this.showOnMap)
@@ -211,7 +203,7 @@
                         return;
                     }
 
-                    renderer.DrawTexture("o9k.scan", mapPosition);
+                    RendererManager.DrawTexture("o9k.scan", mapPosition);
                 }
             }
             catch (Exception e)
@@ -220,24 +212,24 @@
             }
         }
 
-        private void OnDrawTimer(IRenderer renderer)
+        private void OnDrawTimer()
         {
             try
             {
-                var cd = this.ownerTeam == Team.Radiant ? Game.ScanCooldownDire : Game.ScanCooldownRadiant;
+                var cd = this.ownerTeam == Team.Radiant ? GameManager.ScanCooldownDire : GameManager.ScanCooldownRadiant;
 
                 if (cd > 0)
                 {
                     if (!this.showRemaining)
                     {
-                        cd += Game.GameTime;
+                        cd += GameManager.GameTime;
                     }
 
-                    Drawer.DrawTextWithBackground(TimeSpan.FromSeconds(cd).ToString(@"m\:ss"), this.textSize, this.textPosition, renderer);
+                    Drawer.DrawTextWithBackground(TimeSpan.FromSeconds(cd).ToString(@"m\:ss"), this.textSize, this.textPosition);
                 }
                 else if (!this.hide)
                 {
-                    Drawer.DrawTextWithBackground("Ready", this.textSize, this.textPosition, renderer);
+                    Drawer.DrawTextWithBackground("Ready", this.textSize, this.textPosition);
                 }
             }
             catch (Exception e)
@@ -252,7 +244,7 @@
             {
                 if (!this.showEnabled)
                 {
-                    ObjectManager.OnAddEntity += this.OnAddEntity;
+                    EntityManager.EntityAdded += this.OnAddEntity;
                     this.showEnabled = true;
                 }
             }
@@ -260,7 +252,7 @@
             {
                 if (!this.showOnMinimap)
                 {
-                    ObjectManager.OnAddEntity -= this.OnAddEntity;
+                    EntityManager.EntityAdded -= this.OnAddEntity;
                     this.showEnabled = false;
                 }
             }
@@ -272,7 +264,7 @@
             {
                 if (!this.showEnabled)
                 {
-                    ObjectManager.OnAddEntity += this.OnAddEntity;
+                    EntityManager.EntityAdded += this.OnAddEntity;
                     this.showEnabled = true;
                 }
             }
@@ -280,7 +272,7 @@
             {
                 if (!this.showOnMap)
                 {
-                    ObjectManager.OnAddEntity -= this.OnAddEntity;
+                    EntityManager.EntityAdded -= this.OnAddEntity;
                     this.showEnabled = false;
                 }
             }

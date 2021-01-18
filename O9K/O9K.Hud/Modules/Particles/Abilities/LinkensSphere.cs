@@ -9,8 +9,8 @@
     using Core.Managers.Context;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
 
@@ -19,12 +19,12 @@
     [AbilityId(AbilityId.item_sphere)]
     internal class LinkensSphere : AbilityModule
     {
-        private readonly Dictionary<uint, ParticleEffect> effects = new Dictionary<uint, ParticleEffect>();
+        private readonly Dictionary<uint, Particle> effects = new Dictionary<uint, Particle>();
 
         private readonly List<Unit9> units = new List<Unit9>();
 
-        public LinkensSphere(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public LinkensSphere(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
         }
 
@@ -47,7 +47,7 @@
         {
             EntityManager9.UnitAdded += this.OnUnitAdded;
             EntityManager9.UnitRemoved += this.OnUnitRemoved;
-            UpdateManager.Subscribe(this.OnUpdate, 500);
+            UpdateManager.Subscribe(500, this.OnUpdate);
         }
 
         private void OnUnitAdded(Unit9 hero)
@@ -102,10 +102,10 @@
                             continue;
                         }
 
-                        this.effects[unit.Handle] = new ParticleEffect(
+                        this.effects[unit.Handle] = ParticleManager.CreateParticle(
                             "particles/items_fx/immunity_sphere_buff.vpcf",
-                            unit.BaseUnit,
-                            ParticleAttachment.CenterFollow);
+                            ParticleAttachment.CenterFollow,
+                            unit.BaseUnit);
                     }
                     else
                     {

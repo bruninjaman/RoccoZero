@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore.MoreInformation
     {
         public LeshracSplitEarthMenu(Menu.Items.Menu moreInformationMenu)
         {
-            var leshracSplitEarthMenu = moreInformationMenu.CreateMenu("Leshrac Split Earth").SetTexture(@"spells\leshrac_split_earth.png");
+            var leshracSplitEarthMenu = moreInformationMenu.CreateMenu("Leshrac Split Earth").SetAbilityTexture(AbilityId.leshrac_split_earth);
             EnableItem = leshracSplitEarthMenu.CreateSwitcher("Enable");
             RedItem = leshracSplitEarthMenu.CreateSlider("Red:", 255, 0, 255);
             GreenItem = leshracSplitEarthMenu.CreateSlider("Green:", 0, 0, 255);

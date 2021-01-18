@@ -17,7 +17,7 @@
         {
             this.RadiusData = new SpecialData(baseAbility, "splash_radius");
             this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.ChannelTime = baseAbility.GetChannelTime(0);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
         }
 
         public float ChannelTime { get; }

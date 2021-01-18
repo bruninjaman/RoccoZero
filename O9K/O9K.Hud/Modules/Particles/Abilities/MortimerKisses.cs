@@ -9,7 +9,7 @@
     using Core.Managers.Context;
     using Core.Managers.Particle;
 
-    using Ensage;
+    using Divine;
 
     using Helpers.Notificator;
 
@@ -20,12 +20,12 @@
     [AbilityId(AbilityId.snapfire_mortimer_kisses)]
     internal class MortimerKisses : AbilityModule
     {
-        private readonly Queue<ParticleEffect> effects = new Queue<ParticleEffect>();
+        private readonly Queue<Particle> effects = new Queue<Particle>();
 
         private readonly Vector3 radius;
 
-        public MortimerKisses(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public MortimerKisses(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
             var radiusData = new SpecialData(AbilityId.snapfire_mortimer_kisses, "impact_radius").GetValue(1);
             this.radius = new Vector3(radiusData, -radiusData, -radiusData);
@@ -33,15 +33,15 @@
 
         protected override void Disable()
         {
-            this.Context.ParticleManger.ParticleAdded -= this.ParticleMangerOnParticleAdded;
+            Context9.ParticleManger.ParticleAdded -= this.ParticleMangerOnParticleAdded;
         }
 
         protected override void Enable()
         {
-            this.Context.ParticleManger.ParticleAdded += this.ParticleMangerOnParticleAdded;
+            Context9.ParticleManger.ParticleAdded += this.ParticleMangerOnParticleAdded;
         }
 
-        private void ParticleMangerOnParticleAdded(Particle particle)
+        private void ParticleMangerOnParticleAdded(Particle9 particle)
         {
             try
             {
@@ -69,7 +69,7 @@
                     }
                     case "particles/units/heroes/hero_snapfire/snapfire_lizard_blobs_arced.vpcf":
                     {
-                        var effect = new ParticleEffect(
+                        var effect = ParticleManager.CreateParticle(
                             "particles/units/heroes/hero_snapfire/hero_snapfire_ultimate_calldown.vpcf",
                             particle.GetControlPoint(1));
                         effect.SetControlPoint(1, this.radius);

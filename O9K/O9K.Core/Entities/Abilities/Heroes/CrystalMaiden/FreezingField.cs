@@ -17,7 +17,7 @@
         {
             this.RadiusData = new SpecialData(baseAbility, "radius");
             this.DamageData = new SpecialData(baseAbility, "damage");
-            this.ChannelTime = baseAbility.GetChannelTime(0);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
         }
 
         public float ChannelTime { get; }

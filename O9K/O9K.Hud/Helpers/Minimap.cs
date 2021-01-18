@@ -1,27 +1,22 @@
 ﻿namespace O9K.Hud.Helpers
 {
     using System;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Helpers;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using MainMenu;
 
     using Modules;
 
     using SharpDX;
-
-    using Color = System.Drawing.Color;
 
     internal interface IMinimap
     {
@@ -34,11 +29,8 @@
         Rectangle9 WorldToScreen(Vector3 position, float size);
     }
 
-    [Export(typeof(IMinimap))]
     internal class Minimap : IMinimap, IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher debug;
 
         private readonly float MapBottom = -7700;
@@ -63,13 +55,10 @@
 
         private float minimapMapScaleY;
 
-        [ImportingConstructor]
-        public Minimap(IContext9 context, IHudMenu hudMenu)
+        public Minimap(IHudMenu hudMenu)
         {
-            this.context = context;
-
             var minimapSize = new Vector2(Hud.Info.ScreenSize.X * 0.127f, Hud.Info.ScreenSize.Y * 0.226f);
-            if (Game.GetConsoleVar("dota_hud_extra_large_minimap").GetInt() == 1)
+            if (ConVarManager.GetInt32("dota_hud_extra_large_minimap") == 1)
             {
                 minimapSize *= 1.145f;
             }
@@ -100,7 +89,7 @@
             this.ySize.AddTranslation(Lang.Ru, "Y размер");
             this.ySize.AddTranslation(Lang.Cn, "Y大小");
 
-            if (Game.GameMode == GameMode.Demo)
+            if (GameManager.GameMode == GameMode.Custom)
             {
                 this.MapLeft = -3500;
                 this.MapBottom = -3600;
@@ -120,7 +109,7 @@
 
         public void Dispose()
         {
-            this.context.Renderer.Draw -= this.OnDrawDebug;
+            RendererManager.Draw -= this.OnDrawDebug;
             this.debug.ValueChange -= this.DebugOnValueChange;
             this.xPosition.ValueChange -= this.XPositionOnValueChange;
             this.yPosition.ValueChange -= this.YPositionOnValueChange;
@@ -177,7 +166,7 @@
 
         public Rectangle9 WorldToScreen(Vector3 position, float size)
         {
-            var mapPosition = Drawing.WorldToScreen(position);
+            var mapPosition = RendererManager.WorldToScreen(position);
             if (mapPosition.IsZero)
             {
                 return Rectangle9.Zero;
@@ -190,24 +179,24 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDrawDebug;
+                RendererManager.Draw += this.OnDrawDebug;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDrawDebug;
+                RendererManager.Draw -= this.OnDrawDebug;
             }
         }
 
-        private void OnDrawDebug(IRenderer renderer)
+        private void OnDrawDebug()
         {
             try
             {
-                renderer.DrawRectangle(this.minimap, Color.White, 2);
-                renderer.DrawCircle(this.WorldToMinimap(Game.MousePosition), 2, Color.White);
+                RendererManager.DrawRectangle(this.minimap, Color.White, 2);
+                RendererManager.DrawCircle(this.WorldToMinimap(GameManager.MousePosition), 2, Color.White);
 
                 foreach (var tower in EntityManager9.Units.Where(x => x.IsTower))
                 {
-                    renderer.DrawCircle(this.WorldToMinimap(tower.Position), 6, Color.White);
+                    RendererManager.DrawCircle(this.WorldToMinimap(tower.Position), 6, Color.White);
                 }
             }
             catch

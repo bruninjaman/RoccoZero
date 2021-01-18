@@ -2,10 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Reflection;
 
-    [Export(typeof(IAssemblyEventManager9))]
     public sealed class AssemblyEventManager9 : IAssemblyEventManager9
     {
         private readonly List<string> loadedAssemblies = new List<string>();

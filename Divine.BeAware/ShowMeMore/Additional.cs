@@ -50,8 +50,8 @@ namespace Divine.BeAware.ShowMeMore
             MessageCreator = common.MessageCreator;
             SoundHelper = common.SoundHelper;
 
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.roshan_alive.png");
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.roshan_dead.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.roshan_alive.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.roshan_dead.png");
 
             RoshanPanelPosition = HUDInfo.GetCustomTopPanelPosition(1, Team.Radiant) - (new Vector2(480, -4) * RendererManager.Scaling);
 

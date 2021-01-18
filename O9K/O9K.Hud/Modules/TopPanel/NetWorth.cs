@@ -2,22 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Heroes.Unique;
     using Core.Entities.Units.Unique;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
-    using Ensage.SDK.Renderer.Texture;
+    using Divine;
 
     using Helpers;
 
@@ -25,12 +21,8 @@
 
     using SharpDX;
 
-    using Color = System.Drawing.Color;
-
     internal class NetWorth : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher show;
 
         private readonly Dictionary<Team, int> teams = new Dictionary<Team, int>();
@@ -39,10 +31,8 @@
 
         private Team ownerTeam;
 
-        [ImportingConstructor]
-        public NetWorth(IContext9 context, ITopPanel topPanel, IHudMenu hudMenu)
+        public NetWorth(ITopPanel topPanel, IHudMenu hudMenu)
         {
-            this.context = context;
             this.topPanel = topPanel;
 
             var menu = hudMenu.TopPanelMenu.Add(new Menu("Net worth"));
@@ -68,23 +58,23 @@
         {
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             this.show.ValueChange -= this.ShowOnValueChange;
         }
 
         private void LoadTextures()
         {
-            this.context.Renderer.TextureManager.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.net_worth_bg_top",
                 @"panorama\images\masks\chat_preview_opacity_mask_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0f, 0f, 0.6f)
                 });
-            this.context.Renderer.TextureManager.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.net_worth_arrow_ally",
                 @"panorama\images\hud\reborn\arrow_gold_dif_psd.vtex_c");
-            this.context.Renderer.TextureManager.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.net_worth_arrow_enemy",
                 @"panorama\images\hud\reborn\arrow_plus_stats_red_psd.vtex_c");
         }
@@ -157,7 +147,7 @@
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -183,15 +173,14 @@
                 position.Y += position.Height + 1;
                 position.Height = 22f * ratio;
                 var textSize = 15 * ratio;
-                var measureText = (position.Width - (renderer.MeasureText(text, textSize).X + (24 * ratio))) / 2f;
+                var measureText = (position.Width - (RendererManager.MeasureText(text, textSize).X + (24 * ratio))) / 2f;
 
-                renderer.DrawTexture("o9k.net_worth_bg_top", position);
-                renderer.DrawTexture(
+                RendererManager.DrawTexture("o9k.net_worth_bg_top", position);
+                RendererManager.DrawTexture(
                     this.ownerTeam == team ? "o9k.net_worth_arrow_ally" : "o9k.net_worth_arrow_enemy",
-                    new Vector2(position.X + measureText, position.Y + (4 * ratio)),
-                    new Vector2(12 * ratio));
+                    new RectangleF(position.X + measureText, position.Y + (4 * ratio), 12 * ratio, 12 * ratio));
 
-                renderer.DrawText(new Vector2(position.X + measureText + (15 * ratio), position.Y), text, Color.White, textSize);
+                RendererManager.DrawText(text, new Vector2(position.X + measureText + (15 * ratio), position.Y), Color.White, textSize);
             }
             catch (InvalidOperationException)
             {
@@ -211,13 +200,13 @@
                 this.teams[Team.Dire] = 0;
                 EntityManager9.AbilityAdded += this.OnAbilityAdded;
                 EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
                 EntityManager9.AbilityAdded -= this.OnAbilityAdded;
                 EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
     }

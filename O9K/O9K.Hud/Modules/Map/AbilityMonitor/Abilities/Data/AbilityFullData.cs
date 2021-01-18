@@ -9,8 +9,8 @@
     using Core.Entities.Abilities.Base;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;
@@ -21,7 +21,7 @@
     {
         public AbilityId AbilityId { get; set; }
 
-        public uint ControlPoint { get; set; } = 0;
+        public int ControlPoint { get; set; } = 0;
 
         public float Duration { get; set; } = 3;
 
@@ -62,17 +62,17 @@
 
             var drawableAbility = new DrawableUnitAbility
             {
-                AbilityTexture = this.AbilityId + "_rounded",
-                HeroTexture = ownerName + "_rounded",
-                MinimapHeroTexture = ownerName + "_icon",
+                AbilityTexture = this.AbilityId.ToString(),
+                HeroTexture = ownerName,
+                MinimapHeroTexture = ownerName,
                 Position = position.SetZ(Math.Min(position.Z, 350)),
                 Unit = unit,
                 IsShowingRange = this.ShowRange,
                 RangeColor = this.RangeColor,
                 Range = this.Range,
                 Duration = this.Duration,
-                ShowUntil = Game.RawGameTime + this.Duration,
-                ShowHeroUntil = Game.RawGameTime + this.TimeToShow,
+                ShowUntil = GameManager.RawGameTime + this.Duration,
+                ShowHeroUntil = GameManager.RawGameTime + this.TimeToShow,
                 ShowTimer = this.ShowTimer,
                 Owner = owner,
             };
@@ -112,11 +112,11 @@
 
             var drawableAbility = new DrawableAbility
             {
-                AbilityTexture = ability.Name + "_rounded",
-                HeroTexture = ownerName + "_rounded",
-                MinimapHeroTexture = ownerName + "_icon",
+                AbilityTexture = ability.Name,
+                HeroTexture = ownerName,
+                MinimapHeroTexture = ownerName,
                 Position = unit.Position,
-                ShowUntil = Game.RawGameTime + this.TimeToShow,
+                ShowUntil = GameManager.RawGameTime + this.TimeToShow,
             };
 
             if (ability.Id != AbilityId.zuus_cloud)
@@ -134,7 +134,7 @@
 
         public virtual void AddDrawableAbility(
             List<IDrawableAbility> drawableAbilities,
-            ParticleEffect particle,
+            Particle particle,
             Team allyTeam,
             INotificator notificator)
         {
@@ -179,10 +179,10 @@
 
             var drawableAbility = new DrawableAbility
             {
-                AbilityTexture = this.AbilityId + "_rounded",
-                HeroTexture = ownerName + "_rounded",
-                MinimapHeroTexture = ownerName + "_icon",
-                ShowUntil = Game.RawGameTime + this.TimeToShow,
+                AbilityTexture = this.AbilityId.ToString(),
+                HeroTexture = ownerName,
+                MinimapHeroTexture = ownerName,
+                ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                 Position = position.SetZ(350)
             };
 

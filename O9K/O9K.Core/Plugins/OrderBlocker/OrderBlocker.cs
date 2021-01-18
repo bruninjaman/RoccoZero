@@ -49,7 +49,7 @@
 //        protected override void OnActivate()
 //        {
 //            this.menu = new OrderBlockerMenu(this.context, this.menuManager, this.context.AssemblyEventManager);
-//            this.drawInfo = new DrawBlockInfo(this.context.Renderer, this.menu);
+//            this.drawInfo = new DrawBlockInfo(RendererManager, this.menu);
 //            this.oosBlock = new OutOfScreenBlock(this.menu);
 //            this.zoomBlock = new ZoomBlock(this.menu);
 //            this.spamBlock = new SpamBlock(this.menu);

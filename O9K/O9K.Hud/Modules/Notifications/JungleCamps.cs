@@ -2,8 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
-    using System.Drawing;
     using System.Linq;
 
     using Core.Data;
@@ -18,18 +16,16 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Extensions;
+    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
+    using SharpDX;
+
     internal class JungleCamps : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly List<IJungleCamp> drawCamps = new List<IJungleCamp>();
 
         private readonly MenuSwitcher enabled;
@@ -40,11 +36,9 @@
 
         private Owner owner;
 
-        [ImportingConstructor]
-        public JungleCamps(IContext9 context, IHudMenu hudMenu)
+        public JungleCamps(IHudMenu hudMenu)
         {
-            this.context = context;
-            this.jungleManager = context.JungleManager;
+            this.jungleManager = Context9.JungleManager;
 
             var menu = hudMenu.NotificationsMenu.GetOrAdd(new Menu("Jungle stacks"));
             menu.AddTranslation(Lang.Ru, "Стаки");
@@ -67,7 +61,7 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.Enabled_OnValueChange;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             UpdateManager.Unsubscribe(this.OnUpdatePreSpawn);
             UpdateManager.Unsubscribe(this.OnUpdate);
             this.DisableDraw();
@@ -80,7 +74,7 @@
                 return;
             }
 
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             this.drawCamps.Clear();
             this.drawing = false;
         }
@@ -89,7 +83,7 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(this.OnUpdatePreSpawn, 1000);
+                UpdateManager.Subscribe(1000, this.OnUpdatePreSpawn);
             }
             else
             {
@@ -112,18 +106,18 @@
             }
 
             this.drawing = true;
-            this.context.Renderer.Draw += this.OnDraw;
+            RendererManager.Draw += this.OnDraw;
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
-                var seconds = Game.GameTime % 60;
+                var seconds = GameManager.GameTime % 60;
 
                 foreach (var camp in this.drawCamps)
                 {
-                    var position = Drawing.WorldToScreen(camp.DrawPosition);
+                    var position = RendererManager.WorldToScreen(camp.DrawPosition);
                     if (position.IsZero)
                     {
                         continue;
@@ -136,7 +130,7 @@
                     }
 
                     var stackTimeText = stackTime <= 0 ? "now" : stackTime.ToString("N0");
-                    renderer.DrawText(position, "Stack in: " + stackTimeText, Color.White, 18 * Hud.Info.ScreenRatio);
+                    RendererManager.DrawText("Stack in: " + stackTimeText, position, Color.White, 18 * Hud.Info.ScreenRatio);
 
                     //renderer.DrawText(
                     //    position,
@@ -159,7 +153,7 @@
         {
             try
             {
-                var time = Game.GameTime;
+                var time = GameManager.GameTime;
                 if (time % 60 < 45)
                 {
                     this.DisableDraw();
@@ -175,7 +169,7 @@
 
                 var position = hero.Position;
                 var closestCamp = this.jungleManager.JungleCamps
-                    .Where(x => x.Team == hero.Team && !x.IsSmall && x.CreepsPosition.Distance2D(position) < 1000)
+                    .Where(x => x.Team == hero.Team && !x.IsSmall && x.CreepsPosition.Distance(position) < 1000)
                     .OrderBy(x => x.CreepsPosition.DistanceSquared(position))
                     .FirstOrDefault();
 
@@ -197,14 +191,14 @@
         {
             try
             {
-                var time = Game.GameTime;
+                var time = GameManager.GameTime;
                 if (time < GameData.JungleCreepsSpawnStartTime)
                 {
                     return;
                 }
 
                 UpdateManager.Unsubscribe(this.OnUpdatePreSpawn);
-                UpdateManager.Subscribe(this.OnUpdate, 1000);
+                UpdateManager.Subscribe(1000, this.OnUpdate);
             }
             catch (Exception e)
             {

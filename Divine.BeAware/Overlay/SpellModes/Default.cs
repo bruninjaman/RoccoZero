@@ -17,16 +17,8 @@ namespace Divine.BeAware.Overlay.SpellModes
                     continue;
                 }
 
-                var textureKey = $@"spells\{spell.Name}.png";
-
-                if (!RendererManager.LoadTextureFromResource(textureKey))
-                {
-                    RendererManager.LoadTextureFromResource(textureKey, @"spells\empty.png");
-                }
-
                 var rect = new RectangleF(position.X, position.Y, extraSize.X, extraSize.Y);
-
-                RendererManager.DrawTexture(textureKey, rect);
+                RendererManager.DrawTexture(spell.Name, rect, TextureType.Ability, true);
 
                 if (spell.IsInAbilityPhase)
                 {

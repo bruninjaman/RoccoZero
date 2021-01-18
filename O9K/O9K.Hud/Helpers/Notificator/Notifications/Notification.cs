@@ -3,9 +3,8 @@
     using System;
     using System.Threading.Tasks;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using SharpDX;
 
@@ -26,7 +25,7 @@
         {
             get
             {
-                return Game.RawGameTime > this.stopDisplayTime;
+                return GameManager.RawGameTime > this.stopDisplayTime;
             }
         }
 
@@ -34,7 +33,7 @@
 
         protected int TimeToShow { get; set; } = 4;
 
-        public abstract void Draw(IRenderer renderer, RectangleF position, IMinimap minimap);
+        public abstract void Draw(RectangleF position, IMinimap minimap);
 
         public virtual bool OnClick()
         {
@@ -43,7 +42,7 @@
 
         public virtual void Pushed()
         {
-            this.startDisplayTime = Game.RawGameTime;
+            this.startDisplayTime = GameManager.RawGameTime;
             this.stopDisplayTime = this.startDisplayTime + this.TimeToShow;
 
             if (this.playSound)
@@ -55,7 +54,7 @@
         protected float GetOpacity()
         {
             var opacity = 1f;
-            var time = Game.RawGameTime;
+            var time = GameManager.RawGameTime;
 
             if (this.startDisplayTime + 0.5f > time)
             {
@@ -72,7 +71,7 @@
         protected float GetPingSize()
         {
             var size = 0f;
-            var time = Game.RawGameTime;
+            var time = GameManager.RawGameTime;
             var cycle = (this.TimeToShow / this.PingCycleCount);
             var halfCycle = cycle / 2f;
 
@@ -102,11 +101,11 @@
             UpdateManager.BeginInvoke(
                 async () =>
                     {
-                        var hero = ObjectManager.LocalHero;
+                        var hero = EntityManager.LocalHero;
 
-                        hero.PlaySound("General.Ping");
+                        //hero.PlaySound("General.Ping"); TODO
                         await Task.Delay(450);
-                        hero.PlaySound("General.Ping");
+                        //hero.PlaySound("General.Ping");
                     });
         }
     }

@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore.MoreInformation
     {
         public PudgeHookMenu(Menu.Items.Menu moreInformationMenu)
         {
-            var pudgeHookMenu = moreInformationMenu.CreateMenu("Pudge Hook").SetTexture(@"spells\pudge_meat_hook.png");
+            var pudgeHookMenu = moreInformationMenu.CreateMenu("Pudge Hook").SetAbilityTexture(AbilityId.pudge_meat_hook);
             EnableItem = pudgeHookMenu.CreateSwitcher("Enable");
             RedItem = pudgeHookMenu.CreateSlider("Red:", 255, 0, 255);
             GreenItem = pudgeHookMenu.CreateSlider("Green:", 0, 0, 255);

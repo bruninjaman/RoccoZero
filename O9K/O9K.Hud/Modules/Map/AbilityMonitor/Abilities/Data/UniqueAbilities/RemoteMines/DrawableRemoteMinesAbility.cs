@@ -5,8 +5,7 @@
     using Core.Helpers;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
 
@@ -18,7 +17,7 @@
 
         public DrawableRemoteMinesAbility()
         {
-            this.addedTime = Game.RawGameTime;
+            this.addedTime = GameManager.RawGameTime;
         }
 
         public Entity BaseEntity { get; set; }
@@ -37,7 +36,7 @@
         {
             get
             {
-                if (Game.RawGameTime > this.ShowUntil)
+                if (GameManager.RawGameTime > this.ShowUntil)
                 {
                     return false;
                 }
@@ -55,39 +54,39 @@
             this.Unit = unit;
         }
 
-        public override void DrawOnMap(IRenderer renderer, IMinimap minimap)
+        public override void DrawOnMap(IMinimap minimap)
         {
-            var position = Drawing.WorldToScreen(this.Position);
+            var position = RendererManager.WorldToScreen(this.Position);
             if (position.IsZero)
             {
                 return;
             }
 
-            var time = Game.RawGameTime;
+            var time = GameManager.RawGameTime;
 
             if (time < this.ShowHeroUntil)
             {
                 var heroTexturePosition = new Rectangle9(position, new Vector2(45));
-                renderer.DrawTexture("o9k.outline_red", heroTexturePosition * 1.12f);
-                renderer.DrawTexture(this.HeroTexture, heroTexturePosition);
+                RendererManager.DrawTexture("o9k.outline_red", heroTexturePosition * 1.12f);
+                RendererManager.DrawTexture(this.HeroTexture, heroTexturePosition);
 
                 var abilityTexturePosition = new Rectangle9(position + new Vector2(30, 20), new Vector2(27));
-                renderer.DrawTexture("o9k.outline_green_pct100", abilityTexturePosition * 1.2f);
-                renderer.DrawTexture(this.AbilityTexture, abilityTexturePosition);
+                RendererManager.DrawTexture("o9k.outline_green_pct100", abilityTexturePosition * 1.2f);
+                RendererManager.DrawTexture(this.AbilityTexture, abilityTexturePosition, TextureType.RoundAbility);
             }
             else
             {
                 var pct = (int)(((time - this.addedTime) / this.Duration) * 100);
                 var abilityTexturePosition = new Rectangle9(position - (new Vector2(35) / 2f), new Vector2(35));
-                renderer.DrawTexture("o9k.outline_red", abilityTexturePosition * 1.2f);
-                renderer.DrawTexture("o9k.outline_black" + pct, abilityTexturePosition * 1.25f);
-                renderer.DrawTexture(this.AbilityTexture, abilityTexturePosition);
+                RendererManager.DrawTexture("o9k.outline_red", abilityTexturePosition * 1.2f);
+                RendererManager.DrawTexture("o9k.outline_black" + pct, abilityTexturePosition * 1.25f);
+                RendererManager.DrawTexture(this.AbilityTexture, abilityTexturePosition, TextureType.RoundAbility);
             }
         }
 
-        public override void DrawOnMinimap(IRenderer renderer, IMinimap minimap)
+        public override void DrawOnMinimap(IMinimap minimap)
         {
-            if (Game.RawGameTime > this.ShowHeroUntil || this.BaseEntity.IsVisible)
+            if (GameManager.RawGameTime > this.ShowHeroUntil || this.BaseEntity.IsVisible)
             {
                 return;
             }
@@ -98,8 +97,8 @@
                 return;
             }
 
-            renderer.DrawTexture("o9k.outline_red", position * 1.08f);
-            renderer.DrawTexture(this.MinimapHeroTexture, position);
+            RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
+            RendererManager.DrawTexture(this.MinimapHeroTexture, position, UnitTextureType.MiniUnit);
         }
     }
 }

@@ -266,11 +266,9 @@
 
         private void LoadResources()
         {
-            /*var texture = this.Renderer.TextureManager;
-
-            texture.LoadFromDota(this.MenuStyle.TextureArrowKey, @"panorama\images\control_icons\double_arrow_right_png.vtex_c");
-            texture.LoadFromDota(this.MenuStyle.TextureLeftArrowKey, @"panorama\images\control_icons\arrow_dropdown_png.vtex_c");
-            texture.LoadFromDota(this.MenuStyle.TextureIconKey, @"panorama\images\hud\reborn\tournament_pip_on_psd.vtex_c");*/
+            RendererManager.LoadTexture(this.MenuStyle.TextureArrowKey, @"panorama\images\control_icons\double_arrow_right_png.vtex_c");
+            RendererManager.LoadTexture(this.MenuStyle.TextureLeftArrowKey, @"panorama\images\control_icons\arrow_dropdown_png.vtex_c");
+            RendererManager.LoadTexture(this.MenuStyle.TextureIconKey, @"panorama\images\hud\reborn\tournament_pip_on_psd.vtex_c");
         }
 
         /*private void RootMenuExpandMessage(RootMenuExpandMessage args)

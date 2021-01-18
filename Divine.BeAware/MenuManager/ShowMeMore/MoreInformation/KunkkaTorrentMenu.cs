@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore.MoreInformation
     {
         public KunkkaTorrentMenu(Menu.Items.Menu moreInformationMenu)
         {
-            var kunkkaTorrentMenu = moreInformationMenu.CreateMenu("Kunkka Torrent").SetTexture(@"spells\kunkka_torrent.png");
+            var kunkkaTorrentMenu = moreInformationMenu.CreateMenu("Kunkka Torrent").SetAbilityTexture(AbilityId.kunkka_torrent);
             EnableItem = kunkkaTorrentMenu.CreateSwitcher("Enable");
             RedItem = kunkkaTorrentMenu.CreateSlider("Red:", 255, 0, 255);
             GreenItem = kunkkaTorrentMenu.CreateSlider("Green:", 0, 0, 255);

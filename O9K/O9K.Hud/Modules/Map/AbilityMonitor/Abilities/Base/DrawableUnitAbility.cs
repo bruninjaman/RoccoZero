@@ -4,8 +4,7 @@
 
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
 
@@ -13,13 +12,13 @@
 
     internal class DrawableUnitAbility : IDrawableAbility
     {
-        protected ParticleEffect RangeParticle;
+        protected Particle RangeParticle;
 
         private readonly float addedTime;
 
         public DrawableUnitAbility()
         {
-            this.addedTime = Game.RawGameTime;
+            this.addedTime = GameManager.RawGameTime;
         }
 
         public AbilityId AbilityId { get; set; }
@@ -44,7 +43,7 @@
         {
             get
             {
-                if (Game.RawGameTime > this.ShowUntil)
+                if (GameManager.RawGameTime > this.ShowUntil)
                 {
                     return false;
                 }
@@ -71,7 +70,7 @@
 
         public Unit Unit { get; set; }
 
-        public void DrawOnMap(IRenderer renderer, IMinimap minimap)
+        public void DrawOnMap(IMinimap minimap)
         {
             var position = minimap.WorldToScreen(this.Position, 45 * Hud.Info.ScreenRatio);
             if (position.IsZero)
@@ -79,37 +78,37 @@
                 return;
             }
 
-            var time = Game.RawGameTime;
+            var time = GameManager.RawGameTime;
 
             if (time < this.ShowHeroUntil)
             {
-                renderer.DrawTexture("o9k.outline_red", position * 1.12f);
-                renderer.DrawTexture(this.HeroTexture, position);
+                RendererManager.DrawTexture("o9k.outline_red", position * 1.12f);
+                RendererManager.DrawTexture(this.HeroTexture, position, UnitTextureType.RoundUnit);
 
                 var abilityTexturePosition = position * 0.5f;
                 abilityTexturePosition.X += abilityTexturePosition.Width * 0.8f;
                 abilityTexturePosition.Y += abilityTexturePosition.Height * 0.6f;
 
-                renderer.DrawTexture("o9k.outline_green_pct100", abilityTexturePosition * 1.2f);
-                renderer.DrawTexture(this.AbilityTexture, abilityTexturePosition);
+                RendererManager.DrawTexture("o9k.outline_green_pct100", abilityTexturePosition * 1.2f);
+                RendererManager.DrawTexture(this.AbilityTexture, abilityTexturePosition, TextureType.RoundAbility);
             }
             else
             {
-                renderer.DrawTexture("o9k.outline_red", position);
+                RendererManager.DrawTexture("o9k.outline_red", position);
 
                 if (this.ShowTimer)
                 {
                     var pct = (int)(((time - this.addedTime) / this.Duration) * 100);
-                    renderer.DrawTexture("o9k.outline_black" + Math.Min(pct, 100), position * 1.05f);
+                    RendererManager.DrawTexture("o9k.outline_black" + Math.Min(pct, 100), position * 1.05f);
                 }
 
-                renderer.DrawTexture(this.AbilityTexture, position * 0.8f);
+                RendererManager.DrawTexture(this.AbilityTexture, position * 0.8f, TextureType.RoundAbility);
             }
         }
 
-        public void DrawOnMinimap(IRenderer renderer, IMinimap minimap)
+        public void DrawOnMinimap(IMinimap minimap)
         {
-            if (Game.RawGameTime > this.ShowHeroUntil || this.Owner.IsVisible)
+            if (GameManager.RawGameTime > this.ShowHeroUntil || this.Owner.IsVisible)
             {
                 return;
             }
@@ -120,8 +119,8 @@
                 return;
             }
 
-            renderer.DrawTexture("o9k.outline_red", position * 1.08f);
-            renderer.DrawTexture(this.MinimapHeroTexture, position);
+            RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
+            RendererManager.DrawTexture(this.MinimapHeroTexture, position, UnitTextureType.MiniUnit);
         }
 
         public void DrawRange()
@@ -137,7 +136,7 @@
                 return;
             }
 
-            this.RangeParticle = new ParticleEffect("particles/ui_mouseactions/drag_selected_ring.vpcf", this.Position);
+            this.RangeParticle = ParticleManager.CreateParticle("particles/ui_mouseactions/drag_selected_ring.vpcf", this.Position);
             this.RangeParticle.SetControlPoint(1, this.RangeColor);
             this.RangeParticle.SetControlPoint(2, new Vector3(-this.Range, 255, 0));
         }

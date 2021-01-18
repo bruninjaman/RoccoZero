@@ -5,7 +5,7 @@
     using Core.Entities.Units;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using SharpDX;
 

@@ -2,26 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Heroes.Unique;
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
-    using Core.Managers.Input;
-    using Core.Managers.Input.EventArgs;
-    using Core.Managers.Input.Keys;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
-    using Ensage.SDK.Renderer.Texture;
+    using Divine;
 
     using Helpers;
 
@@ -29,16 +22,11 @@
 
     using SharpDX;
 
-    using Color = System.Drawing.Color;
     using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 
     internal class ItemPanel : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuHoldKey holdKey;
-
-        private readonly IInputManager9 input;
 
         private readonly MenuSwitcher ping;
 
@@ -62,12 +50,8 @@
 
         private Team ownerTeam;
 
-        [ImportingConstructor]
-        public ItemPanel(IContext9 context, IHudMenu hudMenu, IInputManager9 input)
+        public ItemPanel(IHudMenu hudMenu)
         {
-            this.context = context;
-            this.input = input;
-
             var panelsMenu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Panels"));
             panelsMenu.AddTranslation(Lang.Ru, "Панели");
             panelsMenu.AddTranslation(Lang.Cn, "面板");
@@ -139,10 +123,10 @@
             this.toggleKey.ValueChange -= this.ToggleKeyOnValueChange;
             this.holdKey.ValueChange -= this.HoldKeyOnValueChange;
             this.ping.ValueChange -= this.PingOnValueChange;
-            this.input.MouseKeyUp -= this.InputOnMouseKeyDown;
+            InputManager.MouseKeyUp -= this.InputOnMouseKeyDown;
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             this.position.Dispose();
             this.units.Clear();
         }
@@ -152,7 +136,7 @@
             this.toggleKey.IsActive = e.NewValue;
         }
 
-        private void InputOnMouseKeyDown(object sender, MouseEventArgs e)
+        private void InputOnMouseKeyDown(MouseEventArgs e)
         {
             try
             {
@@ -166,7 +150,7 @@
                     startPosition,
                     new Vector2(this.heroSize.X + ((this.itemSize.X + 1) * 7), this.heroSize.Y * this.units.Count));
 
-                if (!itemPanel.Contains(e.ScreenPosition))
+                if (!itemPanel.Contains(e.Position))
                 {
                     return;
                 }
@@ -198,7 +182,7 @@
 
                         var itemPosition = borderPosition - 4;
 
-                        if (itemPosition.Contains(e.ScreenPosition))
+                        if (itemPosition.Contains(e.Position))
                         {
                             ability.BaseAbility.Announce();
                             return;
@@ -218,17 +202,15 @@
 
         private void LoadTextures()
         {
-            var tm = this.context.Renderer.TextureManager;
-
-            tm.LoadFromDota("o9k.inventory_item_bg", @"panorama\images\hud\reborn\inventory_item_well_psd.vtex_c");
-            tm.LoadFromDota(
+            RendererManager.LoadTexture("o9k.inventory_item_bg", @"panorama\images\hud\reborn\inventory_item_well_psd.vtex_c");
+            RendererManager.LoadTexture(
                 "o9k.inventory_tp_cd_bg",
                 @"panorama\images\masks\softedge_circle_sharp_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0f, 0f, 0.8f)
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.inventory_item_cd_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
                 new TextureProperties
@@ -237,7 +219,7 @@
                 });
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -250,7 +232,7 @@
                         continue;
                     }
 
-                    renderer.DrawTexture(unit.TextureName, heroPosition, this.heroSize);
+                    RendererManager.DrawTexture(unit.TextureName, new RectangleF(heroPosition.X, heroPosition.Y, this.heroSize.X, this.heroSize.Y), TextureType.Unit);
 
                     var borderPosition = new Rectangle9(
                         heroPosition.X + this.heroSize.X + 1,
@@ -260,7 +242,7 @@
 
                     for (var i = 0; i < 7; i++)
                     {
-                        renderer.DrawTexture("o9k.inventory_item_bg", borderPosition + new Vector2((this.itemSize.X + 1) * i, 0));
+                        RendererManager.DrawTexture("o9k.inventory_item_bg", borderPosition + new Vector2((this.itemSize.X + 1) * i, 0));
                     }
 
                     foreach (var ability in unit.Abilities.OrderBy(x => x.Id == AbilityId.item_tpscroll))
@@ -272,20 +254,20 @@
                                 this.itemSize.X * 0.6f,
                                 this.itemSize.X * 0.6f);
 
-                            renderer.DrawTexture("o9k.outline", tpPosition + 1);
-                            renderer.DrawTexture(ability.TextureName + "_rounded", tpPosition);
+                            RendererManager.DrawTexture("o9k.outline", tpPosition + 1);
+                            RendererManager.DrawTexture(ability.TextureName, tpPosition, TextureType.RoundAbility);
 
                             if (this.showCooldown)
                             {
                                 var cooldown = ability.RemainingCooldown;
                                 if (cooldown > 0)
                                 {
-                                    renderer.DrawTexture("o9k.inventory_tp_cd_bg", tpPosition);
-                                    renderer.DrawText(
-                                        tpPosition,
+                                    RendererManager.DrawTexture("o9k.inventory_tp_cd_bg", tpPosition);
+                                    RendererManager.DrawText(
                                         Math.Ceiling(cooldown).ToString("N0"),
+                                        tpPosition,
                                         Color.White,
-                                        RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                                        FontFlags.Center | FontFlags.VerticalCenter,
                                         this.size * 0.35f);
                                 }
                             }
@@ -300,16 +282,16 @@
 
                         var itemPosition = borderPosition - 4;
 
-                        renderer.DrawTexture(ability.TextureName, itemPosition);
+                        RendererManager.DrawTexture(ability.TextureName, itemPosition, TextureType.Ability);
 
                         if (this.showCharges && ability.IsDisplayingCharges)
                         {
                             var chargesText = ability.BaseItem.CurrentCharges.ToString("N0");
-                            var chargesSize = renderer.MeasureText(chargesText, this.size * 0.35f);
+                            var chargesSize = RendererManager.MeasureText(chargesText, this.size * 0.35f);
                             var chargesPosition = itemPosition.SinkToBottomRight(chargesSize.X * 1.1f, chargesSize.Y * 0.8f);
 
-                            renderer.DrawFilledRectangle(chargesPosition, Color.Black);
-                            renderer.DrawText(chargesPosition, chargesText, Color.White, RendererFontFlags.Left, this.size * 0.35f);
+                            RendererManager.DrawFilledRectangle(chargesPosition, Color.Black);
+                            RendererManager.DrawText(chargesText, chargesPosition, Color.White, FontFlags.Left, this.size * 0.35f);
                         }
 
                         if (this.showCooldown)
@@ -317,12 +299,12 @@
                             var cooldown = ability.RemainingCooldown;
                             if (cooldown > 0)
                             {
-                                renderer.DrawTexture("o9k.inventory_item_cd_bg", itemPosition);
-                                renderer.DrawText(
-                                    itemPosition,
+                                RendererManager.DrawTexture("o9k.inventory_item_cd_bg", itemPosition);
+                                RendererManager.DrawText(
                                     Math.Ceiling(cooldown).ToString("N0"),
+                                    itemPosition,
                                     Color.White,
-                                    RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                                    FontFlags.Center | FontFlags.VerticalCenter,
                                     this.size * 0.7f);
                             }
                         }
@@ -386,11 +368,11 @@
         {
             if (e.NewValue)
             {
-                this.input.MouseKeyUp += this.InputOnMouseKeyDown;
+                InputManager.MouseKeyUp += this.InputOnMouseKeyDown;
             }
             else
             {
-                this.input.MouseKeyUp -= this.InputOnMouseKeyDown;
+                InputManager.MouseKeyUp -= this.InputOnMouseKeyDown;
             }
         }
 
@@ -409,9 +391,9 @@
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
                 this.toggleKey.ValueChange -= this.ToggleKeyOnValueChange;
                 this.holdKey.ValueChange -= this.HoldKeyOnValueChange;
-                this.input.MouseKeyUp -= this.InputOnMouseKeyDown;
+                InputManager.MouseKeyUp -= this.InputOnMouseKeyDown;
                 this.ping.ValueChange -= this.PingOnValueChange;
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
                 this.units.Clear();
             }
         }
@@ -426,14 +408,14 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
                 this.ping.ValueChange += this.PingOnValueChange;
             }
             else
             {
                 this.ping.ValueChange -= this.PingOnValueChange;
-                this.input.MouseKeyUp -= this.InputOnMouseKeyDown;
-                this.context.Renderer.Draw -= this.OnDraw;
+                InputManager.MouseKeyUp -= this.InputOnMouseKeyDown;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
     }

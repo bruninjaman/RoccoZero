@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore.MoreInformation
     {
         public LinaLightStrikeArrayMenu(Menu.Items.Menu moreInformationMenu)
         {
-            var linaLightStrikeArrayMenu = moreInformationMenu.CreateMenu("Lina Light Strike Array").SetTexture(@"spells\lina_light_strike_array.png");
+            var linaLightStrikeArrayMenu = moreInformationMenu.CreateMenu("Lina Light Strike Array").SetAbilityTexture(AbilityId.lina_light_strike_array);
             EnableItem = linaLightStrikeArrayMenu.CreateSwitcher("Enable");
             RedItem = linaLightStrikeArrayMenu.CreateSlider("Red:", 255, 0, 255);
             GreenItem = linaLightStrikeArrayMenu.CreateSlider("Green:", 0, 0, 255);

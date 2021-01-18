@@ -1,18 +1,15 @@
 ﻿namespace O9K.Hud.Modules.Screen.Timers
 {
     using System;
-    using System.ComponentModel.Composition;
 
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
 
@@ -24,8 +21,6 @@
 
     internal class GlyphTimer : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher enabled;
 
         private readonly MenuSwitcher hide;
@@ -38,11 +33,8 @@
 
         private Team ownerTeam;
 
-        [ImportingConstructor]
-        public GlyphTimer(IContext9 context, IHudMenu hudMenu)
+        public GlyphTimer(IHudMenu hudMenu)
         {
-            this.context = context;
-
             var timersMenu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Timers"));
             timersMenu.AddTranslation(Lang.Ru, "Таймеры");
             timersMenu.AddTranslation(Lang.Cn, "计时 器");
@@ -87,7 +79,7 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             this.textPosition.Dispose();
         }
 
@@ -95,32 +87,32 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
-                var cd = this.ownerTeam == Team.Radiant ? Game.GlyphCooldownDire : Game.GlyphCooldownRadiant;
+                var cd = this.ownerTeam == Team.Radiant ? GameManager.GlyphCooldownDire : GameManager.GlyphCooldownRadiant;
 
                 if (cd > 0)
                 {
                     if (!this.showRemaining)
                     {
-                        cd += Game.GameTime;
+                        cd += GameManager.GameTime;
                     }
 
-                    Drawer.DrawTextWithBackground(TimeSpan.FromSeconds(cd).ToString(@"m\:ss"), this.textSize, this.textPosition, renderer);
+                    Drawer.DrawTextWithBackground(TimeSpan.FromSeconds(cd).ToString(@"m\:ss"), this.textSize, this.textPosition);
                 }
                 else if (!this.hide)
                 {
-                    Drawer.DrawTextWithBackground("Ready", this.textSize, this.textPosition, renderer);
+                    Drawer.DrawTextWithBackground("Ready", this.textSize, this.textPosition);
                 }
             }
             catch (Exception e)

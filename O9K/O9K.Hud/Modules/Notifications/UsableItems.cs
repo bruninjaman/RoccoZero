@@ -2,20 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Heroes;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
 
@@ -32,18 +29,14 @@
             AbilityId.item_pirate_hat
         };
 
-        private readonly IContext9 context;
-
         private readonly IMinimap minimap;
 
         private readonly MenuAbilityToggler toggler;
 
         private Owner owner;
 
-        [ImportingConstructor]
-        public UsableItems(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public UsableItems(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var notificationMenu = hudMenu.NotificationsMenu.GetOrAdd(new Menu("Abilities"));
@@ -65,14 +58,14 @@
 
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
-            this.context.Renderer.Draw += this.OnDraw;
+            RendererManager.Draw += this.OnDraw;
         }
 
         public void Dispose()
         {
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
         }
 
         private void OnAbilityAdded(Ability9 ability)
@@ -109,7 +102,7 @@
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -131,14 +124,14 @@
                         continue;
                     }
 
-                    var scale = (Game.RawGameTime % 1) + 0.5f;
+                    var scale = (GameManager.RawGameTime % 1) + 0.5f;
                     if (scale > 1)
                     {
                         scale = 2 - scale;
                     }
 
-                    renderer.DrawTexture("o9k.outline_green", position * scale * 1.3f);
-                    renderer.DrawTexture(ability.TextureName + "_rounded", position * scale);
+                    RendererManager.DrawTexture("o9k.outline_green", position * scale * 1.3f);
+                    RendererManager.DrawTexture(ability.TextureName, position * scale, TextureType.RoundAbility);
                 }
             }
             catch (InvalidOperationException)

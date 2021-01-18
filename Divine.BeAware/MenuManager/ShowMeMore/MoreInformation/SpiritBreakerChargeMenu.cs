@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore.MoreInformation
     {
         public SpiritBreakerChargeMenu(Menu.Items.Menu moreInformationMenu)
         {
-            var spiritBreakerChargeMenu = moreInformationMenu.CreateMenu("Spirit Breaker Charge").SetTexture(@"spells\spirit_breaker_charge_of_darkness.png");
+            var spiritBreakerChargeMenu = moreInformationMenu.CreateMenu("Spirit Breaker Charge").SetAbilityTexture(AbilityId.spirit_breaker_charge_of_darkness);
             EnableItem = spiritBreakerChargeMenu.CreateSwitcher("Enable");
             RedItem = spiritBreakerChargeMenu.CreateSlider("Red:", 255, 0, 255);
             GreenItem = spiritBreakerChargeMenu.CreateSlider("Green:", 0, 0, 255);

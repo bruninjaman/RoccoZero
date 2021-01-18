@@ -1,11 +1,10 @@
 ﻿namespace O9K.Core.Managers.Menu
 {
     using System;
-    using System.ComponentModel.Composition;
     using System.Threading.Tasks;
-    using System.Windows.Input;
 
     using Divine;
+    using Divine.Menu;
 
     using Items;
 
@@ -15,25 +14,11 @@
     {
         private readonly MainMenu mainMenu;
 
-        private readonly Key menuHoldKey;
-
-        private readonly Key menuToggleKey;
-
         private bool menuVisible;
 
         public MenuManager9()
         {
             this.mainMenu = new MainMenu();
-
-            /*if (SandboxConfig.Config.HotKeys.TryGetValue("Menu", out var menuKey))
-            {
-                this.menuHoldKey = KeyInterop.KeyFromVirtualKey(menuKey);
-            }
-
-            if (SandboxConfig.Config.HotKeys.TryGetValue("MenuToggle", out menuKey))
-            {
-                this.menuToggleKey = KeyInterop.KeyFromVirtualKey(menuKey);
-            }*/
 
             InputManager.KeyDown += this.OnKeyDown;
         }
@@ -87,7 +72,7 @@
 
         private void OnKeyDown(KeyEventArgs e)
         {
-            if (e.Key == this.menuToggleKey)
+            if (e.Key == MenuManager.MenuToggleKey.Key)
             {
                 if (this.menuVisible)
                 {
@@ -99,7 +84,7 @@
                     this.Subscribe();
                 }
             }
-            else if (!this.menuVisible && e.Key == this.menuHoldKey)
+            else if (!this.menuVisible && e.Key == MenuManager.MenuHoldKey.Key)
             {
                 this.Subscribe();
             }
@@ -107,7 +92,7 @@
 
         private void OnKeyUp(KeyEventArgs e)
         {
-            if (e.Key != this.menuHoldKey)
+            if (e.Key != MenuManager.MenuHoldKey.Key)
             {
                 return;
             }

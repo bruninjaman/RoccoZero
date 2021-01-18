@@ -29,8 +29,8 @@ namespace Divine.BeAware.Overlay
 
             EmemyItemPanelMenu.MoveItem.ValueChanged += OnMoveValueChanged;
 
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.ui_manabar.png");
-            RendererManager.LoadTextureFromResource("Divine.BeAware.Resources.Textures.item_panel.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.ui_manabar.png");
+            RendererManager.LoadTextureFromAssembly("Divine.BeAware.Resources.Textures.item_panel.png");
         }
 
         private void OnMoveValueChanged(MenuSwitcher switcher, SwitcherEventArgs e)
@@ -192,24 +192,9 @@ namespace Divine.BeAware.Overlay
 
                 foreach (var hero in Heroes)
                 {
-                    var textureKey = $@"horizontal_heroes\{hero.Name}.png";
-
-                    try
-                    {
-                        if (!RendererManager.LoadTextureFromResource(textureKey))
-                        {
-                            RendererManager.LoadTextureFromResource(textureKey, @"horizontal_heroes\npc_dota_hero_default.png");
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        e.Data["textureKey"] = textureKey;
-                        LogManager.Error(e);
-                    }
-
                     itemPosition += new Vector2(0, 2);
  
-                    RendererManager.DrawTexture(textureKey, new RectangleF(itemPosition.X, itemPosition.Y, sizeX * 1.36f, sizeY));
+                    RendererManager.DrawTexture(hero.Name, new RectangleF(itemPosition.X, itemPosition.Y, sizeX * 1.36f, sizeY), TextureType.Unit, true);
 
                     var mana = hero.Mana;
                     var maximumMana = hero.MaximumMana;
@@ -220,24 +205,8 @@ namespace Divine.BeAware.Overlay
 
                     foreach (var item in hero.Inventory.MainItems)
                     {
-                        textureKey = $@"items\{item.Name}.png";
-
-                        try
-                        {
-                            if (!RendererManager.LoadTextureFromResource(textureKey))
-                            {
-                                RendererManager.LoadTextureFromResource(textureKey, @"items\item_emptyitembg.png");
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            e.Data["textureKey"] = textureKey;
-                            LogManager.Error(e);
-                        }
-                        
-
                         var itemSize = new Vector2(sizeX, sizeY);
-                        RendererManager.DrawTexture(textureKey, new RectangleF(itemPosition.X, itemPosition.Y, itemSize.X, itemSize.Y));
+                        RendererManager.DrawTexture(item.Name, new RectangleF(itemPosition.X, itemPosition.Y, itemSize.X, itemSize.Y), TextureType.Item, true);
 
                         var manaCost = item.ManaCost;
                         var enoughMana = mana >= manaCost;
@@ -317,14 +286,7 @@ namespace Divine.BeAware.Overlay
             var tp = hero.Inventory.TownPortalScroll;
             if (tp != null)
             {
-                var textureKey = $@"round_items\{tp.Name}.png";
-
-                if (!RendererManager.LoadTextureFromResource(textureKey))
-                {
-                    RendererManager.LoadTextureFromResource(textureKey, @"round_items\item_emptyitembg.png");
-                }
-
-                RendererManager.DrawTexture(textureKey, new RectangleF(position.X, position.Y, size.X, size.Y));
+                RendererManager.DrawTexture(tp.Name, new RectangleF(position.X, position.Y, size.X, size.Y), TextureType.RoundAbility, true);
 
                 var manaCost = tp.ManaCost;
                 var enoughMana = mana >= manaCost;

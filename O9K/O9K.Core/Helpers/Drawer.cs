@@ -38,11 +38,11 @@
         {
             foreach (var particleEffect in Particles)
             {
-                particleEffect?.Remove();
+                particleEffect?.Dispose();
             }
 
-            greenParticle?.Remove();
-            redParticle?.Remove();
+            greenParticle?.Dispose();
+            redParticle?.Dispose();
         }
 
         public static void DrawGreenCircle(Vector3 position)

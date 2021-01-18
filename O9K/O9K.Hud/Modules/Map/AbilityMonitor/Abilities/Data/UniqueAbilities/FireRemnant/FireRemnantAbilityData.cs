@@ -7,18 +7,18 @@
 
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Helpers.Notificator;
 
     internal class FireRemnantAbilityData : AbilityFullData
     {
-        public uint StartControlPoint { get; set; } = 0;
+        public int StartControlPoint { get; set; } = 0;
 
         public override void AddDrawableAbility(
             List<IDrawableAbility> drawableAbilities,
-            ParticleEffect particle,
+            Particle particle,
             Team allyTeam,
             INotificator notificator)
         {
@@ -43,7 +43,7 @@
                         AbilityTexture = this.AbilityId + "_rounded",
                         HeroTexture = owner.Name + "_rounded",
                         MinimapHeroTexture = owner.Name + "_icon",
-                        ShowUntil = Game.RawGameTime + this.TimeToShow,
+                        ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                         Position = startPosition.SetZ(350)
                     };
 
@@ -52,8 +52,7 @@
                 }
 
                 var remnants = drawableAbilities.OfType<DrawableFireRemnantAbility>().ToArray();
-                var unit = ObjectManager.GetEntitiesFast<Unit>()
-                    .Concat(ObjectManager.GetDormantEntities<Unit>())
+                var unit = EntityManager.GetEntities<Unit>()
                     .FirstOrDefault(
                         x => x.IsAlive && x.Name == "npc_dota_ember_spirit_remnant" && x.Distance2D(startPosition) < 1500
                              && remnants.All(z => z.Unit != x));
@@ -70,8 +69,8 @@
                     MinimapHeroTexture = owner.Name + "_icon",
                     Position = particle.GetControlPoint(this.ControlPoint).SetZ(350),
                     Duration = this.Duration,
-                    ShowUntil = Game.RawGameTime + this.Duration,
-                    ShowHeroUntil = Game.RawGameTime + this.TimeToShow,
+                    ShowUntil = GameManager.RawGameTime + this.Duration,
+                    ShowHeroUntil = GameManager.RawGameTime + this.TimeToShow,
                     Owner = owner.BaseEntity,
                     Unit = unit
                 };

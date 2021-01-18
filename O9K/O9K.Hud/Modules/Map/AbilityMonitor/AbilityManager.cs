@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Abilities.Base;
@@ -11,18 +10,14 @@
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
-    using Ensage.SDK.Renderer.Texture;
+    using Divine;
+    using Divine.SDK.Extensions;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
     using Helpers.Notificator;
@@ -32,12 +27,9 @@
     using SharpDX;
 
     using AbilityData = Abilities.Data.AbilityData;
-    using Color = System.Drawing.Color;
 
     internal class AbilityManager : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly List<IDrawableAbility> drawableAbilities = new List<IDrawableAbility>();
 
         private readonly MenuSwitcher enabled;
@@ -58,10 +50,8 @@
 
         private Team allyTeam;
 
-        [ImportingConstructor]
-        public AbilityManager(IContext9 context, IMinimap minimap, INotificator notificator, IHudMenu hudMenu)
+        public AbilityManager(IMinimap minimap, INotificator notificator, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
             this.notificator = notificator;
 
@@ -110,15 +100,14 @@
 
         public void Dispose()
         {
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             UpdateManager.Unsubscribe(this.OnUpdateRemove);
             UpdateManager.Unsubscribe(this.OnUpdateWard);
-            Entity.OnParticleEffectAdded -= this.OnParticleEffectAdded;
-            Entity.OnParticleEffectReleased -= this.OnParticleEffectReleased;
-            ObjectManager.OnAddEntity -= this.OnAddEntity;
-            ObjectManager.OnRemoveEntity -= this.OnRemoveEntity;
+            ParticleManager.ParticleAdded -= this.OnParticleAdded;
+            EntityManager.EntityAdded -= this.OnAddEntity;
+            EntityManager.EntityRemoved -= this.OnRemoveEntity;
             this.enabled.ValueChange -= this.EnabledOnValueChange;
         }
 
@@ -132,12 +121,12 @@
             var wardPosition = enemy.Unit.InFront(400);
 
             if (this.drawableAbilities.OfType<DrawableWardAbility>()
-                .Any(x => x.Unit != null && x.AbilityUnitName == unitName && x.Position.Distance2D(wardPosition) < 400))
+                .Any(x => x.Unit != null && x.AbilityUnitName == unitName && x.Position.Distance(wardPosition) < 400))
             {
                 return;
             }
 
-            if (this.drawableAbilities.OfType<DrawableWardAbility>().Any(x => x.Position.Distance2D(wardPosition) <= 50))
+            if (this.drawableAbilities.OfType<DrawableWardAbility>().Any(x => x.Position.Distance(wardPosition) <= 50))
             {
                 wardPosition += new Vector3(60, 0, 0);
             }
@@ -166,29 +155,45 @@
 
                 EntityManager9.UnitAdded += this.OnUnitAdded;
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
-                UpdateManager.Subscribe(this.OnUpdateRemove, 500);
-                UpdateManager.Subscribe(this.OnUpdateWard, 200);
-                Entity.OnParticleEffectAdded += this.OnParticleEffectAdded;
-                Entity.OnParticleEffectReleased += this.OnParticleEffectReleased;
-                ObjectManager.OnAddEntity += this.OnAddEntity;
-                ObjectManager.OnRemoveEntity += this.OnRemoveEntity;
-                this.context.Renderer.Draw += this.OnDraw;
+                UpdateManager.Subscribe(500, this.OnUpdateRemove);
+                UpdateManager.Subscribe(200, this.OnUpdateWard);
+                ParticleManager.ParticleAdded += this.OnParticleAdded;
+                EntityManager.EntityAdded += this.OnAddEntity;
+                EntityManager.EntityRemoved += this.OnRemoveEntity;
+                RendererManager.Draw += this.OnDraw;
 
-                foreach (var effect in ObjectManager.ParticleEffects.Where(
-                    x => x.IsValid && x.Name == "particles/units/heroes/hero_wisp/wisp_ambient_entity_tentacles.vpcf"))
+                foreach (var particle in ParticleManager.Particles.Where(x => x.IsValid && x.Name == "particles/units/heroes/hero_wisp/wisp_ambient_entity_tentacles.vpcf"))
                 {
-                    this.OnParticleEffectAdded(effect.Owner, new ParticleEffectAddedEventArgs(effect, effect.Name));
+                    try
+                    {
+                        if (!this.abilityData.Particles.TryGetValue(particle.Name, out var data))
+                        {
+                            return;
+                        }
+
+                        try
+                        {
+                            data.AddDrawableAbility(this.drawableAbilities, particle, this.allyTeam, this.notificationsEnabled ? this.notificator : null);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                    }
                 }
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-                Entity.OnParticleEffectAdded -= this.OnParticleEffectAdded;
-                Entity.OnParticleEffectReleased -= this.OnParticleEffectReleased;
-                ObjectManager.OnAddEntity -= this.OnAddEntity;
-                ObjectManager.OnRemoveEntity -= this.OnRemoveEntity;
+                ParticleManager.ParticleAdded -= this.OnParticleAdded;
+                EntityManager.EntityAdded -= this.OnAddEntity;
+                EntityManager.EntityRemoved -= this.OnRemoveEntity;
                 UpdateManager.Unsubscribe(this.OnUpdateRemove);
                 UpdateManager.Unsubscribe(this.OnUpdateWard);
             }
@@ -204,14 +209,14 @@
 
         private void LoadTextures()
         {
-            this.context.Renderer.TextureManager.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.minimap_item_ward_observer_rounded",
                 @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(1f, 0.6f, 0f, 1f)
                 });
-            this.context.Renderer.TextureManager.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.minimap_item_ward_sentry_rounded",
                 @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
                 new TextureProperties
@@ -220,11 +225,11 @@
                 });
         }
 
-        private void OnAddEntity(EntityEventArgs args)
+        private void OnAddEntity(EntityAddedEventArgs e)
         {
             try
             {
-                var unit = args.Entity as Unit;
+                var unit = e.Entity as Unit;
                 if (unit == null || unit.Team == this.allyTeam)
                 {
                     return;
@@ -271,13 +276,13 @@
                         this.notificationsEnabled ? this.notificator : null);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -292,12 +297,12 @@
 
                         if (this.showOnMap)
                         {
-                            ability.DrawOnMap(renderer, this.minimap);
+                            ability.DrawOnMap(this.minimap);
                         }
 
                         if (this.showOnMinimap)
                         {
-                            ability.DrawOnMinimap(renderer, this.minimap);
+                            ability.DrawOnMinimap(this.minimap);
                         }
                     }
                     catch (Exception e)
@@ -335,11 +340,11 @@
                         continue;
                     }
 
-                    renderer.DrawText(
-                        position + new Vector2(40, 10),
+                    RendererManager.DrawText(
                         "x" + stack.Count,
+                        position + new Vector2(40, 10),
                         Color.White,
-                        RendererFontFlags.Left,
+                        FontFlags.Left,
                         24 * Hud.Info.ScreenRatio);
                 }
             }
@@ -353,26 +358,26 @@
             }
         }
 
-        private void OnParticleEffectAdded(Entity sender, ParticleEffectAddedEventArgs args)
+        private void OnParticleAdded(ParticleAddedEventArgs e)
         {
             try
             {
-                if (!this.abilityData.Particles.TryGetValue(args.Name, out var data))
+                if (!this.abilityData.Particles.TryGetValue(e.Particle.Name, out var data))
                 {
                     return;
                 }
 
-                if (data.ParticleReleaseData)
+                /*if (data.ParticleReleaseData)
                 {
                     return;
-                }
+                }*/
 
                 UpdateManager.BeginInvoke(
                     () =>
                         {
                             try
                             {
-                                var particle = args.ParticleEffect;
+                                var particle = e.Particle;
                                 if (!particle.IsValid)
                                 {
                                     return;
@@ -384,28 +389,28 @@
                                     this.allyTeam,
                                     this.notificationsEnabled ? this.notificator : null);
                             }
-                            catch (Exception e)
+                            catch (Exception ex)
                             {
-                                Logger.Error(e);
+                                Logger.Error(ex);
                             }
                         });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnParticleEffectReleased(Entity sender, ParticleEffectReleasedEventArgs args)
+        /*private void OnParticleReleased(Entity sender, ParticleReleasedEventArgs args)
         {
             try
             {
-                if (!args.ParticleEffect.IsValid)
+                if (!args.Particle.IsValid)
                 {
                     return;
                 }
 
-                if (!this.abilityData.Particles.TryGetValue(args.ParticleEffect.Name, out var data))
+                if (!this.abilityData.Particles.TryGetValue(args.Particle.Name, out var data))
                 {
                     return;
                 }
@@ -417,7 +422,7 @@
 
                 data.AddDrawableAbility(
                     this.drawableAbilities,
-                    args.ParticleEffect,
+                    args.Particle,
                     this.allyTeam,
                     this.notificationsEnabled ? this.notificator : null);
             }
@@ -425,13 +430,13 @@
             {
                 Logger.Error(e);
             }
-        }
+        }*/
 
-        private void OnRemoveEntity(EntityEventArgs args)
+        private void OnRemoveEntity(EntityRemovedEventArgs e)
         {
             try
             {
-                var entity = args.Entity;
+                var entity = e.Entity;
                 if (entity.Team == this.allyTeam)
                 {
                     return;
@@ -448,9 +453,9 @@
                     this.drawableAbilities.Remove(unit);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 

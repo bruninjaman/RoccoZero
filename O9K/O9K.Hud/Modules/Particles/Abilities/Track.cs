@@ -5,9 +5,8 @@
 
     using Core.Entities.Metadata;
     using Core.Logger;
-    using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Helpers.Notificator;
 
@@ -16,17 +15,17 @@
     [AbilityId(AbilityId.bounty_hunter_track)]
     internal class Track : AbilityModule
     {
-        private readonly Dictionary<uint, ParticleEffect> effects = new Dictionary<uint, ParticleEffect>();
+        private readonly Dictionary<uint, Particle> effects = new Dictionary<uint, Particle>();
 
-        public Track(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public Track(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
         }
 
         protected override void Disable()
         {
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Unit.OnModifierRemoved -= this.OnModifierRemoved;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
 
             foreach (var effect in this.effects.Values)
             {
@@ -38,47 +37,51 @@
 
         protected override void Enable()
         {
-            Unit.OnModifierAdded += this.OnModifierAdded;
-            Unit.OnModifierRemoved += this.OnModifierRemoved;
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
+            ModifierManager.ModifierRemoved += this.OnModifierRemoved;
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Team != this.OwnerTeam)
                 {
                     return;
                 }
 
-                if (args.Modifier.Name != "modifier_bounty_hunter_track")
+                if (modifier.Name != "modifier_bounty_hunter_track")
                 {
                     return;
                 }
 
-                var effect = new ParticleEffect(
+                var effect = ParticleManager.CreateParticle(
                     "particles/econ/items/bounty_hunter/bounty_hunter_hunters_hoard/bounty_hunter_hoard_shield.vpcf",
-                    sender,
-                    ParticleAttachment.OverheadFollow);
+                    ParticleAttachment.OverheadFollow,
+                    sender);
 
                 this.effects.Add(sender.Handle, effect);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierRemoved(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Team != this.OwnerTeam)
                 {
                     return;
                 }
 
-                if (args.Modifier.Name != "modifier_bounty_hunter_track")
+                if (modifier.Name != "modifier_bounty_hunter_track")
                 {
                     return;
                 }
@@ -91,9 +94,9 @@
                 effect.Dispose();
                 this.effects.Remove(sender.Handle);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
     }

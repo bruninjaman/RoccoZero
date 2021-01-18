@@ -3,7 +3,7 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using SharpDX;
 
@@ -20,7 +20,7 @@
             this.TimeToShow = 6;
         }
 
-        public override void Draw(IRenderer renderer, RectangleF position, IMinimap minimap)
+        public override void Draw(RectangleF position, IMinimap minimap)
         {
             var notificationSize = GetNotificationSize(position);
             var textureSize = GetTextureSize(notificationSize);
@@ -28,19 +28,19 @@
             var manaSize = GetManaSize(textureSize);
             var opacity = this.GetOpacity();
 
-            renderer.DrawTexture("o9k.notification_bg", notificationSize, 0, opacity);
-            renderer.DrawTexture(this.unit.Name, textureSize, 0, opacity);
+            RendererManager.DrawTexture("o9k.notification_bg", notificationSize, opacity);
+            RendererManager.DrawTexture(this.unit.Name, textureSize, opacity);
 
-            renderer.DrawTexture("o9k.health_enemy_bg", healthSize, 0, opacity);
-            renderer.DrawTexture("o9k.mana_bg", manaSize, 0, opacity);
+            RendererManager.DrawTexture("o9k.health_enemy_bg", healthSize, opacity);
+            RendererManager.DrawTexture("o9k.mana_bg", manaSize, opacity);
 
             if (!this.unit.IsAlive)
             {
                 return;
             }
 
-            renderer.DrawTexture("o9k.health_enemy", this.GetCurrentHealthSize(healthSize), 0, opacity);
-            renderer.DrawTexture("o9k.mana", this.GetCurrentManaSize(manaSize), 0, opacity);
+            RendererManager.DrawTexture("o9k.health_enemy", this.GetCurrentHealthSize(healthSize), opacity);
+            RendererManager.DrawTexture("o9k.mana", this.GetCurrentManaSize(manaSize), opacity);
         }
 
         public override bool OnClick()

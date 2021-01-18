@@ -1,13 +1,14 @@
 ﻿namespace O9K.Hud.Modules.Units.Abilities.HudEntities.Abilities
 {
     using System;
-    using System.Drawing;
 
     using Core.Entities.Abilities.Base;
     using Core.Logger;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage.SDK.Renderer;
+    using Divine;
+
+    using SharpDX;
 
     internal class HudAbility
     {
@@ -49,19 +50,19 @@
             this.abilityEnabled = enabled;
         }
 
-        public void Draw(IRenderer renderer, Rectangle9 position, float cooldownSize)
+        public void Draw(Rectangle9 position, float cooldownSize)
         {
             try
             {
-                renderer.DrawTexture(this.Ability.TextureName, position);
+                RendererManager.DrawTexture(this.Ability.TextureName, position, TextureType.Ability);
 
                 if (this.Ability.IsCasting || this.Ability.IsChanneling)
                 {
-                    renderer.DrawRectangle(position - 3f, Color.LightGreen, 3);
+                    RendererManager.DrawRectangle(position - 3f, Color.LightGreen, 3);
                 }
                 else
                 {
-                    renderer.DrawRectangle(position - 1, Color.Black);
+                    RendererManager.DrawRectangle(position - 1, Color.Black);
                 }
 
                 if (this.displayLevel)
@@ -69,26 +70,25 @@
                     var level = this.Ability.Level;
                     if (level == 0)
                     {
-                        renderer.DrawTexture("o9k.ability_0lvl_bg", position);
+                        RendererManager.DrawTexture("o9k.ability_0lvl_bg", position);
                         return;
                     }
 
                     var levelText = level.ToString("N0");
-                    var levelSize = renderer.MeasureText(levelText, position.Width * 0.45f);
+                    var levelSize = RendererManager.MeasureText(levelText, position.Width * 0.45f);
                     var levelPosition = position.SinkToBottomLeft(levelSize.X, levelSize.Y * 0.8f);
 
-                    renderer.DrawTexture("o9k.ability_lvl_bg", levelPosition);
-                    renderer.DrawText(levelPosition, levelText, Color.White, RendererFontFlags.VerticalCenter, position.Width * 0.45f);
+                    RendererManager.DrawTexture("o9k.ability_lvl_bg", levelPosition);
+                    RendererManager.DrawText(levelText, levelPosition, Color.White, FontFlags.VerticalCenter, position.Width * 0.45f);
                 }
 
                 if (this.Ability.IsDisplayingCharges)
                 {
                     var chargesText = this.Ability.Charges.ToString("N0");
                     var chargesPosition = position.SinkToBottomRight(position.Width * 0.5f, position.Height * 0.5f);
-
-                    renderer.DrawTexture("o9k.charge_bg", chargesPosition);
-                    renderer.DrawTexture("o9k.outline_green", chargesPosition * 1.07f);
-                    renderer.DrawText(chargesPosition, chargesText, Color.White, RendererFontFlags.Center, position.Width * 0.45f);
+                    RendererManager.DrawTexture("o9k.charge_bg", chargesPosition);
+                    RendererManager.DrawTexture("o9k.outline_green", chargesPosition * 1.07f);
+                    RendererManager.DrawText(chargesText, chargesPosition, Color.White, FontFlags.Center, position.Width * 0.45f);
                 }
 
                 if (this.Ability.IsChanneling)
@@ -99,28 +99,28 @@
                 var cooldown = this.Ability.RemainingCooldown;
                 if (cooldown > 0)
                 {
-                    renderer.DrawTexture("o9k.ability_cd_bg", position);
-                    renderer.DrawText(
-                        position,
+                    RendererManager.DrawTexture("o9k.ability_cd_bg", position);
+                    RendererManager.DrawText(
                         Math.Ceiling(cooldown).ToString("N0"),
+                        position,
                         Color.White,
-                        RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                        FontFlags.Center | FontFlags.VerticalCenter,
                         cooldownSize);
                 }
                 else if (this.Ability.ManaCost > this.Ability.Owner.Mana)
                 {
-                    renderer.DrawTexture("o9k.ability_mana_bg", position);
-                    renderer.DrawText(
-                        position,
+                    RendererManager.DrawTexture("o9k.ability_mana_bg", position);
+                    RendererManager.DrawText(
                         Math.Ceiling((this.Ability.ManaCost - this.Ability.Owner.Mana) / this.Ability.Owner.ManaRegeneration)
                             .ToString("N0"),
+                        position,
                         Color.White,
-                        RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                        FontFlags.Center | FontFlags.VerticalCenter,
                         cooldownSize);
                 }
                 else if (!this.Ability.IsUsable)
                 {
-                    renderer.DrawTexture("o9k.ability_0lvl_bg", position);
+                    RendererManager.DrawTexture("o9k.ability_0lvl_bg", position);
                 }
             }
             catch (Exception e)
@@ -129,39 +129,39 @@
             }
         }
 
-        public void DrawMinimalistic(IRenderer renderer, Rectangle9 position, float cooldownSize)
+        public void DrawMinimalistic(Rectangle9 position, float cooldownSize)
         {
             try
             {
-                renderer.DrawTexture("o9k.ability_minimal_bg", position);
+                RendererManager.DrawTexture("o9k.ability_minimal_bg", position);
                 var levelHeight = position.Height * 0.2f;
 
                 var cooldown = this.Ability.RemainingCooldown;
                 if (cooldown > 0)
                 {
                     position = position.MoveTopBorder(cooldownSize * 0.8f);
-                    renderer.DrawTexture("o9k.ability_minimal_cd_bg", position);
-                    renderer.DrawText(
-                        position.MoveTopBorder(cooldownSize * 0.2f),
+                    RendererManager.DrawTexture("o9k.ability_minimal_cd_bg", position);
+                    RendererManager.DrawText(
                         Math.Ceiling(cooldown).ToString("N0"),
+                        position.MoveTopBorder(cooldownSize * 0.2f),
                         Color.White,
-                        RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                        FontFlags.Center | FontFlags.VerticalCenter,
                         cooldownSize);
                 }
                 else if (this.Ability.ManaCost > this.Ability.Owner.Mana)
                 {
                     position = position.MoveTopBorder(cooldownSize * 0.8f);
-                    renderer.DrawTexture("o9k.ability_minimal_mana_bg", position);
-                    renderer.DrawText(
-                        position.MoveTopBorder(cooldownSize * 0.2f),
+                    RendererManager.DrawTexture("o9k.ability_minimal_mana_bg", position);
+                    RendererManager.DrawText(
                         Math.Ceiling((this.Ability.ManaCost - this.Ability.Owner.Mana) / this.Ability.Owner.ManaRegeneration)
                             .ToString("N0"),
+                        position.MoveTopBorder(cooldownSize * 0.2f),
                         Color.White,
-                        RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                        FontFlags.Center | FontFlags.VerticalCenter,
                         cooldownSize);
                 }
 
-                renderer.DrawRectangle(position - 1, this.Ability.IsCasting ? Color.LightGreen : Color.Black);
+                RendererManager.DrawRectangle(position - 1, this.Ability.IsCasting ? Color.LightGreen : Color.Black);
 
                 var rec = position - 5;
                 var levelWidth = rec.Width / this.maxLevel;
@@ -173,7 +173,7 @@
                 for (var i = 0; i < lvl; i++)
                 {
                     var lvlPos = new Rectangle9(rec.X + space, posY, levelDrawWidth, levelHeight);
-                    renderer.DrawTexture("o9k.ability_level_rec", lvlPos);
+                    RendererManager.DrawTexture("o9k.ability_level_rec", lvlPos);
                     rec = rec.MoveLeftBorder(levelWidth);
                 }
             }

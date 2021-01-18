@@ -1,7 +1,6 @@
 ﻿namespace O9K.Hud.Modules.Notifications
 {
     using System;
-    using System.ComponentModel.Composition;
 
     using Core.Entities.Units;
     using Core.Helpers;
@@ -11,7 +10,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;
@@ -32,7 +31,6 @@
 
         private Team ownerTeam;
 
-        [ImportingConstructor]
         public Health(IHudMenu hudMenu, INotificator notificator)
         {
             this.notificator = notificator;

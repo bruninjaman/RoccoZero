@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore.MoreInformation
     {
         public InvokerSunStrikeMenu(Menu.Items.Menu moreInformationMenu)
         {
-            var invokerSunStrikeMenu = moreInformationMenu.CreateMenu("Invoker Sun Strike").SetTexture(@"spells\invoker_sun_strike.png");
+            var invokerSunStrikeMenu = moreInformationMenu.CreateMenu("Invoker Sun Strike").SetAbilityTexture(AbilityId.invoker_sun_strike);
             EnableItem = invokerSunStrikeMenu.CreateSwitcher("Enable");
             RedItem = invokerSunStrikeMenu.CreateSlider("Red:", 255, 0, 255);
             GreenItem = invokerSunStrikeMenu.CreateSlider("Green:", 0, 0, 255);

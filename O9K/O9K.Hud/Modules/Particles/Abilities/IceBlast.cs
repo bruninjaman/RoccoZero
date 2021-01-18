@@ -10,8 +10,8 @@
     using Core.Managers.Context;
     using Core.Managers.Particle;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Helpers.Notificator;
 
@@ -30,12 +30,12 @@
 
         private readonly float speed;
 
-        private ParticleEffect effect;
+        private Particle effect;
 
         private float unitAddTime;
 
-        public IceBlast(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public IceBlast(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
             this.minRadius = new SpecialData(AbilityId.ancient_apparition_ice_blast, "radius_min").GetValue(1);
             this.maxRadius = new SpecialData(AbilityId.ancient_apparition_ice_blast, "radius_max").GetValue(1);
@@ -50,20 +50,20 @@
 
         protected override void Disable()
         {
-            ObjectManager.OnAddEntity -= this.OnAddEntity;
-            this.Context.ParticleManger.ParticleAdded -= this.OnParticleAdded;
+            EntityManager.EntityAdded -= this.OnAddEntity;
+            Context9.ParticleManger.ParticleAdded -= this.OnParticleAdded;
         }
 
         protected override void Enable()
         {
-            ObjectManager.OnAddEntity += this.OnAddEntity;
+            EntityManager.EntityAdded += this.OnAddEntity;
         }
 
-        private void OnAddEntity(EntityEventArgs args)
+        private void OnAddEntity(EntityAddedEventArgs e)
         {
             try
             {
-                var unit = args.Entity as Unit;
+                var unit = e.Entity as Unit;
                 if (unit == null || unit.Team == this.OwnerTeam || unit.UnitType != 0 || unit.NetworkName != "CDOTA_BaseNPC")
                 {
                     return;
@@ -74,8 +74,8 @@
                     return;
                 }
 
-                this.unitAddTime = Game.RawGameTime;
-                this.Context.ParticleManger.ParticleAdded += this.OnParticleAdded;
+                this.unitAddTime = GameManager.RawGameTime;
+                Context9.ParticleManger.ParticleAdded += this.OnParticleAdded;
 
                 //if (!this.notificationsEnabled)
                 //{
@@ -87,13 +87,13 @@
                 //        nameof(HeroId.npc_dota_hero_ancient_apparition),
                 //        nameof(AbilityId.ancient_apparition_ice_blast)));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnParticleAdded(Particle particle)
+        private void OnParticleAdded(Particle9 particle)
         {
             try
             {
@@ -109,13 +109,13 @@
                     {
                         var startPosition = particle.GetControlPoint(0);
                         var endPosition = particle.GetControlPoint(1);
-                        var time = Game.RawGameTime - (Game.Ping / 1000);
+                        var time = GameManager.RawGameTime - (GameManager.Ping / 1000);
                         var flyingTime = time - this.unitAddTime;
                         var direction = startPosition + endPosition;
                         var position = startPosition.Extend2D(direction, flyingTime * this.speed);
                         var radius = Math.Min(this.maxRadius, Math.Max((flyingTime * this.growRadius) + this.minRadius, this.minRadius));
 
-                        this.effect = new ParticleEffect(
+                        this.effect = ParticleManager.CreateParticle(
                             "particles/units/heroes/hero_ancient_apparition/ancient_apparition_ice_blast_marker.vpcf",
                             position.SetZ(384)); // todo correct z coord
                         this.effect.SetControlPoint(1, new Vector3(radius, 1, 1));
@@ -123,7 +123,7 @@
                     }
                     case "particles/econ/items/ancient_apparition/aa_blast_ti_5/ancient_apparition_ice_blast_explode_ti5.vpcf":
                     case "particles/units/heroes/hero_ancient_apparition/ancient_apparition_ice_blast_explode.vpcf":
-                        this.Context.ParticleManger.ParticleAdded -= this.OnParticleAdded;
+                        Context9.ParticleManger.ParticleAdded -= this.OnParticleAdded;
                         this.effect?.Dispose();
                         break;
                 }

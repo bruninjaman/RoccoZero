@@ -10,7 +10,7 @@
     using Core.Managers.Context;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using Helpers.Notificator;
 
@@ -21,12 +21,12 @@
     [AbilityId(AbilityId.treant_eyes_in_the_forest)]
     internal class EyesInTheForest : AbilityModule
     {
-        private readonly Dictionary<uint, ParticleEffect> effects = new Dictionary<uint, ParticleEffect>();
+        private readonly Dictionary<uint, Particle> effects = new Dictionary<uint, Particle>();
 
         private readonly Vector3 radius;
 
-        public EyesInTheForest(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public EyesInTheForest(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
             var radiusData = new SpecialData(AbilityId.treant_eyes_in_the_forest, "vision_aoe").GetValue(1);
             this.radius = new Vector3(radiusData, -radiusData, -radiusData);
@@ -55,7 +55,7 @@
                     return;
                 }
 
-                var effect = new ParticleEffect("particles/units/heroes/hero_treant/treant_eyesintheforest.vpcf", unit.Position);
+                var effect = ParticleManager.CreateParticle("particles/units/heroes/hero_treant/treant_eyesintheforest.vpcf", unit.Position);
                 effect.SetControlPoint(1, this.radius);
                 this.effects.Add(unit.Handle, effect);
             }

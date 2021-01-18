@@ -2,17 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Reflection;
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using Helpers.Notificator;
 
@@ -22,16 +20,12 @@
     {
         private readonly Dictionary<AbilityId, AbilityModule> abilities = new Dictionary<AbilityId, AbilityModule>();
 
-        private readonly IContext9 context;
-
         private readonly IHudMenu hudMenu;
 
         private readonly INotificator notificator;
 
-        [ImportingConstructor]
-        public ParticleAbilityManager(IContext9 context, INotificator notificator, IHudMenu hudMenu)
+        public ParticleAbilityManager(INotificator notificator, IHudMenu hudMenu)
         {
-            this.context = context;
             this.notificator = notificator;
             this.hudMenu = hudMenu;
         }
@@ -49,7 +43,7 @@
                 {
                     try
                     {
-                        var ability = (AbilityModule)Activator.CreateInstance(type, this.context, this.notificator, this.hudMenu);
+                        var ability = (AbilityModule)Activator.CreateInstance(type, this.notificator, this.hudMenu);
                         this.abilities.Add(attribute.AbilityId, ability);
                     }
                     catch (Exception e)

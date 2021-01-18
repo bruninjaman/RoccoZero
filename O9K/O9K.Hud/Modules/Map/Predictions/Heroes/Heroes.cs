@@ -2,19 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
 
@@ -22,8 +19,6 @@
 
     internal class Heroes : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher enabled;
 
         private readonly IMinimap minimap;
@@ -36,10 +31,8 @@
 
         private Team ownerTeam;
 
-        [ImportingConstructor]
-        public Heroes(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public Heroes(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var predictionsMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Predictions"));
@@ -77,7 +70,7 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
         }
@@ -88,17 +81,17 @@
             {
                 EntityManager9.UnitAdded += this.OnUnitAdded;
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -116,8 +109,8 @@
                         var size = 25 * Hud.Info.ScreenRatio;
                         var minimapPosition = this.minimap.WorldToMinimap(position, size);
 
-                        renderer.DrawTexture("o9k.outline_yellow", minimapPosition * 1.08f);
-                        renderer.DrawTexture(unit.Name + "_icon", minimapPosition);
+                        RendererManager.DrawTexture("o9k.outline_yellow", minimapPosition * 1.08f);
+                        RendererManager.DrawTexture(unit.Name, minimapPosition, UnitTextureType.MiniUnit);
                     }
 
                     if (this.showOnMap)
@@ -130,8 +123,8 @@
                             continue;
                         }
 
-                        renderer.DrawTexture("o9k.outline_yellow", mapPosition * 1.15f);
-                        renderer.DrawTexture(unit.Name + "_rounded", mapPosition);
+                        RendererManager.DrawTexture("o9k.outline_yellow", mapPosition * 1.15f);
+                        RendererManager.DrawTexture(unit.Name, mapPosition, UnitTextureType.RoundUnit);
                     }
                 }
             }

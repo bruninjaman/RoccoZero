@@ -2,7 +2,7 @@
 {
     using Core.Helpers;
 
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using SharpDX;
 
@@ -17,9 +17,9 @@
             this.TimeToShow = 5;
         }
 
-        public override void Draw(IRenderer renderer, RectangleF position, IMinimap minimap)
+        public override void Draw(RectangleF position, IMinimap minimap)
         {
-            renderer.DrawTexture("o9k.ping", minimap.WorldToMinimap(this.pingPosition, 25 * Hud.Info.ScreenRatio * this.GetPingSize()));
+            RendererManager.DrawTexture("o9k.ping", minimap.WorldToMinimap(this.pingPosition, 25 * Hud.Info.ScreenRatio * this.GetPingSize()));
         }
     }
 }

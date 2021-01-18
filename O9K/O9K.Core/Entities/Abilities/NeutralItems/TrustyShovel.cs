@@ -13,7 +13,7 @@
         public TrustyShovel(Ability baseAbility)
             : base(baseAbility)
         {
-            this.ChannelTime = baseAbility.GetChannelTime(0);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
         }
 
         public float ChannelTime { get; }

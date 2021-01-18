@@ -1,27 +1,21 @@
 ﻿namespace O9K.Hud.Modules.Screen.Timers
 {
     using System;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Windows.Input;
 
     using Core.Data;
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
-    using Core.Entities.Units.Unique;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
-    using Core.Managers.Input.EventArgs;
-    using Core.Managers.Input.Keys;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
 
@@ -37,8 +31,6 @@
         private readonly MenuHoldKey altKey;
 
         private readonly Sleeper clickSleeper = new Sleeper();
-
-        private readonly IContext9 context;
 
         private readonly MenuSwitcher enabled;
 
@@ -73,10 +65,8 @@
 
         private int roshansKilled;
 
-        [ImportingConstructor]
-        public RoshanTimer(IContext9 context, ITopPanel topPanel, IHudMenu hudMenu)
+        public RoshanTimer(ITopPanel topPanel, IHudMenu hudMenu)
         {
-            this.context = context;
             this.topPanel = topPanel;
 
             var timersMenu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Timers"));
@@ -146,14 +136,14 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
-            this.context.Renderer.Draw -= this.OnDraw;
-            this.context.Renderer.Draw -= this.OnDrawDrop;
+            RendererManager.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDrawDrop;
             this.showDrop.ValueChange -= this.ShowDropOnValueChange;
             this.printTime.ValueChange -= this.PrintTimeOnValueChange;
-            Game.OnFireEvent -= this.OnFireEvent;
+            GameManager.FireEvent -= this.OnFireEvent;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             EntityManager9.UnitAdded -= this.OnUnitAdded;
-            this.context.InputManager.MouseKeyUp -= this.InputManagerOnMouseKeyUp;
+            InputManager.MouseKeyUp -= this.InputManagerOnMouseKeyUp;
             this.textPosition.Dispose();
         }
 
@@ -161,26 +151,26 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
                 this.showDrop.ValueChange += this.ShowDropOnValueChange;
                 this.printTime.ValueChange += this.PrintTimeOnValueChange;
                 EntityManager9.UnitAdded += this.OnUnitAdded;
-                Game.OnFireEvent += this.OnFireEvent;
+                GameManager.FireEvent += this.OnFireEvent;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDraw;
-                this.context.Renderer.Draw -= this.OnDrawDrop;
+                RendererManager.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDrawDrop;
                 this.showDrop.ValueChange -= this.ShowDropOnValueChange;
-                this.context.InputManager.MouseKeyUp -= this.InputManagerOnMouseKeyUp;
+                InputManager.MouseKeyUp -= this.InputManagerOnMouseKeyUp;
                 this.printTime.ValueChange -= this.PrintTimeOnValueChange;
-                Game.OnFireEvent -= this.OnFireEvent;
+                GameManager.FireEvent -= this.OnFireEvent;
                 EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
             }
         }
 
-        private void InputManagerOnMouseKeyUp(object sender, MouseEventArgs e)
+        private void InputManagerOnMouseKeyUp(MouseEventArgs e)
         {
             try
             {
@@ -189,7 +179,7 @@
                     return;
                 }
 
-                var cd = Game.RawGameTime - this.roshanKillTime;
+                var cd = GameManager.RawGameTime - this.roshanKillTime;
                 if (cd > GameData.RoshanMaxRespawnTime)
                 {
                     return;
@@ -199,16 +189,16 @@
                     new Vector2(this.textPosition.Value.X - this.textSize.Value, this.textPosition.Value.Y),
                     new Vector2(this.textSize.Value * 2));
 
-                if (!position.Contains(e.ScreenPosition))
+                if (!position.Contains(e.Position))
                 {
                     return;
                 }
 
-                var time = (GameData.RoshanMaxRespawnTime - cd) + Game.GameTime;
+                var time = (GameData.RoshanMaxRespawnTime - cd) + GameManager.GameTime;
                 var start = TimeSpan.FromSeconds(time - (GameData.RoshanMaxRespawnTime - GameData.RoshanMinRespawnTime)).ToString("mss");
                 var end = TimeSpan.FromSeconds(time).ToString("mss");
 
-                Game.ExecuteCommand("say_team \"" + start + " " + end + " rosh\"");
+                GameManager.ExecuteCommand("say_team \"" + start + " " + end + " rosh\"");
                 this.clickSleeper.Sleep(30);
             }
             catch (Exception ex)
@@ -219,15 +209,13 @@
 
         private void LoadTextures()
         {
-            var tm = this.context.Renderer.TextureManager;
-
-            tm.LoadFromDota("o9k.roshan_icon", @"panorama\images\hud\icon_roshan_psd.vtex_c");
+            RendererManager.LoadTexture("o9k.roshan_icon", @"panorama\images\hud\icon_roshan_psd.vtex_c");
 
             foreach (var ids in this.roshanDrop)
             {
                 foreach (var id in ids)
                 {
-                    tm.LoadAbilityFromDota(id, true);
+                    RendererManager.LoadTexture(id, AbilityTextureType.Round);
                 }
             }
         }
@@ -243,11 +231,11 @@
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
-                var gameTime = Game.RawGameTime;
+                var gameTime = GameManager.RawGameTime;
                 var cd = gameTime - this.roshanKillTime;
                 var aegisCd = gameTime - this.aegisPickUpTime;
                 var showRemainingTime = this.showRemaining.IsEnabled;
@@ -273,7 +261,7 @@
                     var time = GameData.RoshanMaxRespawnTime - cd;
                     if (!showRemainingTime)
                     {
-                        time += Game.GameTime;
+                        time += GameManager.GameTime;
                     }
 
                     text = TimeSpan.FromSeconds(time).ToString(@"m\:ss") + "*";
@@ -283,7 +271,7 @@
                     var time = GameData.AegisExpirationTime - aegisCd;
                     if (!showRemainingTime)
                     {
-                        time += Game.GameTime;
+                        time += GameManager.GameTime;
                     }
 
                     text = TimeSpan.FromSeconds(time).ToString(@"m\:ss") + "!";
@@ -293,7 +281,7 @@
                     var time = GameData.RoshanMaxRespawnTime - cd;
                     if (!showRemainingTime)
                     {
-                        time += Game.GameTime;
+                        time += GameManager.GameTime;
                     }
 
                     text = TimeSpan.FromSeconds(time).ToString(@"m\:ss");
@@ -305,7 +293,7 @@
                     }
                 }
 
-                Drawer.DrawTextWithBackground(text, this.textSize, this.textPosition, renderer);
+                Drawer.DrawTextWithBackground(text, this.textSize, this.textPosition);
             }
             catch (Exception e)
             {
@@ -313,7 +301,7 @@
             }
         }
 
-        private void OnDrawDrop(IRenderer renderer)
+        private void OnDrawDrop()
         {
             try
             {
@@ -321,22 +309,22 @@
                 position.Y += 100 * Hud.Info.ScreenRatio;
                 position *= new Size2F(0.4f, 0.75f);
 
-                var gameTime = Game.RawGameTime;
+                var gameTime = GameManager.RawGameTime;
                 var cd = gameTime - this.roshanKillTime;
 
                 if (cd > GameData.RoshanMaxRespawnTime)
                 {
-                    renderer.DrawTexture("o9k.outline_green", position * 1.15f);
+                    RendererManager.DrawTexture("o9k.outline_green", position * 1.15f);
                 }
                 else
                 {
-                    renderer.DrawTexture(cd > GameData.RoshanMinRespawnTime ? "o9k.outline_green" : "o9k.outline_yellow", position * 1.15f);
+                    RendererManager.DrawTexture(cd > GameData.RoshanMinRespawnTime ? "o9k.outline_green" : "o9k.outline_yellow", position * 1.15f);
 
                     var pct = (int)((cd / GameData.RoshanMaxRespawnTime) * 100);
-                    renderer.DrawTexture("o9k.outline_black" + pct, position * 1.17f);
+                    RendererManager.DrawTexture("o9k.outline_black" + pct, position * 1.17f);
                 }
 
-                renderer.DrawTexture("o9k.roshan_icon", position);
+                RendererManager.DrawTexture("o9k.roshan_icon", position);
 
                 var center = position.Center + new Vector2(0, position.Height * 0.65f);
                 var items = this.roshan?.IsValid == true && this.roshan.BaseInventory != null
@@ -348,9 +336,10 @@
 
                 for (var i = 0; i < items.Length; i++)
                 {
-                    renderer.DrawTexture(
-                        items[i] + "_rounded",
-                        new Rectangle9(start + new Vector2((i * abilitiesSize) + (i * gap), 0), abilitiesSize, abilitiesSize));
+                    RendererManager.DrawTexture(
+                        items[i],
+                        new Rectangle9(start + new Vector2((i * abilitiesSize) + (i * gap), 0), abilitiesSize, abilitiesSize),
+                        AbilityTextureType.Round);
                 }
             }
             catch (Exception e)
@@ -359,13 +348,13 @@
             }
         }
 
-        private void OnFireEvent(FireEventEventArgs args)
+        private void OnFireEvent(FireEventEventArgs e)
         {
-            switch (args.GameEvent.Name)
+            switch (e.Name)
             {
                 case "dota_roshan_kill":
                 {
-                    this.roshanKillTime = Game.RawGameTime;
+                    this.roshanKillTime = GameManager.RawGameTime;
                     this.roshan = null;
 
                     if (this.roshansKilled < this.roshanDrop.Length - 1)
@@ -377,7 +366,7 @@
                 }
                 case "aegis_event":
                 {
-                    this.aegisPickUpTime = Game.RawGameTime;
+                    this.aegisPickUpTime = GameManager.RawGameTime;
                     EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
                     return;
                 }
@@ -388,7 +377,7 @@
         {
             try
             {
-                if (!(unit is Roshan))
+                if (!(unit is Core.Entities.Units.Unique.Roshan))
                 {
                     return;
                 }
@@ -406,11 +395,11 @@
         {
             if (e.NewValue)
             {
-                this.context.InputManager.MouseKeyUp += this.InputManagerOnMouseKeyUp;
+                InputManager.MouseKeyUp += this.InputManagerOnMouseKeyUp;
             }
             else
             {
-                this.context.InputManager.MouseKeyUp -= this.InputManagerOnMouseKeyUp;
+                InputManager.MouseKeyUp -= this.InputManagerOnMouseKeyUp;
             }
         }
 
@@ -418,11 +407,11 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDrawDrop;
+                RendererManager.Draw += this.OnDrawDrop;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDrawDrop;
+                RendererManager.Draw -= this.OnDrawDrop;
             }
         }
     }

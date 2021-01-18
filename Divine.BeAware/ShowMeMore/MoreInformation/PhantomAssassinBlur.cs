@@ -16,7 +16,7 @@ namespace Divine.BeAware.ShowMeMore.MoreInformation
         public PhantomAssassinBlur(Common common)
             : base(common)
         {
-            RendererManager.LoadTextureFromResource(@"mini_heroes\npc_dota_hero_phantom_assassin.png");
+            RendererManager.LoadTexture(HeroId.npc_dota_hero_phantom_assassin, UnitTextureType.MiniUnit);
 
             OnMinimap = new BoolEventArgs();
             OnMinimap.ValueChanged += OnMinimapChanged;

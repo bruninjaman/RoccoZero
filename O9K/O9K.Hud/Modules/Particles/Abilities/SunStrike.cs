@@ -4,9 +4,8 @@
 
     using Core.Entities.Metadata;
     using Core.Logger;
-    using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Helpers.Notificator;
 
@@ -15,43 +14,45 @@
     [AbilityId(AbilityId.invoker_sun_strike)]
     internal class SunStrike : AbilityModule
     {
-        public SunStrike(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public SunStrike(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
         }
 
         protected override void Disable()
         {
-            Unit.OnModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
         }
 
         protected override void Enable()
         {
-            Unit.OnModifierAdded += this.OnModifierAdded;
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Team == this.OwnerTeam)
                 {
                     return;
                 }
 
-                if (args.Modifier.Name != "modifier_invoker_sun_strike")
+                if (modifier.Name != "modifier_invoker_sun_strike")
                 {
                     return;
                 }
 
-                var effect = new ParticleEffect(
+                var effect = ParticleManager.CreateParticle(
                     "particles/econ/items/invoker/invoker_apex/invoker_sun_strike_team_immortal1.vpcf",
                     sender.Position);
                 effect.Release();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
     }

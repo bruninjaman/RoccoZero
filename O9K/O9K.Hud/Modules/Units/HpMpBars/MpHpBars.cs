@@ -2,27 +2,22 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Abilities.Base.Types;
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using MainMenu;
 
     internal class MpHpBars : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher enabledMp;
 
         private readonly MenuSlider hpPositionY;
@@ -49,11 +44,8 @@
 
         private Team ownerTeam;
 
-        [ImportingConstructor]
-        public MpHpBars(IContext9 context, IHudMenu hudMenu)
+        public MpHpBars(IHudMenu hudMenu)
         {
-            this.context = context;
-
             var menuMp = hudMenu.UnitsMenu.Add(new Menu("Mana bars"));
             menuMp.AddTranslation(Lang.Ru, "Мана");
             menuMp.AddTranslation(Lang.Cn, "魔法条");
@@ -123,7 +115,7 @@
             EntityManager9.UnitRemoved += this.OnUnitRemoved;
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
-            this.context.Renderer.Draw += this.OnDraw;
+            RendererManager.Draw += this.OnDraw;
         }
 
         public void Dispose()
@@ -132,7 +124,7 @@
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
         }
 
         private void OnAbilityAdded(Ability9 ability)
@@ -197,7 +189,7 @@
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -217,7 +209,6 @@
                     if (this.enabledMp)
                     {
                         unit.DrawManaBar(
-                            renderer,
                             hpBar,
                             this.mpPositionY,
                             this.mpSizeY,
@@ -227,7 +218,6 @@
                     }
 
                     unit.DrawHealthBar(
-                        renderer,
                         hpBar,
                         this.hpPositionY,
                         this.hpSizeY,

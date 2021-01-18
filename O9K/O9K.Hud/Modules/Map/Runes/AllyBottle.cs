@@ -1,23 +1,18 @@
 ﻿namespace O9K.Hud.Modules.Map.Runes
 {
     using System;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Windows.Input;
 
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
-    using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
-    using Ensage.SDK.Renderer.Texture;
+    using Divine;
+    using Divine.SDK.Extensions;
+    using Divine.SDK.Localization;
 
     using Helpers;
 
@@ -25,20 +20,14 @@
 
     using SharpDX;
 
-    using Color = System.Drawing.Color;
-
     internal class AllyBottle : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuHoldKey holdKey;
 
         private readonly IMinimap minimap;
 
-        [ImportingConstructor]
-        public AllyBottle(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public AllyBottle(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var runesMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Runes"));
@@ -64,26 +53,24 @@
         public void Dispose()
         {
             this.holdKey.ValueChange -= this.HoldKey_OnValueChange;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
         }
 
-        private void HoldKey_OnValueChange(object sender, KeyEventArgs e)
+        private void HoldKey_OnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
 
         private void LoadTextures()
         {
-            var tm = this.context.Renderer.TextureManager;
-
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.outline_hp",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
                 new TextureProperties
@@ -91,23 +78,23 @@
                     ColorRatio = new Vector4(0f, 1f, 0f, 1f)
                 });
 
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.outline_mp",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0.6f, 1f, 1f),
-                    Sliced = true
+                    IsSliced = true
                 });
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
-                var rune = ObjectManager.GetEntitiesFast<Rune>()
+                var rune = EntityManager.GetEntities<Rune>()
                     .Where(x => x.IsValid)
-                    .OrderBy(x => x.Position.DistanceSquared(Game.MousePosition))
+                    .OrderBy(x => x.Position.DistanceSquared(GameManager.MousePosition))
                     .FirstOrDefault();
 
                 if (rune == null || !Hud.IsPositionOnScreen(rune.Position))
@@ -130,23 +117,23 @@
 
                     position.Y += textureSize + margin;
 
-                    renderer.DrawTexture(hero.Name + "_rounded", position);
+                    RendererManager.DrawTexture(hero.Name + "_rounded", position);
 
                     var outlinePosition = position * 1.25f;
-                    renderer.DrawTexture("o9k.outline_hp", outlinePosition);
-                    renderer.DrawTexture("o9k.outline_black" + (int)(100 - (hero.HealthPercentage / 2f)), outlinePosition);
-                    renderer.DrawTexture("o9k.outline_mp" + (int)(hero.ManaPercentage / 2f), outlinePosition);
+                    RendererManager.DrawTexture("o9k.outline_hp", outlinePosition);
+                    RendererManager.DrawTexture("o9k.outline_black" + (int)(100 - (hero.HealthPercentage / 2f)), outlinePosition);
+                    RendererManager.DrawTexture("o9k.outline_mp" + (int)(hero.ManaPercentage / 2f), outlinePosition);
 
                     var chargesText = bottle.Charges.ToString("N0");
                     var chargesPosition = position.SinkToBottomRight(position.Width * 0.4f, position.Height * 0.4f);
 
-                    renderer.DrawTexture("o9k.charge_bg", chargesPosition);
-                    renderer.DrawTexture("o9k.outline_green", chargesPosition * 1.07f);
-                    renderer.DrawText(
-                        chargesPosition,
+                    RendererManager.DrawTexture("o9k.charge_bg", chargesPosition);
+                    RendererManager.DrawTexture("o9k.outline_green", chargesPosition * 1.07f);
+                    RendererManager.DrawText(
                         chargesText,
+                        chargesPosition,
                         Color.White,
-                        RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                        FontFlags.Center | FontFlags.VerticalCenter,
                         position.Width * 0.3f);
                 }
             }

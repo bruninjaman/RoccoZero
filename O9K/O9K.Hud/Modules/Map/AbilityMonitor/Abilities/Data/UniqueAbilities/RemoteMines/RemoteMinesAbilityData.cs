@@ -9,10 +9,9 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Extensions;
+    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
 
@@ -21,7 +20,7 @@
         public override void AddDrawableAbility(List<IDrawableAbility> drawableAbilities, Unit unit, INotificator notificator)
         {
             var mine = drawableAbilities.OfType<DrawableRemoteMinesAbility>()
-                .FirstOrDefault(x => x.Unit == null && x.Position.Distance2D(unit.Position) < 10);
+                .FirstOrDefault(x => x.Unit == null && x.Position.Distance(unit.Position) < 10);
 
             if (mine != null)
             {
@@ -34,18 +33,18 @@
 
             var drawableAbility = new DrawableUnitAbility
             {
-                AbilityTexture = this.AbilityId + "_rounded",
+                AbilityTexture = this.AbilityId.ToString(),
                 AbilityId = this.AbilityId,
-                HeroTexture = ownerName + "_rounded",
-                MinimapHeroTexture = ownerName + "_icon",
+                HeroTexture = ownerName,
+                MinimapHeroTexture = ownerName,
                 Position = unit.Position,
                 Unit = unit,
                 IsShowingRange = this.ShowRange,
                 Range = this.Range,
                 RangeColor = this.RangeColor,
                 Duration = this.Duration,
-                ShowUntil = Game.RawGameTime + this.Duration,
-                ShowHeroUntil = Game.RawGameTime + this.TimeToShow,
+                ShowUntil = GameManager.RawGameTime + this.Duration,
+                ShowHeroUntil = GameManager.RawGameTime + this.TimeToShow,
                 Owner = owner
             };
 
@@ -55,7 +54,7 @@
 
         public override void AddDrawableAbility(
             List<IDrawableAbility> drawableAbilities,
-            ParticleEffect particle,
+            Particle particle,
             Team allyTeam,
             INotificator notificator)
         {
@@ -63,7 +62,7 @@
 
             if (particle.Name.Contains("detonate"))
             {
-                var mine = drawableAbilities.OfType<DrawableRemoteMinesAbility>().FirstOrDefault(x => x.Position.Distance2D(position) < 10);
+                var mine = drawableAbilities.OfType<DrawableRemoteMinesAbility>().FirstOrDefault(x => x.Position.Distance(position) < 10);
                 if (mine != null)
                 {
                     if (mine.IsShowingRange)
@@ -76,7 +75,7 @@
             }
             else
             {
-                var mine = ObjectManager.GetEntitiesFast<Unit>()
+                var mine = EntityManager.GetEntities<Unit>()
                     .FirstOrDefault(x => x.Name == "npc_dota_techies_remote_mine" && x.Distance2D(position) < 10);
 
                 if (mine != null)
@@ -90,7 +89,7 @@
                     return;
                 }
 
-                UpdateManager.BeginInvoke(
+                UpdateManager.BeginInvoke(1000,
                     () =>
                         {
                             try
@@ -102,17 +101,17 @@
 
                                 var drawableAbility = new DrawableRemoteMinesAbility
                                 {
-                                    AbilityTexture = this.AbilityId + "_rounded",
+                                    AbilityTexture = this.AbilityId.ToString(),
                                     AbilityId = this.AbilityId,
-                                    HeroTexture = owner.Name + "_rounded",
-                                    MinimapHeroTexture = owner.Name + "_icon",
+                                    HeroTexture = owner.Name,
+                                    MinimapHeroTexture = owner.Name,
                                     Position = position.SetZ(350),
                                     Duration = this.Duration,
                                     IsShowingRange = this.ShowRange,
                                     Range = this.Range,
                                     RangeColor = this.RangeColor,
-                                    ShowUntil = Game.RawGameTime + this.Duration,
-                                    ShowHeroUntil = Game.RawGameTime + this.TimeToShow,
+                                    ShowUntil = GameManager.RawGameTime + this.Duration,
+                                    ShowHeroUntil = GameManager.RawGameTime + this.TimeToShow,
                                     BaseEntity = owner.BaseEntity
                                 };
 
@@ -125,8 +124,7 @@
                             {
                                 Logger.Error(e);
                             }
-                        },
-                    1000);
+                        });
             }
         }
     }

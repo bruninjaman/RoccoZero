@@ -16,13 +16,13 @@
 
     public class MenuAbilityToggler : MenuItem
     {
-        private readonly Dictionary<string, bool> abilities = new Dictionary<string, bool>();
+        private readonly Dictionary<string, (TextureType, bool)> abilities = new Dictionary<string, (TextureType, bool)>();
 
         private readonly bool defaultValue;
 
         private readonly List<AbilityId> loadTextures = new List<AbilityId>();
 
-        private readonly List<string> loadTextures2 = new List<string>();
+        private readonly List<(string, TextureType)> loadTextures2 = new List<(string, TextureType)>();
 
         private readonly Dictionary<string, bool> savedAbilities = new Dictionary<string, bool>();
 
@@ -56,7 +56,7 @@
 
             foreach (var ability in abilities)
             {
-                this.abilities[ability.Key.ToString()] = ability.Value;
+                this.abilities[ability.Key.ToString()] = (TextureType.Ability, ability.Value);
                 this.loadTextures.Add(ability.Key);
             }
         }
@@ -85,7 +85,7 @@
         {
             get
             {
-                return this.abilities.Where(x => x.Value).Select(x => x.Key);
+                return this.abilities.Where(x => x.Value.Item2).Select(x => x.Key);
             }
         }
 
@@ -93,20 +93,20 @@
         {
             get
             {
-                return this.abilities;
+                return this.abilities.ToDictionary(x => x.Key, x => x.Value.Item2);
             }
         }
 
         public void AddAbility(AbilityId id, bool? value = null)
         {
-            /*if (this.Renderer == null)
+            if (this.Renderer == null)
             {
                 this.loadTextures.Add(id);
             }
             else
             {
-                this.Renderer.TextureManager.LoadAbilityFromDota(id);
-            }*/
+                RendererManager.LoadTexture(id);
+            }
 
             this.AddAbility(id.ToString(), value);
         }
@@ -118,25 +118,36 @@
                 return;
             }
 
-            /*if (this.Renderer == null)
+            var textureType = TextureType.Default;
+
+            if (name.Contains("npc_dota"))
             {
-                this.loadTextures2.Add(name);
+                textureType = TextureType.Unit;
+            }
+            else if (Enum.IsDefined(typeof(AbilityId), name))
+            {
+                textureType = TextureType.Ability;
+            }
+
+            if (this.Renderer == null)
+            {
+                this.loadTextures2.Add((name, textureType));
             }
             else
             {
-                this.Renderer.TextureManager.LoadAbilityFromDota(name);
-            }*/
+                RendererManager.LoadTexture(name, textureType);
+            }
 
             if (this.savedAbilities.TryGetValue(name, out var savedValue))
             {
-                this.abilities[name] = savedValue;
+                this.abilities[name] = (textureType, savedValue);
             }
             else
             {
-                this.abilities[name] = value ?? this.defaultValue;
+                this.abilities[name] = (textureType, value ?? this.defaultValue);
             }
 
-            if (this.abilities[name])
+            if (this.abilities[name].Item2)
             {
                 this.valueChange?.Invoke(this, new AbilityEventArgs(name, true, true));
             }
@@ -150,7 +161,7 @@
         public bool IsEnabled(string name)
         {
             this.abilities.TryGetValue(name, out var value);
-            return value;
+            return value.Item2;
         }
 
         public MenuAbilityToggler SetTooltip(string tooltip)
@@ -174,7 +185,7 @@
         {
             foreach (var ability in this.abilities)
             {
-                this.savedAbilities[ability.Key] = ability.Value;
+                this.savedAbilities[ability.Key] = ability.Value.Item2;
             }
 
             return this.savedAbilities;
@@ -197,9 +208,9 @@
 
                     this.savedAbilities[key] = value;
 
-                    if (this.abilities.ContainsKey(key))
+                    if (this.abilities.TryGetValue(key, out var v))
                     {
-                        this.abilities[key] = value;
+                        this.abilities[key] = (v.Item1, value);
                     }
                 }
 
@@ -238,8 +249,9 @@
                 if (abilityPosition.Contains(position))
                 {
                     var value = this.abilities[ability.Key];
-                    this.abilities[ability.Key] = !value;
-                    this.valueChange?.Invoke(this, new AbilityEventArgs(ability.Key, !value, value));
+                    var v = this.abilities[ability.Key];
+                    this.abilities[ability.Key] = (v.Item1, !value.Item2);
+                    this.valueChange?.Invoke(this, new AbilityEventArgs(ability.Key, !value.Item2, value.Item2));
                     return true;
                 }
 
@@ -253,15 +265,15 @@
         {
             base.SetRenderer();
 
-            /*foreach (var texture in this.loadTextures)
+            foreach (var texture in this.loadTextures)
             {
-                this.Renderer.TextureManager.LoadAbilityFromDota(texture);
+                RendererManager.LoadTexture(texture);
             }
 
             foreach (var texture in this.loadTextures2)
             {
-                this.Renderer.TextureManager.LoadAbilityFromDota(texture);
-            }*/
+                RendererManager.LoadTexture(texture.Item1, texture.Item2);
+            }
         }
 
         protected override void Draw()
@@ -281,11 +293,12 @@
                         startPosition.Y - 1.5f,
                         this.MenuStyle.TextureAbilitySize + 3,
                         this.MenuStyle.TextureAbilitySize + 3),
-                    ability.Value ? Color.LightGreen : Color.Red,
+                    ability.Value.Item2 ? Color.LightGreen : Color.Red,
                     1.5f);
                 RendererManager.DrawTexture(
                     ability.Key,
-                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureAbilitySize, this.MenuStyle.TextureAbilitySize));
+                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureAbilitySize, this.MenuStyle.TextureAbilitySize),
+                    ability.Value.Item1);
 
                 startPosition -= new Vector2(this.MenuStyle.TextureAbilitySize + 4, 0);
             }

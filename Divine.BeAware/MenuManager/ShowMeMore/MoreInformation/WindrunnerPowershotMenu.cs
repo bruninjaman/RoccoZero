@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore.MoreInformation
     {
         public WindrunnerPowershotMenu(Menu.Items.Menu moreInformationMenu)
         {
-            var windrunnerPowershotMenu = moreInformationMenu.CreateMenu("Windrunner Powershot").SetTexture(@"spells\windrunner_powershot.png");
+            var windrunnerPowershotMenu = moreInformationMenu.CreateMenu("Windrunner Powershot").SetAbilityTexture(AbilityId.windrunner_powershot);
             EnableItem = windrunnerPowershotMenu.CreateSwitcher("Enable");
             RedItem = windrunnerPowershotMenu.CreateSlider("Red:", 255, 0, 255);
             GreenItem = windrunnerPowershotMenu.CreateSlider("Green:", 0, 0, 255);

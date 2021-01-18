@@ -2,24 +2,20 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Renderer;
-    using Ensage.SDK.Renderer.Texture;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Helpers;
 
@@ -43,8 +39,6 @@
 
         private readonly MenuSlider abilitiesTextSize;
 
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher itemsEnabled;
 
         private readonly MenuVectorSlider itemsPosition;
@@ -59,11 +53,8 @@
 
         private readonly List<HudUnit> units = new List<HudUnit>();
 
-        [ImportingConstructor]
-        public Abilities(IContext9 context, IHudMenu hudMenu)
+        public Abilities(IHudMenu hudMenu)
         {
-            this.context = context;
-
             var abilitiesMenu = hudMenu.UnitsMenu.Add(new Menu("Abilities"));
             abilitiesMenu.AddTranslation(Lang.Ru, "Способности");
             abilitiesMenu.AddTranslation(Lang.Cn, "播放声音");
@@ -134,7 +125,7 @@
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
             EntityManager9.UnitRemoved += this.OnUnitRemoved;
-            this.context.Renderer.Draw += this.OnDraw;
+            RendererManager.Draw += this.OnDraw;
             this.itemsToggler.ValueChange += this.ItemsTogglerOnValueChange;
 
             //todo delete
@@ -149,7 +140,7 @@
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             this.itemsToggler.ValueChange -= this.ItemsTogglerOnValueChange;
             this.abilitiesPosition.Dispose();
             this.itemsPosition.Dispose();
@@ -185,65 +176,63 @@
 
         private void LoadTextures()
         {
-            var tm = this.context.Renderer.TextureManager;
-
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.ability_level_rec",
                 @"panorama\images\hud\reborn\levelup_button_3_psd.vtex_c",
                 new TextureProperties
                 {
                     Brightness = 35
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.ability_cd_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0f, 0f, 0.6f)
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.ability_0lvl_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0.3f, 0.3f, 0.3f, 0.4f)
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.ability_lvl_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0f, 0f, 0.9f)
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.ability_minimal_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0f, 0f, 0.7f)
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.ability_minimal_cd_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0f, 0f, 1f)
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.ability_minimal_mana_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0f, 0.9f, 1f)
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.ability_mana_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0f, 0.9f, 0.8f)
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.charge_bg",
                 @"panorama\images\masks\softedge_circle_sharper_png.vtex_c",
                 new TextureProperties
@@ -311,7 +300,7 @@
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -344,7 +333,6 @@
                             {
                                 abilities[i]
                                     .DrawMinimalistic(
-                                        renderer,
                                         new Rectangle9(
                                             start + new Vector2(i * this.abilitiesSize, 0),
                                             this.abilitiesSize,
@@ -362,12 +350,12 @@
                             {
                                 abilities[i]
                                     .Draw(
-                                        renderer,
                                         new Rectangle9(start + new Vector2(i * textureSize, 0), textureSize, textureSize),
                                         this.abilitiesTextSize * scale);
                             }
                         }
                     }
+
 
                     if (this.itemsEnabled && (!unit.IsAlly || this.itemsShowAlly))
                     {
@@ -380,16 +368,11 @@
                         {
                             items[i]
                                 .Draw(
-                                    renderer,
                                     new Rectangle9(start + new Vector2(i * textureSize, 0), textureSize, textureSize),
                                     this.itemsTextSize * scale);
                         }
                     }
                 }
-            }
-            catch (InvalidOperationException)
-            {
-                // ignore
             }
             catch (Exception e)
             {

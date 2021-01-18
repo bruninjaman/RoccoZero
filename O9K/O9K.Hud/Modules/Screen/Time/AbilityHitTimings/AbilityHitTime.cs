@@ -2,23 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Windows.Input;
 
     using Core.Entities.Abilities.Base;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -30,8 +26,6 @@
 
     internal class AbilityHitTime : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher enabled;
 
         private readonly MenuHoldKey holdKey;
@@ -46,13 +40,10 @@
 
         private readonly MenuAbilityToggler toggler;
 
-        private IUpdateHandler updateHandler;
+        private UpdateHandler updateHandler;
 
-        [ImportingConstructor]
-        public AbilityHitTime(IContext9 context, IHudMenu hudMenu)
+        public AbilityHitTime(IHudMenu hudMenu)
         {
-            this.context = context;
-
             var timeMenu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Time"));
             timeMenu.AddTranslation(Lang.Ru, "Время");
             timeMenu.AddTranslation(Lang.Cn, "时间");
@@ -107,7 +98,7 @@
 
         public void Activate()
         {
-            this.updateHandler = UpdateManager.Subscribe(this.OnUpdate, 0, false);
+            this.updateHandler = UpdateManager.Subscribe(0, false, this.OnUpdate);
             this.enabled.ValueChange += this.EnabledOnValueChange;
         }
 
@@ -115,7 +106,7 @@
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
             this.updateHandler.IsEnabled = false;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             this.toggleKey.ValueChange -= this.KeyOnValueChange;
             this.holdKey.ValueChange -= this.HoldKeyOnValueChange;
             this.toggler.ValueChange -= this.TogglerOnValueChange;
@@ -143,27 +134,27 @@
                 this.toggler.ValueChange -= this.TogglerOnValueChange;
                 this.holdKey.ValueChange -= this.HoldKeyOnValueChange;
                 this.updateHandler.IsEnabled = false;
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
                 this.timings.Clear();
             }
         }
 
-        private void HoldKeyOnValueChange(object sender, KeyEventArgs e)
+        private void HoldKeyOnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             this.toggleKey.IsActive = e.NewValue;
         }
 
-        private void KeyOnValueChange(object sender, KeyEventArgs e)
+        private void KeyOnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             if (e.NewValue)
             {
                 this.updateHandler.IsEnabled = true;
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
                 this.updateHandler.IsEnabled = false;
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
 
@@ -206,11 +197,11 @@
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
-                var startPosition = Game.MouseScreenPosition + this.textPosition;
+                var startPosition = GameManager.MouseScreenPosition + this.textPosition;
 
                 foreach (var ability in this.timings.Where(x => x.Display))
                 {
@@ -220,12 +211,12 @@
                                               (outlineSize.X - textureSize.X) / 2f,
                                               (outlineSize.Y - textureSize.Y) / 2f);
 
-                    renderer.DrawTexture("o9k.outline", outlinePosition, outlineSize);
-                    renderer.DrawTexture(ability.Name + "_rounded", startPosition, textureSize);
+                    RendererManager.DrawTexture("o9k.outline", new RectangleF(outlinePosition.X, outlinePosition.Y, outlineSize.X, outlineSize.Y));
+                    RendererManager.DrawTexture(ability.Name, new RectangleF(startPosition.X, startPosition.Y, textureSize.X, textureSize.Y), TextureType.RoundAbility);
 
-                    renderer.DrawText(
-                        startPosition + new Vector2(textureSize.X * 1.2f, 0),
+                    RendererManager.DrawText(
                         ability.Time,
+                        startPosition + new Vector2(textureSize.X * 1.2f, 0),
                         ability.Color,
                         this.textSize * Hud.Info.ScreenRatio);
 
@@ -246,7 +237,7 @@
         {
             try
             {
-                var position = Game.MousePosition;
+                var position = GameManager.MousePosition;
 
                 foreach (var ability in this.timings)
                 {

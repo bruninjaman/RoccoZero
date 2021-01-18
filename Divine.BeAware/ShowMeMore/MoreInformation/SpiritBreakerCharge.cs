@@ -28,7 +28,7 @@ namespace Divine.BeAware.ShowMeMore.MoreInformation
         {
             SpiritBreakerChargeMenu = MoreInformationMenu.SpiritBreakerChargeMenu;
 
-            RendererManager.LoadTextureFromResource(@"mini_heroes\npc_dota_hero_spirit_breaker.png");
+            RendererManager.LoadTexture(HeroId.npc_dota_hero_spirit_breaker, UnitTextureType.MiniUnit);
 
             RendererManager.Draw += RendererManagerOnDraw;
         }

@@ -88,9 +88,9 @@ namespace Divine.BeAware.Helpers
             RendererManager.Draw += OnDraw;
         }
 
-        public void AddElement(Vector2 position, Vector2 size, string textureKey)
+        public void AddElement(Vector2 position, Vector2 size, string textureKey, TextureType textureType = TextureType.Default)
         {
-            var element = new MessageComponent(position, size, textureKey)
+            var element = new MessageComponent(position, size, textureKey, textureType)
             {
                 Parent = this,
                 ComponentType = "TextureKey"
@@ -198,11 +198,12 @@ namespace Divine.BeAware.Helpers
                 this.IsOutline = outline;
             }
 
-            public MessageComponent(Vector2 position, Vector2 size, string textureKey)
+            public MessageComponent(Vector2 position, Vector2 size, string textureKey, TextureType textureType)
             {
                 this.Position = position;
                 this.Size = size;
                 this.TextureKey = textureKey;
+                this.TextureType = textureType;
             }
 
             public MessageComponent(string text, Vector2 position, Color color, FontFlags fontFlags)
@@ -264,11 +265,13 @@ namespace Divine.BeAware.Helpers
             private string Text { get; set; }
 
             private string TextureKey { get; set; }
+            
+            private TextureType TextureType { get; set; }
 
             public void Draw()
             {
                 var position = Parent.MessagePosition + this.Position;
-                RendererManager.DrawTexture(TextureKey, new RectangleF(position.X, position.Y, Size.X, Size.Y));
+                RendererManager.DrawTexture(TextureKey, new RectangleF(position.X, position.Y, Size.X, Size.Y), TextureType);
             }
         }
     }

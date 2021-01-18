@@ -2,34 +2,29 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Abilities;
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
     internal class Ranges : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly Menu menu;
 
         private readonly List<RangeUnit> rangeUnits = new List<RangeUnit>();
 
-        [ImportingConstructor]
-        public Ranges(IContext9 context, IHudMenu hudMenu)
+        public Ranges(IHudMenu hudMenu)
         {
-            this.context = context;
             this.menu = hudMenu.UnitsMenu.Add(new Menu("Ranges"));
             this.menu.AddTranslation(Lang.Ru, "Радиус способностей");
             this.menu.AddTranslation(Lang.Cn, "范围");
@@ -37,14 +32,14 @@
 
         public void Activate()
         {
-            this.context.Renderer.TextureManager.LoadFromDota("o9k.attack", @"panorama\images\hud\reborn\ping_icon_attack_psd.vtex_c");
-            this.context.Renderer.TextureManager.LoadFromDota("o9k.exp_plus", @"panorama\images\hud\reborn\levelup_plus_fill_psd.vtex_c");
+            RendererManager.LoadTexture("o9k.attack", @"panorama\images\hud\reborn\ping_icon_attack_psd.vtex_c");
+            RendererManager.LoadTexture("o9k.exp_plus", @"panorama\images\hud\reborn\levelup_plus_fill_psd.vtex_c");
 
             EntityManager9.UnitAdded += this.OnUnitAdded;
             EntityManager9.UnitRemoved += this.OnUnitRemoved;
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
-            UpdateManager.Subscribe(this.OnUpdate, 3000);
+            UpdateManager.Subscribe(3000, this.OnUpdate);
         }
 
         public void Dispose()

@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Divine;
+    using Divine.SDK.Localization;
 
     using Logger;
 
@@ -24,7 +25,7 @@
                 this.EnemyTeam = this.Team == Team.Radiant ? Team.Dire : Team.Radiant;
                 this.HeroId = this.Player.SelectedHeroId;
                 this.HeroName = this.HeroId.ToString();
-                this.HeroDisplayName = this.HeroName;//LocalizationHelper.LocalizeName(this.HeroName);
+                this.HeroDisplayName = LocalizationHelper.LocalizeName(this.HeroName);
             }
             catch (Exception e)
             {

@@ -4,9 +4,8 @@
 
     using Core.Entities.Metadata;
     using Core.Logger;
-    using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Helpers.Notificator;
 
@@ -15,43 +14,45 @@
     [AbilityId(AbilityId.kunkka_torrent)]
     internal class Torrent : AbilityModule
     {
-        public Torrent(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public Torrent(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
         }
 
         protected override void Disable()
         {
-            Unit.OnModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
         }
 
         protected override void Enable()
         {
-            Unit.OnModifierAdded += this.OnModifierAdded;
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
             try
             {
+                var modifier = e.Modifier;
+                var sender = modifier.Owner;
                 if (sender.Team == this.OwnerTeam)
                 {
                     return;
                 }
 
-                if (args.Modifier.Name != "modifier_kunkka_torrent_thinker")
+                if (modifier.Name != "modifier_kunkka_torrent_thinker")
                 {
                     return;
                 }
 
-                var effect = new ParticleEffect(
+                var effect = ParticleManager.CreateParticle(
                     "particles/econ/items/kunkka/divine_anchor/hero_kunkka_dafx_skills/kunkka_spell_torrent_bubbles_fxset.vpcf",
                     sender.Position);
                 effect.Release();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
     }

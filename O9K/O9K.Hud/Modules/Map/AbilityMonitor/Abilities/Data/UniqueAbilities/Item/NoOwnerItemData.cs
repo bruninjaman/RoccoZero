@@ -8,8 +8,8 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;
@@ -20,7 +20,7 @@
 
         public override void AddDrawableAbility(
             List<IDrawableAbility> drawableAbilities,
-            ParticleEffect particle,
+            Particle particle,
             Team allyTeam,
             INotificator notificator)
         {
@@ -54,7 +54,7 @@
                 AbilityTexture = this.AbilityId + "_rounded",
                 HeroTexture = ownerName + "_rounded",
                 MinimapHeroTexture = ownerName + "_icon",
-                ShowUntil = Game.RawGameTime + this.TimeToShow,
+                ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                 Position = position.SetZ(350)
             };
 

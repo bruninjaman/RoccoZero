@@ -1,6 +1,6 @@
 ﻿namespace O9K.Hud.Modules.Map.Runes
 {
-    using Ensage;
+    using Divine;
 
     using SharpDX;
 

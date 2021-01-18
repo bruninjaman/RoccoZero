@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing;
 
     using Core.Entities.Abilities.Base.Types;
     using Core.Entities.Abilities.Items;
@@ -11,8 +10,9 @@
     using Core.Logger;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
+
+    using SharpDX;
 
     using RectangleF = SharpDX.RectangleF;
 
@@ -26,13 +26,13 @@
 
         private readonly List<IHealthRestore> healthRestore = new List<IHealthRestore>();
 
-        private readonly Color healthRestoreColor = Color.FromArgb(89, 0, 0);
+        private readonly Color healthRestoreColor = new Color(89, 0, 0);
 
-        private readonly Color manaColor = Color.FromArgb(25, 54, 255);
+        private readonly Color manaColor = new Color(25, 54, 255);
 
         private readonly List<IManaRestore> manaRestore = new List<IManaRestore>();
 
-        private readonly Color manaRestoreColor = Color.FromArgb(5, 22, 140);
+        private readonly Color manaRestoreColor = new Color(5, 22, 140);
 
         public HpMpUnit(Unit9 unit)
         {
@@ -79,7 +79,6 @@
         }
 
         public void DrawHealthBar(
-            IRenderer renderer,
             Rectangle9 hpBar,
             int hpPositionY,
             int hpSizeY,
@@ -137,17 +136,17 @@
                         //    restoreBar.Height + this.borderSize * 2);
 
                         //renderer.DrawFilledRectangle(borderBar, this.borderColor);
-                        renderer.DrawFilledRectangle(restoreBar, this.healthRestoreColor);
+                        RendererManager.DrawFilledRectangle(restoreBar, this.healthRestoreColor);
                     }
                 }
 
                 if (showHpAmount)
                 {
-                    renderer.DrawText(
-                        hpBar,
+                    RendererManager.DrawText(
                         hp.ToString("N0"),
+                        hpBar,
                         Color.White,
-                        RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                        FontFlags.Center | FontFlags.VerticalCenter,
                         hpTextSize);
                 }
             }
@@ -162,7 +161,6 @@
         }
 
         public void DrawManaBar(
-            IRenderer renderer,
             Rectangle9 hpBar,
             int mpPositionY,
             int mpSizeY,
@@ -187,8 +185,8 @@
                     hpBar.Width + (this.borderSize * 2),
                     mpBar.Height + (this.borderSize * 2));
 
-                renderer.DrawFilledRectangle(borderBar, this.borderColor);
-                renderer.DrawFilledRectangle(mpBar, this.manaColor);
+                RendererManager.DrawFilledRectangle(borderBar, this.borderColor);
+                RendererManager.DrawFilledRectangle(mpBar, this.manaColor);
 
                 if (showMpRestore)
                 {
@@ -220,17 +218,17 @@
                             mpBar.TopRight.Y,
                             hpBar.Width * (restore / maxMana),
                             mpBar.Height);
-                        renderer.DrawFilledRectangle(restoreBar, this.manaRestoreColor);
+                        RendererManager.DrawFilledRectangle(restoreBar, this.manaRestoreColor);
                     }
                 }
 
                 if (showMpAmount)
                 {
-                    renderer.DrawText(
-                        borderBar,
+                    RendererManager.DrawText(
                         mana.ToString("N0"),
+                        borderBar,
                         Color.White,
-                        RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                        FontFlags.Center | FontFlags.VerticalCenter,
                         manaTextSize);
                 }
             }

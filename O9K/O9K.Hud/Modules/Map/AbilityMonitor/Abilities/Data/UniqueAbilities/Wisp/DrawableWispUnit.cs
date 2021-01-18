@@ -5,8 +5,7 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
 
@@ -16,11 +15,11 @@
     {
         private readonly string minimapHeroTexture;
 
-        private readonly ParticleEffect particle;
+        private readonly Particle particle;
 
         private readonly Unit9 unit;
 
-        public DrawableWispUnit(Unit9 unit, ParticleEffect particle)
+        public DrawableWispUnit(Unit9 unit, Particle particle)
         {
             this.unit = unit;
             this.particle = particle;
@@ -54,7 +53,7 @@
 
         public Vector3 Position { get; set; }
 
-        public void DrawOnMap(IRenderer renderer, IMinimap minimap)
+        public void DrawOnMap(IMinimap minimap)
         {
             var particlePosition = this.particle.Position;
             if (particlePosition.IsZero)
@@ -68,11 +67,11 @@
                 return;
             }
 
-            renderer.DrawTexture("o9k.outline_red", position * 1.12f);
-            renderer.DrawTexture(this.HeroTexture, position);
+            RendererManager.DrawTexture("o9k.outline_red", position * 1.12f);
+            RendererManager.DrawTexture(this.HeroTexture, position);
         }
 
-        public void DrawOnMinimap(IRenderer renderer, IMinimap minimap)
+        public void DrawOnMinimap(IMinimap minimap)
         {
             var particlePosition = this.particle.Position;
             if (particlePosition.IsZero)
@@ -86,8 +85,8 @@
                 return;
             }
 
-            renderer.DrawTexture("o9k.outline_red", position * 1.08f);
-            renderer.DrawTexture(this.minimapHeroTexture, position);
+            RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
+            RendererManager.DrawTexture(this.minimapHeroTexture, position);
         }
 
         public void RemoveRange()

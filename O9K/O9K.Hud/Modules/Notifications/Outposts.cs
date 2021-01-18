@@ -1,6 +1,5 @@
 ﻿namespace O9K.Hud.Modules.Notifications
 {
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Data;
@@ -9,8 +8,8 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;
@@ -31,7 +30,6 @@
 
         private Vector3[] positions;
 
-        [ImportingConstructor]
         public Outposts(INotificator notificator, IHudMenu hudMenu)
         {
             this.notificator = notificator;
@@ -53,7 +51,7 @@
 
         public void Activate()
         {
-            this.positions = ObjectManager.GetEntities<Building>()
+            this.positions = EntityManager.GetEntities<Building>()
                 .Where(x => x.NetworkName == "CDOTA_BaseNPC_Watch_Tower")
                 .Select(x => x.Position)
                 .ToArray();
@@ -71,7 +69,7 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(this.OnUpdate, 1000);
+                UpdateManager.Subscribe(1000, this.OnUpdate);
             }
             else
             {
@@ -86,7 +84,7 @@
                 return;
             }
 
-            if (Game.GameTime % GameData.OutpostExperienceTime > GameData.OutpostExperienceTime - 30)
+            if (GameManager.GameTime % GameData.OutpostExperienceTime > GameData.OutpostExperienceTime - 30)
             {
                 this.notificator.PushNotification(new OutpostNotification(this.playSound, this.positions));
                 this.sleeper.Sleep(GameData.OutpostExperienceTime - 5);

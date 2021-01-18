@@ -10,12 +10,9 @@
     using Core.Helpers;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using SharpDX;
-
-    using Color = System.Drawing.Color;
 
     internal class TopPanelUnit
     {
@@ -58,68 +55,68 @@
         public void AddModifier(Modifier modifier)
         {
             this.modifiers[modifier.TextureName] = modifier;
-            this.modifiersTime[modifier.TextureName] = Game.RawGameTime + modifier.RemainingTime;
+            this.modifiersTime[modifier.TextureName] = GameManager.RawGameTime + modifier.RemainingTime;
         }
 
-        public void DrawAllyHealth(IRenderer renderer, bool dim, RectangleF position)
+        public void DrawAllyHealth(bool dim, RectangleF position)
         {
             if (!this.hero.IsAlive)
             {
                 return;
             }
 
-            renderer.DrawTexture("o9k.health_ally_bg", position);
+            RendererManager.DrawTexture("o9k.health_ally_bg", position);
             position.Width *= this.hero.HealthPercentageBase;
-            renderer.DrawTexture(!dim || this.hero.IsVisibleToEnemies ? "o9k.health_ally_visible" : "o9k.health_ally", position);
+            RendererManager.DrawTexture(!dim || this.hero.IsVisibleToEnemies ? "o9k.health_ally_visible" : "o9k.health_ally", position);
         }
 
-        public void DrawAllyMana(IRenderer renderer, bool dim, RectangleF position)
+        public void DrawAllyMana(bool dim, RectangleF position)
         {
             if (!this.hero.IsAlive)
             {
                 return;
             }
 
-            renderer.DrawTexture("o9k.mana_bg", position);
+            RendererManager.DrawTexture("o9k.mana_bg", position);
             position.Width *= this.hero.ManaPercentageBase;
-            renderer.DrawTexture(!dim || this.hero.IsVisibleToEnemies ? "o9k.mana" : "o9k.mana_invis", position);
+            RendererManager.DrawTexture(!dim || this.hero.IsVisibleToEnemies ? "o9k.mana" : "o9k.mana_invis", position);
         }
 
-        public void DrawBuyback(IRenderer renderer, RectangleF position)
+        public void DrawBuyback(RectangleF position)
         {
             if (this.BuybackSleeper.IsSleeping || this.hero.IsAlive)
             {
                 return;
             }
 
-            renderer.DrawTexture("o9k.buyback", position);
+            RendererManager.DrawTexture("o9k.buyback", position);
         }
 
-        public void DrawEnemyHealth(IRenderer renderer, bool dim, RectangleF position)
+        public void DrawEnemyHealth(bool dim, RectangleF position)
         {
             if (!this.hero.IsAlive)
             {
                 return;
             }
 
-            renderer.DrawTexture("o9k.health_enemy_bg", position);
+            RendererManager.DrawTexture("o9k.health_enemy_bg", position);
             position.Width *= this.hero.HealthPercentageBase;
-            renderer.DrawTexture(!dim || this.hero.IsVisible ? "o9k.health_enemy" : "o9k.health_enemy_invis", position);
+            RendererManager.DrawTexture(!dim || this.hero.IsVisible ? "o9k.health_enemy" : "o9k.health_enemy_invis", position);
         }
 
-        public void DrawEnemyMana(IRenderer renderer, bool dim, RectangleF position)
+        public void DrawEnemyMana(bool dim, RectangleF position)
         {
             if (!this.hero.IsAlive)
             {
                 return;
             }
 
-            renderer.DrawTexture("o9k.mana_bg", position);
+            RendererManager.DrawTexture("o9k.mana_bg", position);
             position.Width *= this.hero.ManaPercentageBase;
-            renderer.DrawTexture(!dim || this.hero.IsVisible ? "o9k.mana" : "o9k.mana_invis", position);
+            RendererManager.DrawTexture(!dim || this.hero.IsVisible ? "o9k.mana" : "o9k.mana_invis", position);
         }
 
-        public void DrawItems(IRenderer renderer, RectangleF position)
+        public void DrawItems(RectangleF position)
         {
             if (this.items.Count == 0 || !this.hero.IsAlive)
             {
@@ -136,7 +133,7 @@
                     continue;
                 }
 
-                renderer.DrawTexture(item.Id + "_rounded", start, new Vector2(size));
+                RendererManager.DrawTexture(item.Id, new RectangleF(start.X, start.Y, size, size), AbilityTextureType.Round);
                 start += new Vector2(size + 2, 0);
 
                 if (start.X + size > position.Right)
@@ -146,7 +143,7 @@
             }
         }
 
-        public void DrawRunes(IRenderer renderer, RectangleF position)
+        public void DrawRunes(RectangleF position)
         {
             var size = position.Width * 0.35f;
             var start = new Vector2(position.X, position.Y - size);
@@ -158,15 +155,15 @@
                     var name = pair.Key;
                     var endTime = pair.Value;
 
-                    if (Game.RawGameTime > endTime)
+                    if (GameManager.RawGameTime > endTime)
                     {
                         this.modifiers.Remove(name);
                         this.modifiersTime.Remove(name);
                         continue;
                     }
 
-                    renderer.DrawTexture(name + "_rounded", start, new Vector2(size));
-                    renderer.DrawTexture("o9k.outline", start, new Vector2(size));
+                    RendererManager.DrawTexture(name + "_rounded", new RectangleF(start.X, start.Y, size, size));
+                    RendererManager.DrawTexture("o9k.outline", new RectangleF(start.X, start.Y, size, size));
                     start += new Vector2(size + 2, 0);
                 }
 
@@ -185,13 +182,13 @@
                     continue;
                 }
 
-                renderer.DrawTexture(name + "_rounded", start, new Vector2(size));
-                renderer.DrawTexture("o9k.outline", start, new Vector2(size));
+                RendererManager.DrawTexture(name + "_rounded", new RectangleF(start.X, start.Y, size, size));
+                RendererManager.DrawTexture("o9k.outline", new RectangleF(start.X, start.Y, size, size));
                 start += new Vector2(size + 2, 0);
             }
         }
 
-        public bool DrawUltimate(IRenderer renderer, RectangleF position, Rectangle9 cdPosition, bool cdTime)
+        public bool DrawUltimate(RectangleF position, Rectangle9 cdPosition, bool cdTime)
         {
             if (this.ultimate?.IsValid != true)
             {
@@ -201,7 +198,7 @@
             var cooldown = this.ultimate.RemainingCooldown;
             if (cooldown > 0)
             {
-                renderer.DrawTexture("o9k.ult_cd", position);
+                RendererManager.DrawTexture("o9k.ult_cd", position);
 
                 if (!cdPosition.IsZero)
                 {
@@ -213,18 +210,18 @@
                     var pct = (int)(100 - ((cooldown / this.ultimate.Cooldown) * 100));
                     var outlinePosition = cdPosition * 1.1f;
 
-                    renderer.DrawTexture(this.ultimate.Name + "_rounded", cdPosition);
-                    renderer.DrawTexture("o9k.outline_black100", outlinePosition);
-                    renderer.DrawTexture("o9k.outline_green_pct" + pct, outlinePosition);
+                    RendererManager.DrawTexture(this.ultimate.Name, cdPosition, TextureType.RoundAbility);
+                    RendererManager.DrawTexture("o9k.outline_black100", outlinePosition);
+                    RendererManager.DrawTexture("o9k.outline_green_pct" + pct, outlinePosition);
 
                     if (cdTime)
                     {
-                        renderer.DrawTexture("o9k.top_ult_cd_bg", cdPosition);
-                        renderer.DrawText(
-                            cdPosition,
+                        RendererManager.DrawTexture("o9k.top_ult_cd_bg", cdPosition);
+                        RendererManager.DrawText(
                             cooldown.ToString("N0"),
+                            cdPosition,
                             Color.White,
-                            RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                            FontFlags.Center | FontFlags.VerticalCenter,
                             20 * Hud.Info.ScreenRatio);
                     }
 
@@ -233,7 +230,7 @@
             }
             else if (this.ultimate.ManaCost > this.hero.Mana)
             {
-                renderer.DrawTexture("o9k.ult_mp", position);
+                RendererManager.DrawTexture("o9k.ult_mp", position);
 
                 if (!cdPosition.IsZero)
                 {
@@ -245,15 +242,15 @@
                     var pct = (int)((this.hero.Mana / this.ultimate.ManaCost) * 100);
                     var outlinePosition = cdPosition * 1.1f;
 
-                    renderer.DrawTexture(this.ultimate.Name + "_rounded", cdPosition);
-                    renderer.DrawTexture("o9k.outline_black100", outlinePosition);
-                    renderer.DrawTexture("o9k.outline_blue_pct" + pct, outlinePosition);
+                    RendererManager.DrawTexture(this.ultimate.Name + "_rounded", cdPosition);
+                    RendererManager.DrawTexture("o9k.outline_black100", outlinePosition);
+                    RendererManager.DrawTexture("o9k.outline_blue_pct" + pct, outlinePosition);
 
                     if (cdTime)
                     {
                         var mpCd = Math.Ceiling((this.ultimate.ManaCost - this.hero.Mana) / this.hero.ManaRegeneration).ToString("N0");
-                        renderer.DrawTexture("o9k.top_ult_cd_bg", cdPosition);
-                        renderer.DrawText(cdPosition, mpCd, Color.White, RendererFontFlags.Center | RendererFontFlags.VerticalCenter, 20);
+                        RendererManager.DrawTexture("o9k.top_ult_cd_bg", cdPosition);
+                        RendererManager.DrawText(mpCd, cdPosition, Color.White, FontFlags.Center | FontFlags.VerticalCenter, 20);
                     }
 
                     return true;
@@ -261,13 +258,13 @@
             }
             else if (this.ultimate.IsUsable && this.ultimate.Level > 0)
             {
-                renderer.DrawTexture("o9k.ult_rdy", position);
+                RendererManager.DrawTexture("o9k.ult_rdy", position);
             }
 
             return false;
         }
 
-        public void ForceDrawBuyback(IRenderer renderer, Rectangle9 position, Rectangle9 deadPosition)
+        public void ForceDrawBuyback(Rectangle9 position, Rectangle9 deadPosition)
         {
             if (this.BuybackSleeper.IsSleeping)
             {
@@ -276,11 +273,11 @@
 
             if (this.hero.IsAlive)
             {
-                renderer.DrawTexture("o9k.buyback_alive", position);
+                RendererManager.DrawTexture("o9k.buyback_alive", position);
             }
             else
             {
-                renderer.DrawTexture("o9k.buyback", deadPosition);
+                RendererManager.DrawTexture("o9k.buyback", deadPosition);
             }
         }
 

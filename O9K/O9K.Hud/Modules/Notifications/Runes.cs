@@ -1,7 +1,6 @@
 ﻿namespace O9K.Hud.Modules.Notifications
 {
     using System;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Data;
@@ -10,8 +9,8 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;
@@ -38,7 +37,6 @@
 
         private Vector3[] powerPositions;
 
-        [ImportingConstructor]
         public Runes(INotificator notificator, IHudMenu hudMenu)
         {
             this.notificator = notificator;
@@ -66,17 +64,17 @@
 
         public void Activate()
         {
-            this.bountyPositions = ObjectManager.GetEntities<Item>()
+            this.bountyPositions = EntityManager.GetEntities<Item>()
                 .Where(x => x.NetworkName == "CDOTA_Item_RuneSpawner_Bounty")
                 .Select(x => x.Position)
                 .ToArray();
 
-            this.powerPositions = ObjectManager.GetEntities<Item>()
+            this.powerPositions = EntityManager.GetEntities<Item>()
                 .Where(x => x.NetworkName == "CDOTA_Item_RuneSpawner_Powerup")
                 .Select(x => x.Position)
                 .ToArray();
 
-            var sleep = Math.Max((3 * 60) - Game.GameTime, 0);
+            var sleep = Math.Max((3 * 60) - GameManager.GameTime, 0);
 
             this.bountySleeper.Sleep(sleep);
             this.powerSleeper.Sleep(sleep);
@@ -97,7 +95,7 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(this.BountyOnUpdate, 1000);
+                UpdateManager.Subscribe(1000, this.BountyOnUpdate);
             }
             else
             {
@@ -112,7 +110,7 @@
                 return;
             }
 
-            if (Game.GameTime % GameData.BountyRuneRespawnTime > GameData.BountyRuneRespawnTime - 20)
+            if (GameManager.GameTime % GameData.BountyRuneRespawnTime > GameData.BountyRuneRespawnTime - 20)
             {
                 this.notificator.PushNotification(new RuneNotification(true, this.playSound, this.bountyPositions));
                 this.bountySleeper.Sleep(GameData.BountyRuneRespawnTime - 5);
@@ -123,7 +121,7 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(this.PowerOnUpdate, 1000);
+                UpdateManager.Subscribe(1000, this.PowerOnUpdate);
             }
             else
             {
@@ -138,13 +136,13 @@
                 return;
             }
 
-            if (Game.GameTime % GameData.RuneRespawnTime > GameData.RuneRespawnTime - 15)
+            if (GameManager.GameTime % GameData.RuneRespawnTime > GameData.RuneRespawnTime - 15)
             {
                 this.notificator.PushNotification(new RuneNotification(false, this.playSound, this.powerPositions));
                 this.powerSleeper.Sleep(GameData.RuneRespawnTime - 5);
             }
 
-            if (Game.GameTime > 15 * 60)
+            if (GameManager.GameTime > 15 * 60)
             {
                 UpdateManager.Unsubscribe(this.PowerOnUpdate);
             }

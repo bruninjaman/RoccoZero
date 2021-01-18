@@ -8,7 +8,7 @@
     using Core.Managers.Context;
     using Core.Managers.Particle;
 
-    using Ensage;
+    using Divine;
 
     using Helpers.Notificator;
 
@@ -21,8 +21,8 @@
     {
         private readonly Vector3 radius;
 
-        public CallDown(IContext9 context, INotificator notificator, IHudMenu hudMenu)
-            : base(context, notificator, hudMenu)
+        public CallDown(INotificator notificator, IHudMenu hudMenu)
+            : base(notificator, hudMenu)
         {
             var radiusData = new SpecialData(AbilityId.gyrocopter_call_down, "radius").GetValue(1);
             this.radius = new Vector3(radiusData, -radiusData, -radiusData);
@@ -30,15 +30,15 @@
 
         protected override void Disable()
         {
-            this.Context.ParticleManger.ParticleAdded -= this.OnParticleAdded;
+            Context9.ParticleManger.ParticleAdded -= this.OnParticleAdded;
         }
 
         protected override void Enable()
         {
-            this.Context.ParticleManger.ParticleAdded += this.OnParticleAdded;
+            Context9.ParticleManger.ParticleAdded += this.OnParticleAdded;
         }
 
-        private void OnParticleAdded(Particle particle)
+        private void OnParticleAdded(Particle9 particle)
         {
             try
             {
@@ -47,7 +47,7 @@
                     return;
                 }
 
-                var effect = new ParticleEffect(
+                var effect = ParticleManager.CreateParticle(
                     "particles/units/heroes/hero_gyrocopter/gyro_calldown_marker.vpcf",
                     particle.GetControlPoint(1));
                 effect.SetControlPoint(1, this.radius);

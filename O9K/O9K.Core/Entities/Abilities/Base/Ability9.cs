@@ -3,6 +3,7 @@
     using System;
 
     using Divine;
+    using Divine.SDK.Localization;
 
     using Entities.Units;
 
@@ -31,9 +32,9 @@
             this.AbilityBehavior = baseAbility.AbilityBehavior;
             this.DamageType = baseAbility.DamageType;
             this.MaximumLevel = baseAbility.MaximumLevel;
-            this.DamageData = new SpecialData(baseAbility, baseAbility.GetDamage);
-            this.DurationData = new SpecialData(baseAbility, (Func<uint, float>)baseAbility.GetDuration);
-            this.CastPoint = baseAbility.OverrideCastPoint < 0 ? this.BaseAbility.GetCastPoint(0) : 0;
+            this.DamageData = new SpecialData(baseAbility, baseAbility.AbilityData.GetDamage);
+            this.DurationData = new SpecialData(baseAbility, baseAbility.AbilityData.GetDuration);
+            this.CastPoint = baseAbility.OverrideCastPoint < 0 ? this.BaseAbility.AbilityData.GetCastPoint(1) : 0;
 
             if (baseAbility is Item item)
             {
@@ -43,7 +44,7 @@
             }
             else
             {
-                this.IsDisplayingCharges = baseAbility.GetChargesCount(0) > 0;
+                this.IsDisplayingCharges = baseAbility.AbilityData.GetCharges(1) > 0;
                 this.IsUltimate = baseAbility.AbilityType == AbilityType.Ultimate;
                 this.IsStolen = baseAbility.IsStolen;
             }
@@ -124,8 +125,8 @@
             {
                 if (!this.IsItem && this.IsDisplayingCharges)
                 {
-                    var level = this.Level - 1;
-                    return Math.Max(this.BaseAbility.GetChargesRestoreTime(level), this.BaseAbility.GetCooldown(level));
+                    var level = this.Level;
+                    return Math.Max(this.BaseAbility.AbilityData.GetChargeRestoreTime(level), this.BaseAbility.AbilityData.GetCooldownLength(level));
                 }
 
                 return this.BaseAbility.CooldownLength;
@@ -140,11 +141,11 @@
             {
                 if (this.displayName == null)
                 {
-                    /*try
+                    try
                     {
                         this.displayName = LocalizationHelper.LocalizeAbilityName(this.Name);
                     }
-                    catch*/
+                    catch
                     {
                         this.displayName = this.Name;
                     }

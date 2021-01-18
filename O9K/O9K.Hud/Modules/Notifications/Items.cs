@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Abilities.Base;
@@ -12,8 +11,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;
@@ -36,7 +34,6 @@
 
         private Team ownerTeam;
 
-        [ImportingConstructor]
         public Items(IHudMenu hudMenu, INotificator notificator)
         {
             this.notificator = notificator;

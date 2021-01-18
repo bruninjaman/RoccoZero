@@ -17,7 +17,7 @@
             : base(baseAbility)
         {
             this.RadiusData = new SpecialData(baseAbility, "aoe");
-            this.ChannelTime = baseAbility.GetChannelTime(0);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
         }
 
         public float ChannelTime { get; }

@@ -1,7 +1,6 @@
 ﻿namespace O9K.Hud.Modules.Particles.Units
 {
     using System;
-    using System.ComponentModel.Composition;
 
     using Core.Entities.Units;
     using Core.Logger;
@@ -10,7 +9,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     using MainMenu;
 
@@ -22,7 +21,6 @@
 
         private Team ownerTeam;
 
-        [ImportingConstructor]
         public Illusion(IHudMenu hudMenu)
         {
             this.show = hudMenu.ParticlesMenu.Add(new MenuSwitcher("Illusion", "illusion"));
@@ -57,10 +55,10 @@
                     return;
                 }
 
-                var effect = new ParticleEffect(
+                var effect = ParticleManager.CreateParticle(
                     "materials/ensage_ui/particles/illusions_mod_v2.vpcf",
-                    entity.BaseUnit,
-                    ParticleAttachment.CenterFollow);
+                    ParticleAttachment.CenterFollow,
+                    entity.BaseUnit);
 
                 effect.SetControlPoint(1, new Vector3(255));
                 effect.SetControlPoint(2, new Vector3(65, 105, 255));

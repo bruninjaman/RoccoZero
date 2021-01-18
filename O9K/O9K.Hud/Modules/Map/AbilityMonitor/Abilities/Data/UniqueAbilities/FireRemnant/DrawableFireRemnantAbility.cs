@@ -4,8 +4,7 @@
 
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
 
@@ -15,7 +14,7 @@
 
         public DrawableFireRemnantAbility()
         {
-            this.addedTime = Game.RawGameTime;
+            this.addedTime = GameManager.RawGameTime;
         }
 
         public override bool Draw
@@ -32,7 +31,7 @@
         {
             get
             {
-                if (Game.RawGameTime > this.ShowUntil)
+                if (GameManager.RawGameTime > this.ShowUntil)
                 {
                     return false;
                 }
@@ -47,7 +46,7 @@
 
         public Unit Unit { get; set; }
 
-        public override void DrawOnMap(IRenderer renderer, IMinimap minimap)
+        public override void DrawOnMap(IMinimap minimap)
         {
             var position = minimap.WorldToScreen(this.Position, 35 * Hud.Info.ScreenRatio);
             if (position.IsZero)
@@ -55,15 +54,15 @@
                 return;
             }
 
-            var pct = (int)(((Game.RawGameTime - this.addedTime) / this.Duration) * 100);
-            renderer.DrawTexture("o9k.outline_red", position * 1.2f);
-            renderer.DrawTexture("o9k.outline_black" + pct, position * 1.25f);
-            renderer.DrawTexture(this.AbilityTexture, position);
+            var pct = (int)(((GameManager.RawGameTime - this.addedTime) / this.Duration) * 100);
+            RendererManager.DrawTexture("o9k.outline_red", position * 1.2f);
+            RendererManager.DrawTexture("o9k.outline_black" + pct, position * 1.25f);
+            RendererManager.DrawTexture(this.AbilityTexture, position);
         }
 
-        public override void DrawOnMinimap(IRenderer renderer, IMinimap minimap)
+        public override void DrawOnMinimap(IMinimap minimap)
         {
-            if (Game.RawGameTime > this.ShowHeroUntil || this.Owner.IsVisible)
+            if (GameManager.RawGameTime > this.ShowHeroUntil || this.Owner.IsVisible)
             {
                 return;
             }
@@ -74,8 +73,8 @@
                 return;
             }
 
-            renderer.DrawTexture("o9k.outline_red", position * 1.08f);
-            renderer.DrawTexture(this.AbilityTexture, position);
+            RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
+            RendererManager.DrawTexture(this.AbilityTexture, position);
         }
     }
 }

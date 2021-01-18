@@ -2,22 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Units;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
-    using Ensage.SDK.Renderer.Texture;
+    using Divine;
+    using Divine.SDK.Localization;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -25,12 +22,8 @@
 
     using SharpDX;
 
-    using Color = System.Drawing.Color;
-
     internal partial class Modifiers : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher enabled;
 
         private readonly MenuSwitcher ignoreAuras;
@@ -56,10 +49,8 @@
 
         private readonly List<ModifierUnit> units = new List<ModifierUnit>();
 
-        [ImportingConstructor]
-        public Modifiers(IContext9 context, IHudMenu hudMenu)
+        public Modifiers(IHudMenu hudMenu)
         {
-            this.context = context;
             var menu = hudMenu.UnitsMenu.Add(new Menu("Modifiers"));
             menu.AddTranslation(Lang.Ru, "Баффы/дебаффы");
             menu.AddTranslation(Lang.Cn, "特效");
@@ -142,11 +133,11 @@
             this.ignoreAuras.ValueChange -= this.IgnoreOnValueChange;
             this.ignoreUnknownTime.ValueChange -= this.IgnoreOnValueChange;
             this.ignoreHiddenAuras.ValueChange -= this.IgnoreOnValueChange;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             EntityManager9.UnitAdded -= this.OnUnitAdded;
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Unit.OnModifierRemoved -= this.OnModifierRemoved;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
             UpdateManager.Unsubscribe(this.OnUpdate);
 
             this.units.Clear();
@@ -159,10 +150,10 @@
             {
                 EntityManager9.UnitAdded += this.OnUnitAdded;
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
-                Unit.OnModifierAdded += this.OnModifierAdded;
-                Unit.OnModifierRemoved += this.OnModifierRemoved;
-                UpdateManager.Subscribe(this.OnUpdate, 500);
-                this.context.Renderer.Draw += this.OnDraw;
+                ModifierManager.ModifierAdded += this.OnModifierAdded;
+                ModifierManager.ModifierRemoved += this.OnModifierRemoved;
+                UpdateManager.Subscribe(500, this.OnUpdate);
+                RendererManager.Draw += this.OnDraw;
                 this.ignoreAuras.ValueChange += this.IgnoreOnValueChange;
                 this.ignoreUnknownTime.ValueChange += this.IgnoreOnValueChange;
                 this.ignoreHiddenAuras.ValueChange += this.IgnoreOnValueChange;
@@ -171,10 +162,10 @@
             {
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-                Unit.OnModifierAdded -= this.OnModifierAdded;
-                Unit.OnModifierRemoved -= this.OnModifierRemoved;
+                ModifierManager.ModifierAdded -= this.OnModifierAdded;
+                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
                 UpdateManager.Unsubscribe(this.OnUpdate);
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
                 this.ignoreAuras.ValueChange -= this.IgnoreOnValueChange;
                 this.ignoreUnknownTime.ValueChange -= this.IgnoreOnValueChange;
                 this.ignoreHiddenAuras.ValueChange -= this.IgnoreOnValueChange;
@@ -219,48 +210,42 @@
 
             this.loadedTextures.Add(textureKey);
 
-            var isItem = textureKey.StartsWith("item_");
-            var textureFolder = isItem ? "items" : "spellicons";
-            var textureName = isItem ? textureKey.Substring("item_".Length) : textureKey.Replace('/', '\\');
-            var file = $@"panorama\images\{textureFolder}\{textureName}_png.vtex_c";
-            this.context.Renderer.TextureManager.LoadFromDota(textureKey + "_rounded", file, TextureProperties.Round);
+            RendererManager.LoadTexture(textureKey + "_rounded", TextureType.RoundAbility);
 
             return true;
         }
 
         private void LoadTextures()
         {
-            var tm = this.context.Renderer.TextureManager;
-
-            tm.LoadFromResource(
+            RendererManager.LoadTextureFromAssembly(
                 "o9k.modifier_truesight_rounded",
                 "modifier_truesight.png",
                 new TextureProperties
                 {
-                    Rounded = true
+                    ConvertType = TextureConvertType.Round
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.modifier_bg",
                 @"panorama\images\masks\softedge_circle_sharp_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0f, 0f, 0.45f)
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.outline_green",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0.9f, 0f, 1f)
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.outline_red",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0.9f, 0f, 0f, 1f)
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.outline_yellow",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
                 new TextureProperties
@@ -268,17 +253,17 @@
                     ColorRatio = new Vector4(0.9f, 0.9f, 0f, 1f),
                     Brightness = 50
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.outline_black",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0f, 0f, 1f),
-                    Sliced = true
+                    IsSliced = true
                 });
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -299,7 +284,7 @@
 
                     foreach (var modifier in unit.Modifiers.ToArray())
                     {
-                        renderer.DrawTexture(modifier.TextureName, start);
+                        RendererManager.DrawTexture(modifier.TextureName, start, TextureType.RoundAbility);
 
                         if (!modifier.IgnoreTime)
                         {
@@ -308,24 +293,24 @@
                             if (this.showTime)
                             {
                                 var timePosition = start * 1.5f;
-                                renderer.DrawTexture("o9k.modifier_bg", timePosition);
-                                renderer.DrawText(
-                                    timePosition,
+                                RendererManager.DrawTexture("o9k.modifier_bg", timePosition);
+                                RendererManager.DrawText(
                                     remainingTime < 10 ? remainingTime.ToString("N1") : remainingTime.ToString("N0"),
+                                    timePosition,
                                     Color.White,
-                                    RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                                    FontFlags.Center | FontFlags.VerticalCenter,
                                     this.textSize);
                             }
 
                             var pct = (int)(100 - ((remainingTime / modifier.Duration) * 100));
                             var outlinePosition = start * 1.17f;
 
-                            renderer.DrawTexture(modifier.IsDebuff ? "o9k.outline_red" : "o9k.outline_green", outlinePosition);
-                            renderer.DrawTexture("o9k.outline_black" + pct, outlinePosition);
+                            RendererManager.DrawTexture(modifier.IsDebuff ? "o9k.outline_red" : "o9k.outline_green", outlinePosition);
+                            RendererManager.DrawTexture("o9k.outline_black" + pct, outlinePosition);
                         }
                         else
                         {
-                            renderer.DrawTexture(modifier.IsDebuff ? "o9k.outline_red" : "o9k.outline_green", start * 1.17f);
+                            RendererManager.DrawTexture(modifier.IsDebuff ? "o9k.outline_red" : "o9k.outline_green", start * 1.17f);
                         }
 
                         start += new Vector2(0, this.size + 5);
@@ -342,11 +327,11 @@
             }
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
             try
             {
-                var modifier = args.Modifier;
+                var modifier = e.Modifier;
                 if (!modifier.IsValid)
                 {
                     return;
@@ -377,7 +362,7 @@
                     }
                 }
 
-                var modifierUnit = this.units.Find(x => x.Unit.Handle == sender.Handle);
+                var modifierUnit = this.units.Find(x => x.Unit.Handle == modifier.Owner.Handle);
                 if (modifierUnit == null)
                 {
                     return;
@@ -390,22 +375,23 @@
 
                 modifierUnit.AddModifier(new DrawableModifier(modifier, type));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierRemoved(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
         {
             try
             {
-                var unit = this.units.Find(x => x.Unit.Handle == sender.Handle);
-                unit?.RemoveModifier(args.Modifier);
+                var modifier = e.Modifier;
+                var unit = this.units.Find(x => x.Unit.Handle == modifier.Owner.Handle);
+                unit?.RemoveModifier(modifier);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
@@ -422,7 +408,55 @@
 
                 foreach (var modifier in unit.BaseModifiers)
                 {
-                    this.OnModifierAdded(unit, new ModifierChangedEventArgs(modifier));
+                    try
+                    {
+                        if (!modifier.IsValid)
+                        {
+                            return;
+                        }
+
+                        if (!this.data.TryGetValue(modifier.Name, out var type))
+                        {
+                            return;
+                        }
+
+                        if (modifier.IsHidden)
+                        {
+                            if (this.ignoreHiddenAuras || type != ModifierType.Aura)
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            if (this.ignoreAuras && type == ModifierType.Aura)
+                            {
+                                return;
+                            }
+
+                            if (this.ignoreUnknownTime && type == ModifierType.TemporaryNoTime)
+                            {
+                                return;
+                            }
+                        }
+
+                        var modifierUnit = this.units.Find(x => x.Unit.Handle == modifier.Owner.Handle);
+                        if (modifierUnit == null)
+                        {
+                            return;
+                        }
+
+                        if (!this.LoadModifierTexture(modifier))
+                        {
+                            return;
+                        }
+
+                        modifierUnit.AddModifier(new DrawableModifier(modifier, type));
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                    }
                 }
             }
             catch (Exception e)
@@ -451,7 +485,7 @@
 
         private void OnUpdate()
         {
-            if (Game.IsPaused)
+            if (GameManager.IsPaused)
             {
                 return;
             }

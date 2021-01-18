@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Windows.Input;
 
     using Core.Data;
@@ -11,16 +10,13 @@
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Renderer;
-    using Ensage.SDK.Renderer.Texture;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Helpers;
 
@@ -31,8 +27,6 @@
     internal class HeroStatus : IHudModule
     {
         private readonly MenuHoldKey altKey;
-
-        private readonly IContext9 context;
 
         private readonly MenuSwitcher dimHpMp;
 
@@ -85,10 +79,8 @@
 
         private readonly TopPanelUnit[] units = new TopPanelUnit[10];
 
-        [ImportingConstructor]
-        public HeroStatus(IContext9 context, ITopPanel topPanel, IHudMenu hudMenu)
+        public HeroStatus(ITopPanel topPanel, IHudMenu hudMenu)
         {
-            this.context = context;
             this.topPanel = topPanel;
 
             var statusMenu = hudMenu.TopPanelMenu.Add(new Menu("Status"));
@@ -188,9 +180,9 @@
             EntityManager9.UnitAdded += this.OnUnitAdded;
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
-            Unit.OnModifierAdded += this.OnModifierAdded;
-            Game.OnFireEvent += this.OnFireEvent;
-            this.context.Renderer.Draw += this.OnDraw;
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
+            GameManager.FireEvent += this.OnFireEvent;
+            RendererManager.Draw += this.OnDraw;
         }
 
         public void Dispose()
@@ -198,94 +190,92 @@
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Game.OnFireEvent -= this.OnFireEvent;
-            this.context.Renderer.Draw -= this.OnDraw;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            GameManager.FireEvent -= this.OnFireEvent;
+            RendererManager.Draw -= this.OnDraw;
         }
 
         private void LoadTextures()
         {
-            var tm = this.context.Renderer.TextureManager;
-
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.health_ally",
                 @"panorama\images\hud\reborn\topbar_health_psd.vtex_c",
                 new TextureProperties
                 {
                     Brightness = -60
                 });
-            tm.LoadFromDota("o9k.health_ally_visible", @"panorama\images\hud\reborn\topbar_health_psd.vtex_c");
-            tm.LoadFromDota(
+            RendererManager.LoadTexture("o9k.health_ally_visible", @"panorama\images\hud\reborn\topbar_health_psd.vtex_c");
+            RendererManager.LoadTexture(
                 "o9k.health_ally_bg",
                 @"panorama\images\hud\reborn\topbar_health_psd.vtex_c",
                 new TextureProperties
                 {
                     Brightness = -170
                 });
-            tm.LoadFromDota("o9k.health_enemy", @"panorama\images\hud\reborn\topbar_health_dire_psd.vtex_c");
-            tm.LoadFromDota(
+            RendererManager.LoadTexture("o9k.health_enemy", @"panorama\images\hud\reborn\topbar_health_dire_psd.vtex_c");
+            RendererManager.LoadTexture(
                 "o9k.health_enemy_invis",
                 @"panorama\images\hud\reborn\topbar_health_dire_psd.vtex_c",
                 new TextureProperties
                 {
                     Brightness = -60
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.health_enemy_bg",
                 @"panorama\images\hud\reborn\topbar_health_dire_psd.vtex_c",
                 new TextureProperties
                 {
                     Brightness = -170
                 });
-            tm.LoadFromDota("o9k.mana", @"panorama\images\hud\reborn\topbar_mana_psd.vtex_c");
-            tm.LoadFromDota(
+            RendererManager.LoadTexture("o9k.mana", @"panorama\images\hud\reborn\topbar_mana_psd.vtex_c");
+            RendererManager.LoadTexture(
                 "o9k.mana_invis",
                 @"panorama\images\hud\reborn\topbar_mana_psd.vtex_c",
                 new TextureProperties
                 {
                     Brightness = -60
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.mana_bg",
                 @"panorama\images\hud\reborn\topbar_mana_psd.vtex_c",
                 new TextureProperties
                 {
                     Brightness = -170
                 });
-            tm.LoadFromDota("o9k.ult_rdy", @"panorama\images\hud\reborn\ult_ready_psd.vtex_c");
-            tm.LoadFromDota("o9k.ult_cd", @"panorama\images\hud\reborn\ult_cooldown_psd.vtex_c");
-            tm.LoadFromDota("o9k.ult_mp", @"panorama\images\hud\reborn\ult_no_mana_psd.vtex_c");
-            tm.LoadFromDota("o9k.buyback", @"panorama\images\hud\reborn\buyback_header_psd.vtex_c");
-            tm.LoadFromDota("o9k.buyback_alive", @"panorama\images\hud\reborn\buyback_topbar_alive_psd.vtex_c");
-            tm.LoadFromDota(
+            RendererManager.LoadTexture("o9k.ult_rdy", @"panorama\images\hud\reborn\ult_ready_psd.vtex_c");
+            RendererManager.LoadTexture("o9k.ult_cd", @"panorama\images\hud\reborn\ult_cooldown_psd.vtex_c");
+            RendererManager.LoadTexture("o9k.ult_mp", @"panorama\images\hud\reborn\ult_no_mana_psd.vtex_c");
+            RendererManager.LoadTexture("o9k.buyback", @"panorama\images\hud\reborn\buyback_header_psd.vtex_c");
+            RendererManager.LoadTexture("o9k.buyback_alive", @"panorama\images\hud\reborn\buyback_topbar_alive_psd.vtex_c");
+            RendererManager.LoadTexture(
                 "o9k.top_ult_cd_bg",
                 @"panorama\images\masks\softedge_circle_sharp_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0f, 0f, 0.5f)
                 });
-            tm.LoadFromDota("o9k.outline", @"panorama\images\hud\reborn\buff_outline_psd.vtex_c");
-            tm.LoadFromDota(
+            RendererManager.LoadTexture("o9k.outline", @"panorama\images\hud\reborn\buff_outline_psd.vtex_c");
+            RendererManager.LoadTexture(
                 "o9k.outline_green_pct",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 1f, 0f, 1f),
-                    Sliced = true
+                    IsSliced = true
                 });
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.outline_blue_pct",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(0f, 0.4f, 0.9f, 1f),
                     Brightness = 40,
-                    Sliced = true
+                    IsSliced = true
                 });
 
             foreach (var abilityId in this.drawItems)
             {
-                tm.LoadAbilityFromDota(abilityId, true);
+                RendererManager.LoadTexture(abilityId, AbilityTextureType.Round);
             }
         }
 
@@ -350,7 +340,7 @@
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -365,7 +355,7 @@
                         continue;
                     }
 
-                    hero.DrawRunes(renderer, this.topPanel.GetPlayersHealthBarPosition(i, 7 * ratio, 0));
+                    hero.DrawRunes(this.topPanel.GetPlayersHealthBarPosition(i, 7 * ratio, 0));
 
                     if (hero.IsAlly)
                     {
@@ -373,20 +363,19 @@
 
                         if (this.showAllyHealth)
                         {
-                            hero.DrawAllyHealth(renderer, this.dimHpMp, this.topPanel.GetPlayersHealthBarPosition(i, 8 * ratio, 0));
+                            hero.DrawAllyHealth(this.dimHpMp, this.topPanel.GetPlayersHealthBarPosition(i, 8 * ratio, 0));
                             topIndent += 8 * ratio;
                         }
 
                         if (this.showAllyMana)
                         {
-                            hero.DrawAllyMana(renderer, this.dimHpMp, this.topPanel.GetPlayersHealthBarPosition(i, 8 * ratio, topIndent));
+                            hero.DrawAllyMana(this.dimHpMp, this.topPanel.GetPlayersHealthBarPosition(i, 8 * ratio, topIndent));
                             topIndent += 8 * ratio;
                         }
 
                         if (this.showAllyUlt)
                         {
                             if (hero.DrawUltimate(
-                                renderer,
                                 this.topPanel.GetPlayersUltimatePosition(i, 18 * ratio, 0),
                                 this.showUltCd && !altPressed
                                     ? this.topPanel.GetPlayersUltimatePosition(i, 42 * ratio, topIndent + (28 * ratio))
@@ -399,27 +388,27 @@
 
                         if (this.showAllyItems && !altPressed)
                         {
-                            hero.DrawItems(renderer, this.topPanel.GetPlayersHealthBarPosition(i, 15 * ratio, topIndent + (5 * ratio)));
+                            hero.DrawItems(this.topPanel.GetPlayersHealthBarPosition(i, 15 * ratio, topIndent + (5 * ratio)));
                         }
                     }
                     else
                     {
                         if (this.showBuyback)
                         {
-                            hero.DrawBuyback(renderer, this.topPanel.GetPlayersHealthBarPosition(i, 28 * ratio, 0));
+                            hero.DrawBuyback(this.topPanel.GetPlayersHealthBarPosition(i, 28 * ratio, 0));
                         }
 
                         var topIndent = 0f;
 
                         if (this.showEnemyHealth || altPressed)
                         {
-                            hero.DrawEnemyHealth(renderer, this.dimHpMp, this.topPanel.GetPlayersHealthBarPosition(i, 8 * ratio, 0));
+                            hero.DrawEnemyHealth(this.dimHpMp, this.topPanel.GetPlayersHealthBarPosition(i, 8 * ratio, 0));
                             topIndent += 8 * ratio;
                         }
 
                         if (this.showEnemyMana || altPressed)
                         {
-                            hero.DrawEnemyMana(renderer, this.dimHpMp, this.topPanel.GetPlayersHealthBarPosition(i, 8 * ratio, topIndent));
+                            hero.DrawEnemyMana(this.dimHpMp, this.topPanel.GetPlayersHealthBarPosition(i, 8 * ratio, topIndent));
                             topIndent += 8 * ratio;
                         }
 
@@ -428,13 +417,12 @@
                             var position = this.topPanel.GetPlayersHealthBarPosition(i, 10 * ratio, topIndent * 0.55f);
                             var deadPosition = this.topPanel.GetPlayersHealthBarPosition(i, 28 * ratio, 0);
 
-                            hero.ForceDrawBuyback(renderer, position, deadPosition);
+                            hero.ForceDrawBuyback(position, deadPosition);
                         }
 
                         if (this.showEnemyUlt)
                         {
                             if (hero.DrawUltimate(
-                                renderer,
                                 this.topPanel.GetPlayersUltimatePosition(i, 16 * ratio, 0),
                                 this.showUltCd && !altPressed
                                     ? this.topPanel.GetPlayersUltimatePosition(i, 42 * ratio, topIndent + (28 * ratio))
@@ -447,7 +435,7 @@
 
                         if (this.showEnemyItems && !altPressed)
                         {
-                            hero.DrawItems(renderer, this.topPanel.GetPlayersHealthBarPosition(i, 15 * ratio, topIndent + (5 * ratio)));
+                            hero.DrawItems(this.topPanel.GetPlayersHealthBarPosition(i, 15 * ratio, topIndent + (5 * ratio)));
                         }
                     }
                 }
@@ -462,25 +450,25 @@
             }
         }
 
-        private void OnFireEvent(FireEventEventArgs args)
+        private void OnFireEvent(FireEventEventArgs e)
         {
-            if (args.GameEvent.Name != "dota_buyback")
+            if (e.Name != "dota_buyback")
             {
                 return;
             }
 
             try
             {
-                var id = args.GameEvent.GetInt("player_id");
+                var id = e.KeyValue.GetKeyValue("player_id").GetInt32();
                 this.units[id]?.BuybackSleeper.Sleep(GameData.BuybackCooldown);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs args)
         {
             try
             {
@@ -490,6 +478,7 @@
                     return;
                 }
 
+                var sender = modifier.Owner;
                 var hero = this.units.Find(x => x?.Handle == sender.Handle);
                 if (hero == null)
                 {

@@ -2,21 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Windows.Input;
 
     using Core.Entities.Heroes;
     using Core.Entities.Units;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -26,8 +23,6 @@
 
     internal class Information : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher enabled;
 
         private readonly MenuSwitcher enabledDamage;
@@ -46,11 +41,8 @@
 
         private Owner owner;
 
-        [ImportingConstructor]
-        public Information(IContext9 context, IHudMenu hudMenu)
+        public Information(IHudMenu hudMenu)
         {
-            this.context = context;
-
             var menu = hudMenu.UnitsMenu.GetOrAdd(new Menu("Information"));
             menu.AddTranslation(Lang.Ru, "Информация");
             menu.AddTranslation(Lang.Cn, "信息");
@@ -102,10 +94,10 @@
         public void Activate()
         {
             this.owner = EntityManager9.Owner;
-            this.context.Renderer.TextureManager.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.attack_minimalistic",
                 @"panorama\images\hud\reborn\icon_damage_psd.vtex_c");
-            this.context.Renderer.TextureManager.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.speed_minimalistic",
                 @"panorama\images\hud\reborn\icon_speed_psd.vtex_c");
 
@@ -118,12 +110,12 @@
             this.enabledDamage.ValueChange -= this.EnabledDamageOnValueChange;
             this.toggleKey.ValueChange -= this.ToggleKeyOnValueChange;
             this.holdKey.ValueChange -= this.HoldKeyOnValueChange;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             UpdateManager.Unsubscribe(this.OnUpdate);
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-            Unit.OnModifierAdded -= this.OnModifierChange;
-            Unit.OnModifierRemoved -= this.OnModifierChange;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
             this.position.Dispose();
             this.units.Clear();
         }
@@ -132,15 +124,15 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(this.OnUpdate, 1000);
-                Unit.OnModifierAdded += this.OnModifierChange;
-                Unit.OnModifierRemoved += this.OnModifierChange;
+                UpdateManager.Subscribe(1000, this.OnUpdate);
+                ModifierManager.ModifierAdded += this.OnModifierAdded;
+                ModifierManager.ModifierRemoved += this.OnModifierRemoved;
             }
             else
             {
                 UpdateManager.Unsubscribe(this.OnUpdate);
-                Unit.OnModifierAdded -= this.OnModifierChange;
-                Unit.OnModifierRemoved -= this.OnModifierChange;
+                ModifierManager.ModifierAdded -= this.OnModifierAdded;
+                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
             }
         }
 
@@ -159,21 +151,21 @@
                 this.holdKey.ValueChange -= this.HoldKeyOnValueChange;
                 this.enabledDamage.ValueChange -= this.EnabledDamageOnValueChange;
                 UpdateManager.Unsubscribe(this.OnUpdate);
-                Unit.OnModifierAdded -= this.OnModifierChange;
-                Unit.OnModifierRemoved -= this.OnModifierChange;
+                ModifierManager.ModifierAdded -= this.OnModifierAdded;
+                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
                 this.units.Clear();
             }
         }
 
-        private void HoldKeyOnValueChange(object sender, KeyEventArgs e)
+        private void HoldKeyOnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             this.toggleKey.IsActive = e.NewValue;
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -186,7 +178,7 @@
                         continue;
                     }
 
-                    unit.DrawInformation(renderer, mySpeed, this.enabledDamage, this.enabledSpeed, this.position, this.size);
+                    unit.DrawInformation(mySpeed, this.enabledDamage, this.enabledSpeed, this.position, this.size);
                 }
             }
             catch (InvalidOperationException)
@@ -199,15 +191,26 @@
             }
         }
 
-        private void OnModifierChange(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
+        {
+            OnModifierChange(e.Modifier);
+        }
+
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
+        {
+            OnModifierChange(e.Modifier);
+        }
+
+        private void OnModifierChange(Modifier modifier)
         {
             try
             {
-                if (args.Modifier.IsHidden)
+                if (modifier.IsHidden)
                 {
                     return;
                 }
 
+                var sender = modifier.Owner;
                 if (sender.Handle == this.owner.HeroHandle)
                 {
                     UpdateManager.BeginInvoke(this.OnUpdate);
@@ -300,20 +303,20 @@
             }
         }
 
-        private void ToggleKeyOnValueChange(object sender, KeyEventArgs e)
+        private void ToggleKeyOnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
                 this.enabledDamage.ValueChange += this.EnabledDamageOnValueChange;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
                 this.enabledDamage.ValueChange -= this.EnabledDamageOnValueChange;
                 UpdateManager.Unsubscribe(this.OnUpdate);
-                Unit.OnModifierAdded -= this.OnModifierChange;
-                Unit.OnModifierRemoved -= this.OnModifierChange;
+                EntityManager9.UnitAdded -= this.OnUnitAdded;
+                EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             }
         }
     }

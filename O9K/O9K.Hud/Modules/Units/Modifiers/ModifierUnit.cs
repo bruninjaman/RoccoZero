@@ -5,7 +5,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using SharpDX;
 
@@ -87,7 +87,7 @@
 
         public void RemoveModifier(Modifier modifier)
         {
-            var find = this.modifiers.Find(x => x.Handle == modifier.Handle);
+            var find = this.modifiers.Find(x => x.Index == modifier.Index);
             if (find == null)
             {
                 return;

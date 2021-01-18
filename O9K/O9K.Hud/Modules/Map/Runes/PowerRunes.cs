@@ -2,21 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Data;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Extensions;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -24,8 +20,6 @@
 
     internal class PowerRunes : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly IMinimap minimap;
 
         private readonly Dictionary<RuneType, string> runeTextures = new Dictionary<RuneType, string>
@@ -44,10 +38,8 @@
 
         private RuneData[] runeSpawns;
 
-        [ImportingConstructor]
-        public PowerRunes(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public PowerRunes(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var runesMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Runes"));
@@ -75,7 +67,7 @@
         {
             this.LoadTextures();
 
-            this.runeSpawns = ObjectManager.GetEntities<Item>()
+            this.runeSpawns = EntityManager.GetEntities<Item>()
                 .Where(x => x.NetworkName == "CDOTA_Item_RuneSpawner_Powerup")
                 .Select(x => new RuneData(x.Position))
                 .ToArray();
@@ -85,54 +77,52 @@
                 return;
             }
 
-            ObjectManager.OnAddEntity += this.OnAddEntity;
-            ObjectManager.OnRemoveEntity += this.OnRemoveEntity;
-            UpdateManager.Subscribe(this.OnUpdate, 3000);
+            EntityManager.EntityAdded += this.OnAddEntity;
+            EntityManager.EntityRemoved += this.OnRemoveEntity;
+            UpdateManager.Subscribe(3000, this.OnUpdate);
 
-            this.context.Renderer.Draw += this.OnDraw;
+            RendererManager.Draw += this.OnDraw;
         }
 
         public void Dispose()
         {
-            ObjectManager.OnAddEntity -= this.OnAddEntity;
-            ObjectManager.OnRemoveEntity -= this.OnRemoveEntity;
+            EntityManager.EntityAdded -= this.OnAddEntity;
+            EntityManager.EntityRemoved -= this.OnRemoveEntity;
             UpdateManager.Unsubscribe(this.OnUpdate);
 
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
         }
 
         private void LoadTextures()
         {
-            var tm = this.context.Renderer.TextureManager;
-
-            tm.LoadFromResource("rune_regeneration_minimap", "rune_regeneration_minimap.png");
-            tm.LoadFromResource("rune_arcane_minimap", "rune_arcane_minimap.png");
-            tm.LoadFromResource("rune_double_damage_minimap", "rune_double_damage_minimap.png");
-            tm.LoadFromResource("rune_haste_minimap", "rune_haste_minimap.png");
-            tm.LoadFromResource("rune_illusion_minimap", "rune_illusion_minimap.png");
-            tm.LoadFromResource("rune_invisibility_minimap", "rune_invisibility_minimap.png");
+            RendererManager.LoadTextureFromAssembly("rune_regeneration_minimap", "rune_regeneration_minimap.png");
+            RendererManager.LoadTextureFromAssembly("rune_arcane_minimap", "rune_arcane_minimap.png");
+            RendererManager.LoadTextureFromAssembly("rune_double_damage_minimap", "rune_double_damage_minimap.png");
+            RendererManager.LoadTextureFromAssembly("rune_haste_minimap", "rune_haste_minimap.png");
+            RendererManager.LoadTextureFromAssembly("rune_illusion_minimap", "rune_illusion_minimap.png");
+            RendererManager.LoadTextureFromAssembly("rune_invisibility_minimap", "rune_invisibility_minimap.png");
         }
 
-        private void OnAddEntity(EntityEventArgs args)
+        private void OnAddEntity(EntityAddedEventArgs e)
         {
             try
             {
-                var rune = args.Entity as Rune;
+                var rune = e.Entity as Rune;
                 if (rune == null || rune.RuneType == RuneType.Bounty)
                 {
                     return;
                 }
 
-                var spawn = this.runeSpawns.Find(x => x.Position.Distance2D(rune.Position) < 100);
+                var spawn = this.runeSpawns.Find(x => x.Position.Distance(rune.Position) < 100);
                 spawn?.AddRune(rune, this.runeTextures[rune.RuneType]);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -146,7 +136,7 @@
                     if (this.showOnMinimap)
                     {
                         var position = this.minimap.WorldToMinimap(rune.Position, 20 * Hud.Info.ScreenRatio);
-                        renderer.DrawTexture(rune.RunePicked ? "o9k.x" : rune.Texture, position);
+                        RendererManager.DrawTexture(rune.RunePicked ? "o9k.x" : rune.Texture, position);
                     }
 
                     if (this.showOnMap)
@@ -157,7 +147,7 @@
                             continue;
                         }
 
-                        renderer.DrawTexture(rune.RunePicked ? "o9k.x" : rune.Texture, position);
+                        RendererManager.DrawTexture(rune.RunePicked ? "o9k.x" : rune.Texture, position);
                     }
                 }
             }
@@ -167,22 +157,22 @@
             }
         }
 
-        private void OnRemoveEntity(EntityEventArgs args)
+        private void OnRemoveEntity(EntityRemovedEventArgs e)
         {
             try
             {
-                var rune = args.Entity as Rune;
+                var rune = e.Entity as Rune;
                 if (rune == null || rune.RuneType == RuneType.Bounty)
                 {
                     return;
                 }
 
-                var spawn = this.runeSpawns.Find(x => x.Position.Distance2D(rune.Position) < 100);
+                var spawn = this.runeSpawns.Find(x => x.Position.Distance(rune.Position) < 100);
                 spawn?.RemoveRune(rune);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
@@ -190,7 +180,7 @@
         {
             try
             {
-                if (Game.GameTime % GameData.RuneRespawnTime > GameData.RuneRespawnTime - 3)
+                if (GameManager.GameTime % GameData.RuneRespawnTime > GameData.RuneRespawnTime - 3)
                 {
                     foreach (var rune in this.runeSpawns)
                     {

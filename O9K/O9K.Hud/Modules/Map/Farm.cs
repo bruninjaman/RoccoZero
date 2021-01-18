@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Heroes;
@@ -14,10 +13,8 @@
     using Core.Managers.Menu.Items;
     using Core.Managers.Particle;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Helpers;
 
@@ -40,8 +37,6 @@
 
         private readonly Dictionary<Vector3, Sleeper> attacks = new Dictionary<Vector3, Sleeper>();
 
-        private readonly IContext9 context;
-
         private readonly IMinimap minimap;
 
         private readonly MenuSwitcher showOnMap;
@@ -50,10 +45,8 @@
 
         private Owner owner;
 
-        [ImportingConstructor]
-        public Farm(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public Farm(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var menu = hudMenu.MapMenu.Add(new Menu("Farm"));
@@ -76,18 +69,18 @@
         public void Activate()
         {
             this.owner = EntityManager9.Owner;
-            this.context.Renderer.TextureManager.LoadFromDota("o9k.attack", @"panorama\images\hud\reborn\ping_icon_attack_psd.vtex_c");
+            RendererManager.LoadTexture("o9k.attack", @"panorama\images\hud\reborn\ping_icon_attack_psd.vtex_c");
 
-            this.context.ParticleManger.ParticleAdded += this.OnParticleAdded;
+            Context9.ParticleManger.ParticleAdded += this.OnParticleAdded;
         }
 
         public void Dispose()
         {
-            this.context.Renderer.Draw -= this.OnDraw;
-            this.context.ParticleManger.ParticleAdded -= this.OnParticleAdded;
+            RendererManager.Draw -= this.OnDraw;
+            Context9.ParticleManger.ParticleAdded -= this.OnParticleAdded;
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -99,7 +92,7 @@
 
                         if (this.attacks.Count == 0)
                         {
-                            this.context.Renderer.Draw -= this.OnDraw;
+                            RendererManager.Draw -= this.OnDraw;
                         }
 
                         continue;
@@ -108,7 +101,7 @@
                     if (this.showOnMinimap)
                     {
                         var position = this.minimap.WorldToMinimap(attack.Key, 20 * Hud.Info.ScreenRatio);
-                        renderer.DrawTexture("o9k.attack", position);
+                        RendererManager.DrawTexture("o9k.attack", position);
                     }
 
                     if (this.showOnMap)
@@ -119,7 +112,7 @@
                             continue;
                         }
 
-                        renderer.DrawTexture("o9k.attack", position);
+                        RendererManager.DrawTexture("o9k.attack", position);
                     }
                 }
             }
@@ -133,7 +126,7 @@
             }
         }
 
-        private void OnParticleAdded(Particle particle)
+        private void OnParticleAdded(Particle9 particle)
         {
             try
             {
@@ -151,7 +144,7 @@
 
                 if (particle.SenderHandle == this.owner.PlayerHandle)
                 {
-                    var droppedItem = ObjectManager.GetEntities<PhysicalItem>().FirstOrDefault(x => x.Distance2D(position) < 300);
+                    var droppedItem = EntityManager.GetEntities<PhysicalItem>().FirstOrDefault(x => x.Distance2D(position) < 300);
                     if (droppedItem != null)
                     {
                         return;
@@ -162,7 +155,7 @@
                     return;
                 }
 
-                var sleeper = this.attacks.FirstOrDefault(x => x.Key.Distance2D(position) < 500).Value;
+                var sleeper = this.attacks.FirstOrDefault(x => x.Key.Distance(position) < 500).Value;
                 if (sleeper != null)
                 {
                     sleeper.Sleep(3);
@@ -171,7 +164,7 @@
 
                 if (this.attacks.Count == 0)
                 {
-                    this.context.Renderer.Draw += this.OnDraw;
+                    RendererManager.Draw += this.OnDraw;
                 }
 
                 this.attacks[position] = new Sleeper(3);

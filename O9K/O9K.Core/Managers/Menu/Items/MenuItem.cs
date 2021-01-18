@@ -112,6 +112,8 @@
 
         protected Vector2 Position { get; set; }
 
+        protected object Renderer { get; set; }
+
         protected bool SaveValue { get; private set; } = true;
 
         protected int TextIndent { get; set; }
@@ -125,7 +127,10 @@
         {
             this.localizedName[language] = name;
 
-            this.CalculateSize();
+            if (this.Renderer != null)
+            {
+                this.CalculateSize();
+            }
         }
 
         public void DisableSave()
@@ -242,6 +247,7 @@
 
         internal virtual void SetRenderer()
         {
+            Renderer = new object();
         }
 
         internal virtual void SetLanguage(Lang language)
@@ -286,23 +292,15 @@
                         new Color(50, 50, 50, 255),
                         1);
 
-                    /*RendererManager.DrawText(
+                    RendererManager.DrawText(
+                        this.Tooltip,
                         new RectangleF(
                             this.Position.X + this.Size.X + (this.MenuStyle.LeftIndent * 2),
                             this.Position.Y + (tooltipTextSize.Y / 4f),
                             tooltipTextSize.X,
                             this.Size.Y),
-                        this.Tooltip,
                         Color.White,
-                        RendererFontFlags.Left,
-                        this.MenuStyle.TooltipTextSize);*/
-
-                    RendererManager.DrawText(
-                        this.Tooltip,
-                        new Vector2(
-                            this.Position.X + this.Size.X + (this.MenuStyle.LeftIndent * 2),
-                            this.Position.Y + (tooltipTextSize.Y / 4f)),
-                        Color.White,
+                        FontFlags.Left,
                         this.MenuStyle.TooltipTextSize);
                 }
             }

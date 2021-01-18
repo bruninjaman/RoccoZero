@@ -1,6 +1,6 @@
 ﻿namespace O9K.Hud.Helpers.Notificator.Notifications
 {
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using SharpDX;
 
@@ -20,17 +20,17 @@
             this.TimeToShow = 3;
         }
 
-        public override void Draw(IRenderer renderer, RectangleF position, IMinimap minimap)
+        public override void Draw(RectangleF position, IMinimap minimap)
         {
             var heroPosition = GetHeroPosition(position);
             var targetPosition = GetTargetPosition(position, heroPosition);
             var abilityPosition = GetAbilityPosition(position, heroPosition, targetPosition);
             var opacity = this.GetOpacity();
 
-            renderer.DrawTexture("o9k.notification_bg", position, 0, opacity);
-            renderer.DrawTexture(this.heroName, heroPosition, 0, opacity);
-            renderer.DrawTexture(this.abilityName, abilityPosition, 0, opacity);
-            renderer.DrawTexture(this.targetName, targetPosition, 0, opacity);
+            RendererManager.DrawTexture("o9k.notification_bg", position, opacity);
+            RendererManager.DrawTexture(this.heroName, heroPosition, opacity);
+            RendererManager.DrawTexture(this.abilityName, abilityPosition, opacity);
+            RendererManager.DrawTexture(this.targetName, targetPosition, opacity);
         }
 
         private static RectangleF GetAbilityPosition(RectangleF position, RectangleF heroPosition, RectangleF itemPosition)

@@ -2,19 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Windows.Input;
 
     using Core.Data;
     using Core.Helpers;
-    using Core.Managers.Input;
-    using Core.Managers.Input.EventArgs;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     using MainMenu;
 
@@ -30,19 +27,12 @@
 
         private readonly MenuSwitcher enabled;
 
-        private readonly IInputManager9 inputManager;
-
         private readonly MenuHoldKey key;
 
         private readonly MenuSlider zoom;
 
-        private ConVar zoomVar;
-
-        [ImportingConstructor]
-        public Zoom(IInputManager9 inputManager, IHudMenu hudMenu)
+        public Zoom(IHudMenu hudMenu)
         {
-            this.inputManager = inputManager;
-
             var menu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Zoom"));
             menu.AddTranslation(Lang.Ru, "Зумхак");
             menu.AddTranslation(Lang.Cn, "视野");
@@ -74,7 +64,7 @@
             this.enabled.ValueChange -= this.EnabledOnValueChange;
             this.key.ValueChange -= this.KeyOnValueChange;
             this.zoom.ValueChange -= this.ZoomOnValueChange;
-            this.inputManager.MouseWheel -= this.OnMouseWheel;
+            InputManager.MouseWheel -= this.OnMouseWheel;
         }
 
         private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
@@ -92,10 +82,8 @@
 
                 foreach (var cmd in this.consoleCommands)
                 {
-                    Game.GetConsoleVar(cmd.Key).SetValue(cmd.Value);
+                    ConVarManager.SetValue(cmd.Key, cmd.Value);
                 }
-
-                this.zoomVar = Game.GetConsoleVar("dota_camera_distance");
 
                 this.zoom.ValueChange += this.ZoomOnValueChange;
                 this.key.ValueChange += this.KeyOnValueChange;
@@ -104,9 +92,9 @@
             {
                 this.key.ValueChange -= this.KeyOnValueChange;
                 this.zoom.ValueChange -= this.ZoomOnValueChange;
-                this.inputManager.MouseWheel -= this.OnMouseWheel;
+                InputManager.MouseWheel -= this.OnMouseWheel;
 
-                this.zoomVar.SetValue(GameData.DefaultZoom);
+                ConVarManager.SetValue("dota_camera_distance", GameData.DefaultZoom);
             }
         }
 
@@ -114,15 +102,15 @@
         {
             if (e.NewValue)
             {
-                this.inputManager.MouseWheel += this.OnMouseWheel;
+                InputManager.MouseWheel += this.OnMouseWheel;
             }
             else
             {
-                this.inputManager.MouseWheel -= this.OnMouseWheel;
+                InputManager.MouseWheel -= this.OnMouseWheel;
             }
         }
 
-        private void OnMouseWheel(object sender, MouseWheelEventArgs e)
+        private void OnMouseWheel(MouseWheelEventArgs e)
         {
             this.zoom.Value += e.Up ? -50 : 50;
             e.Process = false;
@@ -130,7 +118,7 @@
 
         private void ZoomOnValueChange(object sender, SliderEventArgs e)
         {
-            this.zoomVar.SetValue(e.NewValue);
+            ConVarManager.SetValue("dota_camera_distance", e.NewValue);
         }
     }
 }

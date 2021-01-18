@@ -6,7 +6,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore
     {
         public CheckRuneMenu(Menu.Items.Menu showMeMoreMenu)
         {
-            var checkRuneMenu = showMeMoreMenu.CreateMenu("Check Rune").SetTexture(@"spells\rune_regen.png");
+            var checkRuneMenu = showMeMoreMenu.CreateMenu("Check Rune").SetTexture("rune_regen", MenuTextureType.Ability);
             EnableItem = checkRuneMenu.CreateSwitcher("Enable");
             SideMessageItem = checkRuneMenu.CreateSwitcher("Side Message");
             PlaySoundItem = checkRuneMenu.CreateSwitcher("Play Sound");

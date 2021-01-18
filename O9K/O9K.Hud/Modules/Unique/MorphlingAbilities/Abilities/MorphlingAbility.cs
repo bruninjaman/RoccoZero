@@ -1,15 +1,15 @@
 ﻿namespace O9K.Hud.Modules.Unique.MorphlingAbilities.Abilities
 {
     using System;
-    using System.Drawing;
     using System.Linq;
 
     using Core.Entities.Abilities.Base;
     using Core.Logger;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
+
+    using SharpDX;
 
     internal class MorphlingAbility : IMorphlingAbility
     {
@@ -43,7 +43,7 @@
         {
             get
             {
-                var cd = (this.updateTime + this.cooldown) - Game.RawGameTime;
+                var cd = (this.updateTime + this.cooldown) - GameManager.RawGameTime;
 
                 if (cd <= 0)
                 {
@@ -59,16 +59,16 @@
             return isMorphed != this.isAbilityReplicated;
         }
 
-        public void Draw(IRenderer renderer, Rectangle9 position, float textSize)
+        public void Draw(Rectangle9 position, float textSize)
         {
             try
             {
-                renderer.DrawTexture(this.texture, position);
-                renderer.DrawRectangle(position - 1, Color.Black);
+                RendererManager.DrawTexture(this.texture, position);
+                RendererManager.DrawRectangle(position - 1, Color.Black);
 
                 if (this.level == 0)
                 {
-                    renderer.DrawTexture("o9k.ability_0lvl_bg", position);
+                    RendererManager.DrawTexture("o9k.ability_0lvl_bg", position);
                     return;
                 }
 
@@ -77,12 +77,12 @@
                     return;
                 }
 
-                renderer.DrawTexture("o9k.ability_cd_bg", position);
-                renderer.DrawText(
-                    position,
+                RendererManager.DrawTexture("o9k.ability_cd_bg", position);
+                RendererManager.DrawText(
                     Math.Ceiling(this.RemainingCooldown).ToString("N0"),
+                    position,
                     Color.White,
-                    RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                    FontFlags.Center | FontFlags.VerticalCenter,
                     textSize);
             }
             catch (Exception e)
@@ -110,7 +110,7 @@
 
             if (this.level > 0)
             {
-                this.updateTime = Game.RawGameTime;
+                this.updateTime = GameManager.RawGameTime;
                 this.cooldown = this.ability.BaseAbility.Cooldown;
             }
 

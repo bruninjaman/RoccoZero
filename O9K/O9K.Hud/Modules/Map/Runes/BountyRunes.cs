@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Data;
@@ -13,10 +12,9 @@
     using Core.Managers.Menu.Items;
     using Core.Managers.Particle;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Extensions;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -26,8 +24,6 @@
 
     internal class BountyRunes : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly IMinimap minimap;
 
         private readonly List<Vector3> pickedRunes = new List<Vector3>();
@@ -38,10 +34,8 @@
 
         private Vector3[] bountySpawns;
 
-        [ImportingConstructor]
-        public BountyRunes(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public BountyRunes(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var runesMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Runes"));
@@ -67,7 +61,7 @@
 
         public void Activate()
         {
-            this.bountySpawns = ObjectManager.GetEntities<Item>()
+            this.bountySpawns = EntityManager.GetEntities<Item>()
                 .Where(x => x.NetworkName == "CDOTA_Item_RuneSpawner_Bounty")
                 .Select(x => x.Position)
                 .ToArray();
@@ -77,18 +71,18 @@
                 return;
             }
 
-            this.context.ParticleManger.ParticleAdded += this.OnParticleAdded;
-            UpdateManager.Subscribe(this.OnUpdate, 3000);
+            Context9.ParticleManger.ParticleAdded += this.OnParticleAdded;
+            UpdateManager.Subscribe(3000, this.OnUpdate);
         }
 
         public void Dispose()
         {
             UpdateManager.Unsubscribe(this.OnUpdate);
-            this.context.ParticleManger.ParticleAdded -= this.OnParticleAdded;
-            this.context.Renderer.Draw -= this.OnDraw;
+            Context9.ParticleManger.ParticleAdded -= this.OnParticleAdded;
+            RendererManager.Draw -= this.OnDraw;
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -97,7 +91,7 @@
                     if (this.showOnMinimap)
                     {
                         var position = this.minimap.WorldToMinimap(pickedRune, 20 * Hud.Info.ScreenRatio);
-                        renderer.DrawTexture("o9k.x", position);
+                        RendererManager.DrawTexture("o9k.x", position);
                     }
 
                     if (this.showOnMap)
@@ -108,7 +102,7 @@
                             continue;
                         }
 
-                        renderer.DrawTexture("o9k.x", position);
+                        RendererManager.DrawTexture("o9k.x", position);
                     }
                 }
             }
@@ -122,7 +116,7 @@
             }
         }
 
-        private void OnParticleAdded(Particle particle)
+        private void OnParticleAdded(Particle9 particle)
         {
             try
             {
@@ -132,7 +126,7 @@
                 }
 
                 var position = particle.GetControlPoint(0);
-                var runeSpawn = Array.Find(this.bountySpawns, x => x.Distance2D(position) < 500);
+                var runeSpawn = Array.Find(this.bountySpawns, x => x.Distance(position) < 500);
                 if (runeSpawn.IsZero)
                 {
                     return;
@@ -145,7 +139,7 @@
 
                 if (this.pickedRunes.Count == 0)
                 {
-                    this.context.Renderer.Draw += this.OnDraw;
+                    RendererManager.Draw += this.OnDraw;
                 }
 
                 this.pickedRunes.Add(runeSpawn);
@@ -160,9 +154,9 @@
         {
             try
             {
-                if (Game.GameTime % GameData.BountyRuneRespawnTime > GameData.BountyRuneRespawnTime - 5)
+                if (GameManager.GameTime % GameData.BountyRuneRespawnTime > GameData.BountyRuneRespawnTime - 5)
                 {
-                    this.context.Renderer.Draw -= this.OnDraw;
+                    RendererManager.Draw -= this.OnDraw;
                     this.pickedRunes.Clear();
                 }
             }

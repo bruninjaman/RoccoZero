@@ -2,22 +2,20 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Core.Entities.Heroes;
     using Core.Entities.Heroes.Unique;
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -29,8 +27,6 @@
 
     internal class Awareness : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher enabled;
 
         private readonly List<AwarenessHero> heroes = new List<AwarenessHero>();
@@ -45,10 +41,8 @@
 
         private float textureSize;
 
-        [ImportingConstructor]
-        public Awareness(IContext9 context, IMinimap minimap, IHudMenu hudMenu)
+        public Awareness(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
             this.minimap = minimap;
 
             var menu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Map awareness"));
@@ -72,7 +66,7 @@
             UpdateManager.Unsubscribe(this.OnUpdate);
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
             this.heroes.Clear();
         }
 
@@ -92,22 +86,22 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(this.OnUpdate, 500);
+                UpdateManager.Subscribe(500, this.OnUpdate);
                 EntityManager9.UnitAdded += this.OnUnitAdded;
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
                 UpdateManager.Unsubscribe(this.OnUpdate);
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
                 this.heroes.Clear();
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -120,8 +114,8 @@
                         continue;
                     }
 
-                    renderer.DrawTexture(hero.OutlineTextureName, rec * 1.2f);
-                    renderer.DrawTexture(hero.TextureName, rec);
+                    RendererManager.DrawTexture(hero.OutlineTextureName, rec * 1.2f);
+                    RendererManager.DrawTexture(hero.TextureName, rec, UnitTextureType.MiniUnit);
 
                     rec += new Vector2(this.textureSize + this.margin, 0);
                 }

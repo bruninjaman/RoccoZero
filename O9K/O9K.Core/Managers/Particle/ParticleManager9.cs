@@ -1,115 +1,112 @@
-﻿//namespace O9K.Core.Managers.Particle
-//{
-//    using System;
-//    using System.Collections.Generic;
-//    using System.ComponentModel.Composition;
+﻿namespace O9K.Core.Managers.Particle
+{
+    using System;
+    using System.Collections.Generic;
 
-//    using Divine;
-//    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
-//    using Logger;
+    using Logger;
 
-//    [Export(typeof(IParticleManager9))]
-//    public class ParticleManager9 : IParticleManager9, IDisposable
-//    {
-//        private readonly HashSet<string> ignoredParticles = new HashSet<string>
-//        {
-//            "particles/ui/hud/levelupburst.vpcf",
-//            "particles/ui_mouseactions/range_finder_tower_aoe.vpcf",
-//            "particles/ui_mouseactions/bounding_area_view.vpcf",
-//            "particles/ui_mouseactions/shop_highlight.vpcf",
-//            "particles/ui_mouseactions/select_unit.vpcf",
-//            "particles/dire_fx/dire_building_damage_minor.vpcf",
-//            "particles/dire_fx/dire_building_damage_major.vpcf",
-//            "particles/radiant_fx2/radiant_building_damage_minor.vpcf",
-//            "particles/radiant_fx2/radiant_building_damage_major.vpcf",
-//            "particles/world_environmental_fx/radiant_creep_spawn.vpcf",
-//            "particles/world_environmental_fx/dire_creep_spawn.vpcf",
-//        };
+    public class ParticleManager9 : IParticleManager9, IDisposable
+    {
+        private readonly HashSet<string> ignoredParticles = new HashSet<string>
+        {
+            "particles/ui/hud/levelupburst.vpcf",
+            "particles/ui_mouseactions/range_finder_tower_aoe.vpcf",
+            "particles/ui_mouseactions/bounding_area_view.vpcf",
+            "particles/ui_mouseactions/shop_highlight.vpcf",
+            "particles/ui_mouseactions/select_unit.vpcf",
+            "particles/dire_fx/dire_building_damage_minor.vpcf",
+            "particles/dire_fx/dire_building_damage_major.vpcf",
+            "particles/radiant_fx2/radiant_building_damage_minor.vpcf",
+            "particles/radiant_fx2/radiant_building_damage_major.vpcf",
+            "particles/world_environmental_fx/radiant_creep_spawn.vpcf",
+            "particles/world_environmental_fx/dire_creep_spawn.vpcf",
+        };
 
-//        [ImportingConstructor]
-//        public ParticleManager9()
-//        {
-//            Entity.OnParticleEffectAdded += this.OnParticleEffectAdded;
-//            Entity.OnParticleEffectReleased += this.OnParticleEffectReleased;
-//        }
+        public ParticleManager9()
+        {
+            ParticleManager.ParticleAdded += this.OnParticleEffectAdded;
+            //Entity.OnParticleEffectReleased += this.OnParticleEffectReleased;
+        }
 
-//        public delegate void EventHandler(Particle particle);
+        public delegate void EventHandler(Particle9 particle);
 
-//        public event EventHandler ParticleAdded;
+        public event EventHandler ParticleAdded;
 
-//        public void Dispose()
-//        {
-//            Entity.OnParticleEffectAdded -= this.OnParticleEffectAdded;
-//            Entity.OnParticleEffectReleased -= this.OnParticleEffectReleased;
-//        }
+        public void Dispose()
+        {
+            ParticleManager.ParticleAdded -= this.OnParticleEffectAdded;
+            //Entity.OnParticleEffectReleased -= this.OnParticleEffectReleased;
+        }
 
-//        private void OnParticleEffectAdded(Entity sender, ParticleEffectAddedEventArgs args)
-//        {
-//            try
-//            {
-//                var particleEffect = args.ParticleEffect;
-//                if (!particleEffect.IsValid)
-//                {
-//                    return;
-//                }
+        private void OnParticleEffectAdded(ParticleAddedEventArgs e)
+        {
+            try
+            {
+                var particle = e.Particle;
+                if (!particle.IsValid)
+                {
+                    return;
+                }
 
-//                if (this.ignoredParticles.Contains(args.Name))
-//                {
-//                    return;
-//                }
+                if (this.ignoredParticles.Contains(particle.Name))
+                {
+                    return;
+                }
 
-//                var particle = new Particle(particleEffect, args.Name, sender, false);
+                var particle9 = new Particle9(particle, particle.Name, particle.Owner, false);
 
-//                UpdateManager.BeginInvoke(
-//                    () =>
-//                        {
-//                            try
-//                            {
-//                                if (!particle.IsValid)
-//                                {
-//                                    return;
-//                                }
+                UpdateManager.BeginInvoke(
+                    () =>
+                        {
+                            try
+                            {
+                                if (!particle.IsValid)
+                                {
+                                    return;
+                                }
 
-//                                this.ParticleAdded?.Invoke(particle);
-//                            }
-//                            catch (Exception e)
-//                            {
-//                                Logger.Error(e);
-//                            }
-//                        });
-//            }
-//            catch (Exception e)
-//            {
-//                Logger.Error(e);
-//            }
-//        }
+                                this.ParticleAdded?.Invoke(particle9);
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex);
+                            }
+                        });
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+        }
 
-//        private void OnParticleEffectReleased(Entity sender, ParticleEffectReleasedEventArgs args)
-//        {
-//            try
-//            {
-//                var particleEffect = args.ParticleEffect;
-//                if (!particleEffect.IsValid)
-//                {
-//                    return;
-//                }
+        /*private void OnParticleEffectReleased(Entity sender, ParticleEffectReleasedEventArgs args)
+        {
+            try
+            {
+                var particleEffect = args.ParticleEffect;
+                if (!particleEffect.IsValid)
+                {
+                    return;
+                }
 
-//                var name = particleEffect.Name;
+                var name = particleEffect.Name;
 
-//                if (this.ignoredParticles.Contains(name))
-//                {
-//                    return;
-//                }
+                if (this.ignoredParticles.Contains(name))
+                {
+                    return;
+                }
 
-//                var particle = new Particle(particleEffect, name, sender, true);
+                var particle = new Particle(particleEffect, name, sender, true);
 
-//                this.ParticleAdded?.Invoke(particle);
-//            }
-//            catch (Exception e)
-//            {
-//                Logger.Error(e);
-//            }
-//        }
-//    }
-//}
+                this.ParticleAdded?.Invoke(particle);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+        }*/
+    }
+}

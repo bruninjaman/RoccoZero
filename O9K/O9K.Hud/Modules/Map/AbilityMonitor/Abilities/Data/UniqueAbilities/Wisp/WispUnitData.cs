@@ -10,8 +10,8 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
 
@@ -19,11 +19,11 @@
     {
         public override void AddDrawableAbility(
             List<IDrawableAbility> drawableAbilities,
-            ParticleEffect particle,
+            Particle particle,
             Team allyTeam,
             INotificator notificator)
         {
-            UpdateManager.BeginInvoke(
+            UpdateManager.BeginInvoke(1000,
                 () =>
                     {
                         try
@@ -67,8 +67,7 @@
                         {
                             Logger.Error(e);
                         }
-                    },
-                1000);
+                    });
         }
     }
 }

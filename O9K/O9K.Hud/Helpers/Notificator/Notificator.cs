@@ -2,23 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
-    using Core.Managers.Input;
-    using Core.Managers.Input.EventArgs;
-    using Core.Managers.Input.Keys;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
-    using Ensage.SDK.Renderer.Texture;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
@@ -28,18 +21,11 @@
 
     using SharpDX;
 
-    using Color = System.Drawing.Color;
-
-    [Export(typeof(INotificator))]
     internal class Notificator : IHudModule, INotificator
     {
         private const int MaxNotifications = 3;
 
-        private readonly IContext9 context;
-
         private readonly MenuSwitcher debug;
-
-        private readonly IInputManager9 inputManager;
 
         private readonly IMinimap minimap;
 
@@ -53,13 +39,10 @@
 
         private Rectangle9 panel;
 
-        private IUpdateHandler updateHandler;
+        private UpdateHandler updateHandler;
 
-        [ImportingConstructor]
-        public Notificator(IContext9 context, IInputManager9 inputManager, IMinimap minimap, IHudMenu hudMenu)
+        public Notificator(IMinimap minimap, IHudMenu hudMenu)
         {
-            this.context = context;
-            this.inputManager = inputManager;
             this.minimap = minimap;
 
             var settings = hudMenu.NotificationsSettingsMenu;
@@ -85,7 +68,7 @@
         {
             this.LoadTextures();
 
-            this.updateHandler = UpdateManager.Subscribe(this.OnUpdate, 300, false);
+            this.updateHandler = UpdateManager.Subscribe(300, false, this.OnUpdate);
 
             this.debug.ValueChange += this.DebugOnValueChange;
             this.size.ValueChange += this.SizeOnValueChange;
@@ -95,9 +78,9 @@
         public void Dispose()
         {
             this.debug.ValueChange -= this.DebugOnValueChange;
-            this.context.Renderer.Draw -= this.OnDrawDebug;
-            this.context.Renderer.Draw -= this.OnDraw;
-            this.inputManager.MouseKeyDown -= this.OnMouseKeyDown;
+            RendererManager.Draw -= this.OnDrawDebug;
+            RendererManager.Draw -= this.OnDraw;
+            InputManager.MouseKeyDown -= this.OnMouseKeyDown;
             this.size.ValueChange -= this.SizeOnValueChange;
             this.position.ValueChange -= this.PositionOnValueChange;
             this.updateHandler.IsEnabled = false;
@@ -111,8 +94,8 @@
             if (!this.updateHandler.IsEnabled)
             {
                 this.updateHandler.IsEnabled = true;
-                this.context.Renderer.Draw += this.OnDraw;
-                this.inputManager.MouseKeyDown += this.OnMouseKeyDown;
+                RendererManager.Draw += this.OnDraw;
+                InputManager.MouseKeyDown += this.OnMouseKeyDown;
             }
         }
 
@@ -120,32 +103,31 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDrawDebug;
+                RendererManager.Draw += this.OnDrawDebug;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDrawDebug;
+                RendererManager.Draw -= this.OnDrawDebug;
             }
         }
 
         private void LoadTextures()
         {
-            var tm = this.context.Renderer.TextureManager;
-            tm.LoadFromDota(
+            RendererManager.LoadTexture(
                 "o9k.notification_bg",
                 @"panorama\images\hud\reborn\bg_deathsummary_psd.vtex_c",
                 new TextureProperties
                 {
                     Brightness = 10
                 });
-            tm.LoadFromDota("o9k.gold", @"panorama\images\hud\reborn\gold_large_png.vtex_c");
-            tm.LoadFromDota("o9k.ping", @"panorama\images\hud\reborn\ping_icon_default_psd.vtex_c");
-            tm.LoadFromDota("o9k.outpost", @"panorama\images\hud\icon_outpost_psd.vtex_c");
-            tm.LoadFromResource("o9k.rune_regen", "rune_regen.png");
-            tm.LoadFromResource("o9k.rune_bounty", "rune_bounty.png");
+            RendererManager.LoadTexture("o9k.gold", @"panorama\images\hud\reborn\gold_large_png.vtex_c");
+            RendererManager.LoadTexture("o9k.ping", @"panorama\images\hud\reborn\ping_icon_default_psd.vtex_c");
+            RendererManager.LoadTexture("o9k.outpost", @"panorama\images\hud\icon_outpost_psd.vtex_c");
+            RendererManager.LoadTextureFromAssembly("o9k.rune_regen", "rune_regen.png");
+            RendererManager.LoadTextureFromAssembly("o9k.rune_bounty", "rune_bounty.png");
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -153,7 +135,7 @@
 
                 foreach (var notification in this.notifications)
                 {
-                    notification.Draw(renderer, drawPosition, this.minimap);
+                    notification.Draw(drawPosition, this.minimap);
                     drawPosition += new Vector2(0, -(drawPosition.Height + 20));
                 }
             }
@@ -167,7 +149,7 @@
             }
         }
 
-        private void OnDrawDebug(IRenderer renderer)
+        private void OnDrawDebug()
         {
             try
             {
@@ -175,7 +157,7 @@
 
                 for (var i = 0; i < MaxNotifications; i++)
                 {
-                    renderer.DrawRectangle(drawPosition, Color.White);
+                    RendererManager.DrawRectangle(drawPosition, Color.White);
                     drawPosition += new Vector2(0, -(drawPosition.Height + 20));
                 }
             }
@@ -185,7 +167,7 @@
             }
         }
 
-        private void OnMouseKeyDown(object sender, MouseEventArgs e)
+        private void OnMouseKeyDown(MouseEventArgs e)
         {
             try
             {
@@ -198,7 +180,7 @@
 
                 foreach (var notification in this.notifications)
                 {
-                    if (drawPosition.Contains(e.ScreenPosition))
+                    if (drawPosition.Contains(e.Position))
                     {
                         if (notification.OnClick())
                         {
@@ -234,8 +216,8 @@
                 if (this.notifications.Count == 0)
                 {
                     this.updateHandler.IsEnabled = false;
-                    this.context.Renderer.Draw -= this.OnDraw;
-                    this.inputManager.MouseKeyDown -= this.OnMouseKeyDown;
+                    RendererManager.Draw -= this.OnDraw;
+                    InputManager.MouseKeyDown -= this.OnMouseKeyDown;
                 }
             }
             catch (Exception e)

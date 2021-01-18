@@ -2,43 +2,27 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Heroes;
     using Core.Entities.Units;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
-    using Ensage.SDK.Renderer.Texture;
+    using Divine;
 
     using Modules;
 
     internal class TextureLoader : IHudModule
     {
-        private readonly IContext9 context;
-
         private readonly HashSet<string> loaded = new HashSet<string>
         {
             nameof(AbilityId.courier_take_stash_and_transfer_items),
             nameof(AbilityId.courier_transfer_items_to_other_player),
         };
 
-        private ITextureManager textureManager;
-
-        [ImportingConstructor]
-        public TextureLoader(IContext9 context)
-        {
-            this.context = context;
-        }
-
         public void Activate()
         {
-            this.textureManager = this.context.Renderer.TextureManager;
-
             this.LoadTextures();
 
             EntityManager9.UnitAdded += this.OnUnitAdded;
@@ -53,13 +37,13 @@
 
         private void LoadAbilityTexture(AbilityId id)
         {
-            this.textureManager.LoadAbilityFromDota(id);
-            this.textureManager.LoadAbilityFromDota(id, true);
+            RendererManager.LoadTexture(id);
+            RendererManager.LoadTexture(id, AbilityTextureType.Round);
         }
 
         private void LoadTextures()
         {
-            foreach (var player in ObjectManager.GetEntities<Player>())
+            foreach (var player in EntityManager.GetEntities<Player>())
             {
                 var id = player.SelectedHeroId;
                 if (id == HeroId.npc_dota_hero_base)
@@ -67,48 +51,30 @@
                     continue;
                 }
 
-                this.textureManager.LoadHeroFromDota(id);
-                this.textureManager.LoadHeroFromDota(id, true);
-                this.textureManager.LoadHeroFromDota(id, false, true);
+                RendererManager.LoadTexture(id);
+                RendererManager.LoadTexture(id, UnitTextureType.RoundUnit);
+                RendererManager.LoadTexture(id, UnitTextureType.MiniUnit);
 
                 this.loaded.Add(id.ToString());
             }
 
-            this.textureManager.LoadFromDota("o9k.x", @"panorama\images\hud\reborn\ping_icon_retreat_psd.vtex_c");
-            this.textureManager.LoadFromDota(
-                "rune_arcane_rounded",
-                @"panorama\images\spellicons\rune_arcane_png.vtex_c",
-                TextureProperties.Round);
-            this.textureManager.LoadFromDota(
-                "rune_arcane_rounded",
-                @"panorama\images\spellicons\rune_doubledamage_png.vtex_c",
-                TextureProperties.Round);
-            this.textureManager.LoadFromDota(
-                "rune_haste_rounded",
-                @"panorama\images\spellicons\rune_haste_png.vtex_c",
-                TextureProperties.Round);
-            this.textureManager.LoadFromDota(
-                "rune_invis_rounded",
-                @"panorama\images\spellicons\rune_invis_png.vtex_c",
-                TextureProperties.Round);
-            this.textureManager.LoadFromDota(
-                "rune_regen_rounded",
-                @"panorama\images\spellicons\rune_regen_png.vtex_c",
-                TextureProperties.Round);
-            this.textureManager.LoadFromDota("npc_dota_roshan", @"panorama\images\heroes\npc_dota_hero_roshan_png.vtex_c");
-            this.textureManager.LoadFromDota(
-                "npc_dota_roshan_rounded",
-                @"panorama\images\heroes\npc_dota_hero_roshan_png.vtex_c",
-                TextureProperties.Round);
+            RendererManager.LoadTexture("o9k.x", @"panorama\images\hud\reborn\ping_icon_retreat_psd.vtex_c");
+            RendererManager.LoadTexture("rune_arcane", TextureType.RoundAbility);
+            RendererManager.LoadTexture("rune_arcane", TextureType.RoundAbility);
+            RendererManager.LoadTexture("rune_haste", TextureType.RoundAbility);
+            RendererManager.LoadTexture("rune_invis", TextureType.RoundAbility);
+            RendererManager.LoadTexture("rune_regen", TextureType.RoundAbility);
+            RendererManager.LoadTexture("npc_dota_roshan", UnitTextureType.Default);
+            RendererManager.LoadTexture("npc_dota_roshan", UnitTextureType.RoundUnit);
 
-            this.textureManager.LoadAbilityFromDota("item_bottle");
-            this.textureManager.LoadAbilityFromDota("item_bottle_arcane");
-            this.textureManager.LoadAbilityFromDota("item_bottle_bounty");
-            this.textureManager.LoadAbilityFromDota("item_bottle_doubledamage");
-            this.textureManager.LoadAbilityFromDota("item_bottle_haste");
-            this.textureManager.LoadAbilityFromDota("item_bottle_illusion");
-            this.textureManager.LoadAbilityFromDota("item_bottle_invisibility");
-            this.textureManager.LoadAbilityFromDota("item_bottle_regeneration");
+            RendererManager.LoadTexture(AbilityId.item_bottle);
+            RendererManager.LoadTexture("item_bottle_arcane", TextureType.Ability);
+            RendererManager.LoadTexture("item_bottle_bounty", TextureType.Ability);
+            RendererManager.LoadTexture("item_bottle_doubledamage", TextureType.Ability);
+            RendererManager.LoadTexture("item_bottle_haste", TextureType.Ability);
+            RendererManager.LoadTexture("item_bottle_illusion");
+            RendererManager.LoadTexture("item_bottle_invisibility", TextureType.Ability);
+            RendererManager.LoadTexture("item_bottle_regeneration", TextureType.Ability);
 
             this.LoadAbilityTexture(AbilityId.item_smoke_of_deceit);
             this.LoadAbilityTexture(AbilityId.item_ward_sentry);
@@ -126,8 +92,8 @@
 
                 if (!ability.IsTalent)
                 {
-                    this.textureManager.LoadAbilityFromDota(ability.TextureName);
-                    this.textureManager.LoadAbilityFromDota(ability.TextureName, true);
+                    RendererManager.LoadTexture(ability.TextureName, TextureType.Ability);
+                    RendererManager.LoadTexture(ability.TextureName, TextureType.RoundAbility);
                 }
 
                 this.loaded.Add(ability.TextureName);
@@ -149,13 +115,13 @@
 
                 if (unit is Hero9 hero)
                 {
-                    this.textureManager.LoadHeroFromDota(hero.TextureName);
-                    this.textureManager.LoadHeroFromDota(hero.TextureName, true);
-                    this.textureManager.LoadHeroFromDota(hero.TextureName, false, true);
+                    RendererManager.LoadTexture(hero.TextureName, TextureType.Unit);
+                    RendererManager.LoadTexture(hero.TextureName, TextureType.RoundUnit);
+                    RendererManager.LoadTexture(hero.TextureName, TextureType.MiniUnit);
                 }
                 else if (unit.IsUnit && !unit.IsCreep)
                 {
-                    this.textureManager.LoadUnitFromDota(unit.DefaultName);
+                    RendererManager.LoadTexture(unit.DefaultName, TextureType.Unit);
                 }
 
                 this.loaded.Add(unit.TextureName);

@@ -4,8 +4,8 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     internal class EnemyHero
     {
@@ -30,7 +30,7 @@
 
         public uint CountWards(AbilityId id)
         {
-            var items = this.Unit.BaseInventory.Items.Concat(this.Unit.BaseInventory.Backpack).ToList();
+            var items = this.Unit.BaseInventory.Items.Concat(this.Unit.BaseInventory.BackpackItems).ToList();
 
             return (uint)(items.Where(x => x.Id == id).Sum(x => x.CurrentCharges) + items.Where(x => x.Id == DispenserId)
                               .Sum(x => id == AbilityId.item_ward_observer ? x.CurrentCharges : x.SecondaryCharges));
@@ -38,7 +38,7 @@
 
         public bool DroppedWard(AbilityId id)
         {
-            return ObjectManager.GetEntitiesFast<PhysicalItem>()
+            return EntityManager.GetEntities<PhysicalItem>()
                 .Any(x => (x.Item.Id == id || x.Item.Id == DispenserId) && x.Distance2D(this.Unit.Position) < 300);
         }
 

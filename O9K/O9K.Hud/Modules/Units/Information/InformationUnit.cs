@@ -5,11 +5,9 @@
     using Core.Entities.Heroes;
     using Core.Entities.Units;
 
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using SharpDX;
-
-    using Color = System.Drawing.Color;
 
     internal class InformationUnit
     {
@@ -30,7 +28,7 @@
 
         public Unit9 Unit { get; }
 
-        public void DrawInformation(IRenderer renderer, float mySpeed, bool showDamage, bool showSpeed, Vector2 position, float size)
+        public void DrawInformation(float mySpeed, bool showDamage, bool showSpeed, Vector2 position, float size)
         {
             var hpBar = this.Unit.HealthBarPosition;
             if (hpBar.IsZero)
@@ -46,8 +44,8 @@
 
             if (showDamage)
             {
-                renderer.DrawTexture("o9k.attack_minimalistic", iconPosition, new Vector2(iconSize));
-                renderer.DrawText(textPosition, this.Hits == 0 ? "?" : this.Hits.ToString(), Color.White, size);
+                RendererManager.DrawTexture("o9k.attack_minimalistic", new RectangleF(iconPosition.X, iconPosition.Y, iconSize, iconSize));
+                RendererManager.DrawText(this.Hits == 0 ? "?" : this.Hits.ToString(), textPosition, Color.White, size);
 
                 iconPosition += new Vector2(0, size);
                 textPosition += new Vector2(0, size);
@@ -55,16 +53,16 @@
 
             if (showSpeed)
             {
-                renderer.DrawTexture("o9k.speed_minimalistic", iconPosition, new Vector2(iconSize));
+                RendererManager.DrawTexture("o9k.speed_minimalistic", new RectangleF(iconPosition.X, iconPosition.Y, iconSize, iconSize));
 
                 var speed = mySpeed - this.Unit.Speed;
                 if (speed >= 0)
                 {
-                    renderer.DrawText(textPosition, speed.ToString(), Color.White, size);
+                    RendererManager.DrawText(speed.ToString(), textPosition, Color.White, size);
                 }
                 else
                 {
-                    renderer.DrawText(textPosition, (speed * -1).ToString(), Color.DarkOrange, size);
+                    RendererManager.DrawText((speed * -1).ToString(), textPosition, Color.DarkOrange, size);
                 }
             }
         }

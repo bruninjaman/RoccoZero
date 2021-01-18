@@ -1,7 +1,6 @@
 ﻿namespace O9K.Hud.Modules.Particles.Units
 {
     using System;
-    using System.ComponentModel.Composition;
 
     using Core.Entities.Heroes;
     using Core.Entities.Units;
@@ -11,9 +10,8 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
@@ -23,9 +21,9 @@
     {
         private readonly MenuSwitcher show;
 
-        private ParticleEffect effect;
+        private Particle effect;
 
-        private IUpdateHandler handler;
+        private UpdateHandler handler;
 
         private Owner owner;
 
@@ -33,7 +31,6 @@
 
         private Unit9 towerTarget;
 
-        [ImportingConstructor]
         public TowerTarget(IHudMenu hudMenu)
         {
             this.show = hudMenu.ParticlesMenu.Add(new MenuSwitcher("Tower target").SetTooltip("Show when tower's target is hero"));
@@ -54,39 +51,48 @@
         {
             this.show.ValueChange -= this.ShowOnValueChange;
             UpdateManager.Unsubscribe(this.handler);
-            Entity.OnHandlePropertyChange -= this.OnHandlePropertyChange;
+            Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
         }
 
-        private void OnHandlePropertyChange(Entity sender, HandlePropertyChangeEventArgs args)
+        private void OnNetworkPropertyChanged(Entity sender, NetworkPropertyChangedEventArgs e)
         {
-            try
+            if (e.PropertyName != "m_hTowerAttackTarget")
             {
-                if (args.NewValue == args.OldValue || args.PropertyName != "m_hTowerAttackTarget")
-                {
-                    return;
-                }
-
-                var unit = EntityManager9.GetUnit(args.NewValue);
-                if (unit == null || !unit.IsHero || unit.IsIllusion || unit.Distance(this.owner) > 1000)
-                {
-                    return;
-                }
-
-                this.effect?.Dispose();
-
-                this.effect = new ParticleEffect(@"materials\ensage_ui\particles\target.vpcf", unit.Position);
-                this.effect.SetControlPoint(2, sender.Position);
-                this.effect.SetControlPoint(5, new Vector3(255, 0, 0));
-                this.effect.SetControlPoint(6, new Vector3(255));
-
-                this.tower = (Tower)sender;
-                this.towerTarget = unit;
-                this.handler.IsEnabled = true;
+                return;
             }
-            catch (Exception e)
+
+            var newValue = e.NewValue.GetUInt32();
+            if (newValue == e.OldValue.GetUInt32())
             {
-                Logger.Error(e);
+                return;
             }
+
+            UpdateManager.BeginInvoke(() =>
+            {
+                try
+                {
+                    var unit = EntityManager9.GetUnit(newValue);
+                    if (unit == null || !unit.IsHero || unit.IsIllusion || unit.Distance(this.owner) > 1000)
+                    {
+                        return;
+                    }
+
+                    this.effect?.Dispose();
+
+                    this.effect = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\target.vpcf", unit.Position);
+                    this.effect.SetControlPoint(2, sender.Position);
+                    this.effect.SetControlPoint(5, new Vector3(255, 0, 0));
+                    this.effect.SetControlPoint(6, new Vector3(255));
+
+                    this.tower = (Tower)sender;
+                    this.towerTarget = unit;
+                    this.handler.IsEnabled = true;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            });
         }
 
         private void OnUpdate()
@@ -114,12 +120,12 @@
         {
             if (e.NewValue)
             {
-                this.handler = UpdateManager.Subscribe(this.OnUpdate, 0, false);
-                Entity.OnHandlePropertyChange += this.OnHandlePropertyChange;
+                this.handler = UpdateManager.Subscribe(0, false, this.OnUpdate);
+                Entity.NetworkPropertyChanged += this.OnNetworkPropertyChanged;
             }
             else
             {
-                Entity.OnHandlePropertyChange -= this.OnHandlePropertyChange;
+                Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
                 UpdateManager.Unsubscribe(this.handler);
                 this.effect?.Dispose();
                 this.effect = null;

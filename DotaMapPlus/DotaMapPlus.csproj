@@ -24,13 +24,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Divine">
-      <HintPath>..\..\..\..\Desktop\Divine\Output\Divine.dll</HintPath>
+      <HintPath>C:\Users\osman\Desktop\Divine\Output\References\Divine.dll</HintPath>
     </Reference>
     <Reference Include="Divine.Menu">
-      <HintPath>..\..\..\..\Desktop\Divine\Output\Divine.Menu.dll</HintPath>
+      <HintPath>C:\Users\osman\Desktop\Divine\Output\References\Divine.Menu.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\..\..\..\Desktop\Divine\Output\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>C:\Users\osman\Desktop\Divine\Output\References\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -41,18 +41,6 @@
     <Compile Include="WeatherHack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZoomHack.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 и x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

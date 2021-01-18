@@ -19,7 +19,7 @@
         public Rearm(Ability baseAbility)
             : base(baseAbility)
         {
-            this.channelTimeData = new SpecialData(baseAbility, (Func<uint, float>)baseAbility.GetChannelTime);
+            this.channelTimeData = new SpecialData(baseAbility, baseAbility.AbilityData.GetChannelMaximumTime);
         }
 
         public float ChannelTime

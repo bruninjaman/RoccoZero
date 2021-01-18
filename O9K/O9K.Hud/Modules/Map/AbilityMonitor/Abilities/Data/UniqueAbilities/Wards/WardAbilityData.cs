@@ -5,8 +5,8 @@
 
     using Base;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Helpers.Notificator;
 
@@ -21,13 +21,13 @@
             var drawableAbility = new DrawableWardAbility
             {
                 AbilityUnitName = this.UnitName,
-                AbilityTexture = this.AbilityId + "_rounded",
+                AbilityTexture = this.AbilityId.ToString(),
                 Position = position,
                 Duration = this.Duration,
                 IsShowingRange = this.ShowRange,
                 Range = this.Range,
                 RangeColor = this.RangeColor,
-                ShowUntil = Game.RawGameTime + this.Duration,
+                ShowUntil = GameManager.RawGameTime + this.Duration,
             };
 
             drawableAbility.DrawRange();
@@ -37,7 +37,7 @@
         public override void AddDrawableAbility(List<IDrawableAbility> drawableAbilities, Unit unit, INotificator notificator)
         {
             var ward = drawableAbilities.OfType<DrawableWardAbility>()
-                .FirstOrDefault(x => x.Unit == null && x.AbilityUnitName == this.UnitName && x.Position.Distance2D(unit.Position) < 400);
+                .FirstOrDefault(x => x.Unit == null && x.AbilityUnitName == this.UnitName && x.Position.Distance(unit.Position) < 400);
             if (ward != null)
             {
                 ward.AddUnit(unit);
@@ -49,15 +49,15 @@
             var drawableAbility = new DrawableWardAbility
             {
                 AbilityUnitName = this.UnitName,
-                AbilityTexture = this.AbilityId + "_rounded",
+                AbilityTexture = this.AbilityId.ToString(),
                 Position = unit.Position,
                 Unit = unit,
                 Duration = this.Duration,
                 IsShowingRange = this.ShowRange,
                 Range = this.Range,
                 RangeColor = this.RangeColor,
-                AddedTime = Game.RawGameTime - (mod?.ElapsedTime ?? 0),
-                ShowUntil = Game.RawGameTime + (mod?.RemainingTime ?? this.Duration)
+                AddedTime = GameManager.RawGameTime - (mod?.ElapsedTime ?? 0),
+                ShowUntil = GameManager.RawGameTime + (mod?.RemainingTime ?? this.Duration)
             };
 
             drawableAbility.DrawRange();

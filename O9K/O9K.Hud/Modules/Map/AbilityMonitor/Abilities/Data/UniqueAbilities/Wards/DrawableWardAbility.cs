@@ -1,22 +1,22 @@
 ﻿namespace O9K.Hud.Modules.Map.AbilityMonitor.Abilities.Data.UniqueAbilities.Wards
 {
     using System;
-    using System.Drawing;
 
     using Base;
 
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Helpers;
+
+    using SharpDX;
 
     internal class DrawableWardAbility : DrawableAbility
     {
         public DrawableWardAbility()
         {
-            this.AddedTime = Game.RawGameTime;
+            this.AddedTime = GameManager.RawGameTime;
         }
 
         public string AbilityUnitName { get; set; }
@@ -37,7 +37,7 @@
         {
             get
             {
-                if (Game.RawGameTime > this.ShowUntil)
+                if (GameManager.RawGameTime > this.ShowUntil)
                 {
                     return false;
                 }
@@ -58,7 +58,7 @@
             this.DrawRange();
         }
 
-        public override void DrawOnMap(IRenderer renderer, IMinimap minimap)
+        public override void DrawOnMap(IMinimap minimap)
         {
             var position = minimap.WorldToScreen(this.Position, 30 * Hud.Info.ScreenRatio);
             if (position.IsZero)
@@ -66,23 +66,23 @@
                 return;
             }
 
-            var pct = (int)(((Game.RawGameTime - this.AddedTime) / this.Duration) * 100);
-            renderer.DrawTexture("o9k.outline_red", position * 1.2f);
-            renderer.DrawTexture("o9k.outline_black" + pct, position * 1.25f);
-            renderer.DrawTexture(this.AbilityTexture, position);
+            var pct = (int)((GameManager.RawGameTime - this.AddedTime) / this.Duration * 100);
+            RendererManager.DrawTexture("o9k.outline_red", position * 1.2f);
+            RendererManager.DrawTexture("o9k.outline_black" + pct, position * 1.25f);
+            RendererManager.DrawTexture(this.AbilityTexture, position, TextureType.RoundAbility);
 
             position.Y += 30 * Hud.Info.ScreenRatio;
             position *= 2;
 
-            renderer.DrawText(
+            RendererManager.DrawText(
+                TimeSpan.FromSeconds(this.Duration - (GameManager.RawGameTime - this.AddedTime)).ToString(@"m\:ss"),
                 position,
-                TimeSpan.FromSeconds(this.Duration - (Game.RawGameTime - this.AddedTime)).ToString(@"m\:ss"),
                 Color.White,
-                RendererFontFlags.Center | RendererFontFlags.VerticalCenter,
+                FontFlags.Center | FontFlags.VerticalCenter,
                 18 * Hud.Info.ScreenRatio);
         }
 
-        public override void DrawOnMinimap(IRenderer renderer, IMinimap minimap)
+        public override void DrawOnMinimap(IMinimap minimap)
         {
             if (this.Unit?.IsVisible == true)
             {
@@ -95,7 +95,7 @@
                 return;
             }
 
-            renderer.DrawTexture("o9k.minimap_" + this.AbilityTexture, position);
+            RendererManager.DrawTexture("o9k.minimap_" + this.AbilityTexture, position);
         }
     }
 }

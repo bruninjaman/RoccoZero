@@ -654,10 +654,7 @@
                 {
                     try
                     {
-                        /*this.projectileSpeed = Game.FindKeyValues(
-                                this.Name + "/ProjectileSpeed",
-                                this.IsHero ? KeyValueSource.Hero : KeyValueSource.Unit)
-                            .IntValue;*/
+                        this.projectileSpeed = (this.IsHero ? Hero.GetKeyValueByName(this.Name) : Unit.GetKeyValueByName(this.Name)).GetKeyValue("ProjectileSpeed").GetInt32();
                     }
                     catch
                     {
@@ -710,10 +707,7 @@
                 {
                     try
                     {
-                        /*this.turnRate = Game.FindKeyValues(
-                                this.Name + "/MovementTurnRate",
-                                this.IsHero ? KeyValueSource.Hero : KeyValueSource.Unit)
-                            .FloatValue;*/
+                        this.turnRate = (this.IsHero ? Hero.GetKeyValueByName(this.Name) : Unit.GetKeyValueByName(this.Name)).GetKeyValue("MovementTurnRate").GetSingle();
                     }
                     catch
                     {
@@ -819,10 +813,7 @@
                 {
                     try
                     {
-                        /*this.baseAttackAnimationPoint = Game.FindKeyValues(
-                                this.Name + "/AttackAnimationPoint",
-                                this.IsHero ? KeyValueSource.Hero : KeyValueSource.Unit)
-                            .FloatValue;*/
+                        this.baseAttackAnimationPoint = (this.IsHero ? Hero.GetKeyValueByName(this.Name) : Unit.GetKeyValueByName(this.Name)).GetKeyValue("AttackAnimationPoint").GetSingle();
                     }
                     catch
                     {
