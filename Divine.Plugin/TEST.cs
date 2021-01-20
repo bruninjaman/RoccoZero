@@ -9,7 +9,7 @@ using SharpDX;
 
 namespace Manabars
 {
-    internal sealed class ItemBar
+    internal sealed class ItemBar 
     {
         private readonly MenuSwitcher ItemEnableChangedValue;
         private readonly MenuSwitcher ItemAllyChangedValue;
