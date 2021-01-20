@@ -37,7 +37,7 @@
   <ItemGroup>
     <Reference Include="Divine, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Desktop\Divine\Output\Divine.dll</HintPath>////
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\Divine.dll</HintPath>
     </Reference>
     <Reference Include="Divine.Menu, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
