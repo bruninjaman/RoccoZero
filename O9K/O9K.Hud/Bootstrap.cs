@@ -1,4 +1,4 @@
-﻿namespace O9K.Hud GGGGG
+﻿namespace O9K.Hud
 {
     using System;
     using System.Collections.Generic;
