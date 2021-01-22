@@ -1,4 +1,4 @@
-﻿namespace O9K.Core.Logger GGGGG
+﻿namespace O9K.Core.Logger
 {
     using System;
     using System.Collections.Concurrent;
