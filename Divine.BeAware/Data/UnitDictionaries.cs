@@ -25,7 +25,7 @@ namespace Divine.BeAware.Data
 
         public static Dictionary<int, AbilityId> UnitsDayVision { get; } = new Dictionary<int, AbilityId>
         {
-            { 200, AbilityId.tusk_ice_shards },
+            //{ 200, AbilityId.tusk_ice_shards },
             { 325, AbilityId.skywrath_mage_arcane_bolt },
             { 450, AbilityId.phantom_assassin_stifling_dagger }
         };

@@ -30,6 +30,7 @@ namespace Divine.BeAware.ShowMeMore.MoreInformation
 
         public override bool Entity(Unit unit)
         {
+            return false;
             if (unit.DayVision != 500)
             {
                 return false;
