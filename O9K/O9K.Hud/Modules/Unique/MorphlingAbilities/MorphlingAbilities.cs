@@ -239,7 +239,8 @@
         {
             try
             {
-                if (e.OrderId != OrderId.Ability || e.Ability.Id != AbilityId.morphling_morph_replicate)
+                var order = e.Order;
+                if (order.Type != OrderType.Cast || order.Ability.Id != AbilityId.morphling_morph_replicate)
                 {
                     return;
                 }

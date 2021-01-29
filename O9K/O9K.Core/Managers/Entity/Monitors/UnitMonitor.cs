@@ -317,52 +317,54 @@
 
         private void OnOrderAdding(OrderAddingEventArgs e)
         {
-            if (e.IsQueued || !e.Process)
+            var order = e.Order;
+            if (order.IsQueued || !e.Process)
             {
                 return;
             }
 
             try
             {
-                switch (e.OrderId)
+                switch (order.Type)
                 {
-                    case OrderId.AttackTarget:
+                    case OrderType.AttackTarget:
                     {
-                        SetTarget(e.Entities, e.Target.Handle);
+                        SetTarget(order.Units, order.Target.Handle);
                         break;
                     }
 
-                    case OrderId.Hold:
-                    case OrderId.Stop:
+                    case OrderType.Hold:
+                    case OrderType.Stop:
                     {
-                        DropTarget(e.Entities);
-                        StopChanneling(e.Entities);
+                        var units = order.Units;
+                        DropTarget(units);
+                        StopChanneling(units);
                         break;
                     }
 
-                    case OrderId.MoveLocation:
-                    case OrderId.MoveTarget:
+                    case OrderType.MovePosition:
+                    case OrderType.MoveTarget:
                     {
-                        DropTarget(e.Entities);
+                        DropTarget(order.Units);
                         break;
                     }
 
-                    case OrderId.AbilityTarget:
+                    case OrderType.CastTarget:
                     {
-                        var target = EntityManager9.GetUnitFast(e.Target.Handle);
+                        var target = EntityManager9.GetUnitFast(order.Target.Handle);
                         if (target?.IsLinkensProtected == true)
                         {
                             return;
                         }
 
-                        StartChanneling(e.Ability.Handle);
+                        StartChanneling(order.Ability.Handle);
                         break;
                     }
 
-                    case OrderId.Ability:
-                    case OrderId.AbilityLocation:
+                    case OrderType.Cast:
+                    case OrderType.CastPosition:
                     {
-                        StartChanneling(e.Ability.Handle);
+                        StartChanneling(order.Ability.Handle);
                         break;
                     }
                 }

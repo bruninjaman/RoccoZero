@@ -56,12 +56,13 @@
         {
             try
             {
-                if (e.OrderId != OrderId.AbilityTarget || e.Ability.Id != AbilityId.windrunner_focusfire || !e.Process)
+                var order = e.Order;
+                if (order.Type != OrderType.CastTarget || order.Ability.Id != AbilityId.windrunner_focusfire || !e.Process)
                 {
                     return;
                 }
 
-                this.FocusFireTarget = EntityManager9.GetUnit(e.Target.Handle);
+                this.FocusFireTarget = EntityManager9.GetUnit(order.Target.Handle);
                 if (this.FocusFireTarget == null || this.FocusFireTarget.IsLinkensProtected || this.FocusFireTarget.IsSpellShieldProtected)
                 {
                     return;

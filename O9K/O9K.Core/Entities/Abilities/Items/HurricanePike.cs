@@ -108,12 +108,13 @@
         {
             try
             {
-                if (this.subbed || e.OrderId != OrderId.AbilityTarget || e.Ability.Id != this.Id || !e.Process)
+                var order = e.Order;
+                if (this.subbed || order.Type != OrderType.CastTarget || order.Ability.Id != this.Id || !e.Process)
                 {
                     return;
                 }
 
-                this.pikeTarget = EntityManager9.GetUnit(e.Target.Handle);
+                this.pikeTarget = EntityManager9.GetUnit(order.Target.Handle);
                 if (this.pikeTarget == null || this.pikeTarget.IsLinkensProtected || this.pikeTarget.IsSpellShieldProtected)
                 {
                     return;
