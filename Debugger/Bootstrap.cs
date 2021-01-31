@@ -24,7 +24,7 @@
 
         protected override void OnPreActivate()
         {
-            UpdateManager.BeginInvoke(OnActivate);
+            //UpdateManager.BeginInvoke(OnActivate);
         }
 
         protected override void OnActivate()
