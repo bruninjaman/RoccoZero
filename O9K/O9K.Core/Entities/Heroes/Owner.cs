@@ -53,7 +53,7 @@
         {
             get
             {
-                return this.Player.Selection.Select(x => EntityManager9.GetUnitFast(x.Handle)).Where(x => x != null);
+                return this.Player.SelectedUnits.Select(x => EntityManager9.GetUnitFast(x.Handle)).Where(x => x != null);
             }
         }
 

@@ -9,6 +9,7 @@
     using Debugger.Menus;
 
     using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Tools;
 
@@ -20,6 +21,11 @@
         private MainMenu MainMenu;
 
         private Log Log;
+
+        protected override void OnPreActivate()
+        {
+            UpdateManager.BeginInvoke(OnActivate);
+        }
 
         protected override void OnActivate()
         {
