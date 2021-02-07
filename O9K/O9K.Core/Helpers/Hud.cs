@@ -19,11 +19,11 @@
         {
             get
             {
-                return Player.CameraPosition;
+                return Player.Camera.LookAtPosition;
             }
             set
             {
-                GameManager.ExecuteCommand($"dota_camera_set_lookatpos {value.X} {value.Y}");
+                Player.Camera.LookAtPosition = value;
             }
         }
 
