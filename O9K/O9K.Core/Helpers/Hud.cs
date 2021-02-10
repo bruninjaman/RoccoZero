@@ -19,11 +19,11 @@
         {
             get
             {
-                return Player.Camera.LookAtPosition;
+                return CameraManager.LookAtPosition;
             }
             set
             {
-                Player.Camera.LookAtPosition = value;
+                CameraManager.LookAtPosition = value;
             }
         }
 
