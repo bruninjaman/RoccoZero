@@ -121,12 +121,12 @@
             var wardPosition = enemy.Unit.InFront(400);
 
             if (this.drawableAbilities.OfType<DrawableWardAbility>()
-                .Any(x => x.Unit != null && x.AbilityUnitName == unitName && x.Position.Distance(wardPosition) < 400))
+                .Any(x => x.Unit != null && x.AbilityUnitName == unitName && x.Position.Distance2D(wardPosition) < 400))
             {
                 return;
             }
 
-            if (this.drawableAbilities.OfType<DrawableWardAbility>().Any(x => x.Position.Distance(wardPosition) <= 50))
+            if (this.drawableAbilities.OfType<DrawableWardAbility>().Any(x => x.Position.Distance2D(wardPosition) <= 50))
             {
                 wardPosition += new Vector3(60, 0, 0);
             }

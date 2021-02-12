@@ -37,7 +37,7 @@
         public override void AddDrawableAbility(List<IDrawableAbility> drawableAbilities, Unit unit, INotificator notificator)
         {
             var ward = drawableAbilities.OfType<DrawableWardAbility>()
-                .FirstOrDefault(x => x.Unit == null && x.AbilityUnitName == this.UnitName && x.Position.Distance(unit.Position) < 400);
+                .FirstOrDefault(x => x.Unit == null && x.AbilityUnitName == this.UnitName && x.Position.Distance2D(unit.Position) < 400);
             if (ward != null)
             {
                 ward.AddUnit(unit);

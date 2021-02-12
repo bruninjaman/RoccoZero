@@ -28,7 +28,7 @@
             }
 
             var position = this.RawParticlePosition ? particle.Position : particle.GetControlPoint(this.ControlPoint);
-            if (position.IsZero || position.Distance(owner.BaseUnit.Position) < 50)
+            if (position.IsZero || position.Distance2D(owner.BaseUnit.Position) < 50)
             {
                 return;
             }

@@ -20,7 +20,7 @@
         public override void AddDrawableAbility(List<IDrawableAbility> drawableAbilities, Unit unit, INotificator notificator)
         {
             var mine = drawableAbilities.OfType<DrawableRemoteMinesAbility>()
-                .FirstOrDefault(x => x.Unit == null && x.Position.Distance(unit.Position) < 10);
+                .FirstOrDefault(x => x.Unit == null && x.Position.Distance2D(unit.Position) < 10);
 
             if (mine != null)
             {
@@ -62,7 +62,7 @@
 
             if (particle.Name.Contains("detonate"))
             {
-                var mine = drawableAbilities.OfType<DrawableRemoteMinesAbility>().FirstOrDefault(x => x.Position.Distance(position) < 10);
+                var mine = drawableAbilities.OfType<DrawableRemoteMinesAbility>().FirstOrDefault(x => x.Position.Distance2D(position) < 10);
                 if (mine != null)
                 {
                     if (mine.IsShowingRange)

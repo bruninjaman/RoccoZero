@@ -130,7 +130,7 @@
 
                 foreach (var camp in this.campPositions)
                 {
-                    var units = neutrals.Where(x => x.Position.Distance(camp) < 500).ToList();
+                    var units = neutrals.Where(x => x.Position.Distance2D(camp) < 500).ToList();
                     var count = units.Count(x => this.singleCreeps.Contains(x.Name))
                                 + (units.Count(x => this.doubleCreeps.Contains(x.Name)) / 2);
 

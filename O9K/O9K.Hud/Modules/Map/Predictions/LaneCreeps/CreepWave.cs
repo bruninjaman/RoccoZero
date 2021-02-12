@@ -46,7 +46,7 @@
         {
             get
             {
-                return this.Creeps.Any(x => x.IsValid && x.BaseUnit.IsAlive) && this.PredictedPosition.Distance(this.endPosition) > 300;
+                return this.Creeps.Any(x => x.IsValid && x.BaseUnit.IsAlive) && this.PredictedPosition.Distance2D(this.endPosition) > 300;
             }
         }
 
@@ -93,7 +93,7 @@
             {
                 this.predictedPosition = value;
 
-                if (this.predictedPosition.Distance(this.Path[this.lastPoint]) < 500)
+                if (this.predictedPosition.Distance2D(this.Path[this.lastPoint]) < 500)
                 {
                     this.lastPoint = Math.Min(this.lastPoint + 1, this.pathLength - 1);
                 }

@@ -124,7 +124,7 @@
 
             var heroPosition = myHero.Position;
             var enemyPosition = this.unit.BasePosition;
-            var distance = heroPosition.Distance(enemyPosition);
+            var distance = heroPosition.Distance2D(enemyPosition);
 
             if (!this.unit.IsVisible)
             {
@@ -138,7 +138,7 @@
                 var invisTime = Math.Min(maxTime, GameManager.RawGameTime - this.unit.LastPositionUpdateTime);
                 var predictedPosition = enemyPosition.Extend2D(heroPosition, invisTime * speed);
 
-                distance = heroPosition.Distance(predictedPosition);
+                distance = heroPosition.Distance2D(predictedPosition);
             }
 
             if (distance < 2000)

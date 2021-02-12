@@ -155,7 +155,7 @@
                     return;
                 }
 
-                var sleeper = this.attacks.FirstOrDefault(x => x.Key.Distance(position) < 500).Value;
+                var sleeper = this.attacks.FirstOrDefault(x => x.Key.Distance2D(position) < 500).Value;
                 if (sleeper != null)
                 {
                     sleeper.Sleep(3);

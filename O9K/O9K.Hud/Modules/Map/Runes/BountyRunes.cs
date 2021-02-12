@@ -126,7 +126,7 @@
                 }
 
                 var position = particle.GetControlPoint(0);
-                var runeSpawn = Array.Find(this.bountySpawns, x => x.Distance(position) < 500);
+                var runeSpawn = Array.Find(this.bountySpawns, x => x.Distance2D(position) < 500);
                 if (runeSpawn.IsZero)
                 {
                     return;

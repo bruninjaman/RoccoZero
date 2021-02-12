@@ -169,7 +169,7 @@
 
                 var position = hero.Position;
                 var closestCamp = this.jungleManager.JungleCamps
-                    .Where(x => x.Team == hero.Team && !x.IsSmall && x.CreepsPosition.Distance(position) < 1000)
+                    .Where(x => x.Team == hero.Team && !x.IsSmall && x.CreepsPosition.Distance2D(position) < 1000)
                     .OrderBy(x => x.CreepsPosition.DistanceSquared(position))
                     .FirstOrDefault();
 

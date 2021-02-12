@@ -121,7 +121,7 @@
 
             if (input.SkillShotType == SkillShotType.AreaOfEffect)
             {
-                if (output.TargetPosition.Distance(output.CastPosition) > input.Radius)
+                if (output.TargetPosition.Distance2D(output.CastPosition) > input.Radius)
                 {
                     output.HitChance = HitChance.Impossible;
                     return false;
@@ -172,7 +172,7 @@
             var caster = input.Caster;
             var casterPosition = caster.Position;
             var castPosition = output.CastPosition;
-            var distance = casterPosition.Distance(castPosition);
+            var distance = casterPosition.Distance2D(castPosition);
             var range = input.CastRange;
 
             if (range >= distance)
@@ -184,10 +184,10 @@
 
             if (output.AoeTargetsHit.Count > 1)
             {
-                var maxDistance = output.AoeTargetsHit.Max(x => x.TargetPosition.Distance(castPosition));
+                var maxDistance = output.AoeTargetsHit.Max(x => x.TargetPosition.Distance2D(castPosition));
                 if (maxDistance > radius)
                 {
-                    distance = casterPosition.Distance(castPosition);
+                    distance = casterPosition.Distance2D(castPosition);
                     castPosition = casterPosition.Extend2D(castPosition, distance + (maxDistance - radius));
                 }
             }

@@ -335,7 +335,7 @@
                     {
                         var merge = this.creepWaves.Find(
                             x => x.IsSpawned && x.Lane == wave.Lane && !x.Equals(wave)
-                                 && x.PredictedPosition.Distance(wave.PredictedPosition) < 500);
+                                 && x.PredictedPosition.Distance2D(wave.PredictedPosition) < 500);
 
                         if (merge != null)
                         {

@@ -113,7 +113,7 @@
                     return;
                 }
 
-                var spawn = this.runeSpawns.Find(x => x.Position.Distance(rune.Position) < 100);
+                var spawn = this.runeSpawns.Find(x => x.Position.Distance2D(rune.Position) < 100);
                 spawn?.AddRune(rune, this.runeTextures[rune.RuneType]);
             }
             catch (Exception ex)
@@ -167,7 +167,7 @@
                     return;
                 }
 
-                var spawn = this.runeSpawns.Find(x => x.Position.Distance(rune.Position) < 100);
+                var spawn = this.runeSpawns.Find(x => x.Position.Distance2D(rune.Position) < 100);
                 spawn?.RemoveRune(rune);
             }
             catch (Exception ex)

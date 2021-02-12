@@ -174,17 +174,17 @@
 
             var duration = 3f;
 
-            if (EntityManager9.EnemyFountain.Distance(position) < 1000)
+            if (EntityManager9.EnemyFountain.Distance2D(position) < 1000)
             {
                 return duration;
             }
 
-            if (EntityManager9.RadiantOutpost.Distance(position) < 1000 || EntityManager9.DireOutpost.Distance(position) < 1000)
+            if (EntityManager9.RadiantOutpost.Distance2D(position) < 1000 || EntityManager9.DireOutpost.Distance2D(position) < 1000)
             {
                 duration = 6f;
             }
 
-            var sleepers = this.teleportSleeper.Count(x => x.Value.IsSleeping && x.Key.Distance(position) < TeleportCheckRadius);
+            var sleepers = this.teleportSleeper.Count(x => x.Value.IsSleeping && x.Key.Distance2D(position) < TeleportCheckRadius);
             if (sleepers > 0)
             {
                 duration += (sleepers * 0.5f) + 1.5f;

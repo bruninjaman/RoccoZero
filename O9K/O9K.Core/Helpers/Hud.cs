@@ -5,7 +5,6 @@
     using System.Linq;
 
     using Divine;
-    using Divine.SDK.Extensions;
 
     using Logger;
 

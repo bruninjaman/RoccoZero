@@ -157,7 +157,7 @@
 
 //                foreach (var vector3 in path)
 //                {
-//                    time += position.Distance(vector3) / hero.Speed;
+//                    time += position.Distance2D(vector3) / hero.Speed;
 //                    position = vector3;
 //                }
 
