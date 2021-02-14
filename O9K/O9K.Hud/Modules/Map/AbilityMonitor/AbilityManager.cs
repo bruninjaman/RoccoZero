@@ -235,46 +235,54 @@
                     return;
                 }
 
-                if (this.abilityData.Units.TryGetValue(unit.Name, out var data))
+                UpdateManager.BeginInvoke(() =>
                 {
-                    data.AddDrawableAbility(this.drawableAbilities, unit, this.notificationsEnabled ? this.notificator : null);
-                }
-                else
-                {
-                    if (unit.NetworkName != "CDOTA_BaseNPC")
+                    if (!unit.IsValid)
                     {
                         return;
                     }
 
-                    var vision = unit.DayVision;
-                    if (vision <= 0)
+                    if (this.abilityData.Units.TryGetValue(unit.Name, out var data))
                     {
-                        return;
+                        data.AddDrawableAbility(this.drawableAbilities, unit, this.notificationsEnabled ? this.notificator : null);
                     }
-
-                    var ids = this.abilityData.AbilityUnitVision.Where(x => x.Value.Vision == unit.DayVision)
-                        .ToDictionary(x => x.Key, x => x.Value);
-                    var abilities = EntityManager9.Abilities.Where(
-                            x => x.Owner.Team != this.allyTeam && x.Owner.CanUseAbilities && ids.ContainsKey(x.Id)
-                                 && (!x.Owner.IsVisible || x.TimeSinceCasted < 0.5f + x.ActivationDelay))
-                        .ToList();
-
-                    if (abilities.Count != 1)
+                    else
                     {
-                        return;
-                    }
+                        if (unit.NetworkName != "CDOTA_BaseNPC")
+                        {
+                            return;
+                        }
 
-                    if (!ids.TryGetValue(abilities[0].Id, out data))
-                    {
-                        return;
-                    }
+                        var vision = unit.DayVision;
+                        if (vision <= 0)
+                        {
+                            return;
+                        }
 
-                    data.AddDrawableAbility(
-                        this.drawableAbilities,
-                        abilities[0],
-                        unit,
-                        this.notificationsEnabled ? this.notificator : null);
-                }
+                        var ids = this.abilityData.AbilityUnitVision.Where(x => x.Value.Vision == unit.DayVision)
+                            .ToDictionary(x => x.Key, x => x.Value);
+                        var abilities = EntityManager9.Abilities.Where(
+                                x => x.Owner.Team != this.allyTeam && x.Owner.CanUseAbilities && ids.ContainsKey(x.Id)
+                                     && (!x.Owner.IsVisible || x.TimeSinceCasted < 0.5f + x.ActivationDelay))
+                            .ToList();
+
+                        if (abilities.Count != 1)
+                        {
+                            return;
+                        }
+
+                        if (!ids.TryGetValue(abilities[0].Id, out data))
+                        {
+                            return;
+                        }
+
+                        data.AddDrawableAbility(
+                            this.drawableAbilities,
+                            abilities[0],
+                            unit,
+                            this.notificationsEnabled ? this.notificator : null);
+                    }
+                });
             }
             catch (Exception ex)
             {
