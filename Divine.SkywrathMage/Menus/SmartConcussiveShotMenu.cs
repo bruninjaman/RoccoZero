@@ -1,23 +1,21 @@
-﻿using System.ComponentModel;
-
-using Ensage.SDK.Menu;
-using Ensage.SDK.Menu.Items;
+﻿using Divine.Menu.Items;
 
 namespace Divine.SkywrathMage.Menus
 {
     internal sealed class SmartConcussiveShotMenu
     {
-        [Item("Anti Fail")]
-        [DefaultValue(true)]
-        public bool AntiFailItem { get; set; }
+        public SmartConcussiveShotMenu(Menu.Items.Menu menu)
+        {
+            var smartConcussiveShotMenu = menu.CreateMenu("Smart Concussive Shot").SetAbilityTexture(AbilityId.skywrath_mage_concussive_shot);
+            AntiFailItem = smartConcussiveShotMenu.CreateSwitcher("Anti Fail");
+            UseOnlyTargetItem = smartConcussiveShotMenu.CreateSwitcher("Use Only Target").SetTooltip("This only works with Combo");
+            UseInRadiusItem = smartConcussiveShotMenu.CreateSlider("Use In Radius", 1400, 800, 1600).SetTooltip("This only works with Combo");
+        }
 
-        [Item("Use Only Target")]
-        [Tooltip("This only works with Combo")]
-        [DefaultValue(true)]
-        public bool UseOnlyTargetItem { get; set; }
+        public MenuSwitcher AntiFailItem { get; }
 
-        [Item("Use In Radius")]
-        [Tooltip("This only works with Combo")]
-        public Slider<int> UseInRadiusItem { get; set; } = new Slider<int>(1400, 800, 1600);
+        public MenuSwitcher UseOnlyTargetItem { get; }
+
+        public MenuSlider UseInRadiusItem { get; }
     }
 }

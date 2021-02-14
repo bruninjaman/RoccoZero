@@ -8,7 +8,7 @@ using Divine.Core.Extensions;
 using Divine.Core.Managers.Unit;
 using Divine.SkywrathMage.Menus;
 
-using Ensage;
+
 using Ensage.SDK.Extensions;
 using Ensage.SDK.Menu.ValueBinding;
 
@@ -92,7 +92,7 @@ namespace Divine.SkywrathMage.Features
             {
                 if (UnitManager<CHero, Enemy, NoIllusion>.Units.Any(x => x.IsVisible && x.IsAlive && x.HasModifier("modifier_item_blade_mail_reflect")))
                 {
-                    eul.UseAbility(Owner);
+                    eul.Cast(Owner);
                     await Task.Delay(eul.GetCastDelay(), token);
                 }
             }

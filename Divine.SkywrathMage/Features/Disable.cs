@@ -9,7 +9,7 @@ using Divine.Core.Entities;
 using Divine.Core.Extensions;
 using Divine.Core.Managers.Unit;
 
-using Ensage;
+
 using Ensage.SDK.Extensions;
 using Ensage.SDK.Menu.ValueBinding;
 
@@ -77,7 +77,7 @@ namespace Divine.SkywrathMage.Features
                     && hex.CanBeCasted
                     && hex.CanHit(target))
                 {
-                    hex.UseAbility(target);
+                    hex.Cast(target);
                     await Task.Delay(hex.GetCastDelay(target), token);
                     return;
                 }
@@ -89,7 +89,7 @@ namespace Divine.SkywrathMage.Features
                     && orchid.CanBeCasted
                     && orchid.CanHit(target))
                 {
-                    orchid.UseAbility(target);
+                    orchid.Cast(target);
                     await Task.Delay(orchid.GetCastDelay(target), token);
                     return;
                 }
@@ -101,7 +101,7 @@ namespace Divine.SkywrathMage.Features
                     && bloodthorn.CanBeCasted
                     && bloodthorn.CanHit(target))
                 {
-                    bloodthorn.UseAbility(target);
+                    bloodthorn.Cast(target);
                     await Task.Delay(bloodthorn.GetCastDelay(target), token);
                     return;
                 }
@@ -112,7 +112,7 @@ namespace Divine.SkywrathMage.Features
                     && ancientSeal.CanBeCasted
                     && ancientSeal.CanHit(target))
                 {
-                    ancientSeal.UseAbility(target);
+                    ancientSeal.Cast(target);
                     await Task.Delay(ancientSeal.GetCastDelay(target), token);
                     return;
                 }

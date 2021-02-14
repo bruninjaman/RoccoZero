@@ -1,75 +1,36 @@
-﻿using System.ComponentModel;
-using System.Windows.Input;
-
-using Ensage.SDK.Menu;
-using Ensage.SDK.Menu.Items;
-using Ensage.SDK.Menu.ValueBinding;
-
-using Newtonsoft.Json;
+﻿using Divine.Menu.Items;
 
 namespace Divine.SkywrathMage.Menus
 {
     internal sealed class SmartArcaneBoltMenu
     {
-        public SmartArcaneBoltMenu()
+        public SmartArcaneBoltMenu(Menu.Items.Menu menu)
         {
-            ToggleHotkey.Action += ToggleHotkeyAction;
-            SpamHotkey.Action += SpamHotkeyAction;
+            var smartArcaneBoltMenu = menu.CreateMenu("Smart Arcane Bolt").SetAbilityTexture(AbilityId.skywrath_mage_arcane_bolt);
+            ToggleHotkeyItem = smartArcaneBoltMenu.CreateToggleKey("Toggle Hotkey");
+            OwnerMinHealthItem = smartArcaneBoltMenu.CreateSlider("Owner Min Health % To Auto Arcane Bolt:", 20, 0, 70);
+
+            smartArcaneBoltMenu.CreateText("SmartArcaneBoltMenuText", "");
+
+            SpamHotkeyItem = smartArcaneBoltMenu.CreateHoldKey("Spam Hotkey");
+            SpamUnitsItem = smartArcaneBoltMenu.CreateSwitcher("Spam Units");
+            OrbwalkerItem = smartArcaneBoltMenu.CreateSelector("Orbwalker", new[] { "Distance", "Default", "Free", "Only Attack", "No Move" });
+            MinDisInOrbwalkItem = smartArcaneBoltMenu.CreateSlider("Min Distance In Orbwalk:", 600, 200, 600);
+            FullFreeModeItem = smartArcaneBoltMenu.CreateSwitcher("Full Free Mode", false);
         }
 
-        private void ToggleHotkeyAction(MenuInputEventArgs obj)
-        {
-            if (!ToggleHotkeyItem)
-            {
-                ToggleHotkeyItem = true;
-                return;
-            }
+        public MenuToggleKey ToggleHotkeyItem { get; }
 
-            ToggleHotkeyItem = false;
-        }
+        public MenuSlider OwnerMinHealthItem { get; }
 
-        private void SpamHotkeyAction(MenuInputEventArgs agrs)
-        {
-            if (agrs.Flag == HotkeyFlags.Down)
-            {
-                SpamHotkeyItem.Value = true;
-            }
-            else
-            {
-                SpamHotkeyItem.Value = false;
-            }
-        }
+        public MenuHoldKey SpamHotkeyItem { get; }
 
-        [JsonIgnore]
-        public bool ToggleHotkeyItem { get; set; }
+        public MenuSwitcher SpamUnitsItem { get; }
 
-        [Item("Toggle Hotkey")]
-        public HotkeySelector ToggleHotkey { get; set; } = new HotkeySelector(Key.None, HotkeyFlags.Press);
+        public MenuSelector OrbwalkerItem { get; }
 
-        [Item("Owner Min Health % To Auto Arcane Bolt:")]
-        public Slider<int> OwnerMinHealthItem { get; set; } = new Slider<int>(20, 0, 70);
+        public MenuSlider MinDisInOrbwalkItem { get; }
 
-        [Item(" ")]
-        public string EmptyString { get; set; } = " ";
-
-        [JsonIgnore]
-        public ValueType<bool> SpamHotkeyItem { get; set; } = new ValueType<bool>();
-
-        [Item("Spam Hotkey")]
-        public HotkeySelector SpamHotkey { get; set; } = new HotkeySelector(Key.None, HotkeyFlags.Up | HotkeyFlags.Down);
-
-        [Item("Spam Units")]
-        [DefaultValue(true)]
-        public bool SpamUnitsItem { get; set; }
-
-        [Item("Orbwalker")]
-        public Selection<string> OrbwalkerItem { get; set; } = new Selection<string>(new[] { "Distance", "Default", "Free", "Only Attack", "No Move" });
-
-        [Item("Min Distance In Orbwalk:")]
-        public Slider<int> MinDisInOrbwalkItem { get; set; } = new Slider<int>(600, 200, 600);
-
-        [Item("Full Free Mode")]
-        [DefaultValue(false)]
-        public bool FullFreeModeItem { get; set; }
+        public MenuSwitcher FullFreeModeItem { get; }
     }
 }

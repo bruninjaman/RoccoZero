@@ -143,7 +143,7 @@ namespace Divine.SkywrathMage.Combos
                     && modifierStun.IsModifier(0.3f)
                     && modifierHex.IsModifier(0.3f))
                 {
-                    hex.UseAbility(target);
+                    hex.Cast(target);
                     await Task.Delay(hex.GetCastDelay(target), token);
                 }
 
@@ -154,7 +154,7 @@ namespace Divine.SkywrathMage.Combos
                     && orchid.CanBeCasted
                     && orchid.CanHit(target))
                 {
-                    orchid.UseAbility(target);
+                    orchid.Cast(target);
                     await Task.Delay(orchid.GetCastDelay(target), token);
                 }
 
@@ -165,7 +165,7 @@ namespace Divine.SkywrathMage.Combos
                     && bloodthorn.CanBeCasted
                     && bloodthorn.CanHit(target))
                 {
-                    bloodthorn.UseAbility(target);
+                    bloodthorn.Cast(target);
                     await Task.Delay(bloodthorn.GetCastDelay(target), token);
                 }
 
@@ -177,7 +177,7 @@ namespace Divine.SkywrathMage.Combos
                     && mysticFlare.CanHit(target))
                 {
                     var position = mysticFlare.MysticFlarePrediction(Prediction, target);
-                    mysticFlare.UseAbility(position);
+                    mysticFlare.Cast(position);
                     await Task.Delay(mysticFlare.GetCastDelay(position), token);
                 }
 
@@ -190,7 +190,7 @@ namespace Divine.SkywrathMage.Combos
                     && modifierStun.IsModifier(0.5f)
                     && modifierHex.IsModifier(0.5f))
                 {
-                    nullifier.UseAbility(target);
+                    nullifier.Cast(target);
                     await Task.Delay(nullifier.GetCastDelay(target), token);
                 }
 
@@ -204,7 +204,7 @@ namespace Divine.SkywrathMage.Combos
                     && modifierAtos.IsModifier(0.5f)
                     && modifierStun.IsModifier(0.5f))
                 {
-                    atos.UseAbility(target);
+                    atos.Cast(target);
                     await Task.Delay(atos.GetCastDelay(target), token);
                 }
 
@@ -214,7 +214,7 @@ namespace Divine.SkywrathMage.Combos
                     && ancientSeal.CanBeCasted
                     && ancientSeal.CanHit(target))
                 {
-                    ancientSeal.UseAbility(target);
+                    ancientSeal.Cast(target);
                     await Task.Delay(ancientSeal.GetCastDelay(target), token);
                     return;
                 }
@@ -226,7 +226,7 @@ namespace Divine.SkywrathMage.Combos
                     && veil.CanBeCasted
                     && veil.CanHit(target))
                 {
-                    veil.UseAbility(target.Position);
+                    veil.Cast(target.Position);
                     await Task.Delay(veil.GetCastDelay(target.Position), token);
                 }
 
@@ -237,7 +237,7 @@ namespace Divine.SkywrathMage.Combos
                     && ethereal.CanBeCasted
                     && ethereal.CanHit(target))
                 {
-                    ethereal.UseAbility(target);
+                    ethereal.Cast(target);
                     MultiSleeper<string>.Sleep($"IsHitTime_{target.Name}_{ethereal.Name}", ethereal.GetHitTime(target));
                     await Task.Delay(ethereal.GetCastDelay(target), token);
                     return;
@@ -250,7 +250,7 @@ namespace Divine.SkywrathMage.Combos
                     && shivas.CanBeCasted
                     && shivas.CanHit(target))
                 {
-                    shivas.UseAbility();
+                    shivas.Cast();
                     await Task.Delay(shivas.GetCastDelay(), token);
                 }
 
@@ -263,7 +263,7 @@ namespace Divine.SkywrathMage.Combos
                         && concussiveShot.CanHit(target)
                         && Utils.ConcussiveShotTarget(SmartConcussiveShotMenu, target, concussiveShot.TargetHit))
                     {
-                        concussiveShot.UseAbility();
+                        concussiveShot.Cast();
                         await Task.Delay(concussiveShot.GetCastDelay(), token);
                     }
 
@@ -274,7 +274,7 @@ namespace Divine.SkywrathMage.Combos
                         && arcaneBolt.CanBeCasted
                         && arcaneBolt.CanHit(target))
                     {
-                        arcaneBolt.UseAbility(target);
+                        arcaneBolt.Cast(target);
                         var castDelay = arcaneBolt.GetCastDelay(target);
                         var hitTime = arcaneBolt.GetHitTime(target) - (castDelay + 340);
                         MultiSleeper<string>.DelaySleep($"IsHitTime_{target.Name}_{arcaneBoltName}", castDelay + 40, hitTime);
@@ -289,7 +289,7 @@ namespace Divine.SkywrathMage.Combos
                         && dagon.CanBeCasted
                         && dagon.CanHit(target))
                     {
-                        dagon.UseAbility(target);
+                        dagon.Cast(target);
                         await Task.Delay(dagon.GetCastDelay(target), token);
                     }
                 }

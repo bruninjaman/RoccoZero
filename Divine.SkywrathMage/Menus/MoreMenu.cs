@@ -1,19 +1,19 @@
-﻿using Divine.Core.ComboFactory.Menus;
-
-using Ensage.SDK.Menu;
-using Ensage.SDK.Menu.Attributes;
-
-namespace Divine.SkywrathMage.Menus
+﻿namespace Divine.SkywrathMage.Menus
 {
-    internal sealed class MoreMenu : BaseMoreMenu
+    internal sealed class MoreMenu
     {
-        [Menu("Auto Combo")]
-        public AutoComboMenu AutoComboMenu { get; } = new AutoComboMenu();
+        public MoreMenu(Menu.Items.Menu menu)
+        {
+            var moreMenu = menu.CreateMenu("More");
+            AutoComboMenu = new AutoComboMenu(moreMenu);
+            SmartArcaneBoltMenu = new SmartArcaneBoltMenu(moreMenu);
+            SmartConcussiveShotMenu = new SmartConcussiveShotMenu(moreMenu);
+        }
 
-        [Menu("Smart Arcane Bolt"), TextureDivine(@"spells\skywrath_mage_arcane_bolt.png")]
-        public SmartArcaneBoltMenu SmartArcaneBoltMenu { get; } = new SmartArcaneBoltMenu();
+        public AutoComboMenu AutoComboMenu { get; } 
 
-        [Menu("Smart Concussive Shot"), TextureDivine(@"spells\skywrath_mage_concussive_shot.png")]
-        public SmartConcussiveShotMenu SmartConcussiveShotMenu { get; } = new SmartConcussiveShotMenu();
+        public SmartArcaneBoltMenu SmartArcaneBoltMenu { get; }
+
+        public SmartConcussiveShotMenu SmartConcussiveShotMenu { get; }
     }
 }

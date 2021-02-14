@@ -1,15 +1,10 @@
 ﻿using System.Linq;
 
-using Divine.Core.Entities;
 using Divine.Core.Entities.Abilities.Spells.SkywrathMage;
-using Divine.Core.Extensions;
 using Divine.Core.Helpers;
-using Divine.Core.Managers.Unit;
+using Divine.SDK.Extensions;
+using Divine.SDK.Prediction;
 using Divine.SkywrathMage.Menus;
-
-using Ensage;
-using Ensage.SDK.Extensions;
-using Divine.SkywrathMage.Core.Prediction;
 
 using SharpDX;
 
@@ -17,24 +12,25 @@ namespace Divine.SkywrathMage
 {
     internal static class Utils
     {
-        public static Vector3 MysticFlarePrediction(this MysticFlare mysticFlare, IPredictionManager prediction, Unit target)
+        public static Vector3 MysticFlarePrediction(this MysticFlare mysticFlare, Unit target)
         {
             var dubleMysticFlare = false;
             var owner = mysticFlare.Owner;
             if (mysticFlare.Owner.HasAghanimsScepter())
             {
-                dubleMysticFlare = UnitManager<CHero, Enemy, NoIllusion>.Units.Count(x => x.IsVisible && x.IsAlive && x.Distance2D(target) <= 700) <= 1;
+                var localHero = EntityManager.LocalHero;
+                dubleMysticFlare = EntityManager.GetEntities<Hero>().Count(x => !x.IsAlly(localHero) && !x.IsIllusion && x.IsVisible && x.IsAlive && x.Distance2D(target) <= 700) <= 1;
             }
 
             var input = new PredictionInput
             {
-                Owner = owner.Base,
+                Owner = owner,
                 Delay = mysticFlare.CastPoint + mysticFlare.ActivationDelay,
                 Range = mysticFlare.CastRange,
                 Radius = mysticFlare.Radius,
             };
 
-            var output = prediction.GetPrediction(input.WithTarget(target.Base));
+            var output = PredictionManager.GetPrediction(input.WithTarget(target));
             var castPosition = output.CastPosition;
 
             Vector3 position;
@@ -58,7 +54,7 @@ namespace Divine.SkywrathMage
                 return false;
             }
 
-            if (target.HasAnyModifiers("modifier_dazzle_shallow_grave", "modifier_spirit_breaker_charge_of_darkness") || UnitManager.Owner.HasModifier("modifier_pugna_nether_ward_aura"))
+            if (target.HasAnyModifiers("modifier_dazzle_shallow_grave", "modifier_spirit_breaker_charge_of_darkness") || EntityManager.LocalHero.HasModifier("modifier_pugna_nether_ward_aura"))
             {
                 return false;
             }
@@ -101,7 +97,7 @@ namespace Divine.SkywrathMage
             "modifier_winter_wyvern_cold_embrace"
         };
 
-        public static bool ConcussiveShotTarget(SmartConcussiveShotMenu smartConcussiveShotMenu, CUnit target, CHero targetHit)
+        public static bool ConcussiveShotTarget(SmartConcussiveShotMenu smartConcussiveShotMenu, Unit target, Hero targetHit)
         {
             if (!smartConcussiveShotMenu.UseOnlyTargetItem)
             {

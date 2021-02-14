@@ -14,7 +14,7 @@ using Divine.Core.Managers.Unit;
 using Divine.Core.Managers.Update;
 using Divine.SkywrathMage.Menus;
 
-using Ensage;
+
 using Ensage.SDK.Extensions;
 using Ensage.SDK.Menu.ValueBinding;
 
@@ -141,7 +141,7 @@ namespace Divine.SkywrathMage.Combos
                     var arcaneBolt = Abilities.ArcaneBolt;
                     if (arcaneBolt.CanBeCasted && arcaneBolt.CanHit(target))
                     {
-                        arcaneBolt.UseAbility(target);
+                        arcaneBolt.Cast(target);
                         var castDelay = arcaneBolt.GetCastDelay(target);
                         var hitTime = arcaneBolt.GetHitTime(target) - (castDelay + 340);
                         MultiSleeper<string>.DelaySleep($"IsHitTime_{target.Name}_{arcaneBolt.Name}", castDelay + 40, hitTime);

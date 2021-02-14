@@ -1,12 +1,12 @@
 ﻿using Divine.Core.ComboFactory.Combos;
 using Divine.Core.ComboFactory.Commons;
 using Divine.Core.ComboFactory.Helpers;
-using Divine.Core.ComboFactory.Menus;
 
 using Divine.SkywrathMage.Combos;
 using Divine.SkywrathMage.Features;
 using Divine.SkywrathMage.Helpers;
 using Divine.SkywrathMage.Menus;
+using Divine.SkywrathMage.TargetSelector;
 
 namespace Divine.SkywrathMage
 {
@@ -14,7 +14,9 @@ namespace Divine.SkywrathMage
     {
         public override BaseAbilities Abilities { get; } = new Abilities();
 
-        public override BaseMenuConfig MenuConfig { get; } = new MenuConfig();
+        public MenuConfig MenuConfig { get; } = new MenuConfig();
+
+        public TargetSelectorManager TargetSelector { get; }
 
         public override BaseDamageCalculation DamageCalculation { get; }
 
@@ -44,6 +46,7 @@ namespace Divine.SkywrathMage
 
         public Common()
         {
+            TargetSelector = new TargetSelectorManager(MenuConfig);
             DamageCalculation = new DamageCalculation(this);
 
             LinkenBreaker = new LinkenBreaker(this);

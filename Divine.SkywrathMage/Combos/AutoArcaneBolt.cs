@@ -9,6 +9,7 @@ using Divine.Core.Entities;
 using Divine.Core.Extensions;
 using Divine.Core.Helpers;
 using Divine.Core.Managers.Unit;
+using Divine.SDK.Helpers;
 using Divine.SkywrathMage.Menus;
 
 using Ensage.SDK.Extensions;
@@ -92,7 +93,7 @@ namespace Divine.SkywrathMage.Combos
                     return;
                 }
 
-                arcaneBolt.UseAbility(target);
+                arcaneBolt.Cast(target);
                 var castDelay = arcaneBolt.GetCastDelay(target);
                 var hitTime = arcaneBolt.GetHitTime(target) - (castDelay + 340);
                 MultiSleeper<string>.DelaySleep($"IsHitTime_{target.Name}_{arcaneBolt.Name}", castDelay + 40, hitTime);

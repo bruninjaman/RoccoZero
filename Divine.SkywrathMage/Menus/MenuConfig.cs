@@ -1,29 +1,46 @@
-﻿using Divine.Core.ComboFactory.Menus;
-using Divine.Core.ComboFactory.Menus.Combo;
+﻿using Divine.Menu;
+using Divine.Menu.Items;
 using Divine.SkywrathMage.Menus.Combo;
-
-using Ensage.SDK.Menu;
-using Ensage.SDK.Menu.Attributes;
 
 namespace Divine.SkywrathMage.Menus
 {
-    [Menu("Divine.SkywrathMage"), TextureDivine(@"horizontal_heroes\npc_dota_hero_skywrath_mage.png")]
-    internal sealed class MenuConfig : BaseMenuConfig
+    internal sealed class MenuConfig
     {
-        public override BaseComboMenu ComboMenu { get; } = new ComboMenu();
+        private readonly RootMenu RootMenu;
 
-        public override BaseKillStealMenu KillStealMenu { get; } = new AutoKillStealMenu();
+        public MenuConfig()
+        {
+            RootMenu = MenuManager.CreateRootMenu("Divine.SkywrathMage").SetHeroTexture(HeroId.npc_dota_hero_skywrath_mage);
+            ComboMenu = new ComboMenu(RootMenu);
+            KillStealMenu = new AutoKillStealMenu(RootMenu);
+            MoreMenu = new MoreMenu(RootMenu);
+            FarmMenu = new FarmMenu(RootMenu);
+            DisableMenu = new DisableMenu(RootMenu);
+            LinkenBreakerMenu = new LinkenBreakerMenu(RootMenu);
+            BladeMailMenu = new BladeMailMenu(RootMenu);
+            RadiusMenu = new RadiusMenu(RootMenu);
+            TargetSelectorMenu = new TargetSelectorMenu(RootMenu);
+            SettingsMenu = new SettingsMenu(RootMenu);
+        }
 
-        public override BaseMoreMenu MoreMenu { get; } = new MoreMenu();
+        public ComboMenu ComboMenu { get; }
 
-        public override BaseFarmMenu FarmMenu { get; } = new FarmMenu();
+        public AutoKillStealMenu KillStealMenu { get; }
 
-        public override BaseDisableMenu DisableMenu { get; } = new DisableMenu();
+        public MoreMenu MoreMenu { get; }
 
-        public override BaseLinkenBreakerMenu LinkenBreakerMenu { get; } = new LinkenBreakerMenu();
+        public FarmMenu FarmMenu { get; }
 
-        public override BaseBladeMailMenu BladeMailMenu { get; } = new BladeMailMenu();
+        public DisableMenu DisableMenu { get; }
 
-        public override BaseRadiusMenu RadiusMenu { get; } = new RadiusMenu();
+        public LinkenBreakerMenu LinkenBreakerMenu { get; }
+
+        public BladeMailMenu BladeMailMenu { get; }
+
+        public RadiusMenu RadiusMenu { get; }
+
+        public TargetSelectorMenu TargetSelectorMenu { get; }
+
+        public SettingsMenu SettingsMenu { get; }
     }
 }

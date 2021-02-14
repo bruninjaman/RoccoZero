@@ -117,7 +117,7 @@ namespace Divine.SkywrathMage.Features
                 // ArcaneBolt
                 if (unit != null && arcaneBolt.CanBeCasted && arcaneBolt.CanHit(unit))
                 {
-                    arcaneBolt.UseAbility(unit);
+                    arcaneBolt.Cast(unit);
                     await Task.Delay(arcaneBolt.GetCastDelay(unit), token);
                     return;
                 }
@@ -131,7 +131,7 @@ namespace Divine.SkywrathMage.Features
                 {
                     if (arcaneBolt.CanBeCasted && arcaneBolt.CanHit(target))
                     {
-                        arcaneBolt.UseAbility(target);
+                        arcaneBolt.Cast(target);
                         await Task.Delay(arcaneBolt.GetCastDelay(target), token);
                         return;
                     }

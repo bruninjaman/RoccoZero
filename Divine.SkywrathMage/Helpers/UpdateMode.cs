@@ -1,14 +1,8 @@
 ﻿using Divine.Core.ComboFactory;
-using Divine.Core.ComboFactory.Menus;
-using Divine.Core.ComboFactory.Menus.Combo;
-using Divine.Core.Entities;
-using Divine.Core.Extensions;
-using Divine.Core.Managers.Renderer.Particle;
-using Divine.Core.Managers.TargetSelector;
+using Divine.SDK.Extensions;
 using Divine.SkywrathMage.Menus;
-
-using Ensage;
-using Ensage.SDK.Extensions;
+using Divine.SkywrathMage.Menus.Combo;
+using Divine.SkywrathMage.TargetSelector;
 
 using SharpDX;
 
@@ -16,11 +10,11 @@ namespace Divine.SkywrathMage.Helpers
 {
     internal sealed class UpdateMode : BaseUpdateHandler
     {
-        private readonly BaseBlinkDaggerMenu BlinkDaggerMenu;
+        private readonly BlinkDaggerMenu BlinkDaggerMenu;
 
         private readonly SmartArcaneBoltMenu SmartArcaneBoltMenu;
 
-        private readonly BaseFarmMenu FarmMenu;
+        private readonly FarmMenu FarmMenu;
 
         private readonly RadiusMenu RadiusMenu;
 
@@ -28,7 +22,7 @@ namespace Divine.SkywrathMage.Helpers
 
         private readonly TargetSelectorManager TargetSelector;
 
-        public CUnit UnitTarget { get; private set; }
+        public Unit UnitTarget { get; private set; }
 
         public UpdateMode(Common common)
         {
@@ -48,7 +42,7 @@ namespace Divine.SkywrathMage.Helpers
             var arcaneBolt = Abilities.ArcaneBolt;
             if (RadiusMenu.ArcaneBoltItem || FarmMenu.FarmHotkeyItem && arcaneBolt.Level > 0)
             {
-                ParticleManager.DrawRange(
+                ParticleManager.RangeParticle(
                     "ArcaneBolt",
                     Owner,
                     arcaneBolt.CastRange,
@@ -56,13 +50,13 @@ namespace Divine.SkywrathMage.Helpers
             }
             else
             {
-                ParticleManager.Remove("ArcaneBolt");
+                ParticleManager.RemoveParticle("ArcaneBolt");
             }
 
             var concussiveShot = Abilities.ConcussiveShot;
             if (RadiusMenu.ConcussiveShotItem && concussiveShot.Level > 0)
             {
-                ParticleManager.DrawRange(
+                ParticleManager.RangeParticle(
                     "ConcussiveShot",
                     Owner,
                     concussiveShot.Radius,
@@ -70,13 +64,13 @@ namespace Divine.SkywrathMage.Helpers
             }
             else
             {
-                ParticleManager.Remove("ConcussiveShot");
+                ParticleManager.RemoveParticle("ConcussiveShot");
             }
 
             var ancientSeal = Abilities.AncientSeal;
             if (RadiusMenu.AncientSealItem && ancientSeal.Level > 0)
             {
-                ParticleManager.DrawRange(
+                ParticleManager.RangeParticle(
                     "AncientSeal",
                     Owner,
                     ancientSeal.CastRange,
@@ -84,13 +78,13 @@ namespace Divine.SkywrathMage.Helpers
             }
             else
             {
-                ParticleManager.Remove("AncientSeal");
+                ParticleManager.RemoveParticle("AncientSeal");
             }
 
             var mysticFlare = Abilities.MysticFlare;
             if (RadiusMenu.MysticFlareItem && mysticFlare.Level > 0)
             {
-                ParticleManager.DrawRange(
+                ParticleManager.RangeParticle(
                     "MysticFlare",
                     Owner,
                     mysticFlare.CastRange,
@@ -98,7 +92,7 @@ namespace Divine.SkywrathMage.Helpers
             }
             else
             {
-                ParticleManager.Remove("MysticFlare");
+                ParticleManager.RemoveParticle("MysticFlare");
             }
 
             var blink = Abilities.Blink;
@@ -109,12 +103,12 @@ namespace Divine.SkywrathMage.Helpers
                 {
                     color = Color.Gray;
                 }
-                else if (Owner.Distance2D(Game.MousePosition) > BlinkDaggerMenu.BlinkActivationItem.Value)
+                else if (Owner.Distance2D(GameManager.MousePosition) > BlinkDaggerMenu.BlinkActivationItem.Value)
                 {
                     color = Color.Aqua;
                 }
 
-                ParticleManager.DrawRange(
+                ParticleManager.RangeParticle(
                     "Blink",
                     Owner,
                     blink.CastRange,
@@ -122,12 +116,12 @@ namespace Divine.SkywrathMage.Helpers
             }
             else
             {
-                ParticleManager.Remove("Blink");
+                ParticleManager.RemoveParticle("Blink");
             }
 
             if (FarmMenu.FarmHotkeyItem)
             {
-                ParticleManager.DrawRange(
+                ParticleManager.RangeParticle(
                     "Farm",
                     Owner,
                     Owner.AttackRange(Owner),
@@ -135,7 +129,7 @@ namespace Divine.SkywrathMage.Helpers
             }
             else
             {
-                ParticleManager.Remove("Farm");
+                ParticleManager.RemoveParticle("Farm");
             }
 
             var targetHit = concussiveShot.TargetHit;
@@ -143,7 +137,7 @@ namespace Divine.SkywrathMage.Helpers
             {
                 var position = targetHit.Position + new Vector3(0, 200, targetHit.HealthBarOffset);
 
-                ParticleManager.AddOrUpdate(
+                ParticleManager.CreateOrUpdateParticle(
                     "TargetHitConcussiveShot",
                     @"particles\units\heroes\hero_skywrath_mage\skywrath_mage_concussive_shot.vpcf",
                     targetHit,
@@ -154,7 +148,7 @@ namespace Divine.SkywrathMage.Helpers
             }
             else
             {
-                ParticleManager.Remove("TargetHitConcussiveShot");
+                ParticleManager.RemoveParticle("TargetHitConcussiveShot");
             }
         }
     }

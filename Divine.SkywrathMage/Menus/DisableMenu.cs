@@ -1,20 +1,24 @@
-﻿using System.Collections.Generic;
-
-using Divine.Core.ComboFactory.Menus;
-
-using Ensage;
-using Ensage.SDK.Menu.Items;
+﻿using Divine.Menu.Items;
 
 namespace Divine.SkywrathMage.Menus
 {
-    internal sealed class DisableMenu : BaseDisableMenu
+    internal sealed class DisableMenu
     {
-        public override ImageToggler AbilitiesSelection { get; set; } = new ImageToggler(new[]
+        public DisableMenu(Menu.Items.Menu menu)
         {
-            new KeyValuePair<string, bool>(AbilityId.item_sheepstick.ToString(), true),
-            new KeyValuePair<string, bool>(AbilityId.item_orchid.ToString(), true),
-            new KeyValuePair<string, bool>(AbilityId.item_bloodthorn.ToString(), true),
-            new KeyValuePair<string, bool>(AbilityId.skywrath_mage_ancient_seal.ToString(), true)
-        });
+            var disableMenu = menu.CreateMenu("Disable").SetAbilityTexture(AbilityId.item_sheepstick);
+            EnableItem = disableMenu.CreateSwitcher("Enable");
+            AbilitiesSelection = disableMenu.CreateAbilityToggler("Use:", new()
+            {
+                { AbilityId.item_sheepstick, true },
+                { AbilityId.item_orchid, true },
+                { AbilityId.item_bloodthorn, true },
+                { AbilityId.skywrath_mage_ancient_seal, true }
+            });
+        }
+
+        public MenuSwitcher EnableItem { get; }
+
+        public MenuAbilityToggler AbilitiesSelection { get; }
     }
 }
