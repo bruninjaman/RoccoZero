@@ -276,6 +276,15 @@
     <Compile Include="Core\Helpers\DamageHelper.cs" />
     <Compile Include="Core\Helpers\TargetModifiers.cs" />
     <Compile Include="AbilityContainer.cs" />
+    <Compile Include="TargetSelector\Selector\ISelector.cs" />
+    <Compile Include="TargetSelector\Selector\LowestHealth.cs" />
+    <Compile Include="TargetSelector\Selector\NearMouse.cs" />
+    <Compile Include="TargetSelector\TargetEffects\EffectType\BaseEffectType.cs" />
+    <Compile Include="TargetSelector\TargetEffects\EffectType\Default.cs" />
+    <Compile Include="TargetSelector\TargetEffects\EffectType\IEffectType.cs" />
+    <Compile Include="TargetSelector\TargetEffects\EffectType\WithoutCircle.cs" />
+    <Compile Include="TargetSelector\TargetEffects\TargetEffectsManager.cs" />
+    <Compile Include="TargetSelector\TargetSelectorManager.cs" />
     <Compile Include="Features\Disable.cs" />
     <Compile Include="Features\EulControl.cs" />
     <Compile Include="Features\ExecuteOrder.cs" />
@@ -284,6 +293,8 @@
     <Compile Include="Menus\Combo\AeonDiskMenu.cs" />
     <Compile Include="Menus\Combo\BlinkDaggerMenu.cs" />
     <Compile Include="Menus\Combo\WithMuteMenu.cs" />
+    <Compile Include="Menus\DamageCalculationMenu.cs" />
+    <Compile Include="Menus\DrawingMenu.cs" />
     <Compile Include="Menus\FarmMenu.cs" />
     <Compile Include="Menus\MoreMenu.cs" />
     <Compile Include="Common.cs" />
@@ -300,9 +311,13 @@
     <Compile Include="Menus\LinkenBreakerMenu.cs" />
     <Compile Include="Menus\MenuConfig.cs" />
     <Compile Include="Menus\RadiusMenu.cs" />
+    <Compile Include="Menus\SettingsMenu.cs" />
     <Compile Include="Menus\SmartConcussiveShotMenu.cs" />
     <Compile Include="Menus\SmartArcaneBoltMenu.cs" />
     <Compile Include="Bootstrap.cs" />
+    <Compile Include="Menus\TargetEffectsMenu.cs" />
+    <Compile Include="Menus\TargetSelectorMenu.cs" />
+    <Compile Include="Menus\TextPanelMenu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
