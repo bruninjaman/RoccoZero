@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -85,7 +82,7 @@ namespace Divine.Core.Handlers
             this.isRunning = true;
 
             this.TokenSource = new CancellationTokenSource();
-            this.RunningTask = UpdateManager.Factory.StartNew(
+            this.RunningTask = Factory.StartNew(
                 async () =>
                 {
                     try

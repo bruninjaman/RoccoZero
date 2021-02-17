@@ -1,14 +1,5 @@
-﻿using Divine.Core.Entities;
-using Divine.Core.Extensions;
-using Divine.Core.Managers.Log;
-using Divine.Core.Managers.Orbwalker;
-using Divine.Core.Managers.Unit;
-using Divine.Core.Services;
-using Divine.SDK.Extensions;
+﻿using Divine.SDK.Extensions;
 using Divine.SDK.Managers.Log;
-
-using Ensage.SDK.Extensions;
-using Ensage.SDK.Prediction;
 
 namespace Divine.Core.ComboFactory
 {
@@ -17,12 +8,9 @@ namespace Divine.Core.ComboFactory
         public BaseUtils()
         {
             Owner = EntityManager.LocalHero;
-            Orbwalker = Owner.Orbwalker;
         }
 
         protected Hero Owner { get; }
-
-        protected virtual OrbwalkerManager Orbwalker { get; }
 
         protected virtual bool IsStopped
         {

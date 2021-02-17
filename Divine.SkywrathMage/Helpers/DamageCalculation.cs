@@ -94,17 +94,17 @@ namespace Divine.SkywrathMage.Helpers
         {
             if (ability == Abilities.Ethereal)
             {
-                return MultiSleeper<string>.Sleeping($"IsHitTime_{target.Name}_{ability.Name}");
+                return Helpers.MultiSleeper<string>.Sleeping($"IsHitTime_{target.Name}_{ability.Name}");
             }
 
             if (ability == Abilities.ConcussiveShot)
             {
-                return MultiSleeper<string>.Sleeping($"IsHitTime_{target.Name}_{ability.Name}");
+                return Helpers.MultiSleeper<string>.Sleeping($"IsHitTime_{target.Name}_{ability.Name}");
             }
 
             if (ability == Abilities.ArcaneBolt)
             {
-                return MultiSleeper<string>.Sleeping($"IsHitTime_{target.Name}_{ability.Name}");
+                return Helpers.MultiSleeper<string>.Sleeping($"IsHitTime_{target.Name}_{ability.Name}");
             }
 
             return false;

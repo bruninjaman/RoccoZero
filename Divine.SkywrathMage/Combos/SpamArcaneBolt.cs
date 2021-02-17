@@ -4,19 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Divine.Core.ComboFactory;
-using Divine.Core.Entities;
-using Divine.Core.Extensions;
-using Divine.Core.Helpers;
-using Divine.Core.Managers;
-using Divine.Core.Managers.Renderer.Particle;
-using Divine.Core.Managers.TargetSelector;
-using Divine.Core.Managers.Unit;
-using Divine.Core.Managers.Update;
+using Divine.Divine.SkywrathMage;
+using Divine.Menu.EventArgs;
+using Divine.Menu.Items;
+using Divine.SDK.Extensions;
+using Divine.SDK.Managers.Update;
 using Divine.SkywrathMage.Menus;
-
-
-using Ensage.SDK.Extensions;
-using Ensage.SDK.Menu.ValueBinding;
+using Divine.SkywrathMage.TargetSelector;
 
 using SharpDX;
 
@@ -34,24 +28,24 @@ namespace Divine.SkywrathMage.Combos
 
         public SpamArcaneBolt(Common common)
         {
-            SmartArcaneBoltMenu = ((MoreMenu)common.MenuConfig.MoreMenu).SmartArcaneBoltMenu;
+            SmartArcaneBoltMenu = common.MenuConfig.MoreMenu.SmartArcaneBoltMenu;
 
             Abilities = (Abilities)common.Abilities;
             TargetSelector = common.TargetSelector;
 
             UpdateHandler = UpdateManager.Subscribe(30, false, OnUpdate);
 
-            SmartArcaneBoltMenu.SpamHotkeyItem.Changed += SpamHotkeyChanged;
+            SmartArcaneBoltMenu.SpamHotkeyItem.ValueChanged += SpamHotkeyChanged;
         }
 
         public override void Dispose()
         {
             base.Dispose();
 
-            SmartArcaneBoltMenu.SpamHotkeyItem.Changed -= SpamHotkeyChanged;
+            SmartArcaneBoltMenu.SpamHotkeyItem.ValueChanged -= SpamHotkeyChanged;
         }
 
-        private void SpamHotkeyChanged(object sender, ValueChangingEventArgs<bool> e)
+        private void SpamHotkeyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
         {
             if (e.Value)
             {
@@ -66,34 +60,36 @@ namespace Divine.SkywrathMage.Combos
                 Cancel();
 
                 UpdateHandler.IsEnabled = false;
-                ParticleManager.Remove("SpamTarget");
+                ParticleManager.RemoveParticle("SpamTarget");
                 spamTarget = null;
 
                 TargetSelector.TargetEffectsManager.DisableTargetDraw = false;
             }
         }
 
-        private CUnit spamTarget;
+        private Unit spamTarget;
 
         private void OnUpdate()
         {
-            CUnit unitTarget = null;
+            Unit unitTarget = null;
             if (SmartArcaneBoltMenu.SpamUnitsItem)
             {
-                unitTarget = UnitManager<CUnit, Enemy, NoIllusion>.Units.Where(x =>
-                                                          x.IsVisible &&
-                                                          x.IsAlive &&
-                                                          x.IsSpawned &&
-                                                          (x.NetworkClassId == NetworkClassId.CDOTA_BaseNPC_Creep_Neutral ||
-                                                          x.NetworkClassId == NetworkClassId.CDOTA_BaseNPC_Invoker_Forged_Spirit ||
-                                                          x.NetworkClassId == NetworkClassId.CDOTA_BaseNPC_Warlock_Golem ||
-                                                          x.NetworkClassId == NetworkClassId.CDOTA_BaseNPC_Creep ||
-                                                          x.NetworkClassId == NetworkClassId.CDOTA_BaseNPC_Creep_Lane ||
-                                                          x.NetworkClassId == NetworkClassId.CDOTA_BaseNPC_Creep_Siege ||
-                                                          x.NetworkClassId == NetworkClassId.CDOTA_Unit_Hero_Beastmaster_Boar ||
-                                                          x.NetworkClassId == NetworkClassId.CDOTA_Unit_Broodmother_Spiderling ||
-                                                          x.NetworkClassId == NetworkClassId.CDOTA_Unit_SpiritBear) &&
-                                                          x.Distance2D(Game.MousePosition) <= 100).OrderBy(x => x.Distance2D(Game.MousePosition)).FirstOrDefault();
+                unitTarget = EntityManager.GetEntities<Unit>().Where(x =>
+                            x.IsVisible &&
+                            !x.IsIllusion &&
+                            !x.IsAlly(Owner) &&
+                            x.IsAlive &&
+                            x.IsSpawned &&
+                            (x.ClassId == ClassId.CDOTA_BaseNPC_Creep_Neutral ||
+                            x.ClassId == ClassId.CDOTA_BaseNPC_Invoker_Forged_Spirit ||
+                            x.ClassId == ClassId.CDOTA_BaseNPC_Warlock_Golem ||
+                            x.ClassId == ClassId.CDOTA_BaseNPC_Creep ||
+                            x.ClassId == ClassId.CDOTA_BaseNPC_Creep_Lane ||
+                            x.ClassId == ClassId.CDOTA_BaseNPC_Creep_Siege ||
+                            x.ClassId == ClassId.CDOTA_Unit_Hero_Beastmaster_Boar ||
+                            x.ClassId == ClassId.CDOTA_Unit_Broodmother_Spiderling ||
+                            x.ClassId == ClassId.CDOTA_Unit_SpiritBear) &&
+                            x.Distance2D(GameManager.MousePosition) <= 100).OrderBy(x => x.Distance2D(GameManager.MousePosition)).FirstOrDefault();
             }
 
             if (spamTarget == null || !spamTarget.IsValid || !spamTarget.IsAlive)
@@ -103,15 +99,15 @@ namespace Divine.SkywrathMage.Combos
 
             if (spamTarget != null)
             {
-                ParticleManager.DrawTargetLine("SpamTarget", Owner, spamTarget.Position, Color.Green);
+                ParticleManager.TargetLineParticle("SpamTarget", Owner, spamTarget.Position, Color.Green);
             }
             else
             {
-                ParticleManager.Remove("SpamTarget");
+                ParticleManager.RemoveParticle("SpamTarget");
             }
         }
 
-        protected override CUnit CurrentTarget
+        protected override Unit CurrentTarget
         {
             get
             {
@@ -144,7 +140,7 @@ namespace Divine.SkywrathMage.Combos
                         arcaneBolt.Cast(target);
                         var castDelay = arcaneBolt.GetCastDelay(target);
                         var hitTime = arcaneBolt.GetHitTime(target) - (castDelay + 340);
-                        MultiSleeper<string>.DelaySleep($"IsHitTime_{target.Name}_{arcaneBolt.Name}", castDelay + 40, hitTime);
+                        Helpers.MultiSleeper<string>.DelaySleep($"IsHitTime_{target.Name}_{arcaneBolt.Name}", castDelay + 40, hitTime);
                         await Task.Delay(castDelay, token);
                     }
                 }
@@ -161,7 +157,7 @@ namespace Divine.SkywrathMage.Combos
             }
         }
 
-        private void OrbwalkTo(CUnit target)
+        private void OrbwalkTo(Unit target)
         {
             if (target.IsInvulnerable() || target.IsAttackImmune()) //TODO
             {
@@ -179,8 +175,8 @@ namespace Divine.SkywrathMage.Combos
 
                 case "Distance":
                     {
-                        var ownerDis = Math.Min(Owner.Distance2D(Game.MousePosition), 230);
-                        var ownerPos = Owner.Position.Extend(Game.MousePosition, ownerDis);
+                        var ownerDis = Math.Min(Owner.Distance2D(GameManager.MousePosition), 230);
+                        var ownerPos = Owner.Position.Extend(GameManager.MousePosition, ownerDis);
                         var pos = target.Position.Extend(ownerPos, SmartArcaneBoltMenu.MinDisInOrbwalkItem.Value);
 
                         Orbwalker.OrbwalkTo(target, pos);
@@ -190,7 +186,7 @@ namespace Divine.SkywrathMage.Combos
                 case "Free":
                     {
                         var attackRange = Owner.AttackRange(target);
-                        if (Owner.Distance2D(target) <= attackRange && !SmartArcaneBoltMenu.FullFreeModeItem || target.Distance2D(Game.MousePosition) <= attackRange)
+                        if (Owner.Distance2D(target) <= attackRange && !SmartArcaneBoltMenu.FullFreeModeItem || target.Distance2D(GameManager.MousePosition) <= attackRange)
                         {
                             Orbwalker.OrbwalkTo(target);
                         }
@@ -203,7 +199,7 @@ namespace Divine.SkywrathMage.Combos
 
                 case "Only Attack":
                     {
-                        Orbwalker.AttackTo(target);
+                        Orbwalker.Attack(target);
                     }
                     break;
 
@@ -211,7 +207,7 @@ namespace Divine.SkywrathMage.Combos
                     {
                         if (Owner.Distance2D(target) < Owner.AttackRange(target))
                         {
-                            Orbwalker.AttackTo(target);
+                            Orbwalker.Attack(target);
                         }
                     }
                     break;

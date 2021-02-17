@@ -1,10 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-using Divine.SDK.Managers.Update;
-
-using Ensage.SDK.Handlers;
-using Ensage.SDK.Helpers;
+using Divine.Core.Handlers;
 
 namespace Divine.Core.ComboFactory
 {
@@ -23,7 +20,7 @@ namespace Divine.Core.ComboFactory
 
             if (TaskHandler == null)
             {
-                TaskHandler = UpdateManager.Run(ExecuteAsync, restart, false);
+                TaskHandler = new TaskHandler(ExecuteAsync, restart);
             }
 
             TaskHandler.RunAsync();

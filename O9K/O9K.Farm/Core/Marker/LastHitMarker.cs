@@ -4,9 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
+    using Divine.SDK.Managers.Update;
 
     using Menu;
 
@@ -14,7 +13,6 @@
     using O9K.Core.Entities.Abilities.Base.Types;
     using O9K.Core.Entities.Heroes;
     using O9K.Core.Logger;
-    using O9K.Core.Managers.Context;
     using O9K.Core.Managers.Entity;
     using O9K.Core.Managers.Menu.EventArgs;
     using O9K.Core.Managers.Renderer.Utils;
@@ -23,12 +21,8 @@
 
     using Units.Base;
 
-    using Color = System.Drawing.Color;
-
     internal class LastHitMarker : IDisposable
     {
-        private readonly IContext9 context;
-
         private readonly HashSet<AbilityId> includeAbilities = new HashSet<AbilityId>
         {
             AbilityId.shredder_timber_chain
@@ -42,9 +36,8 @@
 
         private Dictionary<FarmUnit, DamageData> unitDamage = new Dictionary<FarmUnit, DamageData>();
 
-        public LastHitMarker(IContext9 context, UnitManager unitManager, MenuManager menuManager)
+        public LastHitMarker(UnitManager unitManager, MenuManager menuManager)
         {
-            this.context = context;
             this.unitManager = unitManager;
             this.menu = menuManager.MarkerMenu;
             this.owner = EntityManager9.Owner;
@@ -56,10 +49,10 @@
         {
             this.menu.Enabled.ValueChange -= this.OnValueChange;
             UpdateManager.Unsubscribe(this.OnUpdate);
-            Unit.OnModifierAdded -= this.OnModifierChange;
-            Unit.OnModifierRemoved -= this.OnModifierChange;
+            ModifierManager.ModifierAdded -= OnModifierAdded;
+            ModifierManager.ModifierRemoved -= OnModifierRemoved;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
-            this.context.Renderer.Draw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
         }
 
         private void OnAbilityAdded(Ability9 ability)
@@ -79,7 +72,7 @@
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -121,7 +114,7 @@
                             hpBarSize + new Vector2(this.menu.AttacksSizeX, this.menu.AttacksSizeY));
 
                         bar.Width *= Math.Min(attackDamagePct, unit.Unit.HealthPercentageBase);
-                        renderer.DrawFilledRectangle(bar, color);
+                        RendererManager.DrawFilledRectangle(bar, color);
                     }
 
                     if (this.menu.AbilitiesEnabled)
@@ -155,14 +148,14 @@
                                 var startPosition = hpBarPosition + new Vector2((hpBarSize.X / 2f) - (barSize.X / 2f), -35)
                                                                   + new Vector2(this.menu.AbilitiesX, this.menu.AbilitiesY);
 
-                                renderer.DrawRectangle(
+                                RendererManager.DrawRectangle(
                                     new RectangleF(startPosition.X, startPosition.Y, barSize.X, barSize.Y),
                                     Color.Green,
                                     5);
 
                                 foreach (var ability in drawAbilities)
                                 {
-                                    renderer.DrawTexture(ability, startPosition, new Vector2(barSize.Y, barSize.Y));
+                                    RendererManager.DrawTexture(ability, new RectangleF(startPosition.X, startPosition.Y, barSize.Y, barSize.Y), TextureType.Ability);
                                     startPosition += new Vector2(barSize.Y, 0);
                                 }
                             }
@@ -176,14 +169,14 @@
                                 var startPosition = hpBarPosition + new Vector2((hpBarSize.X / 2f) - (barSize.X / 2f), -35)
                                                                   + new Vector2(this.menu.AbilitiesX, this.menu.AbilitiesY);
 
-                                renderer.DrawRectangle(
+                                RendererManager.DrawRectangle(
                                     new RectangleF(startPosition.X, startPosition.Y, barSize.X, barSize.Y),
                                     Color.Orange,
                                     5);
 
                                 foreach (var ability in damage.AbilityDamage.Select(x => x.Key))
                                 {
-                                    renderer.DrawTexture(ability.Name, startPosition, new Vector2(barSize.Y, barSize.Y));
+                                    RendererManager.DrawTexture(ability.Name, new RectangleF(startPosition.X, startPosition.Y, barSize.Y, barSize.Y));
                                     startPosition += new Vector2(barSize.Y, 0);
                                 }
                             }
@@ -201,21 +194,29 @@
             }
         }
 
-        private void OnModifierChange(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierChange(Modifier modifier)
         {
-            try
+            UpdateManager.BeginInvoke(() =>
             {
-                if (sender?.Handle != this.owner.HeroHandle)
+                try
                 {
-                    return;
-                }
+                    if (!modifier.IsValid)
+                    {
+                        return;
+                    }
 
-                this.OnUpdate();
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+                    if (modifier.Owner?.Handle != this.owner.HeroHandle)
+                    {
+                        return;
+                    }
+
+                    this.OnUpdate();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            });
         }
 
         private void OnUpdate()
@@ -255,20 +256,31 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(this.OnUpdate, 500);
-                Unit.OnModifierAdded += this.OnModifierChange;
-                Unit.OnModifierRemoved += this.OnModifierChange;
+                UpdateManager.Subscribe(500, this.OnUpdate);
+                ModifierManager.ModifierAdded += OnModifierAdded;
+                ModifierManager.ModifierRemoved += OnModifierRemoved;
+
                 EntityManager9.AbilityAdded += this.OnAbilityAdded;
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
                 UpdateManager.Unsubscribe(this.OnUpdate);
-                Unit.OnModifierAdded -= this.OnModifierChange;
-                Unit.OnModifierRemoved -= this.OnModifierChange;
+                ModifierManager.ModifierAdded -= OnModifierAdded;
+                ModifierManager.ModifierRemoved -= OnModifierRemoved;
                 EntityManager9.AbilityAdded -= this.OnAbilityAdded;
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
+        }
+
+        private void OnModifierAdded(ModifierAddedEventArgs e)
+        {
+            OnModifierChange(e.Modifier);
+        }
+
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
+        {
+            OnModifierChange(e.Modifier);
         }
     }
 }

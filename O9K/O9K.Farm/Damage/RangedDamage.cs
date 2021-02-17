@@ -2,7 +2,7 @@
 {
     using System;
 
-    using Ensage;
+    using Divine;
 
     using Units.Base;
 
@@ -38,7 +38,7 @@
         {
             get
             {
-                if (this.Projectile?.IsValid == true)
+                /*if (this.Projectile?.IsValid == true) // TODO RoccoZero
                 {
                     var distance = Math.Max(this.Target.Unit.Distance(this.Projectile.Position) - (this.Target.Unit.HullRadius * 0.5f), 0);
 
@@ -54,14 +54,14 @@
                         }
                     }
 
-                    return Game.RawGameTime + (distance / this.Source.Unit.ProjectileSpeed);
+                    return GameManager.RawGameTime + (distance / this.Source.Unit.ProjectileSpeed);
                 }
 
                 if (this.Projectile != null)
                 {
                     this.Delete();
                     this.Projectile = null;
-                }
+                }*/
 
                 return this.hitTime;
             }
@@ -71,27 +71,27 @@
         {
             get
             {
-                if (this.Projectile?.IsValid == true)
+                /*if (this.Projectile?.IsValid == true) // TODO RoccoZero
                 {
                     var distance = Math.Max(this.Target.Unit.Distance(this.Projectile.Position) - this.Target.Unit.HullRadius, 0);
-                    return (Game.RawGameTime + (distance / this.Source.Unit.ProjectileSpeed)) - 0.07f;
+                    return (GameManager.RawGameTime + (distance / this.Source.Unit.ProjectileSpeed)) - 0.07f;
                 }
 
                 if (this.Projectile != null)
                 {
                     this.Delete();
                     this.Projectile = null;
-                }
+                }*/
 
                 return this.includeTime;
             }
         }
 
-        public TrackingProjectile Projectile { get; protected set; }
+        /*public TrackingProjectile Projectile { get; protected set; } // TODO RoccoZero
 
         public void AddProjectile(TrackingProjectile projectile)
         {
             this.Projectile = projectile;
-        }
+        }*/
     }
 }

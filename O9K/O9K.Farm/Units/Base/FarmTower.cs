@@ -6,7 +6,7 @@
 
     using Damage;
 
-    using Ensage.SDK.Helpers;
+    using Divine.SDK.Managers.Update;
 
     using O9K.Core.Entities.Buildings;
     using O9K.Core.Entities.Units;

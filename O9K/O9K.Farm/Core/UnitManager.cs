@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Reflection;
 
-    using Ensage;
+    using Divine;
 
     using Menu;
 

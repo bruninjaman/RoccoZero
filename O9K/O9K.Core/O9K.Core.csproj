@@ -1054,7 +1054,6 @@
     <Compile Include="Plugins\OrderBlocker\Modules\OutOfScreenBlock.cs" />
     <Compile Include="Plugins\OrderBlocker\Modules\SpamBlock.cs" />
     <Compile Include="Plugins\OrderBlocker\Modules\ZoomBlock.cs" />
-    <Compile Include="Plugins\TestPlugin\TestPlugin.cs" />
     <Compile Include="Prediction\Collision\Collision.cs" />
     <Compile Include="Prediction\Collision\CollisionObject.cs" />
     <Compile Include="Prediction\Collision\CollisionResult.cs" />

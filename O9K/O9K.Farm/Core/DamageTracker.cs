@@ -5,7 +5,7 @@
 
     using Damage;
 
-    using Ensage;
+    using Divine;
 
     using O9K.Core.Entities.Units;
     using O9K.Core.Extensions;
@@ -23,7 +23,7 @@
             EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
             EntityManager9.UnitMonitor.AttackEnd += this.OnUnitDied;
             EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
-            ObjectManager.OnAddTrackingProjectile += this.OnAddTrackingProjectile;
+            //ObjectManager.OnAddTrackingProjectile += this.OnAddTrackingProjectile; //TODO RoccoZero
         }
 
         public event EventHandler<UnitDamage> AttackCanceled;
@@ -33,10 +33,10 @@
             EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
             EntityManager9.UnitMonitor.AttackEnd -= this.OnUnitDied;
             EntityManager9.UnitMonitor.UnitDied -= this.OnUnitDied;
-            ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile;
+            //ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile; //TODO RoccoZero
         }
 
-        private void OnAddTrackingProjectile(TrackingProjectileEventArgs args)
+        /*private void OnAddTrackingProjectile(TrackingProjectileEventArgs args)
         {
             try
             {
@@ -66,7 +66,7 @@
 
                 if (damage != null)
                 {
-                    if (Game.RawGameTime < damage.HitTime)
+                    if (GameManager.RawGameTime < damage.HitTime)
                     {
                         damage.AddProjectile(projectile);
                     }
@@ -96,7 +96,7 @@
             {
                 Logger.Error(e);
             }
-        }
+        }*/
 
         private void OnAttackStart(Unit9 unit)
         {
@@ -109,7 +109,7 @@
                     return;
                 }
 
-                var time = Game.RawGameTime - (Game.Ping / 2000);
+                var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
                 if (farmUnit.IsControllable)
                 {
                     farmUnit.AttackStartTime = time;
@@ -132,12 +132,12 @@
                 {
                     foreach (var damage in farmUnit.IncomingDamage)
                     {
-                        if (damage.MinDamage <= 0 || damage.Source.Unit != unit || damage.HitTime <= Game.RawGameTime)
+                        if (damage.MinDamage <= 0 || damage.Source.Unit != unit || damage.HitTime <= GameManager.RawGameTime)
                         {
                             continue;
                         }
 
-                        if (damage is RangedDamage ranged && ranged.Projectile != null)
+                        if (damage is RangedDamage ranged /*&& ranged.Projectile != null*/) // TODO RoccoZero
                         {
                             continue;
                         }

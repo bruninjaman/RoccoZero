@@ -4,10 +4,9 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Extensions;
+    using Divine.SDK.Managers.Update;
 
     using O9K.Core.Entities.Units;
     using O9K.Core.Helpers;
@@ -19,14 +18,14 @@
     {
         private readonly Sleeper actionSleeper = new Sleeper();
 
-        private readonly IUpdateHandler handler;
+        private readonly UpdateHandler handler;
 
         private readonly List<FarmUnit> units = new List<FarmUnit>();
 
         protected BaseMode(UnitManager unitManager)
         {
             this.UnitManager = unitManager;
-            this.handler = UpdateManager.Subscribe(this.OnUpdate, 0, false);
+            this.handler = UpdateManager.Subscribe(0, false, this.OnUpdate);
         }
 
         public bool IsActive
@@ -62,7 +61,7 @@
                     continue;
                 }
 
-                var delay = (unit.AttackStartTime + unit.GetAttackDelay(target)) - Game.RawGameTime;
+                var delay = (unit.AttackStartTime + unit.GetAttackDelay(target)) - GameManager.RawGameTime;
                 if (target.GetPredictedHealth(unit, delay) > unit.GetDamage(target))
                 {
                     unit.Stop();
@@ -139,14 +138,14 @@
                 return;
             }
 
-            var mousePosition = Game.MousePosition;
+            var mousePosition = GameManager.MousePosition;
             var control = myUnits.Where(x => x.CanMoveToMouse() && x.LastMovePosition.Distance2D(mousePosition) > 50).ToList();
             if (control.Count == 0)
             {
                 return;
             }
 
-            if (!Player.EntitiesMove(control.Select(x => x.Unit.BaseUnit), mousePosition))
+            if (!Player.Move(control.Select(x => x.Unit.BaseUnit), mousePosition))
             {
                 return;
             }
@@ -164,7 +163,7 @@
 
         private void OnUpdate()
         {
-            if (Game.IsPaused)
+            if (GameManager.IsPaused)
             {
                 return;
             }

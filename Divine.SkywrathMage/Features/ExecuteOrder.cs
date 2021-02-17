@@ -45,7 +45,7 @@ namespace Divine.SkywrathMage.Features
 
                     var castDelay = concussiveShot.GetCastDelay();
                     var hitTime = concussiveShot.GetHitTime(targetHit) - (castDelay + 150);
-                    MultiSleeper<string>.DelaySleep($"IsHitTime_{targetHit.Name}_{concussiveShot.Name}", castDelay + 50, hitTime);
+                    Helpers.MultiSleeper<string>.DelaySleep($"IsHitTime_{targetHit.Name}_{concussiveShot.Name}", castDelay + 50, hitTime);
                 }
             }
         }

@@ -2,20 +2,19 @@
 {
     using System;
 
+    using Divine;
+
     using O9K.Core.Managers.Context;
     using O9K.Core.Managers.Menu;
     using O9K.Core.Managers.Menu.Items;
 
     internal class MenuManager : IDisposable
     {
-        private readonly IContext9 context;
-
         private readonly Menu menu;
 
-        public MenuManager(IContext9 context)
+        public MenuManager()
         {
-            this.context = context;
-            this.context.Renderer.TextureManager.LoadFromDota("o9k.icon_gold", @"panorama\images\hud\icon_gold_psd.vtex_c");
+            RendererManager.LoadTexture("o9k.icon_gold", @"panorama\images\hud\icon_gold_psd.vtex_c");
 
             this.menu = new Menu("Farm", "O9K.Farm").SetTexture("o9k.icon_gold");
 
@@ -27,7 +26,7 @@
             //  this.PushMenu = new PushMenu(this.menu);
             this.MarkerMenu = new MarkerMenu(this.menu);
 
-            this.context.MenuManager.AddRootMenu(this.menu);
+            Context9.MenuManager.AddRootMenu(this.menu);
         }
 
         public LastHitMenu LastHitMenu { get; }
@@ -38,7 +37,7 @@
 
         public void Dispose()
         {
-            this.context.MenuManager.RemoveRootMenu(this.menu);
+            Context9.MenuManager.RemoveRootMenu(this.menu);
         }
     }
 }

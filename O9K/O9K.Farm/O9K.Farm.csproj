@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>O9K.Farm</RootNamespace>
     <AssemblyName>O9K.Farm</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,34 +33,23 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ensage">
-      <HintPath>C:\BanIsComing\References\Ensage.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Divine">
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\References\Divine.dll</HintPath>
     </Reference>
-    <Reference Include="Ensage.SDK">
-      <HintPath>C:\BanIsComing\References\Ensage.SDK.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="O9K.Core">
-      <HintPath>..\O9K.Core\bin\Debug\O9K.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PlaySharp.Toolkit">
-      <HintPath>C:\BanIsComing\References\PlaySharp.Toolkit.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Divine.SDK">
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\References\Divine.SDK.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>C:\BanIsComing\References\SharpDX.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\References\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Mathematics">
-      <HintPath>C:\BanIsComing\References\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\Divine\Output\References\SharpDX.Mathematics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Drawing" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -90,6 +80,11 @@
     <Compile Include="Units\SiegeCreep.cs" />
     <Compile Include="Utils\ControlEffect.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\O9K.Core\O9K.Core.csproj">
+      <Project>{9789a144-cbd0-4dd5-8f78-2870ba4ca6d5}</Project>
+      <Name>O9K.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

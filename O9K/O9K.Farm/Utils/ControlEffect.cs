@@ -3,13 +3,13 @@
     using System;
     using System.Collections.Generic;
 
-    using Ensage;
+    using Divine;
 
     using Units.Base;
 
     internal class ControlEffect : IDisposable
     {
-        private readonly List<ParticleEffect> effects = new List<ParticleEffect>();
+        private readonly List<Particle> effects = new List<Particle>();
 
         public ControlEffect(FarmUnit unit)
         {

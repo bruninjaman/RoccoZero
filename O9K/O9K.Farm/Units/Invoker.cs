@@ -5,8 +5,9 @@
 
     using Base;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Helpers;
+    using Divine.SDK.Localization;
 
     using O9K.Core.Entities.Abilities.Heroes.Invoker.BaseAbilities;
     using O9K.Core.Entities.Metadata;

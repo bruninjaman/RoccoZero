@@ -5,35 +5,26 @@
 
     using Core;
 
-    using Ensage.SDK.Service;
-    using Ensage.SDK.Service.Metadata;
+    using Divine;
 
     using Menu;
 
     using O9K.Core.Logger;
     using O9K.Core.Managers.Context;
 
-    [ExportPlugin("O9K // Farm", priority: int.MaxValue)]
-    public class Bootstrap : Plugin
+    //[ExportPlugin("O9K // Farm", priority: int.MaxValue)]
+    public class Bootstrap : Bootstrapper
     {
-        private readonly IContext9 context;
-
         private FarmManager farmManager;
 
         private MenuManager menuManager;
-
-        [ImportingConstructor]
-        public Bootstrap(IContext9 context)
-        {
-            this.context = context;
-        }
 
         protected override void OnActivate()
         {
             try
             {
-                this.menuManager = new MenuManager(this.context);
-                this.farmManager = new FarmManager(this.context, this.menuManager);
+                this.menuManager = new MenuManager();
+                this.farmManager = new FarmManager(this.menuManager);
             }
             catch (Exception e)
             {

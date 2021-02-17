@@ -1,9 +1,9 @@
 ﻿using System;
 
 using Divine.Core.ComboFactory.Helpers;
+using Divine.Menu.EventArgs;
+using Divine.Menu.Items;
 using Divine.SkywrathMage.Menus;
-
-using Ensage.SDK.Menu.ValueBinding;
 
 using SharpDX;
 
@@ -29,7 +29,7 @@ namespace Divine.SkywrathMage.Helpers
                 ComboPanelMore += 30;
             }
 
-            AutoComboMenu.EnableItem.Changed += AutoComboChanged;
+            AutoComboMenu.EnableItem.ValueChanged += AutoComboChanged;
         }
 
         public override void Dispose()
@@ -41,10 +41,10 @@ namespace Divine.SkywrathMage.Helpers
                 ComboPanelMore -= 30;
             }
 
-            AutoComboMenu.EnableItem.Changed -= AutoComboChanged;
+            AutoComboMenu.EnableItem.ValueChanged -= AutoComboChanged;
         }
 
-        private void AutoComboChanged(object sender, ValueChangingEventArgs<bool> e)
+        private void AutoComboChanged(MenuSwitcher switcher, SwitcherEventArgs e)
         {
             if (e.Value)
             {

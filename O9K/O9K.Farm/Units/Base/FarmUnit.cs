@@ -6,7 +6,7 @@
 
     using Damage;
 
-    using Ensage;
+    using Divine;
 
     using Menu;
 
@@ -121,7 +121,7 @@
                 return false;
             }
 
-            var ping = (Game.Ping / 2000) + 0.06f;
+            var ping = (GameManager.Ping / 2000) + 0.06f;
             var turnTime = this.Unit.GetTurnTime(target.Unit.Position);
             var distance = Math.Max(this.Unit.Distance(target.Unit) - this.Unit.GetAttackRange(target.Unit), 0) / this.Unit.Speed;
             var delay = turnTime + distance + ping + 0.25f;
@@ -136,7 +136,7 @@
             this.MoveSleeper.Sleep(attackPoint + delay + (this.Menu.AdditionalDelay / 1000f));
             this.LastMovePosition = Vector3.Zero;
             this.Target = target;
-            this.AddDamage(target, (Game.RawGameTime + distance) - ping, false, false);
+            this.AddDamage(target, (GameManager.RawGameTime + distance) - ping, false, false);
 
             return true;
         }
@@ -226,7 +226,7 @@
             var projectileTime = this.Unit.IsRanged ? Math.Max(distance - moveDistance, 0) / this.Unit.ProjectileSpeed : 0;
             var turnTime = this.Unit.GetTurnTime(target.Unit.Position);
             var customDelay = this.Menu.AdditionalDelay / 1000f;
-            var ping = Game.Ping / 2000;
+            var ping = GameManager.Ping / 2000;
 
             if (target.IsTower)
             {
@@ -268,7 +268,7 @@
                 return null;
             }
 
-            var time = Game.RawGameTime;
+            var time = GameManager.RawGameTime;
             var health = this.Unit.Health;
             var deathTime = 0;
 
@@ -293,7 +293,7 @@
 
         public float GetPredictedHealth(FarmUnit source, float delay)
         {
-            var time = Game.RawGameTime;
+            var time = GameManager.RawGameTime;
             var hitTime = time + delay;
             var health = this.Unit.Health;
             var regen = (int)Math.Ceiling(this.Unit.HealthRegeneration * delay);
@@ -321,7 +321,7 @@
                 return false;
             }
 
-            var ping = (Game.Ping / 2000) + 0.06f;
+            var ping = (GameManager.Ping / 2000) + 0.06f;
             var turnTime = this.Unit.GetTurnTime(target.Unit.Position);
             var distance = Math.Max(this.Unit.Distance(target.Unit) - this.Unit.GetAttackRange(target.Unit), 0) / this.Unit.Speed;
             var delay = turnTime + distance + ping + 0.25f;

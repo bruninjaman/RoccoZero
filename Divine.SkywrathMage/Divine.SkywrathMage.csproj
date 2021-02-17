@@ -273,9 +273,12 @@
     <Compile Include="Core\Data\ModifierData.cs" />
     <Compile Include="Core\Extensions\AbilityExtensions.cs" />
     <Compile Include="Core\Extensions\UnitExtensions.cs" />
+    <Compile Include="Core\Handlers\TaskHandler.cs" />
     <Compile Include="Core\Helpers\DamageHelper.cs" />
     <Compile Include="Core\Helpers\TargetModifiers.cs" />
     <Compile Include="AbilityContainer.cs" />
+    <Compile Include="Core\Orbwalker\Orbwalker.cs" />
+    <Compile Include="Core\Orbwalker\OrbwalkerManager.cs" />
     <Compile Include="TargetSelector\Selector\ISelector.cs" />
     <Compile Include="TargetSelector\Selector\LowestHealth.cs" />
     <Compile Include="TargetSelector\Selector\NearMouse.cs" />

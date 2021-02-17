@@ -9,8 +9,10 @@ using Divine.Core.Entities;
 using Divine.Core.Extensions;
 using Divine.Core.Helpers;
 using Divine.Core.Managers.Unit;
+using Divine.SDK.Extensions;
 using Divine.SDK.Helpers;
 using Divine.SkywrathMage.Menus;
+using Divine.SkywrathMage.Menus.Combo;
 
 using Ensage.SDK.Extensions;
 using Ensage.SDK.Menu;
@@ -19,7 +21,7 @@ namespace Divine.SkywrathMage.Combos
 {
     internal sealed class AutoArcaneBolt : BaseTaskHandler
     {
-        private readonly BaseComboMenu ComboMenu;
+        private readonly ComboMenu ComboMenu;
 
         private readonly SmartArcaneBoltMenu SmartArcaneBoltMenu;
 
@@ -28,7 +30,7 @@ namespace Divine.SkywrathMage.Combos
         public AutoArcaneBolt(Common common)
         {
             ComboMenu = common.MenuConfig.ComboMenu;
-            SmartArcaneBoltMenu = ((MoreMenu)common.MenuConfig.MoreMenu).SmartArcaneBoltMenu;
+            SmartArcaneBoltMenu = common.MenuConfig.MoreMenu.SmartArcaneBoltMenu;
 
             Abilities = (Abilities)common.Abilities;
 
@@ -96,7 +98,7 @@ namespace Divine.SkywrathMage.Combos
                 arcaneBolt.Cast(target);
                 var castDelay = arcaneBolt.GetCastDelay(target);
                 var hitTime = arcaneBolt.GetHitTime(target) - (castDelay + 340);
-                MultiSleeper<string>.DelaySleep($"IsHitTime_{target.Name}_{arcaneBolt.Name}", castDelay + 40, hitTime);
+                Helpers.MultiSleeper<string>.DelaySleep($"IsHitTime_{target.Name}_{arcaneBolt.Name}", castDelay + 40, hitTime);
                 await Task.Delay(castDelay, token);
             }
             catch (TaskCanceledException)

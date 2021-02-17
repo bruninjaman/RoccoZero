@@ -86,7 +86,7 @@ namespace Divine.SkywrathMage.Combos
                     && ethereal.CanHit(target))
                 {
                     ethereal.Cast(target);
-                    MultiSleeper<string>.Sleep($"IsHitTime_{target.Name}_{ethereal.Name}", ethereal.GetHitTime(target));
+                    Helpers.MultiSleeper<string>.Sleep($"IsHitTime_{target.Name}_{ethereal.Name}", ethereal.GetHitTime(target));
                     await Task.Delay(ethereal.GetCastDelay(target), token);
                     return;
                 }
@@ -102,7 +102,7 @@ namespace Divine.SkywrathMage.Combos
                     await Task.Delay(shivas.GetCastDelay(), token);
                 }
 
-                if (!MultiSleeper<string>.Sleeping($"IsHitTime_{target.Name}_item_ethereal_blade") || targetModifiers.IsEthereal)
+                if (!Helpers.MultiSleeper<string>.Sleeping($"IsHitTime_{target.Name}_item_ethereal_blade") || targetModifiers.IsEthereal)
                 {
                     // Concussive Shot
                     var concussiveShot = Abilities.ConcussiveShot;
@@ -128,7 +128,7 @@ namespace Divine.SkywrathMage.Combos
                         arcaneBolt.Cast(target);
                         var castDelay = arcaneBolt.GetCastDelay(target);
                         var hitTime = arcaneBolt.GetHitTime(target) - (castDelay + 340);
-                        MultiSleeper<string>.DelaySleep($"IsHitTime_{target.Name}_{arcaneBoltName}", castDelay + 40, hitTime);
+                        Helpers.MultiSleeper<string>.DelaySleep($"IsHitTime_{target.Name}_{arcaneBoltName}", castDelay + 40, hitTime);
                         await Task.Delay(castDelay, token);
                         return;
                     }

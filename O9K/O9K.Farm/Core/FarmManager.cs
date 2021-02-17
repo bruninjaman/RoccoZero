@@ -6,7 +6,7 @@
 
     using Damage;
 
-    using Ensage;
+    using Divine;
 
     using Marker;
 
@@ -17,9 +17,7 @@
     using O9K.Core.Entities.Heroes;
     using O9K.Core.Entities.Units;
     using O9K.Core.Logger;
-    using O9K.Core.Managers.Context;
     using O9K.Core.Managers.Entity;
-    using O9K.Core.Managers.Menu.EventArgs;
 
     using Units.Base;
 
@@ -43,32 +41,32 @@
 
         private readonly BaseMode pushMode;
 
-        private readonly HashSet<OrderId> stopFarmOrders = new HashSet<OrderId>
+        private readonly HashSet<OrderType> stopFarmOrders = new HashSet<OrderType>
         {
-            OrderId.Hold,
-            OrderId.Continue,
-            OrderId.Stop,
-            OrderId.MoveLocation,
-            OrderId.MoveTarget,
-            OrderId.MoveToDirection,
-            OrderId.AttackLocation,
-            OrderId.AttackTarget,
-            OrderId.Ability,
-            OrderId.AbilityLocation,
-            OrderId.AbilityTarget,
-            OrderId.AbilityTargetRune,
-            OrderId.AbilityTargetTree
+            OrderType.Hold,
+            OrderType.Continue,
+            OrderType.Stop,
+            OrderType.MovePosition,
+            OrderType.MoveTarget,
+            OrderType.MoveToDirection,
+            OrderType.AttackPosition,
+            OrderType.AttackTarget,
+            OrderType.Cast,
+            OrderType.CastPosition,
+            OrderType.CastTarget,
+            OrderType.CastRune,
+            OrderType.CastTree
         };
 
         private readonly UnitManager unitManager;
 
-        public FarmManager(IContext9 context, MenuManager menuManager)
+        public FarmManager(MenuManager menuManager)
         {
             this.owner = EntityManager9.Owner;
             this.menuManager = menuManager;
             this.unitManager = new UnitManager(this.menuManager);
             this.damageTracker = new DamageTracker(this.unitManager);
-            this.lastHitMarker = new LastHitMarker(context, this.unitManager, menuManager);
+            this.lastHitMarker = new LastHitMarker(this.unitManager, menuManager);
 
             this.farmModes.Add(this.lastHitMode = new LastHitMode(this.unitManager, menuManager));
             this.farmModes.Add(this.pushMode = new PushMode(this.unitManager, menuManager));
@@ -82,12 +80,12 @@
             this.damageTracker.AttackCanceled += this.OnAttackCanceled;
             EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
             EntityManager9.UnitRemoved += this.OnUnitDied;
-            Player.OnExecuteOrder += this.OnExecuteOrder;
+            OrderManager.OrderAdding += this.OrderAdding;
         }
 
         public void Dispose()
         {
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= this.OrderAdding;
             EntityManager9.UnitMonitor.UnitDied -= this.OnUnitDied;
             EntityManager9.UnitRemoved -= this.OnUnitDied;
             this.damageTracker.AttackCanceled -= this.OnAttackCanceled;
@@ -117,7 +115,7 @@
             }
         }
 
-        private void LastHitHoldKeyOnValueChange(object sender, KeyEventArgs e)
+        private void LastHitHoldKeyOnValueChange(object sender, O9K.Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             try
             {
@@ -147,7 +145,7 @@
             }
         }
 
-        private void LastHitToggleKeyOnValueChange(object sender, KeyEventArgs e)
+        private void LastHitToggleKeyOnValueChange(object sender, O9K.Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             try
             {
@@ -190,22 +188,23 @@
             }
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OrderAdding(OrderAddingEventArgs e)
         {
             if (this.menuManager.LastHitMenu.HoldKey)
             {
                 return;
             }
 
-            if (!args.Process || args.IsQueued || !args.IsPlayerInput || !this.stopFarmOrders.Contains(args.OrderId))
+            var order = e.Order;
+            if (!e.Process || order.IsQueued || e.IsCustom || !this.stopFarmOrders.Contains(order.Type))
             {
                 return;
             }
 
             foreach (var farmMode in this.farmModes)
             {
-                this.RemoveEffects(args.Entities);
-                farmMode.RemoveUnits(args.Entities);
+                this.RemoveEffects(order.Units);
+                farmMode.RemoveUnits(order.Units);
             }
         }
 
@@ -237,7 +236,7 @@
             }
         }
 
-        private void PushHoldKeyOnValueChange(object sender, KeyEventArgs e)
+        private void PushHoldKeyOnValueChange(object sender, O9K.Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             try
             {
@@ -267,7 +266,7 @@
             }
         }
 
-        private void PushToggleKeyOnValueChange(object sender, KeyEventArgs e)
+        private void PushToggleKeyOnValueChange(object sender, O9K.Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             try
             {
