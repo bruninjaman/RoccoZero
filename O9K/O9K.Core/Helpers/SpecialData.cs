@@ -109,7 +109,7 @@
                 var data = ability.AbilitySpecialData.First(x => x.Name == name);
                 var talentId = data.SpecialBonusAbility;
 
-                if (talentId != AbilityId.ability_base)
+                if (talentId != AbilityId.dota_base_ability)
                 {
                     var unit = ability.Owner as Unit;
                     if (unit != null)
