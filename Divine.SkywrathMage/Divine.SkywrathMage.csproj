@@ -277,8 +277,9 @@
     <Compile Include="Core\Helpers\DamageHelper.cs" />
     <Compile Include="Core\Helpers\TargetModifiers.cs" />
     <Compile Include="AbilityContainer.cs" />
-    <Compile Include="Core\Orbwalker\Orbwalker.cs" />
-    <Compile Include="Core\Orbwalker\OrbwalkerManager.cs" />
+    <Compile Include="Helpers\MultiSleeper.cs" />
+    <Compile Include="Helpers\Sleeper.cs" />
+    <Compile Include="Orbwalker.cs" />
     <Compile Include="TargetSelector\Selector\ISelector.cs" />
     <Compile Include="TargetSelector\Selector\LowestHealth.cs" />
     <Compile Include="TargetSelector\Selector\NearMouse.cs" />

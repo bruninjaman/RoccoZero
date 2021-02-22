@@ -229,14 +229,14 @@
         {
             try
             {
-                var unit = e.Entity as Unit;
-                if (unit == null || unit.Team == this.allyTeam)
-                {
-                    return;
-                }
-
                 UpdateManager.BeginInvoke(() =>
                 {
+                    var unit = e.Entity as Unit;
+                    if (unit == null || unit.Team == this.allyTeam)
+                    {
+                        return;
+                    }
+
                     if (!unit.IsValid)
                     {
                         return;
