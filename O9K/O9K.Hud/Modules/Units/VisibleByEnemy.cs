@@ -14,7 +14,6 @@
     using Core.Managers.Menu.Items;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
@@ -94,7 +93,7 @@
             this.enabled.ValueChange -= this.EnabledOnValueChange;
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             this.heroes.ValueChange -= this.OptionOnValueChange;
             this.creeps.ValueChange -= this.OptionOnValueChange;
             this.buildings.ValueChange -= this.OptionOnValueChange;
@@ -151,7 +150,7 @@
                 this.effectName.ValueChange += this.EffectNameOnValueChange;
                 EntityManager9.UnitAdded += this.OnUnitAdded;
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
-                UpdateManager.Subscribe(300, this.OnUpdate);
+                UpdateManager.CreateIngameUpdate(300, this.OnUpdate);
                 this.heroes.ValueChange += this.OptionOnValueChange;
                 this.creeps.ValueChange += this.OptionOnValueChange;
                 this.buildings.ValueChange += this.OptionOnValueChange;
@@ -161,7 +160,7 @@
             {
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 this.heroes.ValueChange -= this.OptionOnValueChange;
                 this.creeps.ValueChange -= this.OptionOnValueChange;
                 this.buildings.ValueChange -= this.OptionOnValueChange;

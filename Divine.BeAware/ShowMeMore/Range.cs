@@ -1,5 +1,4 @@
 ﻿using Divine.BeAware.MenuManager.ShowMeMore.Range;
-using Divine.SDK.Managers.Update;
 
 using SharpDX;
 

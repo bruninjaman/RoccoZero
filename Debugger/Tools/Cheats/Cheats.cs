@@ -8,7 +8,6 @@
     using Divine;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
-    using Divine.SDK.Managers.Update;
 
     internal class Cheats : IDebuggerTool
     {

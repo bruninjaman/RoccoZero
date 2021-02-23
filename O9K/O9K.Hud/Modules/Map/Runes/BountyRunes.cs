@@ -14,7 +14,6 @@
 
     using Divine;
     using Divine.SDK.Extensions;
-    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -72,12 +71,12 @@
             }
 
             Context9.ParticleManger.ParticleAdded += this.OnParticleAdded;
-            UpdateManager.Subscribe(3000, this.OnUpdate);
+            UpdateManager.CreateIngameUpdate(3000, this.OnUpdate);
         }
 
         public void Dispose()
         {
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             Context9.ParticleManger.ParticleAdded -= this.OnParticleAdded;
             RendererManager.Draw -= this.OnDraw;
         }

@@ -14,7 +14,6 @@
     using Core.Managers.Menu.Items;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
@@ -61,7 +60,7 @@
         public void Activate()
         {
             this.owner = EntityManager9.Owner;
-            this.handler = UpdateManager.Subscribe(100, false, this.OnUpdate);
+            this.handler = UpdateManager.CreateIngameUpdate(100, false, this.OnUpdate);
             this.show.ValueChange += this.ShowOnValueChanging;
         }
 
@@ -70,7 +69,7 @@
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             ModifierManager.ModifierAdded -= this.OnModifierAdded;
             ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
-            UpdateManager.Unsubscribe(this.handler);
+            UpdateManager.DestroyIngameUpdate(this.handler);
             this.added = false;
 
             foreach (var effect in this.units.Values.Where(x => x?.IsValid == true))

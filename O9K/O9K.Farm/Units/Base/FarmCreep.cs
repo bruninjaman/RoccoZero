@@ -6,8 +6,7 @@
     using System.Threading.Tasks;
 
     using Damage;
-
-    using Divine.SDK.Managers.Update;
+    using Divine;
 
     using O9K.Core.Entities.Units;
     using O9K.Core.Logger;

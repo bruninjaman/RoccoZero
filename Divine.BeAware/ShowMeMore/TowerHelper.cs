@@ -2,7 +2,6 @@
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 using Divine.SDK.Extensions;
-using Divine.SDK.Managers.Update;
 
 namespace Divine.BeAware.ShowMeMore
 {
@@ -25,7 +24,7 @@ namespace Divine.BeAware.ShowMeMore
 
             if (TowerHelperMenu.AutoAttackRangeItem)
             {
-                UpdateManager.Unsubscribe(OnUpdate);
+                UpdateManager.DestroyIngameUpdate(OnUpdate);
             }
         }
 
@@ -33,11 +32,11 @@ namespace Divine.BeAware.ShowMeMore
         {
             if (e.Value)
             {
-                UpdateManager.Subscribe(400, OnUpdate);
+                UpdateManager.CreateIngameUpdate(400, OnUpdate);
             }
             else
             {
-                UpdateManager.Unsubscribe(OnUpdate);
+                UpdateManager.DestroyIngameUpdate(OnUpdate);
 
                 foreach (var tower in EntityManager.GetEntities<Tower>())
                 {

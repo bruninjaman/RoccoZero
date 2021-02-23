@@ -28,7 +28,7 @@ namespace VisibleByEnemyPlus
             Config.BlueItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, Green, e.NewValue, Alpha); };
             Config.AlphaItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, Green, Blue, e.NewValue); };
 
-            GameManager.Update += OnGameManagerUpdate;
+            UpdateManager.IngameUpdate += OnIngameUpdate;
         }
 
         /*protected override void OnDeactivate()
@@ -89,7 +89,7 @@ namespace VisibleByEnemyPlus
 
         private float LastTime;
 
-        private void OnGameManagerUpdate()
+        private void OnIngameUpdate()
         {
             if (GameManager.RawGameTime - LastTime < 0.25f)
             {

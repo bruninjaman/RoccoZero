@@ -18,7 +18,6 @@
 
     using Divine;
     using Divine.SDK.Extensions;
-    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
@@ -62,8 +61,8 @@
         {
             this.enabled.ValueChange -= this.Enabled_OnValueChange;
             RendererManager.Draw -= this.OnDraw;
-            UpdateManager.Unsubscribe(this.OnUpdatePreSpawn);
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdatePreSpawn);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             this.DisableDraw();
         }
 
@@ -83,12 +82,12 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(1000, this.OnUpdatePreSpawn);
+                UpdateManager.CreateIngameUpdate(1000, this.OnUpdatePreSpawn);
             }
             else
             {
-                UpdateManager.Unsubscribe(this.OnUpdatePreSpawn);
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdatePreSpawn);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 this.DisableDraw();
             }
         }
@@ -197,8 +196,8 @@
                     return;
                 }
 
-                UpdateManager.Unsubscribe(this.OnUpdatePreSpawn);
-                UpdateManager.Subscribe(1000, this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdatePreSpawn);
+                UpdateManager.CreateIngameUpdate(1000, this.OnUpdate);
             }
             catch (Exception e)
             {

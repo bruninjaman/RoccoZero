@@ -17,7 +17,6 @@
 
     using Divine;
     using Divine.SDK.Extensions;
-    using Divine.SDK.Managers.Update;
 
     using Helpers;
     using Helpers.Notificator;
@@ -103,8 +102,8 @@
             RendererManager.Draw -= this.OnDraw;
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-            UpdateManager.Unsubscribe(this.OnUpdateRemove);
-            UpdateManager.Unsubscribe(this.OnUpdateWard);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdateRemove);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdateWard);
             ParticleManager.ParticleAdded -= this.OnParticleAdded;
             EntityManager.EntityAdded -= this.OnAddEntity;
             EntityManager.EntityRemoved -= this.OnRemoveEntity;
@@ -155,8 +154,8 @@
 
                 EntityManager9.UnitAdded += this.OnUnitAdded;
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
-                UpdateManager.Subscribe(500, this.OnUpdateRemove);
-                UpdateManager.Subscribe(200, this.OnUpdateWard);
+                UpdateManager.CreateIngameUpdate(500, this.OnUpdateRemove);
+                UpdateManager.CreateIngameUpdate(200, this.OnUpdateWard);
                 ParticleManager.ParticleAdded += this.OnParticleAdded;
                 EntityManager.EntityAdded += this.OnAddEntity;
                 EntityManager.EntityRemoved += this.OnRemoveEntity;
@@ -194,8 +193,8 @@
                 ParticleManager.ParticleAdded -= this.OnParticleAdded;
                 EntityManager.EntityAdded -= this.OnAddEntity;
                 EntityManager.EntityRemoved -= this.OnRemoveEntity;
-                UpdateManager.Unsubscribe(this.OnUpdateRemove);
-                UpdateManager.Unsubscribe(this.OnUpdateWard);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdateRemove);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdateWard);
             }
         }
 

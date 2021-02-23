@@ -6,7 +6,6 @@
 
     using Divine;
     using Divine.SDK.Extensions;
-    using Divine.SDK.Managers.Update;
 
     using O9K.Core.Entities.Units;
     using O9K.Core.Helpers;
@@ -25,7 +24,7 @@
         protected BaseMode(UnitManager unitManager)
         {
             this.UnitManager = unitManager;
-            this.handler = UpdateManager.Subscribe(0, false, this.OnUpdate);
+            this.handler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
         }
 
         public bool IsActive
@@ -76,7 +75,7 @@
 
         public void Dispose()
         {
-            UpdateManager.Unsubscribe(this.handler);
+            UpdateManager.DestroyIngameUpdate(this.handler);
         }
 
         public void RemoveLastAddedUnits()

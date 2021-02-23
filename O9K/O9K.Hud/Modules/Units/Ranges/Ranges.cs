@@ -13,7 +13,6 @@
     using Core.Managers.Menu.Items;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
@@ -39,7 +38,7 @@
             EntityManager9.UnitRemoved += this.OnUnitRemoved;
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
-            UpdateManager.Subscribe(3000, this.OnUpdate);
+            UpdateManager.CreateIngameUpdate(3000, this.OnUpdate);
         }
 
         public void Dispose()
@@ -48,7 +47,7 @@
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
         }
 
         private void OnAbilityAdded(Ability9 ability)

@@ -11,7 +11,6 @@
     using Core.Managers.Renderer.Utils;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
@@ -68,7 +67,7 @@
         {
             this.LoadTextures();
 
-            this.updateHandler = UpdateManager.Subscribe(300, false, this.OnUpdate);
+            this.updateHandler = UpdateManager.CreateIngameUpdate(300, false, this.OnUpdate);
 
             this.debug.ValueChange += this.DebugOnValueChange;
             this.size.ValueChange += this.SizeOnValueChange;

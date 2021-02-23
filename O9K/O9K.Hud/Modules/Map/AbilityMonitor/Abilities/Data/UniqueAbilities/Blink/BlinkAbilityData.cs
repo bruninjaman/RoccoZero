@@ -10,7 +10,6 @@
     using Core.Managers.Entity;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
 

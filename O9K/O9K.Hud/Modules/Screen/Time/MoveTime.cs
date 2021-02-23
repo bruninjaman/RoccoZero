@@ -81,7 +81,7 @@
 //                });*/
 
 //            this.pathfinder = new NavMeshPathfinding();
-//            this.updateHandler = UpdateManager.Subscribe(300, false, this.OnUpdate);
+//            this.updateHandler = UpdateManager.CreateIngameUpdate(300, false, this.OnUpdate);
 //            this.key.ValueChange += this.KeyOnValueChange;
 //        }
 
@@ -92,7 +92,7 @@
 //            this.pathfinder.Dispose();
 //            this.key.ValueChange -= this.KeyOnValueChange;
 //            RendererManager.Draw -= this.OnDraw;
-//            UpdateManager.Unsubscribe(this.updateHandler);
+//            UpdateManager.DestroyIngameUpdate(this.updateHandler);
 //        }
 
 //        private void KeyOnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)

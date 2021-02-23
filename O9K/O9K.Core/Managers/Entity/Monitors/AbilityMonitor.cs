@@ -5,7 +5,6 @@
     using System.Linq;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Entities.Abilities.Base;
     using Entities.Abilities.Base.Components;

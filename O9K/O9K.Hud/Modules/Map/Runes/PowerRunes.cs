@@ -12,7 +12,6 @@
 
     using Divine;
     using Divine.SDK.Extensions;
-    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -79,7 +78,7 @@
 
             EntityManager.EntityAdded += this.OnAddEntity;
             EntityManager.EntityRemoved += this.OnRemoveEntity;
-            UpdateManager.Subscribe(3000, this.OnUpdate);
+            UpdateManager.CreateIngameUpdate(3000, this.OnUpdate);
 
             RendererManager.Draw += this.OnDraw;
         }
@@ -88,7 +87,7 @@
         {
             EntityManager.EntityAdded -= this.OnAddEntity;
             EntityManager.EntityRemoved -= this.OnRemoveEntity;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
 
             RendererManager.Draw -= this.OnDraw;
         }

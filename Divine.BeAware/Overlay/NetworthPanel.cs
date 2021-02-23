@@ -6,7 +6,6 @@ using Divine.BeAware.MenuManager.Overlay;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 using Divine.SDK.Extensions;
-using Divine.SDK.Managers.Update;
 
 using SharpDX;
 

@@ -14,7 +14,6 @@
 
     using Divine;
     using Divine.SDK.Extensions;
-    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -87,7 +86,7 @@
         {
             this.showOnMinimap.ValueChange -= this.ShowOnMinimapOnValueChange;
             RendererManager.Draw -= this.OnDraw;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
         }
 
         private void OnDraw()
@@ -147,12 +146,12 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(5000, this.OnUpdate);
+                UpdateManager.CreateIngameUpdate(5000, this.OnUpdate);
                 RendererManager.Draw += this.OnDraw;
             }
             else
             {
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 RendererManager.Draw -= this.OnDraw;
             }
         }

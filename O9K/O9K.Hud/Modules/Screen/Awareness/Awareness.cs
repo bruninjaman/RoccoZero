@@ -15,7 +15,6 @@
     using Core.Managers.Renderer.Utils;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -63,7 +62,7 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             RendererManager.Draw -= this.OnDraw;
@@ -86,14 +85,14 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(500, this.OnUpdate);
+                UpdateManager.CreateIngameUpdate(500, this.OnUpdate);
                 EntityManager9.UnitAdded += this.OnUnitAdded;
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
                 RendererManager.Draw += this.OnDraw;
             }
             else
             {
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
                 RendererManager.Draw -= this.OnDraw;

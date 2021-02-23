@@ -8,9 +8,9 @@
 
     using Debugger.Menus;
 
+    using Divine;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
-    using Divine.SDK.Managers.Update;
 
     using Logger;
 
@@ -49,14 +49,14 @@
 
             this.defaultOutput = Console.Out;
 
-            this.updateHandler = UpdateManager.Subscribe(200, false, this.Check);
+            this.updateHandler = UpdateManager.CreateIngameUpdate(200, false, this.Check);
             this.EnabledOnPropertyChanged(null, null);
         }
 
         public void Dispose()
         {
             this.enabled.ValueChanged -= this.EnabledOnPropertyChanged;
-            UpdateManager.Unsubscribe(this.Check);
+            UpdateManager.CreateIngameUpdate(this.Check);
             Console.SetOut(this.defaultOutput);
             this.output?.Dispose();
         }

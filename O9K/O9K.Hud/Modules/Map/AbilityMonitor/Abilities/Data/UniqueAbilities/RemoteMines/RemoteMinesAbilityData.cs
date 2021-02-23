@@ -11,7 +11,6 @@
 
     using Divine;
     using Divine.SDK.Extensions;
-    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
 

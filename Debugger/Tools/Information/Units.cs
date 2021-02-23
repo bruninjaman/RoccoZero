@@ -10,7 +10,6 @@
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
     using Divine.SDK.Localization;
-    using Divine.SDK.Managers.Update;
 
     using Logger;
 

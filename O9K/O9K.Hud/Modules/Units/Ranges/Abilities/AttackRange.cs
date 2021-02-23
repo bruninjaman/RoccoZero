@@ -6,7 +6,6 @@
     using Core.Managers.Menu.Items;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using SharpDX;
 

@@ -4,7 +4,6 @@
     using System.Collections.Generic;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Logger;
 

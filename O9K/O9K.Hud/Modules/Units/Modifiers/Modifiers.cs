@@ -14,7 +14,6 @@
 
     using Divine;
     using Divine.SDK.Localization;
-    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -138,7 +137,7 @@
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             ModifierManager.ModifierAdded -= this.OnModifierAdded;
             ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
 
             this.units.Clear();
             this.loadedTextures.Clear();
@@ -152,7 +151,7 @@
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
                 ModifierManager.ModifierAdded += this.OnModifierAdded;
                 ModifierManager.ModifierRemoved += this.OnModifierRemoved;
-                UpdateManager.Subscribe(500, this.OnUpdate);
+                UpdateManager.CreateIngameUpdate(500, this.OnUpdate);
                 RendererManager.Draw += this.OnDraw;
                 this.ignoreAuras.ValueChange += this.IgnoreOnValueChange;
                 this.ignoreUnknownTime.ValueChange += this.IgnoreOnValueChange;
@@ -164,7 +163,7 @@
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
                 ModifierManager.ModifierAdded -= this.OnModifierAdded;
                 ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 RendererManager.Draw -= this.OnDraw;
                 this.ignoreAuras.ValueChange -= this.IgnoreOnValueChange;
                 this.ignoreUnknownTime.ValueChange -= this.IgnoreOnValueChange;

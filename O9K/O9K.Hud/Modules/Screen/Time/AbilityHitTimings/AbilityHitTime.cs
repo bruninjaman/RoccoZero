@@ -14,7 +14,6 @@
     using Core.Managers.Menu.Items;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -98,7 +97,7 @@
 
         public void Activate()
         {
-            this.updateHandler = UpdateManager.Subscribe(0, false, this.OnUpdate);
+            this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
             this.enabled.ValueChange += this.EnabledOnValueChange;
         }
 

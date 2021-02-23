@@ -8,7 +8,6 @@
     using Core.Managers.Entity;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
 
@@ -32,12 +31,12 @@
         {
             ModifierManager.ModifierAdded -= this.OnModifierAdded;
             ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
-            UpdateManager.Unsubscribe(this.handler);
+            UpdateManager.DestroyIngameUpdate(this.handler);
         }
 
         protected override void Enable()
         {
-            this.handler = UpdateManager.Subscribe(0, false, this.OnUpdate);
+            this.handler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
             ModifierManager.ModifierAdded += this.OnModifierAdded;
         }
 

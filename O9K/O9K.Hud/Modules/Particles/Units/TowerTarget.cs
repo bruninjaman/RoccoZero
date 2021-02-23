@@ -11,7 +11,6 @@
     using Core.Managers.Menu.Items;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using MainMenu;
 
@@ -50,7 +49,7 @@
         public void Dispose()
         {
             this.show.ValueChange -= this.ShowOnValueChange;
-            UpdateManager.Unsubscribe(this.handler);
+            UpdateManager.DestroyIngameUpdate(this.handler);
             Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
         }
 
@@ -120,13 +119,13 @@
         {
             if (e.NewValue)
             {
-                this.handler = UpdateManager.Subscribe(0, false, this.OnUpdate);
+                this.handler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
                 Entity.NetworkPropertyChanged += this.OnNetworkPropertyChanged;
             }
             else
             {
                 Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
-                UpdateManager.Unsubscribe(this.handler);
+                UpdateManager.DestroyIngameUpdate(this.handler);
                 this.effect?.Dispose();
                 this.effect = null;
             }

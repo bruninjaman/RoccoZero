@@ -9,7 +9,6 @@
     using Data;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
     using Divine.SDK.Managers.Log;
 
     using Exceptions;

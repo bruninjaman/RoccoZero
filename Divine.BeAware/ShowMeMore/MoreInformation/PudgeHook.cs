@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 
 using Divine.BeAware.MenuManager.ShowMeMore.MoreInformation;
 using Divine.SDK.Extensions;
-using Divine.SDK.Managers.Update;
 
 using SharpDX;
 

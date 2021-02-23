@@ -6,7 +6,7 @@
 
     using Damage;
 
-    using Divine.SDK.Managers.Update;
+    using Divine;
 
     using O9K.Core.Entities.Buildings;
     using O9K.Core.Entities.Units;

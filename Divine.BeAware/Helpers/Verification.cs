@@ -9,7 +9,6 @@ using Divine.Helpers;
 using Divine.SDK.Extensions;
 using Divine.SDK.Helpers;
 using Divine.SDK.Managers.Log;
-using Divine.SDK.Managers.Update;
 
 using SharpDX;
 
@@ -99,7 +98,7 @@ namespace Divine.BeAware.Helpers
                 var random = Random.Next(int.MaxValue);
                 DrawingData.Add(new Data(position, position.WorldToMinimap(), textureName, abilityTextureName, playerId, random, particleName, isItem, isEnd));
 
-                UpdateManager.BeginInvoke((uint)(PartialMapHackMenu.DrawTimerItem.Value * 1000), () =>
+                UpdateManager.BeginInvoke(PartialMapHackMenu.DrawTimerItem.Value * 1000, () =>
                 {
                     DrawingData.RemoveAll(x => x.GetRandom == random);
                 });
@@ -143,7 +142,7 @@ namespace Divine.BeAware.Helpers
                 var random = Random.Next(int.MaxValue);
                 DrawingData.Add(new Data(position, position.WorldToMinimap(), textureName, "default", 0, random, ""));
 
-                UpdateManager.BeginInvoke((uint)(PartialMapHackMenu.DrawTimerItem.Value * 1000), () =>
+                UpdateManager.BeginInvoke(PartialMapHackMenu.DrawTimerItem.Value * 1000, () =>
                 {
                     DrawingData.RemoveAll(x => x.GetRandom == random);
                 });
@@ -202,7 +201,7 @@ namespace Divine.BeAware.Helpers
                 var random = Random.Next(int.MaxValue);
                 DrawingData.Add(new Data(position, position.WorldToMinimap(), correctName, abilityTextureName, playerId, random, "", isItem));
 
-                UpdateManager.BeginInvoke((uint)(PartialMapHackMenu.DrawTimerItem.Value * 1000), () =>
+                UpdateManager.BeginInvoke(PartialMapHackMenu.DrawTimerItem.Value * 1000, () =>
                 {
                     DrawingData.RemoveAll(x => x.GetRandom == random);
                 });
@@ -244,7 +243,7 @@ namespace Divine.BeAware.Helpers
                 var random = Random.Next(int.MaxValue);
                 DrawingData.Add(new Data(position, minimapPos, textureName, abilityTextureName, playerId, random, string.Empty));
 
-                UpdateManager.BeginInvoke((uint)(MoreInformationMenu.DrawTimerItem.Value * 1000), () =>
+                UpdateManager.BeginInvoke(MoreInformationMenu.DrawTimerItem.Value * 1000, () =>
                 {
                     DrawingData.RemoveAll(x => x.GetRandom == random);
                 });

@@ -5,7 +5,6 @@ using Divine.BeAware.Helpers;
 using Divine.BeAware.MenuManager.ShowMeMore;
 using Divine.Helpers;
 using Divine.SDK.Helpers;
-using Divine.SDK.Managers.Update;
 
 using SharpDX;
 
@@ -56,14 +55,14 @@ namespace Divine.BeAware.ShowMeMore
             RoshanPanelPosition = HUDInfo.GetCustomTopPanelPosition(1, Team.Radiant) - (new Vector2(480, -4) * RendererManager.Scaling);
 
             GameManager.FireEvent += OnFireEvent;
-            UpdateManager.Subscribe(1000, OnTimeEvent);
+            UpdateManager.CreateIngameUpdate(1000, OnTimeEvent);
             RendererManager.Draw += OnDraw;
         }
 
         public void Dispose()
         {
             RendererManager.Draw -= OnDraw;
-            UpdateManager.Unsubscribe(OnTimeEvent);
+            UpdateManager.DestroyIngameUpdate(OnTimeEvent);
             GameManager.FireEvent += OnFireEvent;
         }
 

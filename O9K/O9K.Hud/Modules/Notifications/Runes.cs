@@ -10,7 +10,6 @@
     using Core.Managers.Menu.Items;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;
@@ -87,19 +86,19 @@
         {
             this.powerEnabled.ValueChange -= this.PowerEnabledOnValueChange;
             this.bountyEnabled.ValueChange -= this.BountyEnabledOnValueChange;
-            UpdateManager.Unsubscribe(this.BountyOnUpdate);
-            UpdateManager.Unsubscribe(this.PowerOnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.BountyOnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.PowerOnUpdate);
         }
 
         private void BountyEnabledOnValueChange(object sender, SwitcherEventArgs e)
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(1000, this.BountyOnUpdate);
+                UpdateManager.CreateIngameUpdate(1000, this.BountyOnUpdate);
             }
             else
             {
-                UpdateManager.Unsubscribe(this.BountyOnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.BountyOnUpdate);
             }
         }
 
@@ -121,11 +120,11 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(1000, this.PowerOnUpdate);
+                UpdateManager.CreateIngameUpdate(1000, this.PowerOnUpdate);
             }
             else
             {
-                UpdateManager.Unsubscribe(this.PowerOnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.PowerOnUpdate);
             }
         }
 
@@ -144,7 +143,7 @@
 
             if (GameManager.GameTime > 15 * 60)
             {
-                UpdateManager.Unsubscribe(this.PowerOnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.PowerOnUpdate);
             }
         }
     }

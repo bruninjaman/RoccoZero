@@ -1,6 +1,6 @@
 ﻿namespace O9K.Core.Extensions
 {
-    using Divine.SDK.Managers.Update;
+    using Divine;
 
     public static class UpdateHandlerExtensions
     {
@@ -8,7 +8,7 @@
         {
             if (updateHandler.Executor is TimeoutHandler timeoutHandler)
             {
-                timeoutHandler.Timeout = (uint)rate;
+                timeoutHandler.Timeout = rate;
             }
         }
     }

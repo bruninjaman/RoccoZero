@@ -10,7 +10,6 @@
     using Core.Managers.Entity;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
 
@@ -32,7 +31,7 @@
         {
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
 
             foreach (var effect in this.effects)
             {
@@ -47,7 +46,7 @@
         {
             EntityManager9.UnitAdded += this.OnUnitAdded;
             EntityManager9.UnitRemoved += this.OnUnitRemoved;
-            UpdateManager.Subscribe(500, this.OnUpdate);
+            UpdateManager.CreateIngameUpdate(500, this.OnUpdate);
         }
 
         private void OnUnitAdded(Unit9 hero)

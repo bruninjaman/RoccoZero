@@ -4,7 +4,6 @@
     using System.Threading.Tasks;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using SharpDX;
 

@@ -9,7 +9,6 @@
     using Core.Managers.Menu.Items;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;
@@ -62,18 +61,18 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
         }
 
         private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(1000, this.OnUpdate);
+                UpdateManager.CreateIngameUpdate(1000, this.OnUpdate);
             }
             else
             {
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             }
         }
 

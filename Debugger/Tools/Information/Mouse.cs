@@ -7,7 +7,6 @@
     using Divine;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
-    using Divine.SDK.Managers.Update;
 
     using Logger;
 

@@ -18,7 +18,6 @@
 
     using Divine;
     using Divine.SDK.Localization;
-    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -99,7 +98,7 @@
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityMonitor.AbilityCasted -= this.OnAbilityCasted;
             EntityManager9.AbilityMonitor.AbilityCastChange -= this.OnAbilityCastChange;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             OrderManager.OrderAdding -= this.OnOrderAdding;
             RendererManager.Draw -= this.OnDraw;
             this.abilitiesPosition.Dispose();
@@ -116,7 +115,7 @@
                 EntityManager9.AbilityAdded += this.OnAbilityAdded;
                 EntityManager9.AbilityMonitor.AbilityCasted += this.OnAbilityCasted;
                 EntityManager9.AbilityMonitor.AbilityCastChange += this.OnAbilityCastChange;
-                UpdateManager.Subscribe(500, this.OnUpdate);
+                UpdateManager.CreateIngameUpdate(500, this.OnUpdate);
             }
             else
             {
@@ -126,7 +125,7 @@
                 EntityManager9.AbilityAdded -= this.OnAbilityAdded;
                 EntityManager9.AbilityMonitor.AbilityCasted -= this.OnAbilityCasted;
                 EntityManager9.AbilityMonitor.AbilityCastChange -= this.OnAbilityCastChange;
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 RendererManager.Draw -= this.OnDraw;
                 this.morphedAbilities.Clear();
             }

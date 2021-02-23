@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 
 using Divine.BeAware.MenuManager.ShowMeMore.MoreInformation;
-using Divine.SDK.Managers.Update;
 
 using SharpDX;
 

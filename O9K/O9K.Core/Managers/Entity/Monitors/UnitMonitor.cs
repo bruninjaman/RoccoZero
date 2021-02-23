@@ -5,7 +5,6 @@
     using System.Linq;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Entities.Abilities.Base.Components;
     using Entities.Abilities.Base.Types;
@@ -127,7 +126,7 @@
             GameManager.FireEvent += this.OnFireEvent;
             OrderManager.OrderAdding += this.OnOrderAdding;
 
-            UpdateManager.Subscribe(OnUpdate);
+            UpdateManager.CreateIngameUpdate(OnUpdate);
         }
 
         public delegate void EventHandler(Unit9 unit);
@@ -154,7 +153,7 @@
             GameManager.FireEvent -= this.OnFireEvent;
             OrderManager.OrderAdding -= this.OnOrderAdding;
 
-            UpdateManager.Unsubscribe(OnUpdate);
+            UpdateManager.DestroyIngameUpdate(OnUpdate);
         }
 
         internal void CheckModifiers(Unit9 unit)
@@ -705,7 +704,7 @@
                                     break;
                                 }
 
-                                UpdateManager.BeginInvoke((uint)delay, () => RespawnUnit(unit));
+                                UpdateManager.BeginInvoke(delay, () => RespawnUnit(unit));
                             }
                         }
                         break;

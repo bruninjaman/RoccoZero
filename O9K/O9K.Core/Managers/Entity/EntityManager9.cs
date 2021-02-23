@@ -6,7 +6,6 @@
     using System.Reflection;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Entities;
     using Entities.Abilities.Base;
@@ -61,7 +60,7 @@
             Owner = new Owner();
             UnitMonitor = new UnitMonitor();
             AbilityMonitor = new AbilityMonitor();
-            delayedEntityHandler = UpdateManager.Subscribe(1000, false, DelayedEntitiesOnUpdate);
+            delayedEntityHandler = UpdateManager.CreateIngameUpdate(1000, false, DelayedEntitiesOnUpdate);
 
             AddCurrentUnits();
             AddCurrentAbilities();
@@ -756,14 +755,14 @@
             var myHero = Units.FirstOrDefault(x => x.IsMyHero);
             if (myHero?.IsValid == true && myHero.MoveCapability != MoveCapability.None)
             {
-                UpdateManager.Subscribe(3000, AutoReload);
+                UpdateManager.CreateIngameUpdate(3000, AutoReload);
                 return;
             }
 
             Logger.Warn("O9K was not loaded successfully, reloading...");
             ForceReload();
 
-            UpdateManager.Subscribe(3000, AutoReload);
+            UpdateManager.CreateIngameUpdate(3000, AutoReload);
         }
 
         private static void OnEntityAdded(EntityAddedEventArgs e)

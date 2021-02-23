@@ -7,7 +7,6 @@
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
     using Divine.SDK.Extensions;
-    using Divine.SDK.Managers.Update;
 
     //[ExportPlugin("Creeps Aggro", StartupMode.Auto, "IdcNoob")]
     internal class CreepsAggro : Bootstrapper
@@ -29,14 +28,14 @@
             hero = EntityManager.LocalHero;
             heroTeam = hero.Team;
 
-            updateHandler = UpdateManager.Subscribe(300, false, OnUpdate);
+            updateHandler = UpdateManager.CreateIngameUpdate(300, false, OnUpdate);
         }
 
         protected override void OnDeactivate()
         {
             config.Aggro.ValueChanged -= KeyPressed;
             config.UnAggro.ValueChanged -= KeyPressed;
-            UpdateManager.Unsubscribe(OnUpdate);
+            UpdateManager.DestroyGameUpdate(OnUpdate);
             config.Dispose();
         }
 

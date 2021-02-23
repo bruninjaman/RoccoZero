@@ -5,7 +5,6 @@
     using System.Linq;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Menu;
 
@@ -48,7 +47,7 @@
         public void Dispose()
         {
             this.menu.Enabled.ValueChange -= this.OnValueChange;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             ModifierManager.ModifierAdded -= OnModifierAdded;
             ModifierManager.ModifierRemoved -= OnModifierRemoved;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
@@ -256,7 +255,7 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(500, this.OnUpdate);
+                UpdateManager.CreateIngameUpdate(500, this.OnUpdate);
                 ModifierManager.ModifierAdded += OnModifierAdded;
                 ModifierManager.ModifierRemoved += OnModifierRemoved;
 
@@ -265,7 +264,7 @@
             }
             else
             {
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 ModifierManager.ModifierAdded -= OnModifierAdded;
                 ModifierManager.ModifierRemoved -= OnModifierRemoved;
                 EntityManager9.AbilityAdded -= this.OnAbilityAdded;

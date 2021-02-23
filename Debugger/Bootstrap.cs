@@ -9,7 +9,6 @@
     using Debugger.Menus;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Tools;
 

@@ -13,7 +13,6 @@
     using Core.Managers.Menu.Items;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -111,7 +110,7 @@
             this.toggleKey.ValueChange -= this.ToggleKeyOnValueChange;
             this.holdKey.ValueChange -= this.HoldKeyOnValueChange;
             RendererManager.Draw -= this.OnDraw;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             ModifierManager.ModifierAdded -= this.OnModifierAdded;
@@ -124,13 +123,13 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(1000, this.OnUpdate);
+                UpdateManager.CreateIngameUpdate(1000, this.OnUpdate);
                 ModifierManager.ModifierAdded += this.OnModifierAdded;
                 ModifierManager.ModifierRemoved += this.OnModifierRemoved;
             }
             else
             {
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 ModifierManager.ModifierAdded -= this.OnModifierAdded;
                 ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
             }
@@ -150,7 +149,7 @@
                 this.toggleKey.ValueChange -= this.ToggleKeyOnValueChange;
                 this.holdKey.ValueChange -= this.HoldKeyOnValueChange;
                 this.enabledDamage.ValueChange -= this.EnabledDamageOnValueChange;
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 ModifierManager.ModifierAdded -= this.OnModifierAdded;
                 ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
@@ -314,7 +313,7 @@
             {
                 RendererManager.Draw -= this.OnDraw;
                 this.enabledDamage.ValueChange -= this.EnabledDamageOnValueChange;
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             }

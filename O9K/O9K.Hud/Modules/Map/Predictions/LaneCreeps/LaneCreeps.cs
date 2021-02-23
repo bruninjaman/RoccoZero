@@ -14,7 +14,6 @@
 
     using Divine;
     using Divine.SDK.Extensions;
-    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -91,7 +90,7 @@
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             EntityManager9.UnitMonitor.UnitDied -= this.OnUnitRemoved;
             Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             this.creepWaves.Clear();
         }
 
@@ -113,8 +112,8 @@
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
                 EntityManager9.UnitMonitor.UnitDied += this.OnUnitRemoved;
                 //Entity.OnBoolPropertyChange += this.OnBoolPropertyChange;
-                UpdateManager.Subscribe(300, this.OnUpdateTime);
-                UpdateManager.Subscribe(this.OnUpdate);
+                UpdateManager.CreateIngameUpdate(300, this.OnUpdateTime);
+                UpdateManager.CreateIngameUpdate(this.OnUpdate);
                 RendererManager.Draw += this.OnDraw;
             }
             else
@@ -124,8 +123,8 @@
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
                 EntityManager9.UnitMonitor.UnitDied -= this.OnUnitRemoved;
                 //Entity.OnBoolPropertyChange -= this.OnBoolPropertyChange;
-                UpdateManager.Unsubscribe(this.OnUpdateTime);
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdateTime);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 this.creepWaves.Clear();
             }
         }

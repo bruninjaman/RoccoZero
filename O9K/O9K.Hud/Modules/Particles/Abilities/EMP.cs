@@ -9,7 +9,6 @@
     using Core.Managers.Particle;
 
     using Divine;
-    using Divine.SDK.Managers.Update;
 
     using Helpers.Notificator;
 
@@ -22,7 +21,7 @@
     {
         private readonly Vector3 color;
 
-        private readonly uint duration;
+        private readonly int duration;
 
         private readonly Vector3 radius;
 
@@ -31,7 +30,7 @@
         {
             var radiusData = new SpecialData(AbilityId.invoker_emp, "area_of_effect").GetValue(1);
             this.radius = new Vector3(radiusData, 100, 0);
-            this.duration = (uint)(new SpecialData(AbilityId.invoker_emp, "delay").GetValue(1) * 1000);
+            this.duration = (int)(new SpecialData(AbilityId.invoker_emp, "delay").GetValue(1) * 1000);
             this.color = new Vector3(255, 192, 200);
         }
 

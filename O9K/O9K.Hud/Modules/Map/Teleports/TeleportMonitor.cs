@@ -14,7 +14,6 @@
 
     using Divine;
     using Divine.SDK.Extensions;
-    using Divine.SDK.Managers.Update;
 
     using Helpers;
 
@@ -150,7 +149,7 @@
                 }
                 else
                 {
-                    UpdateManager.BeginInvoke((uint)(duration * 1000) - 200, () => this.SetPosition(particle, position, hero));
+                    UpdateManager.BeginInvoke((int)(duration * 1000) - 200, () => this.SetPosition(particle, position, hero));
                 }
             }
             catch (Exception e)

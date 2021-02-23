@@ -9,7 +9,6 @@ using Divine.BeAware.ShowMeMore;
 using Divine.BeAware.ShowMeMore.MoreInformation;
 using Divine.SDK.Extensions;
 using Divine.SDK.Managers.Log;
-using Divine.SDK.Managers.Update;
 
 using SharpDX;
 
