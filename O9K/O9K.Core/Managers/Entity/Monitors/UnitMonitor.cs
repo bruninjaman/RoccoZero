@@ -126,7 +126,7 @@
             GameManager.FireEvent += this.OnFireEvent;
             OrderManager.OrderAdding += this.OnOrderAdding;
 
-            UpdateManager.CreateIngameUpdate(OnUpdate);
+            UpdateManager.CreateUpdate(OnUpdate);
         }
 
         public delegate void EventHandler(Unit9 unit);
