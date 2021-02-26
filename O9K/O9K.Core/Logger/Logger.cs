@@ -80,6 +80,7 @@
                 exception.Data["Info"] = info;
             }
 
+            LogManager.Error(exception);
             //CaptureException(exception, Assembly.GetCallingAssembly(), level);
         }
 
@@ -90,7 +91,7 @@
                 exception.Data["Info"] = info;
             }
 
-            LogManager.Error(exception.ToString());
+            LogManager.Error(exception);
             //CaptureException(exception, Assembly.GetCallingAssembly(), level);
         }
 
@@ -110,7 +111,7 @@
                 exception.Data["Info"] = info;
             }
 
-            LogManager.Error(exception.ToString());
+            LogManager.Error(exception);
             //CaptureException(exception, Assembly.GetCallingAssembly(), level);
         }
 
