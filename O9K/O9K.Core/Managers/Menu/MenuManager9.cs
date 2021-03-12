@@ -20,6 +20,30 @@
         {
             this.mainMenu = new MainMenu();
 
+            var menu = new Menu("General Settings");
+
+            var language = menu.Add(new MenuSelector("Language", "En", new[] { "En", "Ru", "Cn" }));
+            language.ValueChange += (sender, e) =>
+            {
+                switch (e.NewValue)
+                {
+                    case "Ru":
+                        this.mainMenu.SetLanguage(Lang.Ru);
+                        break;
+                    case "Cn":
+                        this.mainMenu.SetLanguage(Lang.Cn);
+                        break;
+                    default:
+                        this.mainMenu.SetLanguage(Lang.En);
+                        break;
+                }
+
+                this.mainMenu.CalculateSize();
+                this.mainMenu.CalculateWidth(true);
+            };
+
+            AddRootMenu(menu);
+
             InputManager.KeyDown += this.OnKeyDown;
         }
 

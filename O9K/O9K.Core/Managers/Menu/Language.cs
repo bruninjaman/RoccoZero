@@ -15,12 +15,11 @@
     {
         public static Lang GetLanguage()
         {
-            //switch (SandboxConfig.Language)
+            //switch (language.Selected)
             {
-                /*case "ru":
+                /*case "RU":
                     return Lang.Ru;
-                case "zh-Hans":
-                case "zh-Hant":
+                case "ZH":
                     return Lang.Cn;
                 default:*/
                     return Lang.En;
