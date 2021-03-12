@@ -271,7 +271,7 @@
                 var eulsModifier = target.GetModifier("modifier_eul_cyclone");
                 if (eulsModifier != null)
                 {
-                    var particle = eulsModifier.Particles.FirstOrDefault();
+                    var particle = eulsModifier.Particles?.FirstOrDefault();
                     if (particle != null)
                     {
                         position = particle.GetControlPoint(0);
