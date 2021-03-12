@@ -7,6 +7,8 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Abilities.Base.Types;
 
+    using O9K.Core.Entities.Abilities.Items;
+
     using TargetManager;
 
     internal class HexSkywrath : DisableAbility
@@ -27,7 +29,7 @@
 
             if (target.IsRooted)
             {
-                if (target.Abilities.Any(x => (x is IShield || x is IDisable || x is IBlink) && x.CanBeCasted(false)))
+                if (target.Abilities.Any(x => (x is IShield || x is IDisable || x is IBlink || x is MantaStyle) && x.CanBeCasted(false)))
                 {
                     return true;
                 }
