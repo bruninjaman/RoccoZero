@@ -11,8 +11,8 @@
     using Core.Helpers;
     using Core.Prediction.Data;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Modes.Combo;
 
@@ -55,7 +55,7 @@
                 return false;
             }
 
-            var iceBlastUnit = ObjectManager.GetEntitiesFast<Unit>()
+            var iceBlastUnit = EntityManager.GetEntities<Unit>()
                 .FirstOrDefault(
                     x => x.IsValid && x.NetworkName == "CDOTA_BaseNPC" && x.DayVision == 550 && x.Health == 150
                          && x.Team == this.Owner.Team);

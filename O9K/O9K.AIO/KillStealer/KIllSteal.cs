@@ -20,9 +20,7 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Heroes.Base;
 
@@ -32,11 +30,13 @@
 
     using TargetManager;
 
+    using Sleeper = Core.Helpers.Sleeper;
+
     internal class KillSteal : BaseMode
     {
         private readonly Dictionary<AbilityId, Type> abilityTypes = new Dictionary<AbilityId, Type>();
 
-        private readonly IUpdateHandler damageHandler;
+        private readonly UpdateHandler damageHandler;
 
         private readonly HashSet<AbilityId> highPriorityKillSteal = new HashSet<AbilityId>
         {
@@ -54,7 +54,7 @@
             AbilityId.nyx_assassin_spiked_carapace,
         };
 
-        private readonly IUpdateHandler killStealHandler;
+        private readonly UpdateHandler killStealHandler;
 
         private readonly MultiSleeper orbwalkSleeper;
 
@@ -85,8 +85,8 @@
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
 
-            this.damageHandler = UpdateManager.Subscribe(this.OnUpdateDamage, 200, false);
-            this.killStealHandler = UpdateManager.Subscribe(this.OnUpdateKillSteal, 0, false);
+            this.damageHandler = UpdateManager.CreateIngameUpdate(200, false, this.OnUpdateDamage);
+            this.killStealHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdateKillSteal);
 
             this.KillStealMenu.OverlayX.ValueChange += this.OverlayXOnValueChanged;
             this.KillStealMenu.OverlayY.ValueChange += this.OverlayYOnValueChanged;
@@ -117,9 +117,9 @@
 
         public override void Dispose()
         {
-            Drawing.OnDraw -= this.OnDraw;
-            UpdateManager.Unsubscribe(this.damageHandler);
-            UpdateManager.Unsubscribe(this.OnUpdateKillSteal);
+            RendererManager.Draw -= this.OnDraw;
+            UpdateManager.DestroyIngameUpdate(this.damageHandler);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdateKillSteal);
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             this.KillStealMenu.KillStealEnabled.ValueChange -= this.KillStealEnabledOnValueChanged;
@@ -439,7 +439,7 @@
             }
         }
 
-        private void OnDraw(EventArgs args)
+        private void OnDraw()
         {
             try
             {
@@ -469,8 +469,8 @@
                     var start = hpPosition + new Vector2(0, healthBarSize.Y * 0.7f) + this.AdditionalOverlayPosition;
                     var size = (healthBarSize * new Vector2(damagePercentage, 0.4f)) + this.AdditionalOverlaySize;
 
-                    Drawing.DrawRect(start, size, damage >= health ? Color.LightGreen : Color.DarkOliveGreen);
-                    Drawing.DrawRect(start - new Vector2(1), size + new Vector2(1), Color.Black, true);
+                    RendererManager.DrawFilledRectangle(new RectangleF(start.X, start.Y, size.X, size.Y), damage >= health ? Color.LightGreen : Color.DarkOliveGreen);
+                    RendererManager.DrawRectangle(new RectangleF(start.X - 1, start.Y - 1, size.X + 1, size.Y + 1), Color.Black);
                 }
             }
             catch (Exception e)
@@ -481,7 +481,7 @@
 
         private void OnUpdateDamage()
         {
-            if (Game.IsPaused)
+            if (GameManager.IsPaused)
             {
                 return;
             }
@@ -498,7 +498,7 @@
 
         private void OnUpdateKillSteal()
         {
-            if (Game.IsPaused)
+            if (GameManager.IsPaused)
             {
                 return;
             }
@@ -582,11 +582,11 @@
             if (e.NewValue)
             {
                 this.damageHandler.IsEnabled = true;
-                Drawing.OnDraw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
-                Drawing.OnDraw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
                 if (!this.KillStealMenu.KillStealEnabled)
                 {
                     this.damageHandler.IsEnabled = false;

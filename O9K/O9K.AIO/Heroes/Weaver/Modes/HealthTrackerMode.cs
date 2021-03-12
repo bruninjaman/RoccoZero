@@ -12,7 +12,7 @@
     using Core.Extensions;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using KillStealer;
 
@@ -49,19 +49,19 @@
         public override void Disable()
         {
             base.Disable();
-            Drawing.OnDraw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
         }
 
         public override void Dispose()
         {
             base.Disable();
-            Drawing.OnDraw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
         }
 
         public override void Enable()
         {
             base.Enable();
-            Drawing.OnDraw += this.OnDraw;
+            RendererManager.Draw += this.OnDraw;
         }
 
         protected override void Execute()
@@ -72,7 +72,7 @@
                 return;
             }
 
-            var time = Game.RawGameTime;
+            var time = GameManager.RawGameTime;
 
             this.healthTime[time] = hero.Health;
 
@@ -86,7 +86,7 @@
             }
         }
 
-        private void OnDraw(EventArgs args)
+        private void OnDraw()
         {
             if (this.TimeLapse?.CanBeCasted() != true)
             {
@@ -100,7 +100,7 @@
                 return;
             }
 
-            var time = Game.RawGameTime;
+            var time = GameManager.RawGameTime;
             var health = hero.Health;
             var values = this.healthTime.OrderBy(x => x.Key).ToList();
 
@@ -115,9 +115,8 @@
             var start = hpPosition + new Vector2(0, healthBarSize.Y * 0.7f) + this.killSteal.AdditionalOverlayPosition;
             var size = (healthBarSize * new Vector2(restorePercentage, 0.3f)) + this.killSteal.AdditionalOverlayPosition;
 
-#pragma warning disable 618
-            Drawing.DrawRect(start, size, Color.DarkOliveGreen);
-            Drawing.DrawRect(start - new Vector2(1), size + new Vector2(1), Color.Black, true);
+            RendererManager.DrawFilledRectangle(new RectangleF(start.X, start.Y, size.X, size.Y), Color.DarkOliveGreen);
+            RendererManager.DrawRectangle(new RectangleF(start.X - 1, start.Y - 1, size.X + 1, size.Y + 1), Color.Black);
 
             var restoreEarly = values.Find(x => x.Key + 4f > time).Value;
             if (restoreEarly < restore)
@@ -127,10 +126,9 @@
                 var start2 = hpPosition + new Vector2(Math.Max(size.X - size2.X, 0), healthBarSize.Y * 0.7f)
                                         + this.killSteal.AdditionalOverlayPosition;
 
-                Drawing.DrawRect(start2, size2, Color.LightGreen);
-                Drawing.DrawRect(start2 - new Vector2(1), size2 + new Vector2(1), Color.Black, true);
+                RendererManager.DrawFilledRectangle(new RectangleF(start2.X, start2.Y, size2.X, size2.Y), Color.LightGreen);
+                RendererManager.DrawRectangle(new RectangleF(start2.X - 1, start2.Y - 1, size2.X + 1, size2.Y + 1), Color.Black);
             }
-#pragma warning restore 618
         }
     }
 }

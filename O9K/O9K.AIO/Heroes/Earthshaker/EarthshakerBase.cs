@@ -5,15 +5,14 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
     [HeroId(HeroId.npc_dota_hero_earthshaker)]
     internal class EarthshakerBase : BaseHero
     {
-        public EarthshakerBase(IContext9 context)
-            : base(context)
+        public EarthshakerBase()
         {
         }
 

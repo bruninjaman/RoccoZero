@@ -17,7 +17,7 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using TargetManager;
 
@@ -32,7 +32,7 @@
 
         private TargetableAbility glimpse;
 
-        private ParticleEffect glimpseParticle;
+        private Particle glimpseParticle;
 
         private StaticStorm storm;
 
@@ -57,7 +57,7 @@
 
             this.MoveComboAbilities.Add(AbilityId.disruptor_kinetic_field, _ => this.field);
 
-            Entity.OnParticleEffectAdded += this.OnParticleEffectAdded;
+            ParticleManager.ParticleAdded += OnParticleAdded;
         }
 
         public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
@@ -180,7 +180,7 @@
 
         public void Dispose()
         {
-            Entity.OnParticleEffectAdded -= this.OnParticleEffectAdded;
+            ParticleManager.ParticleAdded -= OnParticleAdded;
         }
 
         protected override bool MoveComboUseDisables(AbilityHelper abilityHelper)
@@ -198,11 +198,11 @@
             return false;
         }
 
-        private void OnParticleEffectAdded(Entity sender, ParticleEffectAddedEventArgs args)
+        private void OnParticleAdded(ParticleAddedEventArgs e)
         {
-            if (args.Name == "particles/units/heroes/hero_disruptor/disruptor_glimpse_targetend.vpcf")
+            if (e.Particle.Name == "particles/units/heroes/hero_disruptor/disruptor_glimpse_targetend.vpcf")
             {
-                this.glimpseParticle = args.ParticleEffect;
+                this.glimpseParticle = e.Particle;
             }
         }
     }

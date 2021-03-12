@@ -4,7 +4,7 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.skywrath_mage_mystic_flare)]
     internal class MysticFlareNukeAbility : OldNukeAbility

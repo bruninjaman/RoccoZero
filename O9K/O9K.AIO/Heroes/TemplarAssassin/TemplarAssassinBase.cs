@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_templar_assassin)]
     internal class TemplarAssassinBase : BaseHero
     {
-        public TemplarAssassinBase(IContext9 context)
-            : base(context)
+        public TemplarAssassinBase()
         {
         }
     }

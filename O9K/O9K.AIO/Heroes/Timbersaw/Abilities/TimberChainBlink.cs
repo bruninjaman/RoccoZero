@@ -9,8 +9,9 @@
     using Core.Helpers;
     using Core.Managers.Entity;
 
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Geometry;
+    using Divine.SDK.Extensions;
+
+    using O9K.Core.Geometry;
 
     using SharpDX;
 

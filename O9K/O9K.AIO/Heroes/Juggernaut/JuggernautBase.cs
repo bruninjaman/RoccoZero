@@ -7,7 +7,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -16,8 +16,7 @@
     {
         private readonly ControlWardMode controlWardMode;
 
-        public JuggernautBase(IContext9 context)
-            : base(context)
+        public JuggernautBase()
         {
             this.controlWardMode = new ControlWardMode(this, new PermanentModeMenu(this.Menu.RootMenu, "Healing ward control"));
         }

@@ -8,7 +8,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -19,8 +19,7 @@
 
         private readonly TorrentStackMode torrentStackMode;
 
-        public KunkkaBase(IContext9 context)
-            : base(context)
+        public KunkkaBase()
         {
             this.autoReturnMode = new AutoReturnMode(
                 this,

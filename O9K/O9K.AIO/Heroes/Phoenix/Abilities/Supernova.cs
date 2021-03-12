@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using TargetManager;
 
@@ -20,7 +20,7 @@
 
         public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
         {
-            var mouse = Game.MousePosition;
+            var mouse = GameManager.MousePosition;
             var ally = targetManager.AllyHeroes
                            .Where(x => !x.Equals(this.Owner) && x.HealthPercentage < 35 && x.Distance(this.Owner) < this.Ability.CastRange)
                            .OrderBy(x => x.Distance(mouse))

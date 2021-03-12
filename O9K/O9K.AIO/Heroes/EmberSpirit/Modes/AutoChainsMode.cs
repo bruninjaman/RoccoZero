@@ -10,7 +10,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Logger;
 
-    using Ensage;
+    using Divine;
 
     internal class AutoChainsMode : PermanentMode
     {
@@ -22,15 +22,15 @@
             : base(baseHero, menu)
         {
             this.menu = menu;
-            Player.OnExecuteOrder += this.OnExecuteOrder;
+            OrderManager.OrderAdding += OnOrderAdding;
         }
 
         public override void Dispose()
         {
             base.Dispose();
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Unit.OnModifierRemoved -= this.OnModifierRemoved;
+            OrderManager.OrderAdding -= OnOrderAdding;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
         }
 
         protected override void Execute()
@@ -67,67 +67,85 @@
             this.useChains = false;
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!args.IsPlayerInput || !args.Process || args.OrderId != OrderId.AbilityLocation)
+                if (e.IsCustom || !e.Process)
                 {
                     return;
                 }
 
-                if (args.Ability.Id == AbilityId.ember_spirit_sleight_of_fist)
+                var order = e.Order;
+                if (order.Type != OrderType.CastPosition)
                 {
-                    Unit.OnModifierAdded += this.OnModifierAdded;
-                    Unit.OnModifierRemoved += this.OnModifierRemoved;
+                    return;
+                }
+
+                if (order.Ability.Id == AbilityId.ember_spirit_sleight_of_fist)
+                {
+                    ModifierManager.ModifierAdded += this.OnModifierAdded;
+                    ModifierManager.ModifierRemoved += this.OnModifierRemoved;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
-            try
+            var modifier = e.Modifier;
+            if (modifier.Name != "modifier_ember_spirit_sleight_of_fist_caster")
             {
-                if (sender.Handle != this.Owner.HeroHandle)
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (args.Modifier.Name == "modifier_ember_spirit_sleight_of_fist_caster")
+            UpdateManager.BeginInvoke(() =>
+            {
+                try
                 {
+                    if (modifier.Owner.Handle != this.Owner.HeroHandle)
+                    {
+                        return;
+                    }
+
                     this.useChains = true;
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            });
         }
 
-        private void OnModifierRemoved(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
         {
-            try
+            var modifier = e.Modifier;
+            if (modifier.Name != "modifier_ember_spirit_sleight_of_fist_caster")
             {
-                if (sender.Handle != this.Owner.HeroHandle)
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (args.Modifier.Name == "modifier_ember_spirit_sleight_of_fist_caster")
+            UpdateManager.BeginInvoke(() =>
+            {
+                try
                 {
-                    Unit.OnModifierAdded -= this.OnModifierAdded;
-                    Unit.OnModifierRemoved -= this.OnModifierRemoved;
+                    if (modifier.Owner.Handle != this.Owner.HeroHandle)
+                    {
+                        return;
+                    }
+
+                    ModifierManager.ModifierAdded -= this.OnModifierAdded;
+                    ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
                     this.useChains = false;
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            });
         }
     }
 }

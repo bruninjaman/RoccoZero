@@ -8,7 +8,7 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using Modes.Combo;
 
@@ -39,8 +39,8 @@
         public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
         {
             var position = this.Owner.Position.Extend2D(
-                Game.MousePosition,
-                Math.Max(this.Ability.CastRange, this.Owner.Distance(Game.MousePosition)));
+                GameManager.MousePosition,
+                Math.Max(this.Ability.CastRange, this.Owner.Distance(GameManager.MousePosition)));
 
             if (!this.Ability.UseAbility(position))
             {

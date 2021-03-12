@@ -8,7 +8,7 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.item_necronomicon)]
     [AbilityId(AbilityId.item_necronomicon_2)]

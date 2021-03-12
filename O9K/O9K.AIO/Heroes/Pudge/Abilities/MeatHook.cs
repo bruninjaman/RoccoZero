@@ -12,7 +12,7 @@
     using Core.Helpers;
     using Core.Prediction.Data;
 
-    using Ensage;
+    using Divine;
 
     using TargetManager;
 
@@ -48,15 +48,15 @@
 
             if (target.Equals(this.lastTarget))
             {
-                if (Math.Abs(this.rotation - target.BaseUnit.NetworkRotationRad) > 0.1)
+                if (Math.Abs(this.rotation - target.BaseUnit.RotationRad) > 0.1)
                 {
-                    this.rotationTime = Game.RawGameTime;
-                    this.rotation = target.BaseUnit.NetworkRotationRad;
+                    this.rotationTime = GameManager.RawGameTime;
+                    this.rotation = target.BaseUnit.RotationRad;
                     return false;
                 }
 
                 var menu = comboMenu.GetAbilitySettingsMenu<MeatHookMenu>(this);
-                if (this.rotationTime + (menu.Delay / 1000f) > Game.RawGameTime)
+                if (this.rotationTime + (menu.Delay / 1000f) > GameManager.RawGameTime)
                 {
                     return false;
                 }
@@ -64,8 +64,8 @@
             else
             {
                 this.lastTarget = target;
-                this.rotationTime = Game.RawGameTime;
-                this.rotation = target.BaseUnit.NetworkRotationRad;
+                this.rotationTime = GameManager.RawGameTime;
+                this.rotation = target.BaseUnit.RotationRad;
                 return false;
             }
 

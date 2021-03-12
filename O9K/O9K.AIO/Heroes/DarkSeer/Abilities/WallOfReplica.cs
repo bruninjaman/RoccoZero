@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using Modes.Combo;
 
@@ -50,7 +50,7 @@
 
         public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
         {
-            if (this.Vacuum != null && this.Vacuum.CastTime + 1 > Game.RawGameTime)
+            if (this.Vacuum != null && this.Vacuum.CastTime + 1 > GameManager.RawGameTime)
             {
                 return this.Ability.UseAbility(this.Vacuum.CastPosition);
             }

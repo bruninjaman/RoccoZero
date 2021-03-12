@@ -6,7 +6,7 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.necrolyte_reapers_scythe)]
     internal class ReapersScythe : KillStealAbility

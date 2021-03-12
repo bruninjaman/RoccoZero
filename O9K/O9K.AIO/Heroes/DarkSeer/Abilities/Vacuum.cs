@@ -7,7 +7,7 @@
     using Core.Helpers;
     using Core.Prediction.Data;
 
-    using Ensage;
+    using Divine;
 
     using Modes.Combo;
 
@@ -68,7 +68,7 @@
             }
 
             this.CastPosition = output.CastPosition;
-            this.CastTime = Game.RawGameTime;
+            this.CastTime = GameManager.RawGameTime;
 
             var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
             var delay = this.Ability.GetCastDelay(targetManager.Target);

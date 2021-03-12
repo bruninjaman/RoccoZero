@@ -10,7 +10,7 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
 
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using FailSafe;
 
@@ -33,11 +33,11 @@
 
         private readonly MoveComboMode moveCombo;
 
-        public BaseHero(IContext9 context)
+        public BaseHero()
         {
             this.Owner = EntityManager9.Owner;
 
-            this.Menu = new MenuManager(this.Owner, context.MenuManager);
+            this.Menu = new MenuManager(this.Owner, Context9.MenuManager);
 
             this.TargetManager = new TargetManager(this.Menu);
 
@@ -61,7 +61,7 @@
             this.combo = new ComboMode(this, this.ComboMenus);
             this.moveCombo = new MoveComboMode(this, this.MoveComboModeMenu);
 
-            UpdateManager.BeginInvoke(() => this.Menu.Enabled.ValueChange += this.EnabledOnValueChange, 1000);
+            UpdateManager.BeginInvoke(1000, () => this.Menu.Enabled.ValueChange += this.EnabledOnValueChange);
         }
 
         public MultiSleeper AbilitySleeper { get; } = new MultiSleeper();

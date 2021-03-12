@@ -18,8 +18,7 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Modes;
 
@@ -148,7 +147,7 @@
 
             if (abilityHelper.UseAbilityIfCondition(this.blink, this.polarity))
             {
-                UpdateManager.BeginInvoke(() => this.polarity.ForceUseAbility(targetManager, this.ComboSleeper, comboModeMenu), 50);
+                UpdateManager.BeginInvoke(50, () => this.polarity.ForceUseAbility(targetManager, this.ComboSleeper, comboModeMenu));
                 return true;
             }
 

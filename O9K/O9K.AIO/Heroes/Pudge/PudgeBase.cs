@@ -7,7 +7,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -16,8 +16,7 @@
     {
         private readonly HookAllyMode hookAllyMode;
 
-        public PudgeBase(IContext9 context)
-            : base(context)
+        public PudgeBase()
         {
             this.hookAllyMode = new HookAllyMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Hook ally"));
         }

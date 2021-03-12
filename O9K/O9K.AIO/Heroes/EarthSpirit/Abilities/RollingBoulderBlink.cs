@@ -10,7 +10,7 @@
     using Core.Helpers;
     using Core.Managers.Entity;
 
-    using Ensage.SDK.Geometry;
+    using O9K.Core.Geometry;
 
     using SharpDX;
 

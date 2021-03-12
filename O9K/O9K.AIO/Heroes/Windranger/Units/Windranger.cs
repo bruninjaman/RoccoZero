@@ -15,7 +15,7 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using Modes.Combo;
 
@@ -219,7 +219,7 @@
             if (this.CanMove())
             {
                 this.OrbwalkSleeper.Sleep(0.2f);
-                return this.Owner.BaseUnit.MoveToDirection(Game.MousePosition);
+                return this.Owner.BaseUnit.MoveToDirection(GameManager.MousePosition);
             }
 
             return false;

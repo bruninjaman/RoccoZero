@@ -16,8 +16,7 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Modes;
 
@@ -74,27 +73,23 @@
 
             if (abilityHelper.UseAbilityIfCondition(this.blink, this.echo))
             {
-                UpdateManager.BeginInvoke(
-                    () =>
-                        {
-                            this.echo.ForceUseAbility(targetManager, this.ComboSleeper);
-                            this.OrbwalkSleeper.ExtendSleep(0.1f);
-                            this.ComboSleeper.ExtendSleep(0.1f);
-                        },
-                    111);
+                UpdateManager.BeginInvoke(111, () =>
+                {
+                    this.echo.ForceUseAbility(targetManager, this.ComboSleeper);
+                    this.OrbwalkSleeper.ExtendSleep(0.1f);
+                    this.ComboSleeper.ExtendSleep(0.1f);
+                });
                 return true;
             }
 
             if (abilityHelper.UseAbilityIfCondition(this.blink, this.totem))
             {
-                UpdateManager.BeginInvoke(
-                    () =>
-                        {
-                            this.totem.ForceUseAbility(targetManager, this.ComboSleeper);
-                            this.OrbwalkSleeper.ExtendSleep(0.2f);
-                            this.ComboSleeper.ExtendSleep(0.2f);
-                        },
-                    111);
+                UpdateManager.BeginInvoke(111, () =>
+                {
+                    this.totem.ForceUseAbility(targetManager, this.ComboSleeper);
+                    this.OrbwalkSleeper.ExtendSleep(0.2f);
+                    this.ComboSleeper.ExtendSleep(0.2f);
+                });
                 return true;
             }
 
@@ -139,14 +134,12 @@
             {
                 if (!this.Owner.HasModifier("modifier_earthshaker_enchant_totem"))
                 {
-                    UpdateManager.BeginInvoke(
-                        () =>
-                            {
-                                this.totem.ForceUseAbility(targetManager, this.ComboSleeper);
-                                this.OrbwalkSleeper.ExtendSleep(0.2f);
-                                this.ComboSleeper.ExtendSleep(0.2f);
-                            },
-                        111);
+                    UpdateManager.BeginInvoke(111, () =>
+                    {
+                        this.totem.ForceUseAbility(targetManager, this.ComboSleeper);
+                        this.OrbwalkSleeper.ExtendSleep(0.2f);
+                        this.ComboSleeper.ExtendSleep(0.2f);
+                    });
                 }
                 else if (this.Owner.BaseUnit.Attack(targetManager.Target.BaseUnit))
                 {
@@ -196,14 +189,12 @@
 
             if (abilityHelper.UseAbilityIfCondition(this.blink, this.echo))
             {
-                UpdateManager.BeginInvoke(
-                    () =>
-                        {
-                            this.echo.ForceUseAbility(targetManager, this.ComboSleeper);
-                            this.ComboSleeper.ExtendSleep(0.2f);
-                            this.OrbwalkSleeper.ExtendSleep(0.2f);
-                        },
-                    111);
+                UpdateManager.BeginInvoke(111, () =>
+                {
+                    this.echo.ForceUseAbility(targetManager, this.ComboSleeper);
+                    this.ComboSleeper.ExtendSleep(0.2f);
+                    this.OrbwalkSleeper.ExtendSleep(0.2f);
+                });
                 return true;
             }
 

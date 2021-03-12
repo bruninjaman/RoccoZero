@@ -5,15 +5,14 @@
     using Base;
 
     using Core.Logger;
-    using Core.Managers.Menu.EventArgs;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Heroes.Base;
 
     using UnitManager;
+
+    using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 
     internal abstract class KeyPressMode : BaseMode
     {
@@ -25,14 +24,14 @@
             this.UnitManager = baseHero.UnitManager;
             this.menu = menu;
 
-            this.UpdateHandler = UpdateManager.Subscribe(this.OnUpdate, 0, false);
+            this.UpdateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
         }
 
         protected bool LockTarget { get; set; } = true;
 
         protected UnitManager UnitManager { get; }
 
-        protected IUpdateHandler UpdateHandler { get; }
+        protected UpdateHandler UpdateHandler { get; }
 
         public virtual void Disable()
         {
@@ -77,7 +76,7 @@
 
         protected void OnUpdate()
         {
-            if (Game.IsPaused)
+            if (GameManager.IsPaused)
             {
                 return;
             }

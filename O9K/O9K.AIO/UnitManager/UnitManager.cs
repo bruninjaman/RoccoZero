@@ -16,7 +16,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     using Heroes.Base;
     using Heroes.Dynamic.Units;
@@ -118,7 +118,7 @@
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
-            ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile;
+            //ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile;
 
             foreach (var disposable in this.controllableUnits.OfType<IDisposable>())
             {
@@ -135,7 +135,7 @@
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
-            ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile;
+            //ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile;
 
             foreach (var disposable in this.controllableUnits.OfType<IDisposable>())
             {
@@ -152,7 +152,7 @@
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
             EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
-            ObjectManager.OnAddTrackingProjectile += this.OnAddTrackingProjectile;
+            //ObjectManager.OnAddTrackingProjectile += this.OnAddTrackingProjectile;
         }
 
         public void EndCombo(ComboModeMenu comboModeMenu)
@@ -228,7 +228,7 @@
                     continue;
                 }
 
-                this.issuedActionTimings[controllable.Handle] = Game.RawGameTime;
+                this.issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
                 this.unitIssuedAction.Sleep(controllable.Handle, 0.2f);
                 this.issuedAction.Sleep(0.08f);
                 return;
@@ -236,7 +236,7 @@
 
             if (noOrbwalkUnits.Count > 0 && !this.unitIssuedAction.IsSleeping(uint.MaxValue))
             {
-                if (Player.EntitiesMove(noOrbwalkUnits.Where(x => x.Owner.CanMove()).Select(x => x.Owner.BaseUnit), Game.MousePosition))
+                if (Player.Move(noOrbwalkUnits.Where(x => x.Owner.CanMove()).Select(x => x.Owner.BaseUnit), GameManager.MousePosition))
                 {
                     this.unitIssuedAction.Sleep(uint.MaxValue, 0.25f);
                     this.issuedAction.Sleep(0.08f);
@@ -261,7 +261,7 @@
                 return;
             }
 
-            this.issuedActionTimings[controllable.Handle] = Game.RawGameTime;
+            this.issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
             this.unitIssuedAction.Sleep(controllable.Handle, 0.2f);
             this.issuedAction.Sleep(0.05f);
         }
@@ -300,7 +300,7 @@
                     continue;
                 }
 
-                this.issuedActionTimings[controllable.Handle] = Game.RawGameTime;
+                this.issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
                 this.unitIssuedAction.Sleep(controllable.Handle, 0.2f);
                 this.issuedAction.Sleep(0.05f);
                 return;
@@ -337,7 +337,7 @@
 
                     if (bodyBlockResult == true)
                     {
-                        this.issuedActionTimings[controllable.Handle] = Game.RawGameTime;
+                        this.issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
                         this.unitIssuedAction.Sleep(controllable.Handle, 0.2f);
                         return true;
                     }
@@ -382,7 +382,7 @@
 
                         if (bodyBlockResult == true)
                         {
-                            this.issuedActionTimings[controllable.Handle] = Game.RawGameTime;
+                            this.issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
                             this.unitIssuedAction.Sleep(controllable.Handle, 0.2f);
                             return true;
                         }
@@ -411,7 +411,7 @@
 
                 if (units.Count > 0)
                 {
-                    Player.EntitiesAttack(units, this.targetManager.Target.BaseUnit);
+                    Player.Attack(units, this.targetManager.Target.BaseUnit);
                 }
             }
             else
@@ -419,7 +419,7 @@
                 var units = noOrbwalkUnits.Where(x => x.Owner.CanMove()).Select(x => x.Owner.BaseUnit).ToList();
                 if (units.Count > 0)
                 {
-                    Player.EntitiesMove(units, Game.MousePosition);
+                    Player.Move(units, GameManager.MousePosition);
                 }
             }
 
@@ -499,7 +499,7 @@
             }
         }
 
-        private void OnAddTrackingProjectile(TrackingProjectileEventArgs args)
+        /*private void OnAddTrackingProjectile(TrackingProjectileEventArgs args)
         {
             try
             {
@@ -521,7 +521,7 @@
             {
                 Logger.Error(e);
             }
-        }
+        }*/
 
         private void OnAttackStart(Unit9 unit)
         {

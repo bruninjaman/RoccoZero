@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_bloodseeker)]
     internal class BloodseekerBase : BaseHero
     {
-        public BloodseekerBase(IContext9 context)
-            : base(context)
+        public BloodseekerBase()
         {
         }
     }

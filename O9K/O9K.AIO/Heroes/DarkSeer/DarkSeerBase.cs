@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_dark_seer)]
     internal class DarkSeerBase : BaseHero
     {
-        public DarkSeerBase(IContext9 context)
-            : base(context)
+        public DarkSeerBase()
         {
         }
     }

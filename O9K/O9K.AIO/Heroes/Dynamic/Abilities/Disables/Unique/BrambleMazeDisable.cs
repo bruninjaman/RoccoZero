@@ -5,7 +5,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.dark_willow_bramble_maze)]
     internal class BrambleMazeDisable : OldDisableAbility

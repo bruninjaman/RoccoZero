@@ -9,7 +9,7 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Specials;
 

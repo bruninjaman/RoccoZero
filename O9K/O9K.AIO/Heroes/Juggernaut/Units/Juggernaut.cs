@@ -17,7 +17,7 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using TargetManager;
 

@@ -6,7 +6,7 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.nyx_assassin_mana_burn)]
     internal class ManaBurnNuke : OldNukeAbility

@@ -4,7 +4,7 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.sniper_shrapnel)]
     internal class ShrapnelDebuff : OldDebuffAbility

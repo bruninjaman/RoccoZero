@@ -18,8 +18,7 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
+    using Divine;
 
     using TargetManager;
 
@@ -132,8 +131,7 @@
             }
 
             var overloaded = this.Owner.CanAttack(target, 25) && this.Owner.HasModifier("modifier_storm_spirit_overload");
-            var projectile = ObjectManager.TrackingProjectiles.FirstOrDefault(
-                x => x.Source?.Handle == this.Handle && x.Target?.Handle == target.Handle && x.IsAutoAttackProjectile());
+            /*var projectile = ObjectManager.TrackingProjectiles.FirstOrDefault(x => x.Source?.Handle == this.Handle && x.Target?.Handle == target.Handle && x.IsAutoAttackProjectile()); //TODO RoccoZero
 
             if (overloaded)
             {
@@ -179,7 +177,7 @@
                         }
                     }
                 }
-            }
+            }*/
 
             if (abilityHelper.UseAbility(this.vortex))
             {

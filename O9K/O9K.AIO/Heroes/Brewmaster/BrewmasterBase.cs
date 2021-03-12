@@ -7,7 +7,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -16,8 +16,7 @@
     {
         private readonly CycloneMode cycloneMode;
 
-        public BrewmasterBase(IContext9 context)
-            : base(context)
+        public BrewmasterBase()
         {
             this.cycloneMode = new CycloneMode(
                 this,

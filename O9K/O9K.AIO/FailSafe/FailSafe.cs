@@ -14,16 +14,15 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Prediction.Data;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Heroes.Base;
 
     using KillStealer;
 
     using Modes.Base;
+
+    using O9K.Core.Geometry;
 
     using SharpDX;
 
@@ -33,7 +32,7 @@
 
         private readonly Dictionary<ActiveAbility, float> abilityTimings = new Dictionary<ActiveAbility, float>();
 
-        private readonly IUpdateHandler failSafeHandler;
+        private readonly UpdateHandler failSafeHandler;
 
         private readonly HashSet<AbilityId> ignoredAbilities = new HashSet<AbilityId>
         {
@@ -69,7 +68,7 @@
             this.AbilitySleeper = baseHero.AbilitySleeper;
             this.OrbwalkSleeper = baseHero.OrbwalkSleeper;
             this.menu = new FailSafeMenu(baseHero.Menu.GeneralSettingsMenu);
-            this.failSafeHandler = UpdateManager.Subscribe(this.OnUpdate, 0, false);
+            this.failSafeHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
         }
 
         public MultiSleeper AbilitySleeper { get; }
@@ -94,9 +93,9 @@
 
         public override void Dispose()
         {
-            UpdateManager.Unsubscribe(this.failSafeHandler);
-            Entity.OnBoolPropertyChange -= this.OnBoolPropertyChange;
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            UpdateManager.DestroyIngameUpdate(this.failSafeHandler);
+            Entity.NetworkPropertyChanged += this.OnNetworkPropertyChanged;
+            OrderManager.OrderAdding += this.OnOrderAdding;
             this.menu.FailSafeEnabled.ValueChange -= this.FailSafeEnabledOnValueChanged;
         }
 
@@ -109,14 +108,14 @@
         {
             if (e.NewValue)
             {
-                Entity.OnBoolPropertyChange += this.OnBoolPropertyChange;
-                Player.OnExecuteOrder += this.OnExecuteOrder;
+                Entity.NetworkPropertyChanged += this.OnNetworkPropertyChanged;
+                OrderManager.OrderAdding += this.OnOrderAdding;
             }
             else
             {
                 this.failSafeHandler.IsEnabled = false;
-                Entity.OnBoolPropertyChange -= this.OnBoolPropertyChange;
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
+                Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
+                OrderManager.OrderAdding -= this.OnOrderAdding;
             }
         }
 
@@ -130,76 +129,89 @@
             return ability is IBlink;
         }
 
-        private void OnBoolPropertyChange(Entity sender, BoolPropertyChangeEventArgs args)
+        private void OnNetworkPropertyChanged(Entity sender, NetworkPropertyChangedEventArgs e)
         {
-            try
+            if (e.PropertyName != "m_bInAbilityPhase")
             {
-                if (args.NewValue == args.OldValue || args.PropertyName != "m_bInAbilityPhase")
-                {
-                    return;
-                }
+                return;
+            }
 
-                var ability = EntityManager9.GetAbility(sender.Handle) as ActiveAbility;
-                if (ability?.IsControllable != true)
+            UpdateManager.BeginInvoke(() =>
+            {
+                try
                 {
-                    return;
-                }
-
-                if (this.IsIgnored(ability))
-                {
-                    return;
-                }
-
-                if (!(ability is AreaOfEffectAbility) && !(ability is PredictionAbility))
-                {
-                    return;
-                }
-
-                if (args.NewValue)
-                {
-                    if (ability is AreaOfEffectAbility)
+                    var newValue = e.NewValue.GetBoolean();
+                    if (newValue == e.OldValue.GetBoolean())
                     {
-                        if (ability.CastRange > 0)
-                        {
-                            UpdateManager.BeginInvoke(
-                                () => this.abilityPositions[ability.Handle] = ability.Owner.InFront(ability.CastRange),
-                                10);
-                        }
-                        else
-                        {
-                            UpdateManager.BeginInvoke(() => this.abilityPositions[ability.Handle] = ability.Owner.Position, 10);
-                        }
+                        return;
                     }
 
-                    this.abilityTimings[ability] = Game.RawGameTime + ability.CastPoint;
-                    this.failSafeHandler.IsEnabled = true;
-                }
-                else
-                {
-                    this.abilityTimings.Remove(ability);
-                    this.abilityPositions.Remove(ability.Handle);
-                    if (this.abilityTimings.Count <= 0)
+                    var ability = EntityManager9.GetAbility(sender.Handle) as ActiveAbility;
+                    if (ability?.IsControllable != true)
                     {
-                        this.failSafeHandler.IsEnabled = false;
+                        return;
+                    }
+
+                    if (this.IsIgnored(ability))
+                    {
+                        return;
+                    }
+
+                    if (!(ability is AreaOfEffectAbility) && !(ability is PredictionAbility))
+                    {
+                        return;
+                    }
+
+                    if (newValue)
+                    {
+                        if (ability is AreaOfEffectAbility)
+                        {
+                            if (ability.CastRange > 0)
+                            {
+                                UpdateManager.BeginInvoke(10, () => this.abilityPositions[ability.Handle] = ability.Owner.InFront(ability.CastRange));
+                            }
+                            else
+                            {
+                                UpdateManager.BeginInvoke(10, () => this.abilityPositions[ability.Handle] = ability.Owner.Position);
+                            }
+                        }
+
+                        this.abilityTimings[ability] = GameManager.RawGameTime + ability.CastPoint;
+                        this.failSafeHandler.IsEnabled = true;
+                    }
+                    else
+                    {
+                        this.abilityTimings.Remove(ability);
+                        this.abilityPositions.Remove(ability.Handle);
+                        if (this.abilityTimings.Count <= 0)
+                        {
+                            this.failSafeHandler.IsEnabled = false;
+                        }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            });
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!args.Process || args.IsPlayerInput || args.OrderId != OrderId.AbilityLocation)
+                if (!e.Process || !e.IsCustom)
                 {
                     return;
                 }
 
-                var ability = EntityManager9.GetAbility(args.Ability.Handle);
+                var order = e.Order;
+                if (order.Type != OrderType.CastPosition)
+                {
+                    return;
+                }
+
+                var ability = EntityManager9.GetAbility(order.Ability.Handle);
                 if (ability == null)
                 {
                     return;
@@ -210,11 +222,11 @@
                     return;
                 }
 
-                this.abilityPositions[ability.Handle] = args.TargetPosition;
+                this.abilityPositions[ability.Handle] = order.Position;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
@@ -245,7 +257,7 @@
                     var phaseEnd = abilityTiming.Value;
 
                     var input = ability.GetPredictionInput(target);
-                    input.Delay = Math.Max(phaseEnd - Game.RawGameTime, 0) + ability.ActivationDelay;
+                    input.Delay = Math.Max(phaseEnd - GameManager.RawGameTime, 0) + ability.ActivationDelay;
                     var output = ability.GetPredictionOutput(input);
 
                     if (!(ability is IHasRadius))

@@ -8,7 +8,7 @@
     using Core.Helpers;
     using Core.Prediction.Data;
 
-    using Ensage;
+    using Divine;
 
     using Modes.Combo;
 

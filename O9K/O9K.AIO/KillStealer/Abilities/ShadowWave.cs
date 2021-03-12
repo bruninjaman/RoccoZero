@@ -9,7 +9,7 @@
     using Core.Entities.Units;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.dazzle_shadow_wave)]
     internal class ShadowWave : KillStealAbility

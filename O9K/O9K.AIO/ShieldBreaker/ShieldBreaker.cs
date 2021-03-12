@@ -11,11 +11,9 @@
     using Core.Helpers;
     using Core.Logger;
     using Core.Managers.Entity;
-    using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Heroes.Base;
 
@@ -25,6 +23,8 @@
     using TargetManager;
 
     using UnitManager;
+
+    using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 
     internal class ShieldBreaker : BaseMode
     {
@@ -38,7 +38,7 @@
 
         private readonly TargetManager targetManager;
 
-        private readonly IUpdateHandler updateHandler;
+        private readonly UpdateHandler updateHandler;
 
         private ComboModeMenu comboModeMenu;
 
@@ -49,7 +49,7 @@
             this.orbwalkerSleeper = baseHero.OrbwalkSleeper;
             this.shieldBreakerMenu = new ShieldBreakerMenu(baseHero.Menu.RootMenu);
 
-            this.updateHandler = UpdateManager.Subscribe(this.OnUpdate, 0, false);
+            this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
         }
 
         public UnitManager UnitManager { get; set; }
@@ -75,7 +75,7 @@
 
         public override void Dispose()
         {
-            UpdateManager.Unsubscribe(this.updateHandler);
+            UpdateManager.DestroyIngameUpdate(this.updateHandler);
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             foreach (var comboMenu in this.comboMenus)
             {

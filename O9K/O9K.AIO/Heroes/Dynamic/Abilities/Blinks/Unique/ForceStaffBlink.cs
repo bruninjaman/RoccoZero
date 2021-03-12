@@ -4,7 +4,7 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.item_force_staff)]
     [AbilityId(AbilityId.item_hurricane_pike)]

@@ -5,7 +5,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -16,13 +16,11 @@
 
         private readonly OverloadChargeMode overloadChargeMode;
 
-        public StormSpiritBase(IContext9 context)
-            : base(context)
+        public StormSpiritBase()
         {
             this.manaCalculatorMode = new ManaCalculatorMode(
                 this,
-                new ManaCalculatorModeMenu(this.Menu.RootMenu, "Mana calculator"),
-                context.Renderer);
+                new ManaCalculatorModeMenu(this.Menu.RootMenu, "Mana calculator"));
 
             this.overloadChargeMode = new OverloadChargeMode(
                 this,

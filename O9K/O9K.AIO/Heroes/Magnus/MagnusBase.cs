@@ -5,7 +5,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -14,8 +14,7 @@
     {
         private readonly BlinkSkewerMode blinkSkewerMode;
 
-        public MagnusBase(IContext9 context)
-            : base(context)
+        public MagnusBase()
         {
             this.blinkSkewerMode = new BlinkSkewerMode(this, new BlinkSkewerModeMenu(this.Menu.RootMenu, "Blink+Skewer combo"));
         }

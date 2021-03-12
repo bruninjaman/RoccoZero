@@ -7,8 +7,7 @@
     using Core.Helpers;
     using Core.Prediction.Data;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Heroes.Base;
 
@@ -357,11 +356,11 @@
                 return false;
             }
 
-            var mouse = Game.MousePosition;
+            var mouse = GameManager.MousePosition;
             if (owner.GetAngle(mouse) > 1f)
             {
                 owner.BaseUnit.Move(mouse);
-                UpdateManager.BeginInvoke(() => force.Ability.UseAbility(owner), 200);
+                UpdateManager.BeginInvoke(200, () => force.Ability.UseAbility(owner));
                 return true;
             }
 
@@ -390,7 +389,7 @@
                 return false;
             }
 
-            return ability.UseAbility(this.TargetManager, this.comboSleeper, Game.MousePosition);
+            return ability.UseAbility(this.TargetManager, this.comboSleeper, GameManager.MousePosition);
         }
 
         public bool UseMoveAbility(UsableAbility ability)

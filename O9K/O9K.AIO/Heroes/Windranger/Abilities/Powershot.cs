@@ -9,10 +9,11 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
+    using Divine;
 
     using Modes.Combo;
+
+    using O9K.Core.Geometry;
 
     using SharpDX;
 
@@ -30,7 +31,7 @@
             : base(ability)
         {
             this.powershot = (BasePowershot)ability;
-            Player.OnExecuteOrder += this.OnExecuteOrder;
+            OrderManager.OrderAdding += this.OnOrderAdding;
         }
 
         public Shackleshot Shackleshot { get; set; }
@@ -67,7 +68,7 @@
 
         public void Dispose()
         {
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
         }
 
         public override bool ShouldConditionCast(TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
@@ -111,16 +112,17 @@
             return true;
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
-            if (args.IsQueued || args.OrderId != OrderId.AbilityLocation)
+            var order = e.Order;
+            if (order.IsQueued || order.Type != OrderType.CastPosition)
             {
                 return;
             }
 
-            if (args.Ability.Handle == this.Ability.Handle)
+            if (order.Ability.Handle == this.Ability.Handle)
             {
-                this.castPosition = args.TargetPosition;
+                this.castPosition = order.Position;
             }
         }
     }

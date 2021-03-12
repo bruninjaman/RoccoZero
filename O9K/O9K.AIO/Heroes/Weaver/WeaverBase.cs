@@ -7,7 +7,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -16,8 +16,7 @@
     {
         private readonly HealthTrackerMode healthTrackerMode;
 
-        public WeaverBase(IContext9 context)
-            : base(context)
+        public WeaverBase()
         {
             this.healthTrackerMode = new HealthTrackerMode(this, new PermanentModeMenu(this.Menu.RootMenu, "Health tracker"));
         }

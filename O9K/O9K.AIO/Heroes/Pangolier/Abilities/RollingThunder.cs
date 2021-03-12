@@ -8,7 +8,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Modes.Combo;
 
@@ -20,8 +20,6 @@
 
     internal class RollingThunder : NukeAbility
     {
-        private readonly NavMeshPathfinding navMesh = new NavMeshPathfinding();
-
         private readonly BaseRollingThunder rollingThunder;
 
         public RollingThunder(ActiveAbility ability)
@@ -41,10 +39,10 @@
                 for (var j = 0; j < CellCount; ++j)
                 {
                     var p = new Vector2(
-                        (this.navMesh.CellSize * (i - (CellCount / 2))) + center.X,
-                        (this.navMesh.CellSize * (j - (CellCount / 2))) + center.Y);
+                        (MapManager.MeshCellSize * (i - (CellCount / 2))) + center.X,
+                        (MapManager.MeshCellSize * (j - (CellCount / 2))) + center.Y);
 
-                    if ((this.navMesh.GetCellFlags(p) & NavMeshCellFlags.InteractionBlocker) != 0)
+                    if ((MapManager.GetMeshCellFlags(p) & MapMeshCellFlags.InteractionBlocker) != 0)
                     {
                         wallPositions.Add(new Vector3(p.X, p.Y, 0));
                     }

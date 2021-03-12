@@ -16,8 +16,8 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Modes.Combo;
 
@@ -159,7 +159,7 @@
 
         protected override bool ForceMove(Unit9 target, bool attack)
         {
-            var mousePosition = Game.MousePosition;
+            var mousePosition = GameManager.MousePosition;
             var movePosition = mousePosition;
 
             if (target != null && attack)

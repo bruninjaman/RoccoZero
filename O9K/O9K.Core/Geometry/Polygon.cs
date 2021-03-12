@@ -1,5 +1,6 @@
 ﻿namespace O9K.Core.Geometry
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -65,6 +66,66 @@
             var result = new List<IntPoint>(this.Points.Count);
             result.AddRange(this.Points.Select(point => new IntPoint(point.X, point.Y)));
             return result;
+        }
+
+        public class Circle : Polygon
+        {
+            /// <summary>
+            ///     The center
+            /// </summary>
+            public Vector2 Center;
+
+            /// <summary>
+            ///     The radius
+            /// </summary>
+            public float Radius;
+
+            /// <summary>
+            ///     The quality
+            /// </summary>
+            private readonly int _quality;
+
+            /// <summary>
+            ///     Initializes a new instance of the <see cref="Polygon.Circle" /> class.
+            /// </summary>
+            /// <param name="center">The center.</param>
+            /// <param name="radius">The radius.</param>
+            /// <param name="quality">The quality.</param>
+            public Circle(Vector3 center, float radius, int quality = 20)
+                : this(center.ToVector2(), radius, quality)
+            {
+            }
+
+            /// <summary>
+            ///     Initializes a new instance of the <see cref="Polygon.Circle" /> class.
+            /// </summary>
+            /// <param name="center">The center.</param>
+            /// <param name="radius">The radius.</param>
+            /// <param name="quality">The quality.</param>
+            public Circle(Vector2 center, float radius, int quality = 20)
+            {
+                this.Center = center;
+                this.Radius = radius;
+                this._quality = quality;
+                this.UpdatePolygon();
+            }
+
+            /// <summary>
+            ///     Updates the polygon.
+            /// </summary>
+            /// <param name="offset">The offset.</param>
+            /// <param name="overrideWidth">Width of the override.</param>
+            public void UpdatePolygon(int offset = 0, float overrideWidth = -1)
+            {
+                this.Points.Clear();
+                var outRadius = overrideWidth > 0 ? overrideWidth : (offset + this.Radius) / (float)Math.Cos((2 * Math.PI) / this._quality);
+                for (var i = 1; i <= this._quality; i++)
+                {
+                    var angle = (i * 2 * Math.PI) / this._quality;
+                    var point = new Vector2(this.Center.X + (outRadius * (float)Math.Cos(angle)), this.Center.Y + (outRadius * (float)Math.Sin(angle)));
+                    this.Points.Add(point);
+                }
+            }
         }
 
         public class Rectangle : Polygon

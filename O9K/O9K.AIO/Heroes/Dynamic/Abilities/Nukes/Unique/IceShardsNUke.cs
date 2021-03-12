@@ -5,7 +5,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.tusk_ice_shards)]
     internal class IceShardsNuke : OldNukeAbility

@@ -7,7 +7,7 @@
 
     using Core.Entities.Abilities.Base;
 
-    using Ensage;
+    using Divine;
 
     using TargetManager;
 

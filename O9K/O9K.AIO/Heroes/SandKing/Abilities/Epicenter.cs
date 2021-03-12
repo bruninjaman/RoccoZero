@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using Modes.Combo;
 

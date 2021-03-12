@@ -9,7 +9,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using SharpDX;
 
@@ -19,7 +19,7 @@
 
         private readonly Dictionary<Unit9, Dictionary<float, Vector3>> positions = new Dictionary<Unit9, Dictionary<float, Vector3>>();
 
-        private ParticleEffect targetParticleEffect;
+        private Particle targetParticleEffect;
 
         public GlimpseTrackerMode(BaseHero baseHero, PermanentModeMenu menu)
             : base(baseHero, menu)
@@ -28,7 +28,7 @@
 
         protected override void Execute()
         {
-            var time = Game.RawGameTime;
+            var time = GameManager.RawGameTime;
 
             foreach (var unit in this.TargetManager.EnemyHeroes)
             {
@@ -78,7 +78,7 @@
         {
             if (this.targetParticleEffect == null)
             {
-                this.targetParticleEffect = new ParticleEffect(@"materials\ensage_ui\particles\target.vpcf", position);
+                this.targetParticleEffect = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\target.vpcf", position);
                 this.targetParticleEffect.SetControlPoint(6, new Vector3(255));
             }
 

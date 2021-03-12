@@ -7,7 +7,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -16,8 +16,7 @@
     {
         private readonly SunRayAllyMode sunRayAllyMode;
 
-        public PhoenixBase(IContext9 context)
-            : base(context)
+        public PhoenixBase()
         {
             this.sunRayAllyMode = new SunRayAllyMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Sun ray ally"));
         }

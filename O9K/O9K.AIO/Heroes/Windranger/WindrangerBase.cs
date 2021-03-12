@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_windrunner)]
     internal class WindrangerBase : BaseHero
     {
-        public WindrangerBase(IContext9 context)
-            : base(context)
+        public WindrangerBase()
         {
         }
     }

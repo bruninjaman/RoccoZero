@@ -6,13 +6,11 @@
 
     using Core.Entities.Heroes;
     using Core.Entities.Units;
-    using Core.Helpers;
     using Core.Logger;
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Menu;
 
@@ -75,7 +73,7 @@
 
         private Func<Unit9, float, IEnumerable<Unit9>> getTargetsFunc;
 
-        private ParticleEffect targetParticleEffect;
+        private Particle targetParticleEffect;
 
         public TargetManager(MenuManager menu)
         {
@@ -186,11 +184,11 @@
 
         public bool TargetLocked { get; set; }
 
-        public Sleeper TargetSleeper { get; } = new Sleeper();
+        public Core.Helpers.Sleeper TargetSleeper { get; } = new Core.Helpers.Sleeper();
 
         public Unit9 ClosestAllyHeroToMouse(Unit9 unit, bool ignoreSelf = true)
         {
-            var mouse = Game.MousePosition;
+            var mouse = GameManager.MousePosition;
             return this.AllyHeroes.Where(x => (!ignoreSelf || !x.Equals(unit)) && x.Distance(mouse) < 500)
                 .OrderBy(x => x.DistanceSquared(mouse))
                 .FirstOrDefault();
@@ -199,7 +197,7 @@
         public void Disable()
         {
             this.targetParticleEffect?.Dispose();
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
         }
@@ -209,16 +207,16 @@
             this.targetManagerMenu.FocusTarget.ValueChange -= this.FocusTargetOnValueChanged;
             this.targetManagerMenu.DrawTargetParticle.ValueChange -= this.DrawTargetParticleOnValueChanged;
 
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
         }
 
         public void Enable()
         {
-            UpdateManager.Subscribe(this.OnUpdate);
+            UpdateManager.CreateIngameUpdate(this.OnUpdate);
 
-            if (ObjectManager.GetEntities<Player>().Any(x => x.SelectedHeroId == HeroId.npc_dota_hero_phoenix))
+            if (EntityManager.GetEntities<Player>().Any(x => x.SelectedHeroId == HeroId.npc_dota_hero_phoenix))
             {
                 EntityManager9.UnitAdded += this.OnUnitAdded;
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
@@ -232,7 +230,7 @@
 
         private IEnumerable<Unit9> ClosestToMouse(Unit9 unit, float range)
         {
-            var mouse = Game.MousePosition;
+            var mouse = GameManager.MousePosition;
 
             return EntityManager9.Units
                 .Where(
@@ -256,7 +254,7 @@
         {
             if (this.targetParticleEffect?.IsValid != true)
             {
-                this.targetParticleEffect = new ParticleEffect(@"materials\ensage_ui\particles\target.vpcf", this.Target.Position);
+                this.targetParticleEffect = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\target.vpcf", this.Target.Position);
                 this.targetParticleEffect.SetControlPoint(6, new Vector3(255));
             }
 

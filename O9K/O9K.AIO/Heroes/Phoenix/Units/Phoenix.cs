@@ -19,7 +19,7 @@
     using Core.Logger;
     using Core.Prediction.Data;
 
-    using Ensage;
+    using Divine;
 
     using SharpDX;
 
@@ -227,7 +227,7 @@
 
             if (abilityHelper.CanBeCasted(this.dive, false, false))
             {
-                this.dive.Ability.UseAbility(Game.MousePosition);
+                this.dive.Ability.UseAbility(GameManager.MousePosition);
                 this.ComboSleeper.Sleep(0.3f);
                 this.dive.Sleeper.Sleep(0.3f);
                 return true;

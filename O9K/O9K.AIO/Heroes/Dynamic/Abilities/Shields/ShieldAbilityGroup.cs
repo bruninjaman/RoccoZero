@@ -14,7 +14,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
+    using Divine;
 
     internal class ShieldAbilityGroup : OldAbilityGroup<IShield, OldShieldAbility>
     {

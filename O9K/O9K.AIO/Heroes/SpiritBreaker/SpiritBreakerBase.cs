@@ -7,7 +7,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -16,8 +16,7 @@
     {
         private readonly ChargeAwayMode chargeAwayMode;
 
-        public SpiritBreakerBase(IContext9 context)
-            : base(context)
+        public SpiritBreakerBase()
         {
             this.chargeAwayMode = new ChargeAwayMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Charge away"));
         }

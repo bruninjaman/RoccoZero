@@ -7,7 +7,7 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.dark_willow_shadow_realm)]
     internal class ShadowRealmNukeAbility : OldNukeAbility

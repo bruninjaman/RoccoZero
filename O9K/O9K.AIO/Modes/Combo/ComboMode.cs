@@ -13,13 +13,13 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Heroes.Base;
 
     using UnitManager;
+
+    using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 
     internal class ComboMode : BaseMode
     {
@@ -32,7 +32,7 @@
             AbilityId.troll_warlord_berserkers_rage
         };
 
-        private readonly IUpdateHandler updateHandler;
+        private readonly UpdateHandler updateHandler;
 
         private bool ignoreComboEnd;
 
@@ -40,7 +40,7 @@
             : base(baseHero)
         {
             this.UnitManager = baseHero.UnitManager;
-            this.updateHandler = UpdateManager.Subscribe(this.OnUpdate, 0, false);
+            this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
 
             foreach (var comboMenu in comboMenus)
             {
@@ -55,7 +55,7 @@
         public void Disable()
         {
             this.updateHandler.IsEnabled = false;
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
 
             foreach (var comboMenu in this.comboModeMenus)
             {
@@ -65,8 +65,8 @@
 
         public override void Dispose()
         {
-            UpdateManager.Unsubscribe(this.updateHandler);
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            UpdateManager.DestroyIngameUpdate(this.updateHandler);
+            OrderManager.OrderAdding -= this.OnOrderAdding;
 
             foreach (var comboMenu in this.comboModeMenus)
             {
@@ -76,7 +76,7 @@
 
         public void Enable()
         {
-            Player.OnExecuteOrder += this.OnExecuteOrder;
+            OrderManager.OrderAdding += this.OnOrderAdding;
 
             foreach (var comboMenu in this.comboModeMenus)
             {
@@ -109,7 +109,7 @@
 
         protected void OnUpdate()
         {
-            if (Game.IsPaused)
+            if (GameManager.IsPaused)
             {
                 return;
             }
@@ -156,33 +156,34 @@
             }
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!this.updateHandler.IsEnabled || !args.Process || args.IsPlayerInput)
+                if (!this.updateHandler.IsEnabled || !e.Process || !e.IsCustom)
                 {
                     return;
                 }
 
-                switch (args.OrderId)
+                var order = e.Order;
+                switch (order.Type)
                 {
-                    case OrderId.ToggleAutoCast:
-                    case OrderId.ToggleAbility:
-                    {
-                        if (this.ignoreToggleDisable.Contains(args.Ability.Id))
+                    case OrderType.CastToggleAutocast:
+                    case OrderType.CastToggle:
                         {
-                            return;
-                        }
+                            if (this.ignoreToggleDisable.Contains(order.Ability.Id))
+                            {
+                                return;
+                            }
 
-                        this.disableToggleAbilities.Add(args.Ability.Handle);
-                        break;
-                    }
+                            this.disableToggleAbilities.Add(order.Ability.Handle);
+                            break;
+                        }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 

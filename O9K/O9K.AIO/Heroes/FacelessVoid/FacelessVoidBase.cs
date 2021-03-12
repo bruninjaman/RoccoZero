@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_faceless_void)]
     internal class FacelessVoidBase : BaseHero
     {
-        public FacelessVoidBase(IContext9 context)
-            : base(context)
+        public FacelessVoidBase()
         {
         }
     }

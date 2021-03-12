@@ -16,7 +16,7 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     internal class OldAbilityGroup<TType, TAbility> : IOldAbilityGroup
         where TType : class, IActiveAbility where TAbility : OldUsableAbility

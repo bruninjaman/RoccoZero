@@ -5,14 +5,10 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_alchemist)]
     internal class AlchemistBase : BaseHero
     {
-        public AlchemistBase(IContext9 context)
-            : base(context)
-        {
-        }
     }
 }

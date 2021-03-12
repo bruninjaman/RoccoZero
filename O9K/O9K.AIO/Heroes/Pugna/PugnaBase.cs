@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_pugna)]
     internal class PugnaBase : BaseHero
     {
-        public PugnaBase(IContext9 context)
-            : base(context)
+        public PugnaBase()
         {
         }
     }

@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_slardar)]
     internal class SlardarBase : BaseHero
     {
-        public SlardarBase(IContext9 context)
-            : base(context)
+        public SlardarBase()
         {
         }
     }

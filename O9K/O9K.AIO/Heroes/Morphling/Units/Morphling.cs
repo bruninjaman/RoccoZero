@@ -17,7 +17,7 @@
     using Core.Helpers;
     using Core.Logger;
 
-    using Ensage;
+    using Divine;
 
     using Modes.Combo;
 
@@ -74,7 +74,7 @@
 
             this.MoveComboAbilities.Add(AbilityId.morphling_waveform, x => this.waveBlink = new BlinkAbility(x));
 
-            Player.OnExecuteOrder += this.OnExecuteOrder;
+            OrderManager.OrderAdding += this.OnOrderAdding;
         }
 
         public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
@@ -139,7 +139,7 @@
 
         public void Dispose()
         {
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
         }
 
         public override bool Orbwalk(Unit9 target, bool attack, bool move, ComboModeMenu comboMenu = null)
@@ -167,7 +167,7 @@
             return false;
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
@@ -176,23 +176,29 @@
                     return;
                 }
 
-                if (!args.Process || args.IsQueued || !args.Entities.Contains(this.Owner.BaseUnit))
+                if (!e.Process)
                 {
                     return;
                 }
 
-                var order = args.OrderId;
-                if (order != OrderId.Ability && order != OrderId.AbilityLocation && order != OrderId.AbilityTarget)
+                var order = e.Order;
+                if (order.IsQueued || !order.Units.Contains(this.Owner.BaseUnit))
                 {
                     return;
                 }
 
-                var ability = args.Ability;
+                var type = order.Type;
+                if (type != OrderType.Cast && type != OrderType.CastPosition && type != OrderType.CastTarget)
+                {
+                    return;
+                }
+
+                var ability = order.Ability;
                 this.morphlingAbilitySleeper.Sleep(ability.Handle, ability.CooldownLength);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
     }

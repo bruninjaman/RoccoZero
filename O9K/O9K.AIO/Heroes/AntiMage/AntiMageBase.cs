@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_antimage)]
     internal class AntiMageBase : BaseHero
     {
-        public AntiMageBase(IContext9 context)
-            : base(context)
+        public AntiMageBase()
         {
         }
     }

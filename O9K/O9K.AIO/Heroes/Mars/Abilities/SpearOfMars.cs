@@ -10,10 +10,11 @@
     using Core.Helpers;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
+    using Divine;
 
     using Modes.Combo;
+
+    using O9K.Core.Geometry;
 
     using SharpDX;
 
@@ -21,8 +22,6 @@
 
     internal class SpearOfMars : NukeAbility
     {
-        private readonly NavMeshPathfinding navMesh = new NavMeshPathfinding();
-
         private Vector3 castPosition;
 
         public SpearOfMars(ActiveAbility ability)
@@ -101,10 +100,10 @@
                 for (var j = 0; j < CellCount; ++j)
                 {
                     var p = new Vector2(
-                        (this.navMesh.CellSize * (i - (CellCount / 2))) + targetPredictedPosition.X,
-                        (this.navMesh.CellSize * (j - (CellCount / 2))) + targetPredictedPosition.Y);
+                        (MapManager.MeshCellSize * (i - (CellCount / 2))) + targetPredictedPosition.X,
+                        (MapManager.MeshCellSize * (j - (CellCount / 2))) + targetPredictedPosition.Y);
 
-                    if ((this.navMesh.GetCellFlags(p) & NavMeshCellFlags.InteractionBlocker) != 0)
+                    if ((MapManager.GetMeshCellFlags(p) & MapMeshCellFlags.InteractionBlocker) != 0)
                     {
                         var rec = new Polygon.Rectangle(
                             targetPredictedPosition,

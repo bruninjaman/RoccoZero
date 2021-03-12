@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_riki)]
     internal class RikiBase : BaseHero
     {
-        public RikiBase(IContext9 context)
-            : base(context)
+        public RikiBase()
         {
         }
     }

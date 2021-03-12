@@ -20,8 +20,9 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+
+    using O9K.Core.Managers.Context;
 
     using SharpDX;
 
@@ -70,12 +71,11 @@
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
             };
 
-            this.ancientCamps = Bootstrap.Context.JungleManager.JungleCamps.Where(x => x.IsAncient).Select(x => x.CreepsPosition).ToArray();
+            this.ancientCamps = Context9.JungleManager.JungleCamps.Where(x => x.IsAncient).Select(x => x.CreepsPosition).ToArray();
 
-            Entity.OnParticleEffectAdded += this.OnParticleEffectAdded;
-
-            Unit.OnModifierAdded += this.OnModifierAdded;
-            Player.OnExecuteOrder += this.OnExecuteOrder;
+            ParticleManager.ParticleAdded += OnParticleAdded;
+            ModifierManager.ModifierAdded += OnModifierAdded;
+            OrderManager.OrderAdding += OnOrderAdding;
         }
 
         public void AutoReturn()
@@ -201,9 +201,9 @@
 
         public void Dispose()
         {
-            Entity.OnParticleEffectAdded -= this.OnParticleEffectAdded;
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            ParticleManager.ParticleAdded -= OnParticleAdded;
+            ModifierManager.ModifierAdded -= OnModifierAdded;
+            OrderManager.OrderAdding -= OnOrderAdding;
         }
 
         public override bool Orbwalk(Unit9 target, bool attack, bool move, ComboModeMenu comboMenu = null)
@@ -216,7 +216,7 @@
                     if (ability.CanBeCasted())
                     {
                         var ownerPosition = this.Owner.Position;
-                        var attackDelay = this.Owner.GetAttackPoint() + (Game.Ping / 1000) + 0.3f;
+                        var attackDelay = this.Owner.GetAttackPoint() + (GameManager.Ping / 1000) + 0.3f;
                         var targetPredictedPosition = target.GetPredictedPosition(attackDelay);
 
                         var unitTarget = EntityManager9.Units
@@ -279,7 +279,7 @@
                 return;
             }
 
-            if (Game.GameTime % 60 < 59.5 - ability.GetHitTime(camp))
+            if (GameManager.GameTime % 60 < 59.5 - ability.GetHitTime(camp))
             {
                 return;
             }
@@ -312,16 +312,22 @@
             return false;
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!args.Process || args.OrderId != OrderId.Ability)
+                if (!e.Process)
                 {
                     return;
                 }
 
-                if (args.Ability.Handle != this.xReturn.Ability.Handle)
+                var order = e.Order;
+                if (order.Type != OrderType.Cast)
+                {
+                    return;
+                }
+
+                if (order.Ability.Handle != this.xReturn.Ability.Handle)
                 {
                     return;
                 }
@@ -334,62 +340,72 @@
                     this.ship.Position = Vector3.Zero;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
-            try
+            var modifier = e.Modifier;
+            if (modifier.Name != "modifier_kunkka_torrent_thinker")
             {
-                var modifier = args.Modifier;
-                if (!modifier.IsHidden || modifier.Team != this.Owner.Team || modifier.Owner?.Owner?.Handle != this.Owner.Handle)
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (modifier.Name == "modifier_kunkka_torrent_thinker")
+            UpdateManager.BeginInvoke(() =>
+            {
+                try
                 {
+                    if (!modifier.IsValid)
+                    {
+                        return;
+                    }
+
+                    if (!modifier.IsHidden || modifier.Team != this.Owner.Team || modifier.Owner?.Owner?.Handle != this.Owner.Handle)
+                    {
+                        return;
+                    }
+
                     this.torrent.Modifier = modifier;
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, (EntityManager9.Abilities.Count(x => this.Owner.Equals(x.Owner))).ToString());
-            }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, (EntityManager9.Abilities.Count(x => this.Owner.Equals(x.Owner))).ToString());
+                }
+            });
         }
 
-        private void OnParticleEffectAdded(Entity sender, ParticleEffectAddedEventArgs args)
+        private void OnParticleAdded(ParticleAddedEventArgs e)
         {
             try
             {
-                var particle = args.ParticleEffect;
+                var particle = e.Particle;
                 if (particle.Owner?.Handle != this.playerHandle)
                 {
                     return;
                 }
 
-                switch (args.Name)
+                switch (e.Particle.Name)
                 {
                     case "particles/units/heroes/hero_kunkka/kunkka_spell_x_spot.vpcf":
                     case "particles/econ/items/kunkka/divine_anchor/hero_kunkka_dafx_skills/kunkka_spell_x_spot_fxset.vpcf":
-                    {
-                        UpdateManager.BeginInvoke(() => this.xMark.Position = particle.GetControlPoint(0));
-                        break;
-                    }
+                        {
+                            UpdateManager.BeginInvoke(() => this.xMark.Position = particle.GetControlPoint(0));
+                            break;
+                        }
                     case "particles/units/heroes/hero_kunkka/kunkka_ghostship_marker.vpcf":
-                    {
-                        var time = Game.RawGameTime - (Game.Ping / 2000);
-                        UpdateManager.BeginInvoke(() => this.ship.CalculateTimings(particle.GetControlPoint(0), time));
-                        break;
-                    }
+                        {
+                            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
+                            UpdateManager.BeginInvoke(() => this.ship.CalculateTimings(particle.GetControlPoint(0), time));
+                            break;
+                        }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
     }

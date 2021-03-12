@@ -12,7 +12,7 @@
     using Core.Managers.Entity;
     using Core.Prediction.Data;
 
-    using Ensage.SDK.Geometry;
+    using O9K.Core.Geometry;
 
     using TargetManager;
 

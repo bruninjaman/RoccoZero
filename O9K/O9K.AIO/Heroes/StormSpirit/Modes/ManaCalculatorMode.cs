@@ -12,26 +12,20 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
 
-    using Ensage;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using SharpDX;
-
-    using Color = System.Drawing.Color;
 
     internal class ManaCalculatorMode : BaseMode
     {
         private readonly ManaCalculatorModeMenu menu;
 
-        private readonly IRenderManager renderer;
-
         private BallLightning ballLightning;
 
-        public ManaCalculatorMode(BaseHero baseHero, ManaCalculatorModeMenu menu, IRenderManager renderer)
+        public ManaCalculatorMode(BaseHero baseHero, ManaCalculatorModeMenu menu)
             : base(baseHero)
         {
             this.menu = menu;
-            this.renderer = renderer;
         }
 
         private BallLightning BallLightning
@@ -66,15 +60,15 @@
         {
             if (e.NewValue)
             {
-                this.renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
-                this.renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
 
-        private void OnDraw(IRenderer renderer1)
+        private void OnDraw()
         {
             try
             {
@@ -83,14 +77,14 @@
                     return;
                 }
 
-                var mousePosition = Game.MousePosition;
+                var mousePosition = GameManager.MousePosition;
                 var mp = this.menu.ShowRemainingMp
                              ? this.BallLightning.GetRemainingMana(mousePosition).ToString()
                              : this.BallLightning.GetRequiredMana(mousePosition).ToString();
 
-                this.renderer.DrawText(
-                    Game.MouseScreenPosition + (new Vector2(30, 30) * Hud.Info.ScreenRatio),
+                RendererManager.DrawText(
                     mp,
+                    GameManager.MouseScreenPosition + (new Vector2(30, 30) * Hud.Info.ScreenRatio),
                     Color.White,
                     16 * Hud.Info.ScreenRatio);
             }

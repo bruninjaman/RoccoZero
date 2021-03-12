@@ -3,7 +3,7 @@
     using Core.Entities.Abilities.Base.Types;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.sniper_assassinate)]
     internal class AssassinateNuke : OldNukeAbility

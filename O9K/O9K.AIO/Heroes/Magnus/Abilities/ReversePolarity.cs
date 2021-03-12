@@ -8,7 +8,7 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using TargetManager;
 
@@ -61,7 +61,7 @@
             if (this.ally != null)
             {
                 this.Owner.BaseUnit.Move(this.ally.Position);
-                UpdateManager.BeginInvoke(() => this.Ability.UseAbility(), 150);
+                UpdateManager.BeginInvoke(150, () => this.Ability.UseAbility());
             }
             else
             {

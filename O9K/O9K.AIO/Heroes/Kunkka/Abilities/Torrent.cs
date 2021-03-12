@@ -7,8 +7,8 @@
     using Core.Entities.Abilities.Base;
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using SharpDX;
 

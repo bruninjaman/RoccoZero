@@ -7,7 +7,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -16,8 +16,7 @@
     {
         private readonly GlimpseTrackerMode glimpseTrackerMode;
 
-        public DisruptorBase(IContext9 context)
-            : base(context)
+        public DisruptorBase()
         {
             this.glimpseTrackerMode = new GlimpseTrackerMode(this, new PermanentModeMenu(this.Menu.RootMenu, "Glimpse tracker"));
         }

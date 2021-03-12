@@ -7,9 +7,7 @@
     using Core.Logger;
     using Core.Managers.Menu.EventArgs;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Heroes.Base;
 
@@ -17,7 +15,7 @@
 
     internal abstract class PermanentMode : BaseMode
     {
-        protected readonly IUpdateHandler Handler;
+        protected readonly UpdateHandler Handler;
 
         private readonly PermanentModeMenu menu;
 
@@ -27,7 +25,7 @@
             this.UnitManager = baseHero.UnitManager;
             this.menu = menu;
 
-            this.Handler = UpdateManager.Subscribe(this.OnUpdate, 0, menu.Enabled);
+            this.Handler = UpdateManager.CreateIngameUpdate(0, menu.Enabled, this.OnUpdate);
         }
 
         protected UnitManager UnitManager { get; }
@@ -41,7 +39,7 @@
         public override void Dispose()
         {
             base.Dispose();
-            UpdateManager.Unsubscribe(this.Handler);
+            UpdateManager.DestroyIngameUpdate(this.Handler);
             this.menu.Enabled.ValueChange -= this.EnabledOnValueChanged;
         }
 
@@ -59,7 +57,7 @@
 
         private void OnUpdate()
         {
-            if (Game.IsPaused)
+            if (GameManager.IsPaused)
             {
                 return;
             }

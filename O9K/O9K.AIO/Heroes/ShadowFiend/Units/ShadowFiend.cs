@@ -16,7 +16,7 @@
     using Core.Helpers;
     using Core.Prediction.Data;
 
-    using Ensage;
+    using Divine;
 
     using Modes.Combo;
 
@@ -257,7 +257,7 @@
             var target = targetManager.Target;
             var position = target.Position;
             var distance = this.Owner.Distance(position);
-            var requiredTime = this.requiem.Ability.CastPoint + (Game.Ping / 2000);
+            var requiredTime = this.requiem.Ability.CastPoint + (GameManager.Ping / 2000);
             const float AdditionalTime = 0.3f;
 
             if (target.IsInvulnerable)
@@ -271,7 +271,7 @@
                 var eulsModifier = target.GetModifier("modifier_eul_cyclone");
                 if (eulsModifier != null)
                 {
-                    var particle = eulsModifier.ParticleEffects.FirstOrDefault();
+                    var particle = eulsModifier.Particles.FirstOrDefault();
                     if (particle != null)
                     {
                         position = particle.GetControlPoint(0);

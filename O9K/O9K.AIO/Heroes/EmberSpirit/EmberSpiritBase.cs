@@ -5,7 +5,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -14,8 +14,7 @@
     {
         private readonly AutoChainsMode autoChainsMode;
 
-        public EmberSpiritBase(IContext9 context)
-            : base(context)
+        public EmberSpiritBase()
         {
             this.autoChainsMode = new AutoChainsMode(
                 this,

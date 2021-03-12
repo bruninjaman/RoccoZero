@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_chaos_knight)]
     internal class ChaosKnightBase : BaseHero
     {
-        public ChaosKnightBase(IContext9 context)
-            : base(context)
+        public ChaosKnightBase()
         {
         }
     }

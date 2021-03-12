@@ -12,7 +12,7 @@
     using Core.Helpers;
     using Core.Prediction.Data;
 
-    using Ensage.SDK.Geometry;
+    using Divine.SDK.Extensions;
 
     using Modes.Combo;
 

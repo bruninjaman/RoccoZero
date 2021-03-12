@@ -17,8 +17,7 @@
     using Core.Helpers;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
+    using Divine;
 
     using Modes.Combo;
 
@@ -191,7 +190,7 @@
 
                 var psi = (PsiBlades)this.Owner.Abilities.First(x => x.Id == AbilityId.templar_assassin_psi_blades);
                 var ownerPosition = this.Owner.Position;
-                var attackDelay = this.Owner.GetAttackPoint() + (Game.Ping / 1000) + 0.3f;
+                var attackDelay = this.Owner.GetAttackPoint() + (GameManager.Ping / 1000) + 0.3f;
                 var targetPredictedPosition = target.GetPredictedPosition(attackDelay);
 
                 var unitTarget = EntityManager9.Units
@@ -259,9 +258,7 @@
                 return false;
             }
 
-            var projectile = ObjectManager.TrackingProjectiles.FirstOrDefault(
-                x => x.IsValid && x.Source?.Handle == this.Owner.Handle && x.Target?.IsValid == true);
-
+            return false;/*var projectile = ObjectManager.TrackingProjectiles.FirstOrDefault(x => x.IsValid && x.Source?.Handle == this.Owner.Handle && x.Target?.IsValid == true); // TODO RoccoZero
             if (projectile == null)
             {
                 return false;
@@ -269,10 +266,10 @@
 
             var projectileTarget = projectile.Target;
             var targetPredictedPosition = target.GetPredictedPosition(
-                (projectile.Position.Distance2D(projectileTarget.Position) / projectile.Speed) + (Game.Ping / 1000));
+                (projectile.Position.Distance2D(projectileTarget.Position) / projectile.Speed) + (GameManager.Ping / 1000));
             var psiPosition = projectileTarget.Position.Extend2D(targetPredictedPosition, -this.Owner.Distance(projectileTarget.Position));
             this.Owner.BaseUnit.Move(psiPosition);
-            return true;
+            return true;*/
         }
     }
 }

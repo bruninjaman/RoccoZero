@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using TargetManager;
 
@@ -26,7 +26,7 @@
             }
 
             if (EntityManager9.Units.Any(
-                x => x.IsAlly(this.Owner) && (x.IsAlive || x.DeathTime + 0.5f > Game.RawGameTime)
+                x => x.IsAlly(this.Owner) && (x.IsAlive || x.DeathTime + 0.5f > GameManager.RawGameTime)
                                           && x.Name == "npc_dota_templar_assassin_psionic_trap"
                                           && x.Distance(targetManager.Target) < this.Ability.Radius))
             {

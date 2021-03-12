@@ -6,9 +6,9 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Ensage.SDK.Geometry;
-
     using Modes.Combo;
+
+    using O9K.Core.Geometry;
 
     using SharpDX;
 

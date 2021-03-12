@@ -5,7 +5,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -14,8 +14,7 @@
     {
         private readonly RollSmashMode rollSmashMode;
 
-        public EarthSpiritBase(IContext9 context)
-            : base(context)
+        public EarthSpiritBase()
         {
             this.rollSmashMode = new RollSmashMode(this, new RollSmashModeMenu(this.Menu.RootMenu, "Roll+Smash combo"));
         }

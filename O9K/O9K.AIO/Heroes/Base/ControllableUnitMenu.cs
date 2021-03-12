@@ -4,7 +4,7 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     internal class ControllableUnitMenu
     {

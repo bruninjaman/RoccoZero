@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_troll_warlord)]
     internal class TrollWarlordBase : BaseHero
     {
-        public TrollWarlordBase(IContext9 context)
-            : base(context)
+        public TrollWarlordBase()
         {
         }
     }

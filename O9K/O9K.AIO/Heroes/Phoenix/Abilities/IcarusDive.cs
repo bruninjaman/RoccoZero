@@ -11,7 +11,7 @@
     using Core.Helpers;
     using Core.Prediction.Data;
 
-    using Ensage;
+    using Divine;
 
     using SharpDX;
 
@@ -107,7 +107,7 @@
             var nova = usableAbilities.Find(x => x.Ability.Id == AbilityId.phoenix_supernova);
             if (nova != null && this.Owner.HasAghanimsScepter)
             {
-                var mouse = Game.MousePosition;
+                var mouse = GameManager.MousePosition;
                 var ally = targetManager.AllyHeroes
                     .Where(x => !x.Equals(this.Owner) && x.HealthPercentage < 35 && x.Distance(this.Owner) < this.Ability.CastRange)
                     .OrderBy(x => x.Distance(mouse))

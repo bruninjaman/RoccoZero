@@ -16,7 +16,7 @@
 
     using Disables;
 
-    using Ensage;
+    using Divine;
 
     using SharpDX;
 

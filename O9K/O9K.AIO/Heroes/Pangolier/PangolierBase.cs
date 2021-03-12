@@ -5,13 +5,12 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     [HeroId(HeroId.npc_dota_hero_pangolier)]
     internal class PangolierBase : BaseHero
     {
-        public PangolierBase(IContext9 context)
-            : base(context)
+        public PangolierBase()
         {
         }
     }

@@ -12,7 +12,7 @@
 
     using Dynamic.Units;
 
-    using Ensage;
+    using Divine;
 
     using Modes.Combo;
 
@@ -93,7 +93,7 @@
                     continue;
                 }
 
-                this.issuedActionTimings[controllable.Handle] = Game.RawGameTime;
+                this.issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
                 this.unitIssuedAction.Sleep(controllable.Handle, 0.2f);
                 this.issuedAction.Sleep(0.05f);
                 return;

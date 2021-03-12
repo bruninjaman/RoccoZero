@@ -13,15 +13,13 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using FailSafe;
 
     using Modes.Combo;
     using Modes.MoveCombo;
-
-    using PlaySharp.Toolkit.Helper.Annotations;
 
     using SharpDX;
 
@@ -271,7 +269,7 @@
                 return false;
             }
 
-            var delay = this.Owner.GetTurnTime(target.Position) + (Game.Ping / 2000f);
+            var delay = this.Owner.GetTurnTime(target.Position) + (GameManager.Ping / 2000f);
             if (delay <= 0)
             {
                 return !this.AttackSleeper.IsSleeping;
@@ -373,7 +371,7 @@
 
         public void OnAttackStart()
         {
-            var ping = Game.Ping / 2000f;
+            var ping = GameManager.Ping / 2000f;
             var attackPoint = this.Owner.GetAttackPoint(this.LastTarget);
 
             if (this.Owner.Abilities.Any(x => x.Id == AbilityId.item_echo_sabre && x.CanBeCasted()))
@@ -440,7 +438,7 @@
             }
         }
 
-        protected virtual bool Attack(Unit9 target, [CanBeNull] ComboModeMenu comboMenu)
+        protected virtual bool Attack(Unit9 target, ComboModeMenu comboMenu)
         {
             if (this.Owner.Name == nameof(HeroId.npc_dota_hero_rubick))
             {
@@ -457,7 +455,7 @@
                 return false;
             }
 
-            var ping = (Game.Ping / 2000) + 0.06f;
+            var ping = (GameManager.Ping / 2000) + 0.06f;
             var turnTime = this.Owner.GetTurnTime(target.Position);
             var distance = Math.Max(this.Owner.Distance(target) - this.Owner.GetAttackRange(target), 0) / this.Owner.BaseUnit.MovementSpeed;
             var delay = turnTime + distance + ping;
@@ -476,7 +474,7 @@
 
         protected virtual bool ForceMove(Unit9 target, bool attack)
         {
-            var mousePosition = Game.MousePosition;
+            var mousePosition = GameManager.MousePosition;
             var movePosition = mousePosition;
 
             if (target != null && attack)

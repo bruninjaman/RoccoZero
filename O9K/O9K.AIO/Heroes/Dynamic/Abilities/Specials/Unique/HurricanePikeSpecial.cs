@@ -10,7 +10,7 @@
     using Core.Entities.Units;
     using Core.Logger;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.item_hurricane_pike)]
     internal class HurricanePikeSpecial : OldSpecialAbility, IDisposable
@@ -24,8 +24,8 @@
 
         public void Dispose()
         {
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            Unit.OnModifierRemoved -= this.OnModifierRemoved;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
         }
 
         public override bool ShouldCast(Unit9 target)
@@ -50,7 +50,7 @@
                 return false;
             }
 
-            Unit.OnModifierAdded += this.OnModifierAdded;
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
 
             this.OrbwalkSleeper.Sleep(this.Ability.Owner.Handle, this.Ability.GetCastDelay(target));
             this.AbilitySleeper.Sleep(this.Ability.Handle, this.Ability.GetHitTime(target) + 0.5f);
@@ -58,41 +58,56 @@
             return true;
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
-            try
+            var modifier = e.Modifier;
+            if (modifier.Name != "modifier_item_hurricane_pike_range")
             {
-                if (sender.Handle != this.Ability.Owner.Handle || args.Modifier.Name != "modifier_item_hurricane_pike_range")
-                {
-                    return;
-                }
+                return;
+            }
 
-                foreach (var orb in this.Ability.Owner.Abilities.OfType<OrbAbility>())
+            UpdateManager.BeginInvoke(() =>
+            {
+                try
                 {
-                    if (orb.Enabled || !orb.CanBeCasted())
+                    if (modifier.Owner.Handle != this.Ability.Owner.Handle)
                     {
-                        continue;
+                        return;
                     }
 
-                    this.enabledOrbs.Add(orb.Id);
-                    orb.Enabled = true;
-                }
+                    foreach (var orb in this.Ability.Owner.Abilities.OfType<OrbAbility>())
+                    {
+                        if (orb.Enabled || !orb.CanBeCasted())
+                        {
+                            continue;
+                        }
 
-                Unit.OnModifierRemoved += this.OnModifierRemoved;
-                Unit.OnModifierAdded -= this.OnModifierAdded;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-                Unit.OnModifierAdded -= this.OnModifierAdded;
-            }
+                        this.enabledOrbs.Add(orb.Id);
+                        orb.Enabled = true;
+                    }
+
+                    ModifierManager.ModifierRemoved += this.OnModifierRemoved;
+                    ModifierManager.ModifierAdded -= this.OnModifierAdded;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                    ModifierManager.ModifierAdded -= this.OnModifierAdded;
+                }
+            });
         }
 
-        private void OnModifierRemoved(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierRemoved(ModifierRemovedEventArgs e)
         {
+            var modifier = e.Modifier;
+            if (modifier.Name != "modifier_item_hurricane_pike_range")
+            {
+                return;
+            }
+
             try
             {
-                if (sender.Handle != this.Ability.Owner.Handle || args.Modifier.Name != "modifier_item_hurricane_pike_range")
+                if (modifier.Owner.Handle != this.Ability.Owner.Handle)
                 {
                     return;
                 }
@@ -102,12 +117,12 @@
                     orb.Enabled = false;
                 }
 
-                Unit.OnModifierRemoved -= this.OnModifierRemoved;
+                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Unit.OnModifierRemoved -= this.OnModifierRemoved;
-                Logger.Error(e);
+                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
+                Logger.Error(ex);
             }
         }
     }

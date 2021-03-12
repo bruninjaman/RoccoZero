@@ -17,7 +17,7 @@
     using Core.Helpers;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using Modes.Combo;
 
@@ -183,7 +183,7 @@
 
             if (rush?.Enabled == false && rush.CanBeCasted())
             {
-                var mousePosition = Game.MousePosition;
+                var mousePosition = GameManager.MousePosition;
                 var range = rush.Range;
                 var target = EntityManager9.Units
                     .Where(

@@ -7,7 +7,7 @@
     using Core.Entities.Metadata;
     using Core.Managers.Context;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -16,8 +16,7 @@
     {
         private readonly HealAllyMode healAllyMode;
 
-        public OracleBase(IContext9 context)
-            : base(context)
+        public OracleBase()
         {
             this.healAllyMode = new HealAllyMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Heal ally"));
         }

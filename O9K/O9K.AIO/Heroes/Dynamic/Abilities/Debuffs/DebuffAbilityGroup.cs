@@ -11,7 +11,7 @@
     using Core.Entities.Abilities.Base.Types;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     internal class DebuffAbilityGroup : OldAbilityGroup<IDebuff, OldDebuffAbility>
     {

@@ -18,7 +18,7 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using Modes;
 
@@ -282,7 +282,7 @@
 
             if (abilityHelper.CanBeCasted(this.blink))
             {
-                var predicted = target.GetPredictedPosition(this.Owner.GetTurnTime(target.Position) + (Game.Ping / 2000f) + 0.2f);
+                var predicted = target.GetPredictedPosition(this.Owner.GetTurnTime(target.Position) + (GameManager.Ping / 2000f) + 0.2f);
                 var position = predicted.Extend2D(ally.Position, -125);
 
                 if (abilityHelper.UseAbility(this.blink, position))
