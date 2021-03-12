@@ -38,7 +38,7 @@
         {
             get
             {
-                return this.BaseAbility.CastRange;
+                return this.BaseAbility.BaseCastRange;
             }
         }
 
