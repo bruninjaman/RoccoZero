@@ -125,7 +125,7 @@
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.blink, 850, 600))
+            if (abilityHelper.UseAbility(this.arcaneBlink, 850, 600))
             {
                 return true;
             }
@@ -140,7 +140,7 @@
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.arcaneBlink, 850, 600))
+            if (abilityHelper.UseAbility(this.blink, 850, 600))
             {
                 return true;
             }
