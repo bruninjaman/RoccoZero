@@ -28,6 +28,12 @@
 
         private BlinkAbility blink;
 
+        private BlinkAbility overwhelmingBlink;
+
+        private BlinkAbility swiftBlink;
+
+        private BlinkAbility arcaneBlink;
+
         private NukeAbility bolt;
 
         private DebuffAbility concussive;
@@ -62,6 +68,9 @@
                 { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.overwhelmingBlink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.swiftBlink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.arcaneBlink = new BlinkAbility(x) },
                 { AbilityId.item_sheepstick, x => this.hex = new HexSkywrath(x) },
                 { AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x) },
                 { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
@@ -117,6 +126,21 @@
             }
 
             if (abilityHelper.UseAbility(this.blink, 850, 600))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.overwhelmingBlink, 850, 600))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.swiftBlink, 850, 600))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.arcaneBlink, 850, 600))
             {
                 return true;
             }

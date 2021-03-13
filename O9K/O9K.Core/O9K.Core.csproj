@@ -222,6 +222,8 @@
     <Compile Include="Entities\Abilities\Items\AegisOfTheImmortal.cs" />
     <Compile Include="Entities\Abilities\Items\AghanimsScepter.cs" />
     <Compile Include="Entities\Abilities\Items\AnimalCourier.cs" />
+    <Compile Include="Entities\Abilities\Items\OverwhelmingBlink.cs" />
+    <Compile Include="Entities\Abilities\Items\SwiftBlink.cs" />
     <Compile Include="Entities\Abilities\Items\AssaultCuirass.cs" />
     <Compile Include="Entities\Abilities\Items\BandOfElvenskin.cs" />
     <Compile Include="Entities\Abilities\Items\BattleFury.cs" />
@@ -229,6 +231,7 @@
     <Compile Include="Entities\Abilities\Items\BladeOfAlacrity.cs" />
     <Compile Include="Entities\Abilities\Items\BladesOfAttack.cs" />
     <Compile Include="Entities\Abilities\Items\BlightStone.cs" />
+    <Compile Include="Entities\Abilities\Items\ArcaneBlink.cs" />
     <Compile Include="Entities\Abilities\Items\BlitzKnuckles.cs" />
     <Compile Include="Entities\Abilities\Items\BootsOfSpeed.cs" />
     <Compile Include="Entities\Abilities\Items\Bottle.cs" />

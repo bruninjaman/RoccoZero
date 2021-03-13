@@ -28,7 +28,10 @@
         {
             AbilityId.item_force_staff,
             AbilityId.item_hurricane_pike,
-            AbilityId.item_blink
+            AbilityId.item_blink,
+            AbilityId.item_overwhelming_blink,
+            AbilityId.item_swift_blink,
+            AbilityId.item_arcane_blink
         };
 
         private readonly HashSet<AbilityId> forceBlinkAbilities = new HashSet<AbilityId>

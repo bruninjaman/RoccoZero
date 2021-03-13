@@ -69,7 +69,12 @@
 
         public override bool ShouldConditionCast(TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
         {
-            var blink = usableAbilities.Find(x => x.Ability.Id == AbilityId.item_blink);
+            var blink = usableAbilities.Find(x =>
+                              x.Ability.Id == AbilityId.item_blink ||
+                              x.Ability.Id == AbilityId.item_overwhelming_blink ||
+                              x.Ability.Id == AbilityId.item_swift_blink ||
+                              x.Ability.Id == AbilityId.item_arcane_blink);
+
             if (blink == null)
             {
                 return this.Owner.Distance(targetManager.Target) < 600;

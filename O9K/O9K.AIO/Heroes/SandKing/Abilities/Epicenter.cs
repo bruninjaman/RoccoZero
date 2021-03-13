@@ -48,7 +48,12 @@
 
         public override bool ShouldConditionCast(TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
         {
-            var blink = usableAbilities.Find(x => x.Ability.Id == AbilityId.item_blink);
+            var blink = usableAbilities.Find(x =>
+                                x.Ability.Id == AbilityId.item_blink ||
+                                x.Ability.Id == AbilityId.item_overwhelming_blink ||
+                                x.Ability.Id == AbilityId.item_swift_blink ||
+                                x.Ability.Id == AbilityId.item_arcane_blink);
+
             var burrow = usableAbilities.Find(x => x.Ability.Id == AbilityId.sandking_burrowstrike);
             var distance = (burrow?.Ability.CastRange ?? 0) + (blink?.Ability.CastRange ?? 0) + this.Ability.Radius;
 

@@ -35,7 +35,13 @@
                 }
             }
 
-            var blink = usableAbilities.Find(x => x.Ability.Id == AbilityId.item_blink || x.Ability.Id == AbilityId.item_force_staff);
+            var blink = usableAbilities.Find(x => 
+                              x.Ability.Id == AbilityId.item_blink ||
+                              x.Ability.Id == AbilityId.item_overwhelming_blink ||
+                              x.Ability.Id == AbilityId.item_swift_blink ||
+                              x.Ability.Id == AbilityId.item_arcane_blink ||
+                              x.Ability.Id == AbilityId.item_force_staff);
+
             if (blink == null || this.Ability.GetDamage(targetManager.Target) > targetManager.Target.Health)
             {
                 return true;
