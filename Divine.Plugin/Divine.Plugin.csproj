@@ -35,35 +35,35 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Output\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\Output\References\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Output\SharpDX.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct2D1, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Output\SharpDX.Direct2D1.dll</HintPath>
+      <HintPath>..\Output\References\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Output\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>..\Output\References\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrap.cs" />
-    <Compile Include="DotaMap\Bootstrap.cs" />
-    <Compile Include="DotaMap\Config.cs" />
-    <Compile Include="DotaMap\ConsoleCommands.cs" />
-    <Compile Include="DotaMap\Weather.cs" />
-    <Compile Include="DotaMap\Zoom.cs" />
+    <Compile Include="Divine.Humanizer\Camera.cs" />
+    <Compile Include="Divine.Humanizer\Helper.cs" />
+    <Compile Include="Divine.Humanizer\HUDInfo.cs" />
+    <Compile Include="Divine.Humanizer\Humanizer.cs" />
+    <Compile Include="Divine.Humanizer\Menu.cs" />
+    <Compile Include="Divine.Humanizer\OldFunctions.cs" />
+    <Compile Include="Divine.Humanizer\Screen.cs" />
+    <Compile Include="MapMeshDrawer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TEST.cs" />
+    <Compile Include="TogetherWeStand.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Divine.Zero\Divine.Zero.csproj">

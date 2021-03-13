@@ -2,145 +2,177 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Ports;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 
+using CustomGame;
+
+using Divine.Extensions;
 using Divine.Menu;
 using Divine.Menu.Items;
-using Divine.SDK.Managers.Update;
+using Divine.SDK.Extensions;
+using Divine.SDK.Managers.Log;
+
+using Newtonsoft.Json.Linq;
 
 using SharpDX;
-using SharpDX.Direct2D1;
-using SharpDX.DirectWrite;
 using SharpDX.Mathematics.Interop;
+
+using Divine.Zero.Sandbox;
+using Divine.Items;
+using Divine.SDK.Orbwalker;
+using Divine.SDK.Helpers;
+using System.Security.Cryptography;
+using Divine.SDK.Prediction;
+using Divine.SDK.Prediction.Collision;
+using Divine.SDK.Localization;
 
 namespace Divine.Plugin
 {
     internal sealed class Bootstrap : Bootstrapper
     {
+        private readonly Sleeper Sleeper = new();
+
         protected override void OnActivate()
         {
-            //new DotaMap.Bootstrap();
+            Console.WriteLine("OnActivate");
+
+            var humanizer = new Humanizer.Humanizer();
+            humanizer.OnActivate();
+
+            //new TogetherWeStand(MenuManager.CreateRootMenu("TogetherWeStand"));
         }
 
         private MenuHoldKey HoldKey;
 
-        protected unsafe override void OnPreActivate()
+        protected override void OnPreActivate()
         {
             Console.WriteLine("======================================================================================");
             Console.WriteLine("Test in Plugin: " + typeof(Bootstrap).FullName);
             Console.WriteLine("======================================================================================");
 
-            GameManager.UnhandledException += Game_UnhandledException;
+            SystemManager.UnhandledException += OnUnhandledException;
 
             //InputManager.WndProc += InputManager_WndProc;
             //InputManager.WndProc += InputManager_WndProcBBB;
 
-            var fff = MenuManager.CreateRootMenu("TEST");
-            var ttt = fff.CreateMenu("TEST2");
-            ttt.CreateText("TEST").SetFontColor(Color.Red);
-            fff.CreateSlider("Slider", 0, 0, 100);
-            fff.SetTooltip("O YEEEEE");
-            HoldKey = fff.CreateHoldKey("HoldKey", Key.D);
-
             //Game.FireEvent += Game_FireEvent;
             //Game.GameStateChanged += Game_GameStateChanged;
-            //RendererManager.D3D11Renderer.Draw += OnD3D11RendererDraw;
-            //RendererManager.GameRenderer.Draw += OnGameRendererDraw;
+            //RendererManager.Draw += OnRendererManagerDraw;
             //Entity.NetworkPropertyChanged += Entity_NetworkPropertyChanged;
             //Entity.AnimationChanged += Entity_AnimationChanged;
             //ParticleManager.ParticleAdded += ParticleManager_ParticleAdded;
             //ParticleManager.ParticleRemoved += ParticleManager_ParticleRemoved;
             //ModifierManager.ModifierAdded += OnModifierManagerModifierAdded;
             //ModifierManager.ModifierRemoved += OnModifierManagerModifierRemoved;
+            //OrderManager.OrderAdding += OrderManager_OrderAdding;
+            //OrderManager.OrderLiveGameAdding += OrderManager_OrderLiveGameAdding;
 
             //EntityManager.EntityAdded += EntityManager_EntityAdded;
 
-            GameManager.Update += OnGameUpdate;
-        }
+            UpdateManager.IngameUpdate += OnGameUpdate;
 
-        private void EntityManager_EntityAdded(EntityAddedEventArgs e)
-        {
-            Console.WriteLine("EntityAdded: " + GameManager.Time);
-        }
-
-        private void OnModifierManagerModifierAdded(ModifierAddedEventArgs e)
-        {
-            var modifier = e.Modifier;
-            Console.WriteLine("ModifierAdded: " + modifier.Name + " | " + modifier.Owner + " | " + modifier.Caster);
-        }
-        private void OnModifierManagerModifierRemoved(ModifierRemovedEventArgs e)
-        {
-            var modifier = e.Modifier;
-            Console.WriteLine("ModifierRemoved: " + modifier.Name + " | " + modifier.Owner + " | " + modifier.Caster);
-        }
-
-        private void ParticleManager_ParticleAdded(ParticleAddedEventArgs e)
-        {
-            var particle = e.Particle;
-            if (!particle.Name.Contains("generic_hit_blood"))
+            var cameraRootMenu = MenuManager.CreateRootMenu("Camera");
+            cameraRootMenu.CreateSlider("Pitch", 60, 0, 359).ValueChanged += async (slider, e) =>
             {
-                //return;
-            }
-        }
+                CameraManager.Pitch = e.NewValue;
 
-        private void ParticleManager_ParticleRemoved(ParticleRemovedEventArgs e)
-        {
-            //Console.WriteLine("ParticleRemoved: " + e.Particle.Position + " | " + e.Particle.Name);
-        }
+                await Task.Delay(50);
+            };
 
-        private void Entity_AnimationChanged(Entity sender, AnimationChangedEventArgs e)
-        {
-            Console.WriteLine(sender + "  " + e.Name);
-        }
-
-        private void Game_GameStateChanged(GameStateChangedEventArgs e)
-        {
-            Console.WriteLine(e.NewGameState + "  " + e.OldGameState);
-        }
-
-        private void Game_FireEvent(FireEventEventArgs e)
-        {
-        }
-
-        private unsafe void Entity_NetworkPropertyChanged(Entity sender, NetworkPropertyChangedEventArgs e)
-        {
-            if (e.PropertyName != "m_iNetTimeOfDay")
+            cameraRootMenu.CreateSlider("Yaw", 90, 0, 359).ValueChanged += async (slider, e) =>
             {
-                return;
-            }
+                CameraManager.Yaw = e.NewValue;
 
-            /*if (e.NewValue.GetEntity() == null)
+                await Task.Delay(50);
+            };
+
+            //RendererManager.Draw += GameManager_GameUpdate;
+        }
+
+        private void GameManager_GameUpdate()
+        {
+            /*var screenPosition = GameManager.MouseScreenPosition;
+            RendererManager.DrawText("A", screenPosition - new Vector2(0, 100), Color.Red, 100);
+            RendererManager.DrawText(
+                "A",
+                new RectangleF(screenPosition.X - (ushort.MaxValue / 2), screenPosition.Y - (ushort.MaxValue / 2), ushort.MaxValue, ushort.MaxValue),
+                Color.Blue,
+                "Tahoma",
+                FontFlags.Center | FontFlags.VerticalCenter,
+                100);*/
+
+            
+            /*RendererManager.DrawTexture("panorama/images/backgrounds/sidelane_jpg.vtex_c", new RectangleF(0, 200, 300, 300), TextureType.Default, true);
+            RendererManager.DrawTexture("panorama/images/backgrounds/sidelane_jpg.vtex_c", new RectangleF(300, 200, 300, 300), TextureType.Round, true);
+            RendererManager.DrawTexture("panorama/images/backgrounds/sidelane_jpg.vtex_c", new RectangleF(600, 200, 300, 300), TextureType.Square, true);
+
+            RendererManager.LoadTexture("A1", "panorama/images/backgrounds/sidelane_jpg.vtex_c", new TextureProperties { IsBlackWhite = true });
+            RendererManager.DrawTexture("A1", new RectangleF(900, 200, 300, 300));
+
+            RendererManager.LoadTexture("A2", "panorama/images/backgrounds/sidelane_jpg.vtex_c", new TextureProperties { Brightness = 100 });
+            RendererManager.DrawTexture("A2", new RectangleF(1200, 200, 300, 300));
+
+            RendererManager.LoadTexture("A3", "panorama/images/backgrounds/sidelane_jpg.vtex_c", new TextureProperties { ColorRatio = new Vector4(5, 5, 5, 5) });
+            RendererManager.DrawTexture("A3", new RectangleF(1500, 200, 300, 300));*/
+        }
+
+        private void Entity_NetworkPropertyChanged(Entity sender, NetworkPropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != "m_NetworkActivity")
             {
                 return;
-            }*/
+            }
 
-            //Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
-
-            //Console.WriteLine(sender + "  " + e.ValueTypeName + "  " + e.PropertyName + "  " + e.NewValue.GetInt32() + "  " + e.OldValue.GetInt32());
+            Console.WriteLine((NetworkActivity)e.NewValue.GetInt32());
         }
 
-        private void Game_UnhandledException(Exception e)
+        private void OnRendererManagerDraw()
         {
-            Console.WriteLine(e);
+            MapMeshDrawer.Draw();
+        }
+
+        private void OrderManager_OrderAdding(OrderAddingEventArgs e)
+        {
+            Console.WriteLine(e.Order.Position);
+            var localHero = EntityManager.LocalHero;
+            //e.Order.Units = EntityManager.GetEntities<Unit>().Where(x => x.Team == localHero.Team);
+            //e.Order.Position = new Vector3();
+        }
+
+        private void OnUnhandledException(Exception e)
+        {
+            LogManager.Error(e);
         }
 
         protected override void OnDeactivate()
         {
+
         }
 
         private Particle Particle;
 
         private float Time;
+
+        public static Vector3 InFront(Unit unit, float distance)
+        {
+            var alpha = unit.RotationRad;
+            var vector2FromPolarAngle = SharpDXExtensions.FromPolarCoordinates(1f, alpha);
+
+            var v = unit.Position + (vector2FromPolarAngle.ToVector3() * distance);
+            return new Vector3(v.X, v.Y, 0);
+        }
 
         private unsafe void OnGameUpdate()
         {
@@ -150,59 +182,45 @@ namespace Divine.Plugin
                 return;
             }
 
-            return;
+            //var ff = LocalizationHelper.LocalizeName(AbilityId.item_arcane_blink);
+
+            //Console.WriteLine(ff); 
+
             /*var particleNmee = "materials/ensage_ui/particles/range_display_mod.vpcf";
             var controlPoints = new[] { new ControlPoint(0, Game.MousePosition), new ControlPoint(1, 255, 255, 5), new ControlPoint(2, 255, 255, 255) };
 
-            ParticleManager.CreateOrUpdateParticle("TEST", particleNmee, localHero, ParticleAttachment.AbsOrigin, controlPoints);*/
+            ParticleManager.CreateOrUpdateParticle("TEST", particleNmee, localHero, ParticleAttachment.AbsOrigin, controlPoints)h;*/
 
-            var sw = Stopwatch.StartNew();
-            for (int i = 0; i < 1; i++)
-            {
-            }
-            sw.Stop();
-            Console.WriteLine("AAAAA: " + sw.Elapsed);
-
-            if (GameManager.RawGameTime - Time > 1f)
+            if (GameManager.RawGameTime - Time > 2f)
             {
                 //Player.Cast(localHero, creeps, Game.MousePosition, Vector3.Zero);
                 Time = GameManager.RawGameTime;
+                /*var hero = EntityManager.GetEntities<Hero>().OrderBy(x => x.Distance2D(localHero)).FirstOrDefault(x => x.IsAlly(localHero) && x != localHero);
+                OrderManager.CreateOrder(OrderType.MovePosition, localHero, 0, 0, hero.Position, false, true, false);*/
 
-                /*foreach (var item in ModifierManager.Modifiers)
+
+                /*var s = localHero.Spellbook.Spell2;
+
+                var sw = Stopwatch.StartNew();
+                for (int i = 0; i < 1; i++)
                 {
-                    Console.WriteLine(item.Owner + " | " + item.Caster + " | " + item.Name);
+                    var ttt = s.CastPoint;
                 }
+                sw.Stop();
+                Console.WriteLine(sw.Elapsed);*/
 
-                Console.WriteLine();*/
-
+                /*foreach (var item in EntityManager.GetEntities<PowerTreads>())
+                {
+                    Console.WriteLine(item.ActiveAttribute);
+                }*/
             }
 
-            /*if (Particle == null)
-            {
-                Particle = ParticleManager.CreateParticle(@"materials\\ensage_ui\\particles\\target.vpcf", ParticleAttachment.AbsOrigin, localHero);
-            }
-
-            var random = new Random();
-
-            Particle.SetControlPoint(0, Game.MousePosition);
-            Particle.SetControlPoint(1, new Vector3(random.Next(100, 500), 255, 5));
-            Particle.SetControlPoint(2, new Vector3(255, 255, 255));*/
-
-            //var fff = ParticleManager.Particles;
-
-            for (var i = 0; i <= 10; i++)
-            {
-                //Console.WriteLine(Particle.GetControlPoint(i));
-            }
-
-            //Console.WriteLine(Particle.HighestControlPoint);
-            //Console.WriteLine(Particle.IsInFogVisible);
 
             /*if (localHero.IsVisibleToEnemies)
             {
                 if (Particle == null)
                 {
-                    Particle = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\range_display_mod.vpcf", ParticleAttachment.AbsOriginFollow, localHero);
+                    Particle = ParticleManager.CreateParticle("particles/items_fx/aura_shivas.vpcf", ParticleAttachment.AbsOriginFollow, localHero);
                 }
             }
             else if (Particle != null)
