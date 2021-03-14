@@ -5,7 +5,7 @@
 
     using Core.Entities.Abilities.Base;
 
-    using Ensage;
+    using Divine;
 
     using Enums;
 
@@ -42,7 +42,7 @@
 
         public static bool CanBePurchased(this AbilityId itemId, Team team)
         {
-            var itemStockInfo = Game.StockInfo.FirstOrDefault(x => x.AbilityId == itemId && x.Team == team);
+            var itemStockInfo = GameManager.ItemStockInfo.FirstOrDefault(x => x.AbilityId == itemId && x.Team == team);
             if (itemStockInfo != null && itemStockInfo.StockCount <= 0)
             {
                 return false;
@@ -55,7 +55,7 @@
         {
             var hero = ability.Owner.BaseUnit;
 
-            for (var i = ItemSlot.InventorySlot_1; i <= ItemSlot.StashSlot_6; i++)
+            for (var i = ItemSlot.MainSlot_1; i <= ItemSlot.StashSlot_6; i++)
             {
                 var inventoryItem = hero.Inventory.GetItem(i);
                 if (inventoryItem?.Handle != ability.Handle)
@@ -82,16 +82,7 @@
                 return price;
             }
 
-            try
-            {
-                price = Game.FindKeyValues(itemId + "/ItemCost", KeyValueSource.Ability).IntValue;
-            }
-            catch (KeyValuesNotFoundException)
-            {
-                price = 0;
-            }
-
-            ItemPrice[itemId] = price;
+            ItemPrice[itemId] = Ability.GetKeyValueById(itemId).GetKeyValue("ItemCost")?.GetInt32() ?? 0;
             return price;
         }
 
@@ -188,41 +179,17 @@
 
         private static bool HasGlobalTag(string name)
         {
-            try
-            {
-                Game.FindKeyValues(name + "/GlobalShop", KeyValueSource.Ability);
-                return true;
-            }
-            catch (KeyValuesNotFoundException)
-            {
-                return false;
-            }
+            return Ability.GetKeyValueByName(name).GetKeyValue("GlobalShop")?.GetBooleon() ?? false;
         }
 
         private static bool HasSecretShopFlag(string name)
         {
-            try
-            {
-                Game.FindKeyValues(name + "/SecretShop", KeyValueSource.Ability);
-                return true;
-            }
-            catch (KeyValuesNotFoundException)
-            {
-                return false;
-            }
+            return Ability.GetKeyValueByName(name).GetKeyValue("SecretShop")?.GetBooleon() ?? false;
         }
 
         private static bool HasSideShopFlag(string name)
         {
-            try
-            {
-                Game.FindKeyValues(name + "/SideShop", KeyValueSource.Ability);
-                return true;
-            }
-            catch (KeyValuesNotFoundException)
-            {
-                return false;
-            }
+            return Ability.GetKeyValueByName(name).GetKeyValue("SideShop")?.GetBooleon() ?? false;
         }
     }
 }

@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -16,16 +15,18 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Localization;
 
     using Metadata;
+
+    using O9K.Core.Managers.Context;
 
     using OrderHelper;
 
     using SharpDX;
 
-    using Attribute = Ensage.Attribute;
+    using Attribute = Divine.Attribute;
 
     internal class PowerTreads : IModule
     {
@@ -75,11 +76,10 @@
 
         private bool switchingThreads;
 
-        [ImportingConstructor]
-        public PowerTreads(IMainMenu mainMenu, IAssemblyEventManager9 eventManager, IOrderSync orderSync)
+        public PowerTreads(IMainMenu mainMenu, IOrderSync orderSync)
         {
-            this.eventManager = eventManager;
             this.orderSync = orderSync;
+            this.eventManager = Context9.AssemblyEventManager;
 
             var menu = mainMenu.AutoActionsMenu.Add(new Menu(LocalizationHelper.LocalizeName(AbilityId.item_power_treads), "PowerTreads"));
 
@@ -118,9 +118,9 @@
             this.eventManager.AutoSoulRingEnabled -= this.OnAutoSoulRingEnabled;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
-            Player.OnExecuteOrder -= this.OnExecutePowerTreadsOrder;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            OrderManager.OrderAdding -= this.OnOrderAdding;
+            OrderManager.OrderAdding -= this.OnPowerTreadsOrderAdding;
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             this.subscribed = false;
         }
 
@@ -136,10 +136,10 @@
             {
                 EntityManager9.AbilityAdded -= this.OnAbilityAdded;
                 EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
-                Player.OnExecuteOrder -= this.OnExecutePowerTreadsOrder;
+                OrderManager.OrderAdding -= this.OnOrderAdding;
+                OrderManager.OrderAdding -= this.OnPowerTreadsOrderAdding;
                 this.eventManager.AutoSoulRingEnabled -= this.OnAutoSoulRingEnabled;
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 this.subscribed = false;
             }
         }
@@ -190,13 +190,13 @@
                     this.powerTreads = (Core.Entities.Abilities.Items.PowerTreads)ability;
                     this.defaultAttribute = this.powerTreads.ActiveAttribute;
 
-                    Player.OnExecuteOrder += this.OnExecutePowerTreadsOrder;
-                    Player.OnExecuteOrder += this.OnExecuteOrder;
-                    UpdateManager.Subscribe(this.OnUpdate, 112);
+                    OrderManager.OrderAdding += this.OnPowerTreadsOrderAdding;
+                    OrderManager.OrderAdding += this.OnOrderAdding;
+                    UpdateManager.CreateIngameUpdate(112, this.OnUpdate);
                     this.eventManager.InvokeForceBlockerResubscribe();
                     this.subscribed = true;
                 }
-                else if (ability.BaseAbility.GetManaCost(1) > 0 && !this.ignoredAbilities.Contains(ability.Id))
+                else if (ability.BaseAbility.AbilityData.GetManaCost(2) > 0 && !this.ignoredAbilities.Contains(ability.Id))
                 {
                     this.intToggler.AddAbility(ability.Id);
                     this.agiToggler.AddAbility(ability.Id, false);
@@ -222,9 +222,9 @@
                     return;
                 }
 
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
-                Player.OnExecuteOrder -= this.OnExecutePowerTreadsOrder;
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                OrderManager.OrderAdding += this.OnOrderAdding;
+                OrderManager.OrderAdding += this.OnPowerTreadsOrderAdding;
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 this.subscribed = false;
             }
             catch (Exception e)
@@ -241,12 +241,12 @@
             }
 
             // change execute order check
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
-            Player.OnExecuteOrder += this.OnExecuteOrder;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
+            OrderManager.OrderAdding += this.OnOrderAdding;
             this.eventManager.InvokeForceBlockerResubscribe();
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
@@ -256,12 +256,18 @@
                     return;
                 }
 
-                if (!args.Process || args.IsQueued || this.recoveryKey)
+                if (!e.Process || this.recoveryKey)
                 {
                     return;
                 }
 
-                var isPlayerInput = args.IsPlayerInput;
+                var order = e.Order;
+                if (order.IsQueued)
+                {
+                    return;
+                }
+
+                var isPlayerInput = !e.IsCustom;
 
                 if (this.orderSync.ForceNextOrderManual)
                 {
@@ -274,155 +280,156 @@
                     return;
                 }
 
-                if (!args.Entities.Contains(this.owner))
+                if (!order.Units.Contains(this.owner))
                 {
                     return;
                 }
 
-                switch (args.OrderId)
+                switch (order.Type)
                 {
-                    case OrderId.Ability:
-                    {
-                        if (args.Ability.Id == AbilityId.item_power_treads)
+                    case OrderType.Cast:
                         {
-                            return;
-                        }
+                            if (order.Ability.Id == AbilityId.item_power_treads)
+                            {
+                                return;
+                            }
 
-                        if (this.switchingThreads)
+                            if (this.switchingThreads)
+                            {
+                                e.Process = false;
+                                return;
+                            }
+
+                            var ability = EntityManager9.GetAbility(order.Ability.Handle);
+                            if (ability == null)
+                            {
+                                return;
+                            }
+
+                            if (this.PowerTreadsSwitched(ability, false, isPlayerInput))
+                            {
+                                e.Process = false;
+                            }
+
+                            break;
+                        }
+                    case OrderType.CastPosition:
                         {
-                            args.Process = false;
-                            return;
-                        }
+                            if (this.switchingThreads)
+                            {
+                                e.Process = false;
+                                return;
+                            }
 
-                        var ability = EntityManager9.GetAbility(args.Ability.Handle);
-                        if (ability == null)
+                            var ability = EntityManager9.GetAbility(order.Ability.Handle);
+                            if (ability == null)
+                            {
+                                return;
+                            }
+
+                            if (this.PowerTreadsSwitched(ability, order.Position, isPlayerInput))
+                            {
+                                e.Process = false;
+                            }
+
+                            break;
+                        }
+                    case OrderType.CastTarget:
                         {
-                            return;
-                        }
+                            if (this.switchingThreads)
+                            {
+                                e.Process = false;
+                                return;
+                            }
 
-                        if (this.PowerTreadsSwitched(ability, false, isPlayerInput))
+                            var ability = EntityManager9.GetAbility(order.Ability.Handle);
+                            if (ability == null)
+                            {
+                                return;
+                            }
+
+                            if (this.PowerTreadsSwitched(ability, (Unit)order.Target, isPlayerInput))
+                            {
+                                e.Process = false;
+                            }
+
+                            break;
+                        }
+                    case OrderType.CastToggle:
                         {
-                            args.Process = false;
-                        }
+                            if (order.Ability.IsToggled)
+                            {
+                                return;
+                            }
 
-                        break;
-                    }
-                    case OrderId.AbilityLocation:
-                    {
-                        if (this.switchingThreads)
+                            if (this.switchingThreads)
+                            {
+                                e.Process = false;
+                                return;
+                            }
+
+                            var ability = EntityManager9.GetAbility(order.Ability.Handle);
+                            if (ability == null)
+                            {
+                                return;
+                            }
+
+                            if (this.PowerTreadsSwitched(ability, true, isPlayerInput))
+                            {
+                                e.Process = false;
+                            }
+
+                            break;
+                        }
+                    case OrderType.CastRune:
                         {
-                            args.Process = false;
-                            return;
-                        }
+                            if (this.switchingThreads)
+                            {
+                                e.Process = false;
+                                return;
+                            }
 
-                        var ability = EntityManager9.GetAbility(args.Ability.Handle);
-                        if (ability == null)
-                        {
-                            return;
-                        }
+                            var ability = EntityManager9.GetAbility(order.Ability.Handle);
+                            if (ability == null)
+                            {
+                                return;
+                            }
 
-                        if (this.PowerTreadsSwitched(ability, args.TargetPosition, isPlayerInput))
-                        {
-                            args.Process = false;
-                        }
+                            if (this.PowerTreadsSwitched(ability, (Rune)order.Target, isPlayerInput))
+                            {
+                                e.Process = false;
+                            }
 
-                        break;
-                    }
-                    case OrderId.AbilityTarget:
-                    {
-                        if (this.switchingThreads)
-                        {
-                            args.Process = false;
-                            return;
+                            break;
                         }
-
-                        var ability = EntityManager9.GetAbility(args.Ability.Handle);
-                        if (ability == null)
-                        {
-                            return;
-                        }
-
-                        if (this.PowerTreadsSwitched(ability, (Unit)args.Target, isPlayerInput))
-                        {
-                            args.Process = false;
-                        }
-
-                        break;
-                    }
-                    case OrderId.ToggleAbility:
-                    {
-                        if (args.Ability.IsToggled)
-                        {
-                            return;
-                        }
-
-                        if (this.switchingThreads)
-                        {
-                            args.Process = false;
-                            return;
-                        }
-
-                        var ability = EntityManager9.GetAbility(args.Ability.Handle);
-                        if (ability == null)
-                        {
-                            return;
-                        }
-
-                        if (this.PowerTreadsSwitched(ability, true, isPlayerInput))
-                        {
-                            args.Process = false;
-                        }
-
-                        break;
-                    }
-                    case OrderId.AbilityTargetRune:
-                    {
-                        if (this.switchingThreads)
-                        {
-                            args.Process = false;
-                            return;
-                        }
-
-                        var ability = EntityManager9.GetAbility(args.Ability.Handle);
-                        if (ability == null)
-                        {
-                            return;
-                        }
-
-                        if (this.PowerTreadsSwitched(ability, (Rune)args.Target, isPlayerInput))
-                        {
-                            args.Process = false;
-                        }
-
-                        break;
-                    }
-                    //case OrderId.AbilityTargetTree:
-                    //{
-                    //    break;
-                    //}
+                        //case OrderId.AbilityTargetTree:
+                        //{
+                        //    break;
+                        //}
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnExecutePowerTreadsOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnPowerTreadsOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!args.Process || !args.IsPlayerInput)
+                if (!e.Process || e.IsCustom)
                 {
                     return;
                 }
 
-                if (args.OrderId != OrderId.Ability || args.Ability.Handle != this.powerTreads.Handle)
+                var order = e.Order;
+                if (order.Type != OrderType.Cast || order.Ability.Handle != this.powerTreads.Handle)
                 {
                     return;
                 }
 
-                if (!args.Entities.Contains(this.owner))
+                if (!order.Units.Contains(this.owner))
                 {
                     return;
                 }
@@ -434,11 +441,11 @@
 
                 this.powerTreads.UseAbility();
                 this.defaultAttribute = this.powerTreads.ActiveAttribute;
-                args.Process = false;
+                e.Process = false;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
@@ -446,7 +453,7 @@
         {
             try
             {
-                if (Game.IsPaused || this.changeBackSleeper || this.switchingThreads || this.recoveryKey)
+                if (GameManager.IsPaused || this.changeBackSleeper || this.switchingThreads || this.recoveryKey)
                 {
                     return;
                 }
@@ -497,7 +504,7 @@
                             {
                                 this.ignoreNextOrder = true;
                                 this.orderSync.IgnoreSoulRingOrder = true;
-                                ability.BaseAbility.UseAbility(target);
+                                ability.BaseAbility.Cast(target);
                                 this.SetSleep(ability, target.Position);
                             }
                         }
@@ -541,7 +548,7 @@
                             {
                                 this.ignoreNextOrder = true;
                                 this.orderSync.IgnoreSoulRingOrder = true;
-                                ability.BaseAbility.UseAbility(position);
+                                ability.BaseAbility.Cast(position);
                                 this.SetSleep(ability, position);
                             }
                         }
@@ -585,7 +592,7 @@
                             {
                                 this.ignoreNextOrder = true;
                                 this.orderSync.IgnoreSoulRingOrder = true;
-                                ability.BaseAbility.UseAbility(target);
+                                ability.BaseAbility.Cast(target);
                                 this.SetSleep(ability, target.Position);
                             }
                         }
@@ -632,11 +639,11 @@
 
                                 if (toggle)
                                 {
-                                    ability.BaseAbility.ToggleAbility();
+                                    ability.BaseAbility.CastToggle();
                                 }
                                 else
                                 {
-                                    ability.BaseAbility.UseAbility();
+                                    ability.BaseAbility.Cast();
                                 }
 
                                 this.SetSleep(ability, Vector3.Zero);

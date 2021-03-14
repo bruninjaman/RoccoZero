@@ -1,25 +1,19 @@
 ﻿namespace O9K.ItemManager.Menu
 {
-    using System.ComponentModel.Composition;
-
-    using Core.Managers.Context;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Localization;
 
     using Metadata;
 
-    [Export(typeof(IMainMenu))]
+    using O9K.Core.Managers.Context;
+
     internal class MainMenu : IMainMenu, IModule
     {
-        private readonly IContext9 context;
-
-        [ImportingConstructor]
-        public MainMenu(IContext9 context)
+        public MainMenu()
         {
-            this.context = context;
             this.RootMenu = new Menu("Item manager", "O9K.ItemManager").SetTexture(nameof(AbilityId.courier_go_to_secretshop));
 
             this.AutoActionsMenu = this.RootMenu.Add(new Menu("Auto actions"));
@@ -69,12 +63,12 @@
 
         public void Activate()
         {
-            this.context.MenuManager.AddRootMenu(this.RootMenu);
+            Context9.MenuManager.AddRootMenu(this.RootMenu);
         }
 
         public void Dispose()
         {
-            this.context.MenuManager.RemoveRootMenu(this.RootMenu);
+            Context9.MenuManager.RemoveRootMenu(this.RootMenu);
         }
     }
 }

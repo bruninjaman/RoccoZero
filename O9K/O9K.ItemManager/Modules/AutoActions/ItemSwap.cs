@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Abilities.Base;
@@ -14,8 +13,8 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Localization;
 
     using Metadata;
 
@@ -65,7 +64,6 @@
 
         private Item swapBackItem;
 
-        [ImportingConstructor]
         public ItemSwap(IMainMenu mainMenu)
         {
             var menu = mainMenu.AutoActionsMenu.Add(new Menu("Item auto swap"));
@@ -107,7 +105,7 @@
             this.philosophersStone.ValueChange -= this.PhilosophersStoneOnValueChange;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             EntityManager9.AbilityRemoved -= this.OnNeutralAbilityRemoved;
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= OnOrderAdding;
             EntityManager9.UnitMonitor.UnitDied -= this.UnitMonitorOnUnitDied;
         }
 
@@ -133,7 +131,7 @@
                 }
 
                 this.moveStoneToStash = false;
-                Player.EntitiesOrder(OrderId.DropItemAtFountain, new[] { this.owner.Hero.BaseHero }, 0, item.Index, Vector3.Zero, false);
+                OrderManager.CreateOrder(OrderType.DropItemAtFountain, new[] { this.owner.Hero.BaseHero }, 0, item.Index, Vector3.Zero, false, false, false);
             }
             catch (Exception e)
             {
@@ -145,12 +143,12 @@
         {
             if (e.NewValue)
             {
-                Player.OnExecuteOrder += this.OnExecuteOrder;
+                OrderManager.OrderAdding += OnOrderAdding;
                 EntityManager9.AbilityRemoved += this.OnNeutralAbilityRemoved;
             }
             else
             {
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
+                OrderManager.OrderAdding -= OnOrderAdding;
                 EntityManager9.AbilityRemoved -= this.OnNeutralAbilityRemoved;
             }
         }
@@ -164,7 +162,7 @@
                     return;
                 }
 
-                UpdateManager.BeginInvoke(this.SwapItem, 545);
+                UpdateManager.BeginInvoke(545, this.SwapItem);
             }
             catch (Exception e)
             {
@@ -172,20 +170,20 @@
             }
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!args.IsPlayerInput || args.OrderId != OrderId.DropItemAtFountain)
+                if (e.IsCustom || e.Order.Type != OrderType.DropItemAtFountain)
                 {
                     return;
                 }
 
-                UpdateManager.BeginInvoke(this.SwapNeutralItem, 589);
+                UpdateManager.BeginInvoke(589, this.SwapNeutralItem);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
@@ -198,7 +196,7 @@
                     return;
                 }
 
-                UpdateManager.BeginInvoke(this.SwapNeutralItem, 511);
+                UpdateManager.BeginInvoke(511, this.SwapNeutralItem);
             }
             catch (Exception e)
             {
@@ -221,14 +219,14 @@
                 {
                     this.swapBackItem = null;
                     this.moveStoneToStash = false;
-                    UpdateManager.Unsubscribe(this.OnUpdateStone);
+                    UpdateManager.DestroyIngameUpdate(this.OnUpdateStone);
                     return;
                 }
 
-                UpdateManager.BeginInvoke(() => this.MoveItemToNeutralStash(stone), 125);
-                UpdateManager.BeginInvoke(this.SwapOldNeutralItem, 355);
+                UpdateManager.BeginInvoke(125, () => this.MoveItemToNeutralStash(stone));
+                UpdateManager.BeginInvoke(355, this.SwapOldNeutralItem);
 
-                UpdateManager.Unsubscribe(this.OnUpdateStone);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdateStone);
             }
             catch (Exception e)
             {
@@ -253,12 +251,12 @@
             try
             {
                 var inventory = this.owner.Hero.BaseHero.Inventory;
-                if (!inventory.FreeInventorySlots.Any())
+                if (!inventory.FreeMainSlots.Any())
                 {
                     return;
                 }
 
-                var backPackItem = inventory.Backpack.Where(x => x.NeutralTierIndex < 0 && !x.IsRecipe)
+                var backPackItem = inventory.BackpackItems.Where(x => x.NeutralTierIndex < 0 && !x.IsRecipe)
                     .OrderByDescending(x => x.Cost)
                     .FirstOrDefault();
 
@@ -267,7 +265,7 @@
                     return;
                 }
 
-                backPackItem.MoveItem(inventory.FreeInventorySlots.First());
+                backPackItem.Move(inventory.FreeMainSlots.First());
             }
             catch (Exception e)
             {
@@ -285,13 +283,13 @@
                     return;
                 }
 
-                var neutralItem = this.owner.Hero.BaseHero.Inventory.Backpack.FirstOrDefault(x => x.NeutralTierIndex >= 0);
+                var neutralItem = this.owner.Hero.BaseHero.Inventory.BackpackItems.FirstOrDefault(x => x.NeutralTierIndex >= 0);
                 if (neutralItem == null)
                 {
                     return;
                 }
 
-                neutralItem.MoveItem(ItemSlot.NeutralItemSlot);
+                neutralItem.Move(ItemSlot.NeutralItemSlot);
             }
             catch (Exception e)
             {
@@ -315,7 +313,7 @@
                     var slotItem = inventory.GetItem(i);
                     if (slotItem?.Handle == this.swapBackItem.Handle)
                     {
-                        Player.MoveItem(this.owner.Hero, this.swapBackItem, ItemSlot.NeutralItemSlot);
+                        Player.Move(this.owner.Hero, this.swapBackItem, ItemSlot.NeutralItemSlot);
                         break;
                     }
                 }
@@ -338,10 +336,10 @@
                 if (neutralItem?.Handle != stone.Handle)
                 {
                     this.swapBackItem = neutralItem;
-                    Player.MoveItem(this.owner.Hero, stone, ItemSlot.NeutralItemSlot);
+                    Player.Move(this.owner.Hero, stone, ItemSlot.NeutralItemSlot);
                 }
 
-                UpdateManager.Subscribe(this.OnUpdateStone, 100);
+                UpdateManager.CreateIngameUpdate(100, this.OnUpdateStone);
             }
             catch (Exception e)
             {
@@ -363,15 +361,9 @@
 
                 this.moveStoneToStash = true;
 
-                Player.EntitiesOrder(
-                    OrderId.TakeItemFromNeutralItemStash,
-                    new[] { this.owner.Hero.BaseHero },
-                    0,
-                    stone.Index,
-                    Vector3.Zero,
-                    false);
+                OrderManager.CreateOrder(OrderType.TakeItemFromNeutralItemStash, new[] { this.owner.Hero.BaseHero }, 0, stone.Index, Vector3.Zero, false, false, false);
 
-                UpdateManager.BeginInvoke(() => this.TakeItemFromBackpack(stone), 500);
+                UpdateManager.BeginInvoke(500, () => this.TakeItemFromBackpack(stone));
             }
             catch (Exception e)
             {
@@ -388,7 +380,7 @@
                     return;
                 }
 
-                var stone = ObjectManager.GetEntities<Item>()
+                var stone = EntityManager.GetEntities<Item>()
                     .FirstOrDefault(x => x.Id == AbilityId.item_philosophers_stone && x.Team == this.owner.Team);
 
                 if (stone == null || !(stone.Owner is Hero stoneOwner))
@@ -403,14 +395,14 @@
                     {
                         if (stoneOwner.Handle == unit.Handle)
                         {
-                            UpdateManager.BeginInvoke(() => this.TakeItemFromBackpack(stone), 500);
+                            UpdateManager.BeginInvoke(500, () => this.TakeItemFromBackpack(stone));
                         }
 
                         return;
                     }
                 }
 
-                UpdateManager.BeginInvoke(() => this.TakeItemFromStash(stone), 500);
+                UpdateManager.BeginInvoke(500, () => this.TakeItemFromStash(stone));
             }
             catch (Exception e)
             {

@@ -4,7 +4,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     internal class SpiritBear : Controllable
     {
@@ -25,7 +25,7 @@
                 case AbilityId.item_gem:
                 case AbilityId.item_rapier:
                 {
-                    return this.Unit.BaseInventory.FreeInventorySlots.Any();
+                    return this.Unit.BaseInventory.FreeMainSlots.Any();
                 }
                 case AbilityId.item_aegis:
                 {
@@ -35,7 +35,7 @@
                 case AbilityId.item_ultimate_scepter_2:
                 case AbilityId.item_cheese:
                 {
-                    return this.Unit.BaseInventory.FreeInventorySlots.Any() || this.Unit.BaseInventory.FreeBackpackSlots.Any();
+                    return this.Unit.BaseInventory.FreeMainSlots.Any() || this.Unit.BaseInventory.FreeBackpackSlots.Any();
                 }
             }
 

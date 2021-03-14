@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -12,24 +11,22 @@
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Metadata;
+
+    using O9K.Core.Managers.Context;
 
     using Utils;
 
     internal class NearDeath : IModule
     {
         private readonly MenuAbilityPriorityChanger abilityToggler;
-
-        private readonly IContext9 context;
 
         private readonly MenuSwitcher enabled;
 
@@ -60,11 +57,9 @@
 
         private Owner owner;
 
-        [ImportingConstructor]
-        public NearDeath(IContext9 context, IMainMenu mainMenu)
+        public NearDeath(IMainMenu mainMenu)
         {
-            this.context = context;
-            this.context.AssemblyEventManager.AssemblyLoaded();
+            Context9.AssemblyEventManager.AssemblyLoaded();
 
             this.saveForBuyback = mainMenu.GoldSpenderMenu.GetOrAdd(new MenuSlider("Save for buyback", 30, 0, 60))
                 .SetTooltip("Save for buyback after x mins");
@@ -116,7 +111,7 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
-            this.context.AssemblyEventManager.EvaderPredictedDeath -= this.OnEvaderPredictedDeath;
+            Context9.AssemblyEventManager.EvaderPredictedDeath -= this.OnEvaderPredictedDeath;
             EntityManager9.UnitMonitor.UnitHealthChange -= this.OnUnitHealthChange;
         }
 
@@ -151,7 +146,7 @@
         {
             try
             {
-                if (Game.IsPaused || this.sleeper.IsSleeping)
+                if (GameManager.IsPaused || this.sleeper.IsSleeping)
                 {
                     return;
                 }
@@ -206,7 +201,7 @@
                             {
                                 foreach (var (unit, id) in itemsToBuy)
                                 {
-                                    Player.BuyItem(unit, id);
+                                    Player.Buy(unit, id);
                                     await Task.Delay(50);
                                 }
                             }
@@ -228,12 +223,12 @@
         {
             if (e.NewValue)
             {
-                this.context.AssemblyEventManager.EvaderPredictedDeath += this.OnEvaderPredictedDeath;
+                Context9.AssemblyEventManager.EvaderPredictedDeath += this.OnEvaderPredictedDeath;
                 EntityManager9.UnitMonitor.UnitHealthChange += this.OnUnitHealthChange;
             }
             else
             {
-                this.context.AssemblyEventManager.EvaderPredictedDeath -= this.OnEvaderPredictedDeath;
+                Context9.AssemblyEventManager.EvaderPredictedDeath -= this.OnEvaderPredictedDeath;
                 EntityManager9.UnitMonitor.UnitHealthChange -= this.OnUnitHealthChange;
             }
         }
@@ -259,7 +254,7 @@
 
         private Unit9 GetUnitToPurchase(AbilityId itemId)
         {
-            if (Game.GameMode == GameMode.Turbo)
+            if (GameManager.GameMode == GameMode.Turbo)
             {
                 return this.owner;
             }
@@ -299,7 +294,7 @@
                 case AbilityId.item_flask:
                 case AbilityId.item_enchanted_mango:
                 {
-                    if (Game.GameTime > 10 * 60)
+                    if (GameManager.GameTime > 10 * 60)
                     {
                         return true;
                     }

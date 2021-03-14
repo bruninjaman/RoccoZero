@@ -11,7 +11,7 @@
     using Core.Logger;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     using Names;
 

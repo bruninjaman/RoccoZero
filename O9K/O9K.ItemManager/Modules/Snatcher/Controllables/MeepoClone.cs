@@ -2,7 +2,7 @@
 {
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     internal class MeepoClone : Controllable
     {

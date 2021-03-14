@@ -5,8 +5,8 @@
 
     using Core.Entities.Heroes;
 
-    using Ensage;
-    using Ensage.Items;
+    using Divine;
+    using Divine.Items;
 
     internal static class HeroUtils
     {
@@ -36,7 +36,7 @@
             var reliable = owner.Player.ReliableGold;
             var unreliable = owner.Player.UnreliableGold;
 
-            if (Game.GameTime / 60f >= saveForBuyback)
+            if (GameManager.GameTime / 60f >= saveForBuyback)
             {
                 var required = GetBuybackCost(owner) + GetGoldLossOnDeath(owner);
 

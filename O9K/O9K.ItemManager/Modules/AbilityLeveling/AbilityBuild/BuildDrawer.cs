@@ -8,11 +8,10 @@
     using Core.Logger;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     using SharpDX;
 
-#pragma warning disable 618
     internal class BuildDrawer : IDisposable
     {
         private readonly MenuSelector<BuildType> abilitiesType;
@@ -28,12 +27,12 @@
             this.abilitiesType = abilitiesType;
             this.talentsType = talentsType;
 
-            Drawing.OnDraw += this.OnDraw;
+            RendererManager.Draw += this.OnDraw;
         }
 
         public void Dispose()
         {
-            Drawing.OnDraw -= this.OnDraw;
+            RendererManager.Draw -= this.OnDraw;
         }
 
         private void DrawAbilities()
@@ -71,11 +70,9 @@
             var uniqueAbilities = build.Values.GroupBy(x => x.Ability).Select(x => x.First()).OrderBy(x => x.Ability.AbilitySlot).ToList();
             var positions = new Dictionary<Ability, float>();
 
-            Drawing.DrawRect(
-                new Vector2(xStart - 2, yStart),
-                new Vector2(((build.Count + 1) * 48 * ratio) + 2, uniqueAbilities.Count * 40 * ratio),
-                new Color(75, 75, 75, 175),
-                false);
+            RendererManager.DrawFilledRectangle(
+                new RectangleF(xStart - 2, yStart, ((build.Count + 1) * 48 * ratio) + 2, uniqueAbilities.Count * 40 * ratio),
+                new Color(75, 75, 75, 175));
 
             for (var i = 0; i < uniqueAbilities.Count; i++)
             {
@@ -84,24 +81,21 @@
                 //    new Vector2(45 * ratio, 40 * ratio),
                 //    uniqueAbilities[i].Texture);
                 positions.Add(uniqueAbilities[i].Ability, yStart + (i * 40 * ratio));
-                Drawing.DrawRect(
-                    new Vector2(xStart - 2, (yStart - 2) + (i * 40 * ratio)),
-                    new Vector2((build.Count + 1) * 48 * ratio, 2),
+                RendererManager.DrawFilledRectangle(
+                    new RectangleF(xStart - 2, (yStart - 2) + (i * 40 * ratio), (build.Count + 1) * 48 * ratio, 2),
                     Color.Silver);
             }
 
-            Drawing.DrawRect(
-                new Vector2(xStart - 2, (yStart - 2) + (uniqueAbilities.Count * 40 * ratio)),
-                new Vector2((build.Count + 1) * 48 * ratio, 2),
-                Color.Silver);
+            RendererManager.DrawFilledRectangle(
+                    new RectangleF(xStart - 2, (yStart - 2) + (uniqueAbilities.Count * 40 * ratio), (build.Count + 1) * 48 * ratio, 2),
+                    Color.Silver);
 
             for (var i = 1u; i <= build.Count; i++)
             {
-                var size = Drawing.MeasureText(i.ToString(), "Arial", new Vector2(35 * ratio), FontFlags.None);
+                var size = RendererManager.MeasureText(i.ToString(), "Arial", 35 * ratio);
 
-                Drawing.DrawRect(
-                    new Vector2((xStart - 2) + (i * 48 * ratio), yStart - 2),
-                    new Vector2(2, uniqueAbilities.Count * 40 * ratio),
+                RendererManager.DrawFilledRectangle(
+                    new RectangleF((xStart - 2) + (i * 48 * ratio), yStart - 2, 2, uniqueAbilities.Count * 40 * ratio),
                     Color.Silver);
 
                 if (!build.TryGetValue(i, out var buildAbility))
@@ -109,23 +103,23 @@
                     continue;
                 }
 
-                Drawing.DrawText(
+                RendererManager.DrawText(
                     i.ToString(),
-                    "Arial",
                     new Vector2(
                         xStart + (45 * ratio) + ((i - 1) * 48 * ratio) + (((48 * ratio) - size.X) / 2),
                         positions[buildAbility.Ability]),
-                    new Vector2(35 * ratio),
                     Color.White,
-                    FontFlags.None);
+                    "Arial",
+                    35 * ratio);
             }
 
-            Drawing.DrawRect(
-                new Vector2((xStart - 2) + ((build.Count + 1) * 48 * ratio), yStart - 2),
-                new Vector2(2, (uniqueAbilities.Count * 40 * ratio) + 2),
-                Color.Silver);
+            RendererManager.DrawFilledRectangle(
+                    new RectangleF((xStart - 2) + ((build.Count + 1) * 48 * ratio), yStart - 2, 2, (uniqueAbilities.Count * 40 * ratio) + 2),
+                    Color.Silver);
 
-            Drawing.DrawRect(new Vector2(xStart - 2, yStart - 2), new Vector2(2, (uniqueAbilities.Count * 40 * ratio) + 2), Color.Silver);
+            RendererManager.DrawFilledRectangle(
+                    new RectangleF(xStart - 2, yStart - 2, 2, (uniqueAbilities.Count * 40 * ratio) + 2),
+                    Color.Silver);
         }
 
         private void DrawTalents()
@@ -144,7 +138,7 @@
                                   ? group.OrderByDescending(x => x.WinRate).First()
                                   : group.OrderByDescending(x => x.PickRate).First();
 
-                var measure = Drawing.MeasureText(ability.DisplayName, "Arial", new Vector2(35 * ratio), FontFlags.None);
+                var measure = RendererManager.MeasureText(ability.DisplayName, "Arial", 35 * ratio);
                 if (measure.X > nameSize.X)
                 {
                     nameSize = measure;
@@ -153,59 +147,53 @@
                 talents.Add(group.Key, ability.DisplayName);
             }
 
-            var levelSize = Drawing.MeasureText(talents.ElementAt(0).Key.ToString(), "Arial", new Vector2(35 * ratio), FontFlags.None);
+            var levelSize = RendererManager.MeasureText(talents.ElementAt(0).Key.ToString(), "Arial", 35 * ratio);
 
-            Drawing.DrawRect(
-                new Vector2(xStart, yStart),
-                new Vector2(nameSize.X + levelSize.X + 24, talents.Count * 40 * ratio),
-                new Color(75, 75, 75, 175),
-                false);
+            RendererManager.DrawFilledRectangle(
+                    new RectangleF(xStart, yStart, nameSize.X + levelSize.X + 24, talents.Count * 40 * ratio),
+                    new Color(75, 75, 75, 175));
 
             for (var i = 0; i < talents.Count; i++)
             {
-                Drawing.DrawText(
+                RendererManager.DrawText(
                     talents.ElementAt(i).Key.ToString(),
-                    "Arial",
                     new Vector2(xStart + 2, yStart + (i * 40 * ratio)),
-                    new Vector2(35 * ratio),
                     Color.White,
-                    FontFlags.None);
-
-                var size = Drawing.MeasureText(talents.ElementAt(i).Key.ToString(), "Arial", new Vector2(35 * ratio), FontFlags.None);
-
-                Drawing.DrawText(
-                    talents.ElementAt(i).Value,
                     "Arial",
-                    new Vector2(xStart + size.X + 10 + 2, yStart + (i * 40 * ratio)),
-                    new Vector2(35 * ratio),
-                    Color.White,
-                    FontFlags.None);
+                    35 * ratio);
 
-                Drawing.DrawRect(
-                    new Vector2(xStart - 2, (yStart - 2) + (i * 40 * ratio)),
-                    new Vector2(nameSize.X + levelSize.X + 24, 2),
+                var size = RendererManager.MeasureText(talents.ElementAt(i).Key.ToString(), "Arial", 35 * ratio);
+
+                RendererManager.DrawText(
+                    talents.ElementAt(i).Value,
+                    new Vector2(xStart + size.X + 10 + 2, yStart + (i * 40 * ratio)),
+                    Color.White,
+                    "Arial",
+                    35 * ratio);
+
+                RendererManager.DrawFilledRectangle(
+                    new RectangleF(xStart - 2, (yStart - 2) + (i * 40 * ratio), nameSize.X + levelSize.X + 24, 2),
                     Color.Silver);
             }
 
-            Drawing.DrawRect(new Vector2(xStart - 2, yStart - 2), new Vector2(2, (talents.Count * 40 * ratio) + 2), Color.Silver);
+            RendererManager.DrawFilledRectangle(
+                    new RectangleF(xStart - 2, yStart - 2, 2, (talents.Count * 40 * ratio) + 2),
+                    Color.Silver);
 
-            Drawing.DrawRect(
-                new Vector2((xStart - 2) + levelSize.X + 8, yStart - 2),
-                new Vector2(2, (talents.Count * 40 * ratio) + 2),
-                Color.Silver);
+            RendererManager.DrawFilledRectangle(
+                    new RectangleF((xStart - 2) + levelSize.X + 8, yStart - 2, 2, (talents.Count * 40 * ratio) + 2),
+                    Color.Silver);
 
-            Drawing.DrawRect(
-                new Vector2((xStart - 2) + nameSize.X + levelSize.X + 24, yStart - 2),
-                new Vector2(2, (talents.Count * 40 * ratio) + 2),
-                Color.Silver);
+            RendererManager.DrawFilledRectangle(
+                    new RectangleF((xStart - 2) + nameSize.X + levelSize.X + 24, yStart - 2, 2, (talents.Count * 40 * ratio) + 2),
+                    Color.Silver);
 
-            Drawing.DrawRect(
-                new Vector2(xStart - 2, (yStart - 2) + (talents.Count * 40 * ratio)),
-                new Vector2(nameSize.X + levelSize.X + 24, 2),
-                Color.Silver);
+            RendererManager.DrawFilledRectangle(
+                    new RectangleF(xStart - 2, (yStart - 2) + (talents.Count * 40 * ratio), nameSize.X + levelSize.X + 24, 2),
+                    Color.Silver);
         }
 
-        private void OnDraw(EventArgs args)
+        private void OnDraw()
         {
             try
             {
@@ -215,7 +203,7 @@
             catch (Exception e)
             {
                 Logger.Error(e);
-                Drawing.OnDraw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
     }

@@ -14,7 +14,7 @@
         //    {
         //        try
         //        {
-        //            var displayName = Game.Localize(name);
+        //            var displayName = GameManager.Localize(name);
         //            Console.WriteLine("{ \"" + name + "\", \"" + displayName + "\" },");
         //        }
         //        catch

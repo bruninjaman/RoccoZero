@@ -1,7 +1,6 @@
 ﻿namespace O9K.ItemManager.Modules.AutoActions
 {
     using System;
-    using System.ComponentModel.Composition;
 
     using Core.Entities.Abilities.Base;
     using Core.Extensions;
@@ -12,9 +11,9 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Extensions;
+    using Divine.SDK.Localization;
 
     using Metadata;
 
@@ -22,7 +21,6 @@
     {
         private readonly MenuSwitcher enabled;
 
-        [ImportingConstructor]
         public BlinkRangeChange(IMainMenu mainMenu)
         {
             var menu = mainMenu.AutoActionsMenu.Add(new Menu(LocalizationHelper.LocalizeName(AbilityId.item_blink), "BlinkDagger"));
@@ -40,24 +38,30 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.OnValueChange;
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!args.IsPlayerInput || !args.Process || args.IsQueued)
+                if (e.IsCustom || !e.Process)
                 {
                     return;
                 }
 
-                if (args.OrderId != OrderId.AbilityLocation || args.Ability.Id != AbilityId.item_blink)
+                var order = e.Order;
+                if (order.IsQueued)
                 {
                     return;
                 }
 
-                var blink = (ActiveAbility)EntityManager9.GetAbility(args.Ability.Handle);
+                if (order.Type != OrderType.CastPosition || order.Ability.Id != AbilityId.item_blink)
+                {
+                    return;
+                }
+
+                var blink = (ActiveAbility)EntityManager9.GetAbility(order.Ability.Handle);
                 var hero = blink.Owner;
 
                 if (hero.IsChanneling)
@@ -66,7 +70,7 @@
                 }
 
                 var blinkRange = blink.Range;
-                var blinkPosition = args.TargetPosition;
+                var blinkPosition = order.Position;
                 var heroPosition = hero.Position;
                 if (heroPosition.Distance2D(blinkPosition) < blinkRange)
                 {
@@ -80,11 +84,11 @@
                 }
 
                 blink.UseAbility(newBlinkPosition);
-                args.Process = false;
+                e.Process = false;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
@@ -92,11 +96,11 @@
         {
             if (e.NewValue)
             {
-                Player.OnExecuteOrder += this.OnExecuteOrder;
+                OrderManager.OrderAdding += this.OnOrderAdding;
             }
             else
             {
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
+                OrderManager.OrderAdding -= this.OnOrderAdding;
             }
         }
     }

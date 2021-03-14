@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Windows.Input;
 
@@ -13,21 +12,18 @@
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Metadata;
 
     using SharpDX;
 
-    using Color = System.Drawing.Color;
+    using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 
     internal class Snatcher : IModule
     {
@@ -36,8 +32,6 @@
         private readonly MenuAbilityToggler aegisDummyToggler;
 
         private readonly MenuHoldKey aegisKey;
-
-        private readonly IContext9 context;
 
         private readonly List<ControllableAbility> controllableAbilities = new List<ControllableAbility>();
 
@@ -64,7 +58,7 @@
 
         private readonly Dictionary<string, AbilityId> menuItems = new Dictionary<string, AbilityId>
         {
-            { "rune_doubledamage", AbilityId.ability_base },
+            { "rune_doubledamage", AbilityId.dota_base_ability },
             { "item_aegis", AbilityId.item_aegis },
             { "item_rapier", AbilityId.item_rapier },
             { "item_cheese", AbilityId.item_cheese },
@@ -84,11 +78,8 @@
 
         private readonly MenuAbilityToggler toggleToggler;
 
-        [ImportingConstructor]
-        public Snatcher(IContext9 context, IMainMenu mainMenu)
+        public Snatcher(IMainMenu mainMenu)
         {
-            this.context = context;
-
             this.enabled = mainMenu.SnatcherMenu.Add(new MenuSwitcher("Enabled"));
             this.enabled.AddTranslation(Lang.Ru, "Включено");
             this.enabled.AddTranslation(Lang.Cn, "启用");
@@ -165,30 +156,30 @@
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             this.statusEnabled.ValueChange -= this.StatusEnabledOnValueChange;
             this.holdKey.ValueChange -= this.HoldKeyOnValueChange;
-            Game.OnUpdate -= this.HoldOnUpdate;
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            UpdateManager.Update -= this.HoldOnUpdate;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
             this.toggleKey.ValueChange -= this.ToggleKeyOnValueChange;
             this.aegisKey.ValueChange -= this.AegisKeyOnValueChange;
-            Game.OnFireEvent -= this.OnFireEvent;
-            Game.OnUpdate -= this.AegisOnUpdate;
-            this.context.Renderer.Draw -= this.OnDraw;
+            GameManager.FireEvent -= this.OnFireEvent;
+            UpdateManager.Update -= this.AegisOnUpdate;
+            RendererManager.Draw -= this.OnDraw;
         }
 
         private void AegisKeyOnValueChange(object sender, KeyEventArgs e)
         {
             if (e.NewValue)
             {
-                Game.OnFireEvent += this.OnFireEvent;
-                Game.OnUpdate += this.AegisOnUpdate;
+                GameManager.FireEvent += this.OnFireEvent;
+                UpdateManager.Update += this.AegisOnUpdate;
             }
             else
             {
-                Game.OnFireEvent -= this.OnFireEvent;
-                Game.OnUpdate -= this.AegisOnUpdate;
+                GameManager.FireEvent -= this.OnFireEvent;
+                UpdateManager.Update -= this.AegisOnUpdate;
             }
         }
 
-        private void AegisOnUpdate(EventArgs args)
+        private void AegisOnUpdate()
         {
             try
             {
@@ -210,7 +201,7 @@
 
         private void AegisSteal(Unit9 roshan)
         {
-            if (Game.IsPaused)
+            if (GameManager.IsPaused)
             {
                 return;
             }
@@ -227,7 +218,7 @@
                 EntityManager9.UnitRemoved += this.OnUnitRemoved;
                 EntityManager9.AbilityAdded += this.OnAbilityAdded;
                 EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
-                Player.OnExecuteOrder += this.OnExecuteOrder;
+                OrderManager.OrderAdding += this.OnOrderAdding;
                 this.statusEnabled.ValueChange += this.StatusEnabledOnValueChange;
                 this.holdKey.ValueChange += this.HoldKeyOnValueChange;
                 this.toggleKey.ValueChange += this.ToggleKeyOnValueChange;
@@ -239,16 +230,16 @@
                 EntityManager9.UnitRemoved -= this.OnUnitRemoved;
                 EntityManager9.AbilityAdded -= this.OnAbilityAdded;
                 EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
+                OrderManager.OrderAdding -= this.OnOrderAdding;
                 this.statusEnabled.ValueChange -= this.StatusEnabledOnValueChange;
                 this.holdKey.ValueChange -= this.HoldKeyOnValueChange;
-                Game.OnUpdate -= this.HoldOnUpdate;
+                UpdateManager.Update -= this.HoldOnUpdate;
                 this.toggleKey.ValueChange -= this.ToggleKeyOnValueChange;
-                UpdateManager.Unsubscribe(this.ToggleOnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.ToggleOnUpdate);
                 this.aegisKey.ValueChange -= this.AegisKeyOnValueChange;
-                Game.OnFireEvent -= this.OnFireEvent;
-                Game.OnUpdate -= this.AegisOnUpdate;
-                this.context.Renderer.Draw -= this.OnDraw;
+                GameManager.FireEvent -= this.OnFireEvent;
+                UpdateManager.Update -= this.AegisOnUpdate;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
 
@@ -256,15 +247,15 @@
         {
             if (e.NewValue)
             {
-                Game.OnUpdate += this.HoldOnUpdate;
+                UpdateManager.Update += this.HoldOnUpdate;
             }
             else
             {
-                Game.OnUpdate -= this.HoldOnUpdate;
+                UpdateManager.Update -= this.HoldOnUpdate;
             }
         }
 
-        private void HoldOnUpdate(EventArgs args)
+        private void HoldOnUpdate()
         {
             try
             {
@@ -295,21 +286,21 @@
         {
             foreach (var ability in this.menuAbilities)
             {
-                this.context.Renderer.TextureManager.LoadAbilityFromDota(ability.Key);
+                RendererManager.LoadTexture(ability.Key);
             }
 
-            this.context.Renderer.TextureManager.LoadFromDota(
+            RendererManager.LoadTexture(
                 "rune_doubledamage",
                 @"panorama\images\spellicons\rune_doubledamage_png.vtex_c");
 
             foreach (var ability in this.menuItems)
             {
-                if (ability.Value == AbilityId.ability_base)
+                if (ability.Value == AbilityId.dota_base_ability)
                 {
                     continue;
                 }
 
-                this.context.Renderer.TextureManager.LoadAbilityFromDota(ability.Value);
+                RendererManager.LoadTexture(ability.Value);
             }
 
             foreach (var ability in this.menuItems)
@@ -379,7 +370,7 @@
             }
         }
 
-        private void OnDraw(IRenderer renderer)
+        private void OnDraw()
         {
             try
             {
@@ -409,7 +400,7 @@
                     return;
                 }
 
-                renderer.DrawText(new Vector2(this.statusX, this.statusY), text, Color.LawnGreen, 20 * Hud.Info.ScreenRatio);
+                RendererManager.DrawText(text, new Vector2(this.statusX, this.statusY), Color.LawnGreen, 20 * Hud.Info.ScreenRatio);
             }
             catch (Exception e)
             {
@@ -417,37 +408,38 @@
             }
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!args.IsPlayerInput || !args.Process)
+                if (e.IsCustom || !e.Process)
                 {
                     return;
                 }
 
-                if (args.OrderId == OrderId.DropItem)
+                var order = e.Order;
+                if (order.Type == OrderType.DropItem)
                 {
-                    this.ignoredItems.Add(args.Ability.Handle);
+                    this.ignoredItems.Add(order.Ability.Handle);
                 }
-                else if (args.OrderId == OrderId.PickItem)
+                else if (order.Type == OrderType.PickUpItem)
                 {
-                    var physicalItem = args.Target as PhysicalItem;
+                    var physicalItem = order.Target as PhysicalItem;
                     if (physicalItem != null)
                     {
                         this.ignoredItems.Remove(physicalItem.Item.Handle);
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnFireEvent(FireEventEventArgs args)
+        private void OnFireEvent(FireEventEventArgs e)
         {
-            if (args.GameEvent.Name != "dota_roshan_kill")
+            if (e.Name != "dota_roshan_kill")
             {
                 return;
             }
@@ -456,9 +448,9 @@
             {
                 this.AegisSteal(null);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
@@ -528,7 +520,7 @@
 
         private void PickOnUpdate(MenuAbilityToggler toggler)
         {
-            if (Game.IsPaused)
+            if (GameManager.IsPaused)
             {
                 return;
             }
@@ -537,7 +529,7 @@
 
             if (toggler.IsEnabled("rune_doubledamage"))
             {
-                var runes = ObjectManager.GetEntitiesFast<Rune>().Where(x => !this.itemSleeper.IsSleeping(x.Handle));
+                var runes = EntityManager.GetEntities<Rune>().Where(x => !this.itemSleeper.IsSleeping(x.Handle));
 
                 foreach (var rune in runes)
                 {
@@ -553,7 +545,7 @@
                 }
             }
 
-            var items = ObjectManager.GetEntitiesFast<PhysicalItem>()
+            var items = EntityManager.GetEntities<PhysicalItem>()
                 .Where(
                     x => !this.ignoredItems.Contains(x.Item.Handle) && !this.itemSleeper.IsSleeping(x.Handle)
                                                                     && this.IsItemEnabled(toggler, x))
@@ -577,11 +569,11 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.OnDraw;
+                RendererManager.Draw += this.OnDraw;
             }
             else
             {
-                this.context.Renderer.Draw -= this.OnDraw;
+                RendererManager.Draw -= this.OnDraw;
             }
         }
 
@@ -589,11 +581,11 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(this.ToggleOnUpdate, 300);
+                UpdateManager.CreateIngameUpdate(300, this.ToggleOnUpdate);
             }
             else
             {
-                UpdateManager.Unsubscribe(this.ToggleOnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.ToggleOnUpdate);
             }
         }
 

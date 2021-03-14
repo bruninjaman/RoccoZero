@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Reflection;
     using System.Windows.Input;
@@ -20,18 +19,16 @@
     using Core.Logger;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
-    using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Metadata;
 
     using Utils;
 
-    using Attribute = Ensage.Attribute;
+    using Attribute = Divine.Attribute;
+    using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 
     internal class RecoveryAbuse : IModule
     {
@@ -41,12 +38,12 @@
 
         private readonly Dictionary<AbilityId, Type> abilityTypes = new Dictionary<AbilityId, Type>();
 
-        private readonly HashSet<OrderId> blockedOrders = new HashSet<OrderId>
+        private readonly HashSet<OrderType> blockedOrders = new HashSet<OrderType>
         {
-            OrderId.MoveLocation,
-            OrderId.MoveTarget,
-            OrderId.AttackLocation,
-            OrderId.AttackTarget,
+            OrderType.MovePosition,
+            OrderType.MoveTarget,
+            OrderType.AttackPosition,
+            OrderType.AttackTarget,
         };
 
         private readonly MenuHoldKey ctrlKey;
@@ -85,19 +82,18 @@
 
         private Owner owner;
 
-        private IUpdateHandler pickUpItemsHandler;
+        private UpdateHandler pickUpItemsHandler;
 
         private Attribute powerTreadsAttribute;
 
         private bool powerTreadsChanged;
 
-        private IUpdateHandler sortItemsHandler;
+        private UpdateHandler sortItemsHandler;
 
         private MenuAbilityPriorityChanger toggler;
 
-        private IUpdateHandler useAbilitiesHandler;
+        private UpdateHandler useAbilitiesHandler;
 
-        [ImportingConstructor]
         public RecoveryAbuse(IMainMenu mainMenu)
         {
             var menu = mainMenu.RecoveryAbuseMenu;
@@ -154,9 +150,9 @@
         {
             this.owner = EntityManager9.Owner;
 
-            this.pickUpItemsHandler = UpdateManager.Subscribe(this.OnUpdatePickUp, 0, false);
-            this.useAbilitiesHandler = UpdateManager.Subscribe(this.OnUpdateUse, 0, false);
-            this.sortItemsHandler = UpdateManager.Subscribe(this.OnUpdateSort, 0, false);
+            this.pickUpItemsHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdatePickUp);
+            this.useAbilitiesHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdateUse);
+            this.sortItemsHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdateSort);
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
             this.key.ValueChange += this.KeyOnValueChange;
@@ -165,12 +161,12 @@
         public void Dispose()
         {
             this.key.ValueChange -= this.KeyOnValueChange;
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-            UpdateManager.Unsubscribe(this.useAbilitiesHandler);
-            UpdateManager.Unsubscribe(this.pickUpItemsHandler);
-            UpdateManager.Unsubscribe(this.sortItemsHandler);
+            UpdateManager.DestroyIngameUpdate(this.useAbilitiesHandler);
+            UpdateManager.DestroyIngameUpdate(this.pickUpItemsHandler);
+            UpdateManager.DestroyIngameUpdate(this.sortItemsHandler);
             this.recoveryAbilities.Clear();
         }
 
@@ -196,7 +192,7 @@
                     continue;
                 }
 
-                Player.MoveItem(this.owner, item, savedSlot);
+                Player.Move(this.owner, item, savedSlot);
                 return true;
             }
 
@@ -239,7 +235,7 @@
                     return false;
                 }
 
-                if (Player.MoveItem(hero, item, slot.Value))
+                if (Player.Move(hero, item, slot.Value))
                 {
                     if (item.NeutralTierIndex >= 0)
                     {
@@ -253,7 +249,7 @@
                 return false;
             }
 
-            if (Player.DropItem(hero, item, RNG.Randomize(hero.Position, 40)))
+            if (Player.Drop(hero, item, RNG.Randomize(hero.Position, 40)))
             {
                 this.ignoredItems.Add(item.Handle);
                 return true;
@@ -330,7 +326,7 @@
             if (e.NewValue)
             {
                 this.heroIsMoving = this.owner.Hero.IsMoving;
-                Player.OnExecuteOrder += this.OnExecuteOrder;
+                OrderManager.OrderAdding += this.OnOrderAdding;
                 this.sortItemsHandler.IsEnabled = false;
                 this.useAbilitiesHandler.IsEnabled = true;
             }
@@ -355,7 +351,7 @@
                 return false;
             }
 
-            if (!Player.MoveItem(this.owner, bottle.Ability, this.bottleSlot))
+            if (!Player.Move(this.owner, bottle.Ability, this.bottleSlot))
             {
                 return true;
             }
@@ -423,7 +419,7 @@
             }
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             //todo delete ?
 
@@ -449,7 +445,7 @@
         {
             try
             {
-                if (Game.IsPaused || this.pickSleeper)
+                if (GameManager.IsPaused || this.pickSleeper)
                 {
                     return;
                 }
@@ -457,7 +453,7 @@
                 var hero = this.owner.Hero;
                 if (!hero.IsAlive)
                 {
-                    Player.OnExecuteOrder -= this.OnExecuteOrder;
+                    OrderManager.OrderAdding -= this.OnOrderAdding;
                     this.pickUpItemsHandler.IsEnabled = false;
                     this.sortItemsHandler.IsEnabled = true;
                     return;
@@ -470,13 +466,13 @@
                 }
 
                 var pickUp = this.droppedItems.Values.Select(x => x.Handle).ToArray();
-                var item = ObjectManager.GetEntitiesFast<PhysicalItem>()
+                var item = EntityManager.GetEntities<PhysicalItem>()
                     .FirstOrDefault(
                         x => !this.ignoredItems.Contains(x.Handle) && pickUp.Contains(x.Item.Handle) && hero.Distance(x.Position) < 400);
 
                 if (item != null)
                 {
-                    if (Player.PickUpItem(hero, item))
+                    if (Player.PickUp(hero, item))
                     {
                         this.ignoredItems.Add(item.Handle);
                         this.pickSleeper.Sleep(RNG.Randomize(this.ShortDelay, 0.05f));
@@ -489,7 +485,7 @@
                         this.sortSleeper.Sleep(0.5f);
                     }
 
-                    Player.OnExecuteOrder -= this.OnExecuteOrder;
+                    OrderManager.OrderAdding -= this.OnOrderAdding;
                     this.sortItemsHandler.IsEnabled = true;
                     this.pickUpItemsHandler.IsEnabled = false;
                 }
@@ -497,7 +493,7 @@
             catch (Exception e)
             {
                 //todo test
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
+                OrderManager.OrderAdding -= this.OnOrderAdding;
 
                 Logger.Error(e);
             }
@@ -507,7 +503,7 @@
         {
             try
             {
-                if (Game.IsPaused || this.sortSleeper)
+                if (GameManager.IsPaused || this.sortSleeper)
                 {
                     return;
                 }
@@ -551,7 +547,7 @@
         {
             try
             {
-                if (Game.IsPaused || this.useSleeper)
+                if (GameManager.IsPaused || this.useSleeper)
                 {
                     return;
                 }
@@ -627,7 +623,7 @@
                 .ToArray();
             var dropped = this.droppedItems.Values.Select(x => x.Handle).ToArray();
 
-            var item = ObjectManager.GetEntitiesFast<PhysicalItem>()
+            var item = EntityManager.GetEntities<PhysicalItem>()
                 .FirstOrDefault(x => usable.Contains(x.Item.Handle) && dropped.Contains(x.Item.Handle) && hero.Distance(x.Position) < 400);
 
             if (item == null)
@@ -635,7 +631,7 @@
                 return false;
             }
 
-            Player.PickUpItem(hero, item);
+            Player.PickUp(hero, item);
             return true;
         }
 
@@ -713,12 +709,12 @@
             }
 
             this.bottleSlot = bottle.Ability.GetItemSlot();
-            if (this.bottleSlot <= ItemSlot.InventorySlot_6)
+            if (this.bottleSlot <= ItemSlot.MainSlot_6)
             {
                 return false;
             }
 
-            if (!Player.MoveItem(this.owner, bottle.Ability, ItemSlot.InventorySlot_1))
+            if (!Player.Move(this.owner, bottle.Ability, ItemSlot.MainSlot_1))
             {
                 return true;
             }

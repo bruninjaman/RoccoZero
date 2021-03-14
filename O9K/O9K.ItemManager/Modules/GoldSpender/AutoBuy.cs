@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -17,8 +16,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Metadata;
 
@@ -52,7 +50,6 @@
 
         private float tomeReuseCooldown;
 
-        [ImportingConstructor]
         public AutoBuy(IMainMenu mainMenu)
         {
             this.saveForBuyback = mainMenu.GoldSpenderMenu.GetOrAdd(new MenuSlider("Save for buyback", 30, 0, 60))
@@ -116,9 +113,9 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
-            Game.OnFireEvent -= this.OnFireEvent;
-            Entity.OnFloatPropertyChange -= this.OnFloatPropertyChange;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            GameManager.FireEvent -= this.OnFireEvent;
+            Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
         }
 
         public ShopFlags GetUnitShopFlags(Unit9 unit)
@@ -140,15 +137,15 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(this.OnUpdate, 1000);
-                Game.OnFireEvent += this.OnFireEvent;
-                Entity.OnFloatPropertyChange += this.OnFloatPropertyChange;
+                UpdateManager.CreateIngameUpdate(1000, this.OnUpdate);
+                GameManager.FireEvent += this.OnFireEvent;
+                Entity.NetworkPropertyChanged += this.OnNetworkPropertyChanged;
             }
             else
             {
-                UpdateManager.Unsubscribe(this.OnUpdate);
-                Game.OnFireEvent -= this.OnFireEvent;
-                Entity.OnFloatPropertyChange -= this.OnFloatPropertyChange;
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
+                GameManager.FireEvent -= this.OnFireEvent;
+                Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
             }
         }
 
@@ -187,7 +184,7 @@
 
         private Unit9 GetUnitToPurchase(AbilityId itemId)
         {
-            if (Game.GameMode == GameMode.Turbo)
+            if (GameManager.GameMode == GameMode.Turbo)
             {
                 return this.owner;
             }
@@ -263,7 +260,7 @@
 
         private void OnFireEvent(FireEventEventArgs args)
         {
-            if (args.GameEvent.Name != "dota_player_shop_changed")
+            if (args.Name != "dota_player_shop_changed")
             {
                 return;
             }
@@ -271,21 +268,29 @@
             this.OnUpdate();
         }
 
-        private void OnFloatPropertyChange(Entity sender, FloatPropertyChangeEventArgs args)
+        private void OnNetworkPropertyChanged(Entity sender, NetworkPropertyChangedEventArgs e)
         {
-            if (this.tomeSleeper.IsSleeping || args.PropertyName != "fStockTime")
+            if (e.PropertyName != "fStockTime")
             {
                 return;
             }
 
-            this.OnUpdate();
+            UpdateManager.BeginInvoke(() =>
+            {
+                if (this.tomeSleeper.IsSleeping)
+                {
+                    return;
+                }
+
+                this.OnUpdate();
+            });
         }
 
         private void OnUpdate()
         {
             try
             {
-                if (Game.IsPaused || this.sleeper.IsSleeping)
+                if (GameManager.IsPaused || this.sleeper.IsSleeping)
                 {
                     return;
                 }
@@ -345,7 +350,7 @@
                             try
                             {
                                 var inventory = hero.BaseInventory;
-                                var maxItems = inventory.FreeBackpackSlots.Count() + inventory.FreeInventorySlots.Count();
+                                var maxItems = inventory.FreeBackpackSlots.Count() + inventory.FreeMainSlots.Count();
                                 var flags = this.GetUnitShopFlags(this.owner);
 
                                 if ((!this.nearShop && flags == ShopFlags.None) || flags == ShopFlags.Base)
@@ -364,7 +369,7 @@
                                         continue;
                                     }
 
-                                    Player.BuyItem(unit, id);
+                                    Player.Buy(unit, id);
                                     await Task.Delay(50);
                                 }
                             }

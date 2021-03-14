@@ -1,7 +1,6 @@
 ﻿namespace O9K.ItemManager.Modules.AbilityLeveling
 {
     using System;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -14,8 +13,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Metadata;
 
@@ -35,7 +33,6 @@
 
         private Owner owner;
 
-        [ImportingConstructor]
         public AbilityLeveling(IMainMenu mainMenu)
         {
             this.enabled = mainMenu.AbilityLevelingMenu.Add(new MenuSwitcher("Enabled", false, true)).SetTooltip("Auto ability leveling");
@@ -97,17 +94,17 @@
             this.abilityBuilder.BuildReady -= this.OnBuildReady;
             this.learnTalents.ValueChange -= this.LearnOnValueChange;
             this.learnAbilities.ValueChange -= this.LearnOnValueChange;
-            Entity.OnInt32PropertyChange -= this.OnInt32PropertyChange;
+            Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
         }
 
         private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
         {
             if (e.NewValue)
             {
-                UpdateManager.BeginInvoke(() => this.abilityBuilder.GetBuild(), 3000);
+                UpdateManager.BeginInvoke(3000, () => this.abilityBuilder.GetBuild());
             }
 
-            Entity.OnInt32PropertyChange -= this.OnInt32PropertyChange;
+            Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
             this.learnTalents.ValueChange -= this.LearnOnValueChange;
             this.learnAbilities.ValueChange -= this.LearnOnValueChange;
         }
@@ -117,7 +114,7 @@
             try
             {
                 var ability = this.abilityBuilder.GetLearnableAbility(points);
-                ability?.UpgradeAbility();
+                ability?.Upgrade();
             }
             catch (Exception e)
             {
@@ -132,27 +129,41 @@
                 return;
             }
 
-            UpdateManager.BeginInvoke(() => this.LearnAbility((int)this.owner.Hero.BaseHero.AbilityPoints), 100);
+            UpdateManager.BeginInvoke(100, () => this.LearnAbility((int)this.owner.Hero.BaseHero.AbilityPoints));
         }
 
         private void OnBuildReady(object sender, EventArgs eventArgs)
         {
             //var drawings = new BuildDrawer(abilityBuilder, this.abilitiesType, this.talentsType);
-            Entity.OnInt32PropertyChange += this.OnInt32PropertyChange;
+            Entity.NetworkPropertyChanged += this.OnNetworkPropertyChanged;
             this.learnTalents.ValueChange += this.LearnOnValueChange;
             this.learnAbilities.ValueChange += this.LearnOnValueChange;
             this.LearnAbility((int)this.owner.Hero.BaseHero.AbilityPoints);
         }
 
-        private async void OnInt32PropertyChange(Entity sender, Int32PropertyChangeEventArgs args)
+        private void OnNetworkPropertyChanged(Entity sender, NetworkPropertyChangedEventArgs e)
         {
-            if (sender.Handle != this.owner.HeroHandle || args.OldValue == args.NewValue || args.PropertyName != "m_iAbilityPoints")
+            if (e.PropertyName != "m_iAbilityPoints")
             {
                 return;
             }
 
-            await Task.Delay(100);
-            this.LearnAbility(args.NewValue);
+            UpdateManager.BeginInvoke(async () =>
+            {
+                if (sender.Handle != this.owner.HeroHandle)
+                {
+                    return;
+                }
+
+                var newValue = e.NewValue.GetInt32();
+                if (newValue == e.OldValue.GetInt32())
+                {
+                    return;
+                }
+
+                await Task.Delay(100);
+                this.LearnAbility(newValue);
+            });
         }
     }
 }

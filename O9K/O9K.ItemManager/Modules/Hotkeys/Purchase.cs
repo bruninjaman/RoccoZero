@@ -2,19 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Core.Entities.Heroes;
     using Core.Logger;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
-    using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Localization;
 
     using Metadata;
+
+    using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 
     internal class Purchase : IModule
     {
@@ -34,7 +34,6 @@
 
         private Owner owner;
 
-        [ImportingConstructor]
         public Purchase(IMainMenu mainMenu)
         {
             var menu = mainMenu.Hotkeys.Add(new Menu("Purchase"));
@@ -82,7 +81,7 @@
                     return;
                 }
 
-                Player.BuyItem(this.owner, itemData.Id);
+                Player.Buy(this.owner, itemData.Id);
             }
             catch (Exception e)
             {

@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Abilities.Base;
@@ -15,9 +14,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Metadata;
 
@@ -27,24 +24,24 @@
 
         private readonly MenuSwitcher attack;
 
-        private readonly HashSet<OrderId> blockedOrders = new HashSet<OrderId>
+        private readonly HashSet<OrderType> blockedOrders = new HashSet<OrderType>
         {
-            OrderId.MoveLocation,
-            OrderId.MoveTarget,
-            OrderId.MoveToDirection,
-            OrderId.AttackLocation,
-            OrderId.AttackTarget,
-            OrderId.Ability,
-            OrderId.AbilityLocation,
-            OrderId.AbilityTarget,
-            OrderId.AbilityTargetRune,
-            OrderId.AbilityTargetTree,
-            OrderId.ToggleAbility,
-            OrderId.Hold,
-            OrderId.Stop,
-            OrderId.Continue,
-            OrderId.ConsumeRune,
-            OrderId.DropItem,
+            OrderType.MovePosition,
+            OrderType.MoveTarget,
+            OrderType.MoveToDirection,
+            OrderType.AttackPosition,
+            OrderType.AttackTarget,
+            OrderType.Cast,
+            OrderType.CastPosition,
+            OrderType.CastTarget,
+            OrderType.CastRune,
+            OrderType.CastTree,
+            OrderType.CastToggle,
+            OrderType.Hold,
+            OrderType.Stop,
+            OrderType.Continue,
+            OrderType.PickUpRune,
+            OrderType.DropItem,
         };
 
         private readonly HashSet<AbilityId> mineAbilities = new HashSet<AbilityId>
@@ -56,11 +53,10 @@
 
         private readonly Sleeper sleeper = new Sleeper();
 
-        private IUpdateHandler handler;
+        private UpdateHandler handler;
 
         private Owner owner;
 
-        [ImportingConstructor]
         public MinesDestroyer(IMainMenu mainMenu)
         {
             var menu = mainMenu.AutoActionsMenu.Add(new Menu("Mines destroyer"));
@@ -76,7 +72,7 @@
         {
             this.owner = EntityManager9.Owner;
 
-            this.handler = UpdateManager.Subscribe(this.OnUpdate, 300, false);
+            this.handler = UpdateManager.CreateIngameUpdate(300, false, this.OnUpdate);
             this.attack.ValueChange += this.AttackOnValueChange;
         }
 
@@ -84,8 +80,8 @@
         {
             this.attack.ValueChange -= this.AttackOnValueChange;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
-            UpdateManager.Unsubscribe(this.handler);
+            OrderManager.OrderAdding -= this.OnOrderAdding;
+            UpdateManager.DestroyIngameUpdate(this.handler);
         }
 
         private void AttackOnValueChange(object sender, SwitcherEventArgs e)
@@ -97,7 +93,7 @@
             else
             {
                 EntityManager9.AbilityAdded -= this.OnAbilityAdded;
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
+                OrderManager.OrderAdding -= this.OnOrderAdding;
                 this.handler.IsEnabled = false;
             }
         }
@@ -116,7 +112,7 @@
                 if (!this.handler.IsEnabled)
                 {
                     this.handler.IsEnabled = true;
-                    Player.OnExecuteOrder += this.OnExecuteOrder;
+                    OrderManager.OrderAdding += this.OnOrderAdding;
                 }
             }
             catch (Exception e)
@@ -125,21 +121,21 @@
             }
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!this.actionBlockSleeper || !this.blockedOrders.Contains(args.OrderId)
-                                             || !args.Entities.Contains(this.owner.Hero.BaseHero))
+                var order = e.Order;
+                if (!this.actionBlockSleeper || !this.blockedOrders.Contains(order.Type) || !order.Units.Contains(this.owner.Hero.BaseHero))
                 {
                     return;
                 }
 
-                args.Process = false;
+                e.Process = false;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
@@ -147,7 +143,7 @@
         {
             try
             {
-                if (Game.IsPaused || this.sleeper)
+                if (GameManager.IsPaused || this.sleeper)
                 {
                     return;
                 }

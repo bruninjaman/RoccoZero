@@ -3,7 +3,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.item_soul_ring)]
     internal class SoulRing : RecoveryAbility

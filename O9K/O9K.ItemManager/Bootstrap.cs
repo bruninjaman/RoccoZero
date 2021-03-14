@@ -2,31 +2,64 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
+    using System.Reflection;
 
     using Core.Logger;
 
-    using Ensage.SDK.Service;
-    using Ensage.SDK.Service.Metadata;
+    using Divine;
 
     using Metadata;
 
-    [ExportPlugin("O9K // Item manager", priority: int.MaxValue)]
-    internal class Bootstrap : Plugin
-    {
-        private readonly IEnumerable<IModule> modules;
+    using O9K.ItemManager.Menu;
+    using O9K.ItemManager.Modules.OrderHelper;
 
-        [ImportingConstructor]
-        public Bootstrap([ImportMany] IEnumerable<IModule> modules)
-        {
-            this.modules = modules;
-        }
+    //[ExportPlugin("O9K // Item manager", priority: int.MaxValue)]
+    internal class Bootstrap : Bootstrapper
+    {
+        private readonly List<IModule> modules = new List<IModule>();
 
         protected override void OnActivate()
         {
             try
             {
+                var mainMenu = new MainMenu();
+                var orderSync = new OrderSync();
+
+                modules.Add(mainMenu);
+
+                var mainModules = new Dictionary<Type, object>
+                {
+                    { typeof(IMainMenu), mainMenu },
+                    { typeof(IOrderSync), orderSync }
+                };
+
+                foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+                {
+                    if (!type.IsClass || !typeof(IModule).IsAssignableFrom(type))
+                    {
+                        continue;
+                    }
+
+                    if (type == typeof(MainMenu))
+                    {
+                        continue;
+                    }
+
+                    var constructor = type.GetConstructors()[0];
+
+                    var parameters = constructor.GetParameters();
+                    var objectParameters = new object[parameters.Length];
+
+                    for (var i = 0; i < parameters.Length; i++)
+                    {
+                        var parameter = parameters[i];
+                        objectParameters[i] = mainModules[parameter.ParameterType];
+                    }
+
+                    modules.Add((IModule)Activator.CreateInstance(type, objectParameters));
+                }
+
                 foreach (var module in this.modules.OrderByDescending(x => x is IMainMenu))
                 {
                     module.Activate();

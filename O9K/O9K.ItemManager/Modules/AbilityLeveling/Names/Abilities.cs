@@ -17,7 +17,7 @@
         //        {
         //            try
         //            {
-        //                var name = Game.FindKeyValues(hero + "/Ability" + i, KeyValueSource.Hero).StringValue;
+        //                var name = GameManager.FindKeyValues(hero + "/Ability" + i, KeyValueSource.Hero).StringValue;
         //                var displayName = LocalizationHelper.Localize(Loc.DOTA_Tooltip_Ability_STRING, name);
         //                if (displayName[0] == '#' || !duplicates.Add(name))
         //                {

@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Abilities.Base;
@@ -14,10 +13,12 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Localization;
 
     using Metadata;
+
+    using O9K.Core.Managers.Context;
 
     using OrderHelper;
 
@@ -56,11 +57,10 @@
 
         private bool subscribed;
 
-        [ImportingConstructor]
-        public SoulRing(IMainMenu mainMenu, IAssemblyEventManager9 eventManager, IOrderSync orderSync)
+        public SoulRing(IMainMenu mainMenu, IOrderSync orderSync)
         {
-            this.eventManager = eventManager;
             this.orderSync = orderSync;
+            this.eventManager = Context9.AssemblyEventManager;
 
             var menu = mainMenu.AutoActionsMenu.Add(new Menu(LocalizationHelper.LocalizeName(AbilityId.item_soul_ring), "SoulRing"));
 
@@ -98,7 +98,7 @@
             this.enabled.ValueChange -= this.EnabledOnValueChange;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= OnOrderAdding;
             this.subscribed = false;
         }
 
@@ -113,7 +113,7 @@
             {
                 EntityManager9.AbilityAdded -= this.OnAbilityAdded;
                 EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
+                OrderManager.OrderAdding -= OnOrderAdding;
                 this.subscribed = false;
             }
         }
@@ -135,12 +135,12 @@
                     }
 
                     this.soulRing = active;
-                    Player.OnExecuteOrder += this.OnExecuteOrder;
+                    OrderManager.OrderAdding += OnOrderAdding;
                     this.eventManager.InvokeForceBlockerResubscribe();
                     this.eventManager.InvokeAutoSoulRingEnabled();
                     this.subscribed = true;
                 }
-                else if (ability.BaseAbility.GetManaCost(1) > 0 && !this.ignoredAbilities.Contains(ability.Id))
+                else if (ability.BaseAbility.AbilityData.GetManaCost(2) > 0 && !this.ignoredAbilities.Contains(ability.Id))
                 {
                     this.toggler.AddAbility(ability.Id);
                 }
@@ -165,7 +165,7 @@
                     return;
                 }
 
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
+                OrderManager.OrderAdding -= OnOrderAdding;
                 this.subscribed = false;
             }
             catch (Exception e)
@@ -174,7 +174,7 @@
             }
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
@@ -190,87 +190,88 @@
                     return;
                 }
 
-                if (!args.Process || args.IsQueued || this.recoveryKey)
+                var order = e.Order;
+                if (!e.Process || order.IsQueued || this.recoveryKey)
                 {
                     return;
                 }
 
-                if (this.manualOnly && !args.IsPlayerInput)
+                if (this.manualOnly && e.IsCustom)
                 {
                     return;
                 }
 
-                if (!args.Entities.Contains(this.owner))
+                if (!order.Units.Contains(this.owner))
                 {
                     return;
                 }
 
-                switch (args.OrderId)
+                switch (order.Type)
                 {
-                    case OrderId.Ability:
-                    {
-                        if (args.Ability.Id == AbilityId.item_soul_ring)
+                    case OrderType.Cast:
                         {
-                            return;
-                        }
+                            if (order.Ability.Id == AbilityId.item_soul_ring)
+                            {
+                                return;
+                            }
 
-                        if (this.SoulRingUsed(args.Ability, false, args.IsPlayerInput))
+                            if (this.SoulRingUsed(order.Ability, false, !e.IsCustom))
+                            {
+                                e.Process = false;
+                            }
+
+                            break;
+                        }
+                    case OrderType.CastPosition:
                         {
-                            args.Process = false;
-                        }
+                            if (this.SoulRingUsed(order.Ability, order.Position, !e.IsCustom))
+                            {
+                                e.Process = false;
+                            }
 
-                        break;
-                    }
-                    case OrderId.AbilityLocation:
-                    {
-                        if (this.SoulRingUsed(args.Ability, args.TargetPosition, args.IsPlayerInput))
+                            break;
+                        }
+                    case OrderType.CastTarget:
                         {
-                            args.Process = false;
-                        }
+                            if (this.SoulRingUsed(order.Ability, (Unit)order.Target, !e.IsCustom))
+                            {
+                                e.Process = false;
+                            }
 
-                        break;
-                    }
-                    case OrderId.AbilityTarget:
-                    {
-                        if (this.SoulRingUsed(args.Ability, (Unit)args.Target, args.IsPlayerInput))
+                            break;
+                        }
+                    case OrderType.CastToggle:
                         {
-                            args.Process = false;
-                        }
+                            if (order.Ability.IsToggled)
+                            {
+                                return;
+                            }
 
-                        break;
-                    }
-                    case OrderId.ToggleAbility:
-                    {
-                        if (args.Ability.IsToggled)
+                            if (this.SoulRingUsed(order.Ability, true, !e.IsCustom))
+                            {
+                                e.Process = false;
+                            }
+
+                            break;
+                        }
+                    case OrderType.CastRune:
                         {
-                            return;
-                        }
+                            if (this.SoulRingUsed(order.Ability, (Rune)order.Target, !e.IsCustom))
+                            {
+                                e.Process = false;
+                            }
 
-                        if (this.SoulRingUsed(args.Ability, true, args.IsPlayerInput))
-                        {
-                            args.Process = false;
+                            break;
                         }
-
-                        break;
-                    }
-                    case OrderId.AbilityTargetRune:
-                    {
-                        if (this.SoulRingUsed(args.Ability, (Rune)args.Target, args.IsPlayerInput))
-                        {
-                            args.Process = false;
-                        }
-
-                        break;
-                    }
-                    //case OrderId.AbilityTargetTree:
-                    //{
-                    //    break;
-                    //}
+                        //case OrderId.AbilityTargetTree:
+                        //{
+                        //    break;
+                        //}
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
@@ -305,14 +306,12 @@
 
             if (isPlayerInput)
             {
-                UpdateManager.BeginInvoke(
-                    () =>
-                        {
-                            this.ignoreNextOrder = true;
-                            this.orderSync.ForceNextOrderManual = true;
-                            ability.UseAbility(position);
-                        },
-                    Delay);
+                UpdateManager.BeginInvoke(Delay, () =>
+                {
+                    this.ignoreNextOrder = true;
+                    this.orderSync.ForceNextOrderManual = true;
+                    ability.Cast(position);
+                });
             }
 
             return true;
@@ -329,14 +328,12 @@
 
             if (isPlayerInput)
             {
-                UpdateManager.BeginInvoke(
-                    () =>
-                        {
-                            this.ignoreNextOrder = true;
-                            this.orderSync.ForceNextOrderManual = true;
-                            ability.UseAbility(target);
-                        },
-                    Delay);
+                UpdateManager.BeginInvoke(Delay, () =>
+                {
+                    this.ignoreNextOrder = true;
+                    this.orderSync.ForceNextOrderManual = true;
+                    ability.Cast(target);
+                });
             }
 
             return true;
@@ -353,14 +350,12 @@
 
             if (isPlayerInput)
             {
-                UpdateManager.BeginInvoke(
-                    () =>
-                        {
-                            this.ignoreNextOrder = true;
-                            this.orderSync.ForceNextOrderManual = true;
-                            ability.UseAbility(rune);
-                        },
-                    Delay);
+                UpdateManager.BeginInvoke(Delay, () =>
+                {
+                    this.ignoreNextOrder = true;
+                    this.orderSync.ForceNextOrderManual = true;
+                    ability.Cast(rune);
+                });
             }
 
             return true;
@@ -377,22 +372,20 @@
 
             if (isPlayerInput)
             {
-                UpdateManager.BeginInvoke(
-                    () =>
-                        {
-                            this.ignoreNextOrder = true;
-                            this.orderSync.ForceNextOrderManual = true;
+                UpdateManager.BeginInvoke(Delay, () =>
+                {
+                    this.ignoreNextOrder = true;
+                    this.orderSync.ForceNextOrderManual = true;
 
-                            if (toggle)
-                            {
-                                ability.ToggleAbility();
-                            }
-                            else
-                            {
-                                ability.UseAbility();
-                            }
-                        },
-                    Delay);
+                    if (toggle)
+                    {
+                        ability.CastToggle();
+                    }
+                    else
+                    {
+                        ability.Cast();
+                    }
+                });
             }
 
             return true;

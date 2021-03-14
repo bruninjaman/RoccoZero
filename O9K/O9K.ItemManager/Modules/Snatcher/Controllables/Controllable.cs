@@ -5,8 +5,7 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Utils;
 
@@ -54,7 +53,7 @@
                 case AbilityId.item_aegis:
                 case AbilityId.item_refresher_shard:
                 {
-                    if (this.Unit.BaseInventory.FreeInventorySlots.Any())
+                    if (this.Unit.BaseInventory.FreeMainSlots.Any())
                     {
                         return true;
                     }
@@ -70,13 +69,13 @@
                         return false;
                     }
 
-                    item.MoveItem(this.Unit.BaseInventory.FreeBackpackSlots.First());
+                    item.Move(this.Unit.BaseInventory.FreeBackpackSlots.First());
                     return true;
                 }
                 case AbilityId.item_cheese:
                 case AbilityId.item_ultimate_scepter_2 when this.Unit.HasAghanimsScepter:
                 {
-                    return this.Unit.BaseInventory.FreeInventorySlots.Any() || this.Unit.BaseInventory.FreeBackpackSlots.Any();
+                    return this.Unit.BaseInventory.FreeMainSlots.Any() || this.Unit.BaseInventory.FreeBackpackSlots.Any();
                 }
                 case AbilityId.item_ultimate_scepter_2:
                 {
@@ -94,11 +93,11 @@
 
         public void Pick(PhysicalItem item)
         {
-            if (this.Unit.BaseUnit.PickUpItem(item))
+            if (this.Unit.BaseUnit.PickUp(item))
             {
                 if (item.Item.NeutralTierIndex >= 0 && !this.Unit.IsInvisible)
                 {
-                    UpdateManager.BeginInvoke(() => this.Unit.BaseUnit.Attack(this.Unit.Position, true), 100);
+                    UpdateManager.BeginInvoke(100, () => this.Unit.BaseUnit.Attack(this.Unit.Position, true));
                 }
 
                 this.Sleeper.Sleep(0.5f);
@@ -107,7 +106,7 @@
 
         public void Pick(Rune rune)
         {
-            if (this.Unit.BaseUnit.PickUpRune(rune))
+            if (this.Unit.BaseUnit.PickUp(rune))
             {
                 this.Sleeper.Sleep(0.5f);
             }

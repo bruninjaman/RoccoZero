@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Heroes;
@@ -14,8 +13,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Metadata;
 
@@ -38,7 +36,6 @@
 
         private Owner owner;
 
-        [ImportingConstructor]
         public AbyssalAbuse(IMainMenu mainMenu)
         {
             this.enabled = mainMenu.AbyssalAbuseMenu.Add(
@@ -58,7 +55,7 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
         }
 
@@ -73,13 +70,13 @@
                     return;
                 }
 
-                var freeSlots = baseHero.Inventory.FreeInventorySlots.Count() + baseHero.Inventory.FreeBackpackSlots.Count();
+                var freeSlots = baseHero.Inventory.FreeMainSlots.Count() + baseHero.Inventory.FreeBackpackSlots.Count();
                 if (freeSlots < this.disassembledAbyssalIds.Count - 1)
                 {
                     return;
                 }
 
-                abyssal.DisassembleItem();
+                abyssal.Disassemble();
             }
             catch (Exception e)
             {
@@ -91,12 +88,12 @@
         {
             if (e.NewValue)
             {
-                UpdateManager.Subscribe(this.OnUpdate, 100);
+                UpdateManager.CreateIngameUpdate(100, this.OnUpdate);
                 EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
             }
             else
             {
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
             }
         }
@@ -123,7 +120,7 @@
                 this.attackSleeper.Sleep(attackCheckDelay);
                 this.sleeper.Sleep(assembleDelay);
 
-                UpdateManager.BeginInvoke(this.Disassemble, (int)(disassembleDelay * 1000));
+                UpdateManager.BeginInvoke((int)(disassembleDelay * 1000), this.Disassemble);
             }
             catch (Exception e)
             {
@@ -147,7 +144,7 @@
                 }
 
                 var baseHero = hero.BaseHero;
-                var items = baseHero.Inventory.Items.Concat(baseHero.Inventory.Backpack).ToList();
+                var items = baseHero.Inventory.Items.Concat(baseHero.Inventory.BackpackItems).ToList();
                 var disassembledAbyssal = items.Where(x => this.disassembledAbyssalIds.Contains(x.Id)).ToList();
                 if (disassembledAbyssal.Count != this.disassembledAbyssalIds.Count)
                 {
@@ -163,7 +160,7 @@
                         continue;
                     }
 
-                    UpdateManager.BeginInvoke(() => disassembled.UnlockCombining(), delay += 75);
+                    UpdateManager.BeginInvoke(delay += 75, () => disassembled.CombineUnlock());
                 }
 
                 this.sleeper.Sleep(0.5f);
