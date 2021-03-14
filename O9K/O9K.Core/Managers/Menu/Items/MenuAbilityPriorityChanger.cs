@@ -138,7 +138,6 @@
             }
             else
             {
-                Console.WriteLine(name);
                 RendererManager.LoadTexture(name, TextureType.Ability);
             }
 
