@@ -11,8 +11,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Settings;
 
@@ -31,7 +30,7 @@
 
         public void Dispose()
         {
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
         }
 
         public override void Enabled(bool enabled)
@@ -40,11 +39,11 @@
 
             if (enabled)
             {
-                UpdateManager.Subscribe(this.OnUpdate, 500);
+                UpdateManager.CreateIngameUpdate(500, this.OnUpdate);
             }
             else
             {
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             }
         }
 

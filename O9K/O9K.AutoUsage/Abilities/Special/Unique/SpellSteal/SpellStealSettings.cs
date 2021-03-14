@@ -8,8 +8,9 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Helpers;
+    using Divine.SDK.Localization;
 
     internal class SpellStealSettings
     {

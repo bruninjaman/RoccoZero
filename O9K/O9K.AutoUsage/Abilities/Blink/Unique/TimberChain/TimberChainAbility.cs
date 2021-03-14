@@ -10,9 +10,10 @@
     using Core.Extensions;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Geometry;
+    using Divine;
+    using Divine.SDK.Extensions;
+
+    using O9K.Core.Geometry;
 
     using Settings;
 

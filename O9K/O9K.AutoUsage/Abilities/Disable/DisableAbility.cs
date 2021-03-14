@@ -9,8 +9,8 @@
     using Core.Extensions;
     using Core.Prediction.Data;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Helpers;
 
     using Settings;
 
@@ -120,7 +120,7 @@
                     if (!enemy.ChannelActivatesOnCast)
                     {
                         var time = this.Ability.GetHitTime(enemy.Position) + (this.settings.Delay / 1000f) + 0.3f;
-                        if (enemy.ChannelEndTime - Game.RawGameTime > time)
+                        if (enemy.ChannelEndTime - GameManager.RawGameTime > time)
                         {
                             return false;
                         }
@@ -229,9 +229,7 @@
 
             if (this.settings.Delay > 0)
             {
-                UpdateManager.BeginInvoke(
-                    () => this.Ability.UseAbility(enemy, enemies, HitChance.Medium, this.settings.EnemiesCount),
-                    this.settings.Delay);
+                UpdateManager.BeginInvoke(this.settings.Delay, () => this.Ability.UseAbility(enemy, enemies, HitChance.Medium, this.settings.EnemiesCount));
             }
             else
             {

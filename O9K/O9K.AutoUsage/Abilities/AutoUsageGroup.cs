@@ -14,9 +14,7 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Settings;
 
@@ -39,7 +37,7 @@
                 }
             }
 
-            this.Handler = UpdateManager.Subscribe(this.OnUpdate, 1000, false);
+            this.Handler = UpdateManager.CreateIngameUpdate(1000, false, this.OnUpdate);
 
             this.sleeper = sleeper;
             this.Settings = settings;
@@ -51,7 +49,7 @@
 
         protected HashSet<TAbility> Abilities { get; } = new HashSet<TAbility>();
 
-        protected IUpdateHandler Handler { get; }
+        protected UpdateHandler Handler { get; }
 
         protected GroupSettings Settings { get; }
 
@@ -87,7 +85,7 @@
                 ability.Dispose();
             }
 
-            UpdateManager.Unsubscribe(this.Handler);
+            UpdateManager.DestroyIngameUpdate(this.Handler);
             this.Settings.GroupEnabled.ValueChange -= this.EnabledOnValueChange;
             this.Settings.UpdateRate.ValueChange -= this.UpdateRateOnValueChange;
             this.Settings.AbilityToggler.ValueChange -= this.AbilityTogglerOnValueChange;
@@ -127,7 +125,7 @@
 
         private void OnUpdate()
         {
-            if (Game.IsPaused)
+            if (GameManager.IsPaused)
             {
                 return;
             }

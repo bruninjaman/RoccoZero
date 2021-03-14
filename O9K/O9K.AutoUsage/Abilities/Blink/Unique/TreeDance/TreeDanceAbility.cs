@@ -8,8 +8,8 @@
     using Core.Entities.Units;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Settings;
 

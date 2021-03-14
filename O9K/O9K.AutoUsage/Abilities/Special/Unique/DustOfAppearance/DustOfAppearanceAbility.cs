@@ -14,8 +14,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Settings;
 
@@ -52,10 +51,9 @@
 
         public void Dispose()
         {
-            Entity.OnParticleEffectAdded -= this.OnParticleEffectAdded;
-            Entity.OnParticleEffectReleased -= this.OnParticleEffectReleased;
+            ParticleManager.ParticleAdded -= this.OnParticleAdded;
             EntityManager9.AbilityMonitor.AbilityCasted -= this.OnAbilityCasted;
-            Unit.OnModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
         }
 
         public override void Enabled(bool enabled)
@@ -64,17 +62,15 @@
 
             if (enabled)
             {
-                Entity.OnParticleEffectAdded += this.OnParticleEffectAdded;
-                Entity.OnParticleEffectReleased += this.OnParticleEffectReleased;
-                Unit.OnModifierAdded += this.OnModifierAdded;
+                ParticleManager.ParticleAdded += this.OnParticleAdded;
+                ModifierManager.ModifierAdded += this.OnModifierAdded;
                 EntityManager9.AbilityMonitor.AbilityCasted += this.OnAbilityCasted;
                 EntityManager9.AbilityMonitor.AbilityCastChange += this.OnAbilityCastChange;
             }
             else
             {
-                Entity.OnParticleEffectAdded -= this.OnParticleEffectAdded;
-                Entity.OnParticleEffectReleased -= this.OnParticleEffectReleased;
-                Unit.OnModifierAdded -= this.OnModifierAdded;
+                ParticleManager.ParticleAdded -= this.OnParticleAdded;
+                ModifierManager.ModifierAdded -= this.OnModifierAdded;
                 EntityManager9.AbilityMonitor.AbilityCasted -= this.OnAbilityCasted;
             }
         }
@@ -238,25 +234,37 @@
             }
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
-            try
+            var modifier = e.Modifier;
+            if (modifier.Name != "modifier_invoker_ghost_walk_enemy")
             {
-                var modifier = args.Modifier;
-                if (!modifier.IsDebuff || sender.Team != this.Owner.Team || modifier.Name != "modifier_invoker_ghost_walk_enemy")
-                {
-                    return;
-                }
+                return;
+            }
 
-                var ghostWalk =
-                    EntityManager9.Abilities.FirstOrDefault(x => x.Id == AbilityId.invoker_ghost_walk && !x.Owner.IsAlly(this.Owner));
-                if (ghostWalk == null)
+            UpdateManager.BeginInvoke(() =>
+            {
+                try
                 {
-                    return;
-                }
+                    if (!modifier.IsDebuff)
+                    {
+                        return;
+                    }
 
-                UpdateManager.BeginInvoke(
-                    async () =>
+                    var sender = modifier.Owner;
+                    if (sender.Team != this.Owner.Team)
+                    {
+                        return;
+                    }
+
+                    var ghostWalk = EntityManager9.Abilities.FirstOrDefault(x => x.Id == AbilityId.invoker_ghost_walk && !x.Owner.IsAlly(this.Owner));
+                    if (ghostWalk == null)
+                    {
+                        return;
+                    }
+
+                    UpdateManager.BeginInvoke(
+                        async () =>
                         {
                             if (!modifier.IsValid)
                             {
@@ -273,37 +281,33 @@
                                 await Task.Delay(300);
                             }
                         });
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            });
         }
 
-        private void OnParticleEffectAdded(Entity sender, ParticleEffectAddedEventArgs args)
+        private void OnParticleAdded(ParticleAddedEventArgs e)
         {
-            try
-            {
-                if (args.Name != "particles/units/heroes/hero_sandking/sandking_sandstorm.vpcf")
-                {
-                    return;
-                }
+            var particle = e.Particle;
 
-                UpdateManager.BeginInvoke(
-                    async () =>
+            switch (particle.Name)
+            {
+                case "particles/units/heroes/hero_sandking/sandking_sandstorm.vpcf":
+                    {
+                        UpdateManager.BeginInvoke(async () =>
                         {
                             try
                             {
-                                var particle = args.ParticleEffect;
-
                                 if (!particle.IsValid)
                                 {
                                     return;
                                 }
 
                                 var position = particle.GetControlPoint(0);
-                                var sandStorm = EntityManager9.Abilities.FirstOrDefault(
-                                    x => x.Id == AbilityId.sandking_sand_storm && x.Owner.Distance(position) < 500);
+                                var sandStorm = EntityManager9.Abilities.FirstOrDefault(x => x.Id == AbilityId.sandking_sand_storm && x.Owner.Distance(position) < 500);
 
                                 if (sandStorm == null || sandStorm.Owner.Team == this.Owner.Team)
                                 {
@@ -320,42 +324,42 @@
                                     await Task.Delay(300);
                                 }
                             }
-                            catch (Exception e)
+                            catch (Exception ex)
                             {
-                                Logger.Error(e);
+                                Logger.Error(ex);
                             }
                         });
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
+                    }
+                    break;
 
-        private void OnParticleEffectReleased(Entity sender, ParticleEffectReleasedEventArgs args)
-        {
-            try
-            {
-                if (args.ParticleEffect.Name != "particles/units/heroes/hero_nyx_assassin/nyx_assassin_vendetta_start.vpcf")
-                {
-                    return;
-                }
+                case "particles/units/heroes/hero_nyx_assassin/nyx_assassin_vendetta_start.vpcf":
+                    {
+                        UpdateManager.BeginInvoke(() =>
+                        {
+                            try
+                            {
+                                if (!particle.IsValid)
+                                {
+                                    return;
+                                }
 
-                var particle = args.ParticleEffect;
-                var position = particle.GetControlPoint(0);
-                var vendetta = EntityManager9.Abilities.FirstOrDefault(
-                    x => x.Id == AbilityId.nyx_assassin_vendetta && x.Owner.Distance(position) < 500);
+                                var position = particle.GetControlPoint(0);
+                                var vendetta = EntityManager9.Abilities.FirstOrDefault(x => x.Id == AbilityId.nyx_assassin_vendetta && x.Owner.Distance(position) < 500);
 
-                if (vendetta == null || vendetta.Owner.Team == this.Owner.Team)
-                {
-                    return;
-                }
+                                if (vendetta == null || vendetta.Owner.Team == this.Owner.Team)
+                                {
+                                    return;
+                                }
 
-                this.ForceUse(vendetta.Owner, position);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
+                                this.ForceUse(vendetta.Owner, position);
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex);
+                            }
+                        });
+                    }
+                    break;
             }
         }
     }

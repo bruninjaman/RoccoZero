@@ -10,15 +10,13 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Settings;
 
     internal class AutocastAbility : UsableAbility, IDisposable
     {
-        private readonly IUpdateHandler autocastHandler;
+        private readonly UpdateHandler autocastHandler;
 
         private readonly GroupSettings groupSettings;
 
@@ -35,7 +33,7 @@
             this.settings = new AutocastSettings(settings.Menu, orbAbility);
             this.groupSettings = settings;
 
-            this.autocastHandler = UpdateManager.Subscribe(this.AutocastOnUpdate, 0, false);
+            this.autocastHandler = UpdateManager.CreateIngameUpdate(0, false, this.AutocastOnUpdate);
             this.groupSettings.GroupEnabled.ValueChange += this.EnabledOnPropertyChanged;
         }
 
@@ -44,8 +42,8 @@
         public void Dispose()
         {
             this.groupSettings.GroupEnabled.ValueChange -= this.EnabledOnPropertyChanged;
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
-            UpdateManager.Unsubscribe(this.autocastHandler);
+            OrderManager.OrderAdding -= this.OnOrderAdding;
+            UpdateManager.DestroyIngameUpdate(this.autocastHandler);
         }
 
         public override void Enabled(bool enabled)
@@ -54,12 +52,12 @@
 
             if (enabled && this.groupSettings.GroupEnabled)
             {
-                Player.OnExecuteOrder += this.OnExecuteOrder;
+                OrderManager.OrderAdding += this.OnOrderAdding;
                 this.subbed = true;
             }
             else
             {
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
+                OrderManager.OrderAdding -= this.OnOrderAdding;
                 this.autocastHandler.IsEnabled = false;
                 this.subbed = false;
             }
@@ -89,39 +87,45 @@
         {
             if (e.NewValue && !this.subbed && this.IsEnabled)
             {
-                Player.OnExecuteOrder += this.OnExecuteOrder;
+                OrderManager.OrderAdding += this.OnOrderAdding;
                 this.subbed = true;
             }
             else
             {
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
+                OrderManager.OrderAdding -= this.OnOrderAdding;
                 this.subbed = false;
             }
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (args.IsQueued || !args.IsPlayerInput || !args.Process)
+                if (!e.Process || e.IsCustom)
                 {
                     return;
                 }
 
-                if (args.OrderId == OrderId.AttackTarget)
+                var order = e.Order;
+                if (order.IsQueued)
+                {
+                    return;
+                }
+
+                if (order.Type == OrderType.AttackTarget)
                 {
                     if (this.OrbAbility.Enabled || !this.OrbAbility.CanBeCasted() || this.Owner.ManaPercentage < this.settings.MpThreshold)
                     {
                         return;
                     }
 
-                    this.target = EntityManager9.GetUnit(args.Target.Handle);
+                    this.target = EntityManager9.GetUnit(order.Target.Handle);
                     if (this.target?.IsHero != true || this.target.IsIllusion || !this.settings.IsHeroEnabled(this.target.Name))
                     {
                         return;
                     }
 
-                    if (args.Entities.All(x => x.Handle != this.OwnerHandle))
+                    if (order.Units.All(x => x.Handle != this.OwnerHandle))
                     {
                         return;
                     }
@@ -131,7 +135,7 @@
                         return;
                     }
 
-                    args.Process = false;
+                    e.Process = false;
                     this.autocastHandler.IsEnabled = true;
                 }
                 else if (this.autocastHandler.IsEnabled)
@@ -139,9 +143,9 @@
                     this.autocastHandler.IsEnabled = false;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
     }

@@ -24,7 +24,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using Settings;
 

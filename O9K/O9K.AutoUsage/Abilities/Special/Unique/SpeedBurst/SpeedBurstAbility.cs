@@ -7,8 +7,8 @@
     using Core.Entities.Metadata;
     using Core.Logger;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Helpers;
 
     [AbilityId(AbilityId.courier_burst)]
     internal class SpeedBurstAbility
@@ -22,29 +22,35 @@
 
         public void Activate()
         {
-            Player.OnExecuteOrder += this.OnExecuteOrder;
+            OrderManager.OrderAdding += this.OnOrderAdding;
         }
 
         public void Deactivate()
         {
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!args.Process || args.OrderId != OrderId.Ability)
+                if (!e.Process)
                 {
                     return;
                 }
 
-                if (!this.ids.Contains(args.Ability.Id))
+                var order = e.Order;
+                if (order.Type != OrderType.Cast)
                 {
                     return;
                 }
 
-                if (!(args.Entities.FirstOrDefault() is Courier courier))
+                if (!this.ids.Contains(order.Ability.Id))
+                {
+                    return;
+                }
+
+                if (!(order.Units.FirstOrDefault() is Courier courier))
                 {
                     return;
                 }
@@ -55,11 +61,11 @@
                     return;
                 }
 
-                UpdateManager.BeginInvoke(() => Game.ExecuteCommand("dota_courier_burst"), 200);
+                UpdateManager.BeginInvoke(200, () => GameManager.ExecuteCommand("dota_courier_burst"));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
     }

@@ -7,7 +7,7 @@
     using Core.Helpers;
     using Core.Managers.Menu.EventArgs;
 
-    using Ensage;
+    using Divine;
 
     using Settings;
 

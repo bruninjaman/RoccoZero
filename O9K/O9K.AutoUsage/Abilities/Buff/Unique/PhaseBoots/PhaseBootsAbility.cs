@@ -9,7 +9,7 @@
     using Core.Entities.Units;
     using Core.Logger;
 
-    using Ensage;
+    using Divine;
 
     using Settings;
 
@@ -26,7 +26,7 @@
 
         public void Dispose()
         {
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
         }
 
         public override void Enabled(bool enabled)
@@ -35,11 +35,11 @@
 
             if (enabled)
             {
-                Player.OnExecuteOrder += this.OnExecuteOrder;
+                OrderManager.OrderAdding += this.OnOrderAdding;
             }
             else
             {
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
+                OrderManager.OrderAdding -= this.OnOrderAdding;
             }
         }
 
@@ -48,16 +48,22 @@
             return false;
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (args.IsQueued || !args.Process || !this.Ability.CanBeCasted())
+                if (!e.Process)
                 {
                     return;
                 }
 
-                if (args.Entities.All(x => x.Handle != this.OwnerHandle))
+                var order = e.Order;
+                if (order.IsQueued || !this.Ability.CanBeCasted())
+                {
+                    return;
+                }
+
+                if (order.Units.All(x => x.Handle != this.OwnerHandle))
                 {
                     return;
                 }
@@ -67,35 +73,35 @@
                     return;
                 }
 
-                switch (args.OrderId)
+                switch (order.Type)
                 {
-                    case OrderId.AttackLocation:
-                    case OrderId.AttackTarget:
-                    {
-                        var location = args.Target?.Position ?? args.TargetPosition;
-                        if (this.Owner.Distance(location) - this.Owner.GetAttackRange() >= this.settings.Distance)
+                    case OrderType.AttackPosition:
+                    case OrderType.AttackTarget:
                         {
-                            this.Ability.UseAbility();
-                        }
+                            var location = order.Target?.Position ?? order.Position;
+                            if (this.Owner.Distance(location) - this.Owner.GetAttackRange() >= this.settings.Distance)
+                            {
+                                this.Ability.UseAbility();
+                            }
 
-                        break;
-                    }
-                    case OrderId.MoveTarget:
-                    case OrderId.MoveLocation:
-                    {
-                        var location = args.Target?.Position ?? args.TargetPosition;
-                        if (this.Owner.Distance(location) >= this.settings.Distance)
+                            break;
+                        }
+                    case OrderType.MoveTarget:
+                    case OrderType.MovePosition:
                         {
-                            this.Ability.UseAbility();
-                        }
+                            var location = order.Target?.Position ?? order.Position;
+                            if (this.Owner.Distance(location) >= this.settings.Distance)
+                            {
+                                this.Ability.UseAbility();
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
     }

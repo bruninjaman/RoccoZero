@@ -7,7 +7,7 @@
     using Core.Managers.Menu.Items;
     using Core.Prediction.Collision;
 
-    using Ensage;
+    using Divine;
 
     internal class DisableSettings
     {

@@ -9,7 +9,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     internal class GlyphAbility
     {
@@ -21,7 +21,7 @@
         {
             get
             {
-                return this.team == Team.Radiant ? Game.GlyphCooldownRadiant : Game.GlyphCooldownDire;
+                return this.team == Team.Radiant ? GameManager.GlyphCooldownRadiant : GameManager.GlyphCooldownDire;
             }
         }
 

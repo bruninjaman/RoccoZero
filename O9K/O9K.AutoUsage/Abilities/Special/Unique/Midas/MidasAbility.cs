@@ -10,7 +10,7 @@
     using Core.Entities.Units;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using Settings;
 
@@ -54,16 +54,7 @@
         {
             if (!Experience.TryGetValue(creep.Name, out var exp))
             {
-                try
-                {
-                    exp = Game.FindKeyValues(creep.Name + "/BountyXP", KeyValueSource.Unit).IntValue;
-                }
-                catch (KeyValuesNotFoundException)
-                {
-                    exp = 0;
-                }
-
-                Experience[creep.Name] = exp;
+                Experience[creep.Name] = Unit.GetKeyValueByName(creep.Name).GetKeyValue("BountyXP")?.GetInt32() ?? 0;
             }
 
             return exp;

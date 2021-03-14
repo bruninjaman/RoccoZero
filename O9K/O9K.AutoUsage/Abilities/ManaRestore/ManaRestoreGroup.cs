@@ -4,7 +4,7 @@
     using Core.Entities.Abilities.Base.Components.Base;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using Settings;
 

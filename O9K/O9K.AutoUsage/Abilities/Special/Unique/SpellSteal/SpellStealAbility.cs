@@ -12,9 +12,7 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Settings;
 
@@ -33,7 +31,7 @@
             AbilityId.shadow_demon_demonic_purge,
         };
 
-        private readonly IUpdateHandler handler;
+        private readonly UpdateHandler handler;
 
         private readonly HashSet<AbilityId> ignoredAbilities = new HashSet<AbilityId>
         {
@@ -71,14 +69,14 @@
             : base(ability)
         {
             this.settings = new SpellStealSettings(settings.Menu, ability);
-            this.handler = UpdateManager.Subscribe(this.OnUpdate, 500, false);
+            this.handler = UpdateManager.CreateIngameUpdate(500, false, this.OnUpdate);
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             this.useInvisible = settings.UseWhenInvisible;
         }
 
         public void Dispose()
         {
-            UpdateManager.Unsubscribe(this.handler);
+            UpdateManager.DestroyIngameUpdate(this.handler);
             EntityManager9.AbilityMonitor.AbilityCasted -= this.OnAbilityCasted;
             EntityManager9.AbilityMonitor.AbilityCastChange -= this.OnAbilityCastChange;
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
@@ -190,11 +188,11 @@
 
                 if (ability.IsCasting)
                 {
-                    this.abilityCastTimes[ability.Handle] = Game.RawGameTime;
+                    this.abilityCastTimes[ability.Handle] = GameManager.RawGameTime;
                 }
                 else if (this.abilityCastTimes.TryGetValue(ability.Handle, out var castStartTime))
                 {
-                    if (castStartTime + active.CastPoint <= Game.RawGameTime)
+                    if (castStartTime + active.CastPoint <= GameManager.RawGameTime)
                     {
                         this.OnAbilityCasted(ability);
                     }

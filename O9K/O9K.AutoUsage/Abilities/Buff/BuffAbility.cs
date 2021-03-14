@@ -7,7 +7,7 @@
     using Core.Entities.Units;
     using Core.Prediction.Data;
 
-    using Ensage.SDK.Extensions;
+    using Divine.SDK.Extensions;
 
     using Settings;
 

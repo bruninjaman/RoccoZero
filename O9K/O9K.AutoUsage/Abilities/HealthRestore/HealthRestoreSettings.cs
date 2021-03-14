@@ -20,7 +20,7 @@
             this.HpThreshold.AddTranslation(Lang.Cn, "生命值％（目标）");
             this.HpThreshold.AddTooltipTranslation(Lang.Cn, "当目标健康状况较差 % 时，使用能力");
 
-            if (ability.BaseAbility.GetManaCost(0) > 0)
+            if (ability.BaseAbility.ManaCost > 0)
             {
                 this.CriticalHpThreshold = menu.GetOrAdd(new MenuSlider("Critical HP% threshold (target)", 30, 1, 100));
                 this.CriticalHpThreshold.SetTooltip("Use when target hp% is lower, mp% check is ignored");

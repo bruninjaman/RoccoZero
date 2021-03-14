@@ -12,8 +12,8 @@
     using Core.Managers.Entity;
     using Core.Prediction.Data;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Settings;
 

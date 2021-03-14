@@ -10,8 +10,8 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Settings;
 
@@ -31,8 +31,8 @@
 
         public void Dispose()
         {
-            ObjectManager.OnAddEntity -= this.OnAddEntity;
-            ObjectManager.OnRemoveEntity -= this.OnRemoveEntity;
+            EntityManager.EntityAdded -= this.OnEntityAdded;
+            EntityManager.EntityRemoved -= this.OnEntityRemoved;
         }
 
         public override void Enabled(bool enabled)
@@ -41,13 +41,14 @@
 
             if (enabled)
             {
-                ObjectManager.OnAddEntity += this.OnAddEntity;
-                ObjectManager.OnRemoveEntity += this.OnRemoveEntity;
+
+                EntityManager.EntityAdded += this.OnEntityAdded;
+                EntityManager.EntityRemoved += this.OnEntityRemoved;
             }
             else
             {
-                ObjectManager.OnAddEntity -= this.OnAddEntity;
-                ObjectManager.OnRemoveEntity -= this.OnRemoveEntity;
+                EntityManager.EntityAdded -= this.OnEntityAdded;
+                EntityManager.EntityRemoved -= this.OnEntityRemoved;
             }
         }
 
@@ -89,38 +90,56 @@
             return false;
         }
 
-        private void OnAddEntity(EntityEventArgs args)
+        private void OnEntityAdded(EntityAddedEventArgs e)
         {
-            try
+            UpdateManager.BeginInvoke(() =>
             {
-                if (!(args.Entity is Tree tree) || tree.Name != "dota_temp_tree")
+                try
                 {
-                    return;
-                }
+                    var entity = e.Entity;
+                    if (!entity.IsValid)
+                    {
+                        return;
+                    }
 
-                this.trees.Add(tree);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+                    if (!(entity is Tree tree) || tree.Name != "dota_temp_tree")
+                    {
+                        return;
+                    }
+
+                    this.trees.Add(tree);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            });
         }
 
-        private void OnRemoveEntity(EntityEventArgs args)
+        private void OnEntityRemoved(EntityRemovedEventArgs e)
         {
-            try
+            UpdateManager.BeginInvoke(() =>
             {
-                if (!(args.Entity is Tree tree) || tree.Name != "dota_temp_tree")
+                try
                 {
-                    return;
-                }
+                    var entity = e.Entity;
+                    if (!entity.IsValid)
+                    {
+                        return;
+                    }
 
-                this.trees.Remove(tree);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+                    if (!(entity is Tree tree) || tree.Name != "dota_temp_tree")
+                    {
+                        return;
+                    }
+
+                    this.trees.Remove(tree);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            });
         }
     }
 }

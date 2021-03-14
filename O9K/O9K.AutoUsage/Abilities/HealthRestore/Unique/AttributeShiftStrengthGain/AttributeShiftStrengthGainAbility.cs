@@ -10,8 +10,7 @@
     using Core.Helpers;
     using Core.Logger;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Settings;
 
@@ -46,15 +45,15 @@
 
             if (enabled)
             {
-                Player.OnExecuteOrder += this.OnExecuteOrder;
-                Unit.OnModifierAdded += this.OnModifierAdded;
-                UpdateManager.Subscribe(this.OnUpdate, 100);
+                OrderManager.OrderAdding += this.OnOrderAdding;
+                ModifierManager.ModifierAdded += this.OnModifierAdded;
+                UpdateManager.CreateIngameUpdate(100, this.OnUpdate);
             }
             else
             {
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
-                Unit.OnModifierAdded -= this.OnModifierAdded;
-                UpdateManager.Unsubscribe(this.OnUpdate);
+                OrderManager.OrderAdding -= this.OnOrderAdding;
+                ModifierManager.ModifierAdded -= this.OnModifierAdded;
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             }
         }
 
@@ -63,58 +62,71 @@
             return false;
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (args.OrderId != OrderId.ToggleAbility || !args.IsPlayerInput || !args.Process)
+                if (!e.Process || e.IsCustom)
                 {
                     return;
                 }
 
-                if (args.Ability.Id != this.shiftStr.Id && args.Ability.Id != this.shiftAgi.Id)
+                var order = e.Order;
+                if (order.Type != OrderType.CastToggle)
                 {
                     return;
                 }
 
-                if (!args.Ability.IsToggled)
+                if (order.Ability.Id != this.shiftStr.Id && order.Ability.Id != this.shiftAgi.Id)
+                {
+                    return;
+                }
+
+                if (!order.Ability.IsToggled)
                 {
                     this.manualToggle = true;
                     return;
                 }
 
-                var delay = (int)Game.Ping + 100;
-                UpdateManager.BeginInvoke(
-                    () =>
-                        {
-                            this.balanceHealth = this.Owner.Health;
-                            this.manualToggle = false;
-                        },
-                    delay);
+                var delay = (int)GameManager.Ping + 100;
+                UpdateManager.BeginInvoke(delay, () =>
+                {
+                    this.balanceHealth = this.Owner.Health;
+                    this.manualToggle = false;
+                });
 
                 this.sleeper.Sleep(delay / 1000f);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs e)
         {
-            try
+            var modifier = e.Modifier;
+            if (modifier.Name != "modifier_pudge_meat_hook")
             {
-                if (sender.Handle != this.Owner.Handle || args.Modifier.Name != "modifier_pudge_meat_hook")
-                {
-                    return;
-                }
+                return;
+            }
 
-                this.sleeper.Sleep(2f);
-            }
-            catch (Exception e)
+            UpdateManager.BeginInvoke(() =>
             {
-                Logger.Error(e);
-            }
+                try
+                {
+                    if (!modifier.IsValid || modifier.Owner.Handle != this.Owner.Handle)
+                    {
+                        return;
+                    }
+
+                    this.sleeper.Sleep(2f);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            });
         }
 
         private void OnUpdate()

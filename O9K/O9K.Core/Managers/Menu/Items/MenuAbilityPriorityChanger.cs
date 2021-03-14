@@ -138,6 +138,7 @@
             }
             else
             {
+                Console.WriteLine(name);
                 RendererManager.LoadTexture(name, TextureType.Ability);
             }
 
@@ -489,7 +490,7 @@
                     1.5f);
                 RendererManager.DrawTexture(
                     ability.Key,
-                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureAbilitySize, this.MenuStyle.TextureAbilitySize));
+                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureAbilitySize, this.MenuStyle.TextureAbilitySize), TextureType.Ability);
 
                 if (ability.Value)
                 {
