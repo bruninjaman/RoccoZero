@@ -17,7 +17,7 @@
 
     public class MenuAbilityPriorityChanger : MenuItem
     {
-        private readonly Dictionary<string, bool> abilities = new Dictionary<string, bool>();
+        private readonly Dictionary<string, (TextureType, bool)> abilities = new Dictionary<string, (TextureType, bool)>();
 
         private readonly Dictionary<string, int> abilityPriority = new Dictionary<string, int>();
 
@@ -25,7 +25,7 @@
 
         private readonly List<AbilityId> loadTextures = new List<AbilityId>();
 
-        private readonly List<string> loadTextures2 = new List<string>();
+        private readonly List<(string, TextureType)> loadTextures2 = new List<(string, TextureType)>();
 
         private readonly Dictionary<string, bool> savedAbilities = new Dictionary<string, bool>();
 
@@ -80,7 +80,7 @@
             foreach (var ability in abilities)
             {
                 var abilityName = ability.Key.ToString();
-                this.abilities[abilityName] = ability.Value;
+                this.abilities[ability.Key.ToString()] = (TextureType.Ability, ability.Value);
                 this.abilityPriority[abilityName] = this.autoPriority++;
                 this.loadTextures.Add(ability.Key);
             }
@@ -107,7 +107,7 @@
         {
             get
             {
-                return this.abilities.Where(x => x.Value).OrderBy(x => this.abilityPriority[x.Key]).Select(x => x.Key);
+                return this.abilities.Where(x => x.Value.Item2).OrderBy(x => this.abilityPriority[x.Key]).Select(x => x.Key);
             }
         }
 
@@ -132,22 +132,33 @@
                 return;
             }
 
+            var textureType = TextureType.Default;
+
+            if (name.Contains("npc_dota"))
+            {
+                textureType = TextureType.Unit;
+            }
+            else if (Enum.IsDefined(typeof(AbilityId), name))
+            {
+                textureType = TextureType.Ability;
+            }
+
             if (this.Renderer == null)
             {
-                this.loadTextures2.Add(name);
+                this.loadTextures2.Add((name, textureType));
             }
             else
             {
-                RendererManager.LoadTexture(name, TextureType.Ability);
+                RendererManager.LoadTexture(name, textureType);
             }
 
             if (this.savedAbilities.TryGetValue(name, out var savedValue))
             {
-                this.abilities[name] = savedValue;
+                this.abilities[name] = (textureType, savedValue);
             }
             else
             {
-                this.abilities[name] = value ?? this.defaultValue;
+                this.abilities[name] = (textureType, value ?? this.defaultValue);
             }
 
             if (this.savedAbilityPriority.TryGetValue(name, out var savedPriority))
@@ -185,7 +196,7 @@
         public bool IsEnabled(string name)
         {
             this.abilities.TryGetValue(name, out var value);
-            return value;
+            return value.Item2;
         }
 
         public MenuAbilityPriorityChanger SetTooltip(string tooltip)
@@ -219,7 +230,7 @@
         {
             foreach (var ability in this.abilities)
             {
-                this.savedAbilities[ability.Key] = ability.Value;
+                this.savedAbilities[ability.Key] = ability.Value.Item2;
             }
 
             foreach (var ability in this.abilityPriority)
@@ -251,9 +262,9 @@
 
                     this.savedAbilities[key] = value;
 
-                    if (this.abilities.ContainsKey(key))
+                    if (this.abilities.TryGetValue(key, out var v))
                     {
-                        this.abilities[key] = value;
+                        this.abilities[key] = (v.Item1, value);
                     }
                 }
 
@@ -389,8 +400,8 @@
                 if (abilityPosition.Contains(position))
                 {
                     var value = this.abilities[ability.Key];
-                    this.abilities[ability.Key] = !value;
-                    this.ValueChange?.Invoke(this, new AbilityEventArgs(ability.Key, !value, value));
+                    this.abilities[ability.Key] = (value.Item1, !value.Item2);
+                    this.ValueChange?.Invoke(this, new AbilityEventArgs(ability.Key, !value.Item2, value.Item2));
                     this.change?.Invoke(this, EventArgs.Empty);
 
                     return true;
@@ -419,7 +430,7 @@
 
             foreach (var texture in this.loadTextures2)
             {
-                RendererManager.LoadTexture(texture, TextureType.Ability);
+                RendererManager.LoadTexture(texture.Item1, texture.Item2);
             }
         }
 
@@ -445,11 +456,13 @@
                 (this.Position.X + this.Size.X) - this.MenuStyle.TextureAbilitySize - 4,
                 this.Position.Y + ((this.Size.Y - this.MenuStyle.TextureAbilitySize) / 2.2f));
 
-            var priority = this.abilities.Count(x => x.Value);
+            var priority = this.abilities.Count(x => x.Value.Item2);
             var count = 0;
             foreach (var ability in this.abilities.OrderByDescending(x => this.abilityPriority[x.Key]))
             {
                 count++;
+
+                var isEnabled = ability.Value.Item2;
 
                 if (this.drawDrag)
                 {
@@ -470,7 +483,7 @@
 
                     if (ability.Key == this.dragAbility)
                     {
-                        if (ability.Value)
+                        if (isEnabled)
                         {
                             priority--;
                         }
@@ -485,13 +498,14 @@
                         startPosition.Y - 1.5f,
                         this.MenuStyle.TextureAbilitySize + 3,
                         this.MenuStyle.TextureAbilitySize + 3),
-                    ability.Value ? Color.LightGreen : Color.Red,
+                    isEnabled ? Color.LightGreen : Color.Red,
                     1.5f);
                 RendererManager.DrawTexture(
                     ability.Key,
-                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureAbilitySize, this.MenuStyle.TextureAbilitySize), TextureType.Ability);
+                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureAbilitySize, this.MenuStyle.TextureAbilitySize),
+                    ability.Value.Item1);
 
-                if (ability.Value)
+                if (isEnabled)
                 {
                     //priority
                     RendererManager.DrawLine(

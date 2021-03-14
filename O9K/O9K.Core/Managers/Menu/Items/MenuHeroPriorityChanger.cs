@@ -427,7 +427,9 @@
                         this.dragAbilityPosition.X,
                         this.dragAbilityPosition.Y,
                         this.MenuStyle.TextureHeroSize.X,
-                        this.MenuStyle.TextureHeroSize.Y));
+                        this.MenuStyle.TextureHeroSize.Y),
+                    TextureType.Unit);
+
                 this.dragTargetAbility = null;
             }
 

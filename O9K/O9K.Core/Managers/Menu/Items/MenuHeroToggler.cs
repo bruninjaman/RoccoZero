@@ -189,7 +189,8 @@
 
                 RendererManager.DrawTexture(
                     ability.Key,
-                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureHeroSize.X, this.MenuStyle.TextureHeroSize.Y));
+                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureHeroSize.X, this.MenuStyle.TextureHeroSize.Y),
+                    TextureType.Unit);
 
                 startPosition -= new Vector2(this.MenuStyle.TextureHeroSize.X + 4, 0);
             }

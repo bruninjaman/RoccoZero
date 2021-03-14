@@ -249,8 +249,7 @@
                 if (abilityPosition.Contains(position))
                 {
                     var value = this.abilities[ability.Key];
-                    var v = this.abilities[ability.Key];
-                    this.abilities[ability.Key] = (v.Item1, !value.Item2);
+                    this.abilities[ability.Key] = (value.Item1, !value.Item2);
                     this.valueChange?.Invoke(this, new AbilityEventArgs(ability.Key, !value.Item2, value.Item2));
                     return true;
                 }
