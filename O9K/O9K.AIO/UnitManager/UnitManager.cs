@@ -118,7 +118,7 @@
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
-            //ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile;
+            ProjectileManager.TrackingProjectileAdded -= this.OnAddTrackingProjectile;
 
             foreach (var disposable in this.controllableUnits.OfType<IDisposable>())
             {
@@ -135,7 +135,7 @@
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
-            //ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile;
+            ProjectileManager.TrackingProjectileAdded -= this.OnAddTrackingProjectile;
 
             foreach (var disposable in this.controllableUnits.OfType<IDisposable>())
             {
@@ -152,7 +152,7 @@
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
             EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
-            //ObjectManager.OnAddTrackingProjectile += this.OnAddTrackingProjectile;
+            ProjectileManager.TrackingProjectileAdded += this.OnAddTrackingProjectile;
         }
 
         public void EndCombo(ComboModeMenu comboModeMenu)
@@ -499,11 +499,11 @@
             }
         }
 
-        /*private void OnAddTrackingProjectile(TrackingProjectileEventArgs args)
+        private void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs e)
         {
             try
             {
-                var source = args.Projectile.Source;
+                var source = e.TrackingProjectile.Source;
                 if (source?.IsValid != true)
                 {
                     return;
@@ -517,11 +517,11 @@
 
                 controllable.MoveSleeper.Reset();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
-        }*/
+        }
 
         private void OnAttackStart(Unit9 unit)
         {

@@ -4,9 +4,9 @@
 
     public static class ProjectileExtensions
     {
-        /*public static bool IsAutoAttackProjectile(this TrackingProjectile projectile)
+        public static bool IsAutoAttackProjectile(this TrackingProjectile projectile)
         {
-            return (projectile.Flags & 256) != 0;
-        }*/
+            return projectile.IsAttack;
+        }
     }
 }

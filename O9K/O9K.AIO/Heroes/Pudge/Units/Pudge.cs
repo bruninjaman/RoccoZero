@@ -19,6 +19,7 @@
     using Core.Prediction.Data;
 
     using Divine;
+    using Divine.SDK.Extensions;
 
     using TargetManager;
 
@@ -280,108 +281,108 @@
             this.hook.Ability.UseAbility(output.CastPosition);
         }
 
-        //public void SoulRingSuicide(Dictionary<Unit9, float> attacks, Dictionary<TrackingProjectile, int> projectiles) //TODO RoccoZero
-        //{
-        //    if (this.Owner.HealthPercentage > 30)
-        //    {
-        //        return;
-        //    }
+        public void SoulRingSuicide(Dictionary<Unit9, float> attacks, Dictionary<TrackingProjectile, int> projectiles)
+        {
+            if (this.Owner.HealthPercentage > 30)
+            {
+                return;
+            }
 
-        //    if (this.rot?.Ability.CanBeCasted() != true)
-        //    {
-        //        return;
-        //    }
+            if (this.rot?.Ability.CanBeCasted() != true)
+            {
+                return;
+            }
 
-        //    var position = this.Owner.IsMoving && Math.Abs(this.Owner.BaseUnit.RotationDifference) < 60
-        //                       ? this.Owner.InFront(55)
-        //                       : this.Owner.Position;
+            var position = this.Owner.IsMoving && Math.Abs(this.Owner.BaseUnit.RotationDifference) < 60
+                               ? this.Owner.InFront(55)
+                               : this.Owner.Position;
 
-        //    var noProjectiles = true;
-        //    foreach (var projectile in projectiles)
-        //    {
-        //        if (!projectile.Key.IsValid)
-        //        {
-        //            continue;
-        //        }
+            var noProjectiles = true;
+            foreach (var projectile in projectiles)
+            {
+                if (!projectile.Key.IsValid)
+                {
+                    continue;
+                }
 
-        //        if (projectile.Key.Position.Distance2D(position) < 200)
-        //        {
-        //            noProjectiles = false;
-        //            break;
-        //        }
-        //    }
+                if (projectile.Key.Position.Distance2D(position) < 200)
+                {
+                    noProjectiles = false;
+                    break;
+                }
+            }
 
-        //    var noAutoAttacks = true;
-        //    foreach (var attack in attacks.Where(
-        //        x => x.Key.IsValid && x.Key.IsAlive && x.Key.Distance(this.Owner) <= x.Key.GetAttackRange(this.Owner, 200)
-        //             && x.Key.GetAngle(this.Owner.Position) < 0.5
-        //             && (!x.Key.IsRanged || x.Key.Distance(this.Owner) < 400 /*|| x.Key.AttackPoint() < 0.15*/)))
-        //    {
-        //        var unit = attack.Key;
-        //        var attackStart = attack.Value;
-        //        var attackPoint = unit.GetAttackPoint(this.Owner);
-        //        var secondsPerAttack = unit.BaseUnit.SecondsPerAttack;
-        //        var time = GameManager.RawGameTime;
+            var noAutoAttacks = true;
+            foreach (var attack in attacks.Where(
+                x => x.Key.IsValid && x.Key.IsAlive && x.Key.Distance(this.Owner) <= x.Key.GetAttackRange(this.Owner, 200)
+                     && x.Key.GetAngle(this.Owner.Position) < 0.5
+                     && (!x.Key.IsRanged || x.Key.Distance(this.Owner) < 400 /*|| x.Key.AttackPoint() < 0.15*/)))
+            {
+                var unit = attack.Key;
+                var attackStart = attack.Value;
+                var attackPoint = unit.GetAttackPoint(this.Owner);
+                var secondsPerAttack = unit.BaseUnit.SecondsPerAttack;
+                var time = GameManager.RawGameTime;
 
-        //        var damageTime = attackStart + attackPoint;
-        //        if (unit.IsRanged)
-        //        {
-        //            damageTime += Math.Max(unit.Distance(this.Owner) - this.Owner.HullRadius, 0) / unit.ProjectileSpeed;
-        //        }
+                var damageTime = attackStart + attackPoint;
+                if (unit.IsRanged)
+                {
+                    damageTime += Math.Max(unit.Distance(this.Owner) - this.Owner.HullRadius, 0) / unit.ProjectileSpeed;
+                }
 
-        //        var echoSabre = unit.Abilities.FirstOrDefault(x => x.Id == AbilityId.item_echo_sabre);
+                var echoSabre = unit.Abilities.FirstOrDefault(x => x.Id == AbilityId.item_echo_sabre);
 
-        //        fuck calcus
-        //        if ((time <= damageTime // no switch before damage
-        //             && (attackPoint < 0.35 // no switch if low attackpoint before attack start
-        //                 || time + (attackPoint * 0.6) > damageTime)) // or allow switch if big attack point
-        //            || (attackPoint < 0.25 // dont allow switch if very low attack point 
-        //                && time > damageTime + (unit.GetAttackBackswing(this.Owner) * 0.6) // after attack end
-        //                && time <= attackStart + secondsPerAttack + 0.12) // allow if attack time passed secperatk time
-        //            || (echoSabre != null && !unit.IsRanged // echo sabre check
-        //                                  && echoSabre.Cooldown - echoSabre.RemainingCooldown <= attackPoint * 2))
-        //        {
-        //            noAutoAttacks = false;
-        //            break;
-        //        }
-        //    }
+                // fuck calcus
+                if ((time <= damageTime // no switch before damage
+                     && (attackPoint < 0.35 // no switch if low attackpoint before attack start
+                         || time + (attackPoint * 0.6) > damageTime)) // or allow switch if big attack point
+                    || (attackPoint < 0.25 // dont allow switch if very low attack point 
+                        && time > damageTime + (unit.GetAttackBackswing(this.Owner) * 0.6) // after attack end
+                        && time <= attackStart + secondsPerAttack + 0.12) // allow if attack time passed secperatk time
+                    || (echoSabre != null && !unit.IsRanged // echo sabre check
+                                          && echoSabre.Cooldown - echoSabre.RemainingCooldown <= attackPoint * 2))
+                {
+                    noAutoAttacks = false;
+                    break;
+                }
+            }
 
-        //    if (!noProjectiles || !noAutoAttacks)
-        //    {
-        //        return;
-        //    }
+            if (!noProjectiles || !noAutoAttacks)
+            {
+                return;
+            }
 
-        //    var soulRing = this.Owner.Abilities.FirstOrDefault(x => x.Id == AbilityId.item_soul_ring) as SoulRing;
-        //    if (soulRing?.CanBeCasted() == true)
-        //    {
-        //        if (this.Owner.Health > soulRing.HealthCost)
-        //        {
-        //            return;
-        //        }
+            var soulRing = this.Owner.Abilities.FirstOrDefault(x => x.Id == AbilityId.item_soul_ring) as SoulRing;
+            if (soulRing?.CanBeCasted() == true)
+            {
+                if (this.Owner.Health > soulRing.HealthCost)
+                {
+                    return;
+                }
 
-        //        soulRing.UseAbility();
+                soulRing.UseAbility();
 
-        //        if (!this.rot.IsEnabled)
-        //        {
-        //            this.rot.Ability.UseAbility();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (this.rot.IsEnabled)
-        //        {
-        //            return;
-        //        }
+                if (!this.rot.IsEnabled)
+                {
+                    this.rot.Ability.UseAbility();
+                }
+            }
+            else
+            {
+                if (this.rot.IsEnabled)
+                {
+                    return;
+                }
 
-        //        var damage = this.rot.Ability.GetDamage(this.Owner) * 0.5f;
+                var damage = this.rot.Ability.GetDamage(this.Owner) * 0.5f;
 
-        //        if (this.Owner.Health > damage)
-        //        {
-        //            return;
-        //        }
+                if (this.Owner.Health > damage)
+                {
+                    return;
+                }
 
-        //        this.rot.Ability.UseAbility();
-        //    }
-        //}
+                this.rot.Ability.UseAbility();
+            }
+        }
     }
 }

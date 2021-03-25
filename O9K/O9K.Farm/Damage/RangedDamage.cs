@@ -38,7 +38,7 @@
         {
             get
             {
-                /*if (this.Projectile?.IsValid == true) // TODO RoccoZero
+                if (this.Projectile?.IsValid == true)
                 {
                     var distance = Math.Max(this.Target.Unit.Distance(this.Projectile.Position) - (this.Target.Unit.HullRadius * 0.5f), 0);
 
@@ -61,7 +61,7 @@
                 {
                     this.Delete();
                     this.Projectile = null;
-                }*/
+                }
 
                 return this.hitTime;
             }
@@ -71,7 +71,7 @@
         {
             get
             {
-                /*if (this.Projectile?.IsValid == true) // TODO RoccoZero
+                if (this.Projectile?.IsValid == true)
                 {
                     var distance = Math.Max(this.Target.Unit.Distance(this.Projectile.Position) - this.Target.Unit.HullRadius, 0);
                     return (GameManager.RawGameTime + (distance / this.Source.Unit.ProjectileSpeed)) - 0.07f;
@@ -81,17 +81,17 @@
                 {
                     this.Delete();
                     this.Projectile = null;
-                }*/
+                }
 
                 return this.includeTime;
             }
         }
 
-        /*public TrackingProjectile Projectile { get; protected set; } // TODO RoccoZero
+        public TrackingProjectile Projectile { get; protected set; }
 
         public void AddProjectile(TrackingProjectile projectile)
         {
             this.Projectile = projectile;
-        }*/
+        }
     }
 }

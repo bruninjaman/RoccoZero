@@ -18,6 +18,7 @@
     using Core.Managers.Entity;
 
     using Divine;
+    using Divine.SDK.Extensions;
 
     using Modes.Combo;
 
@@ -258,7 +259,7 @@
                 return false;
             }
 
-            return false;/*var projectile = ObjectManager.TrackingProjectiles.FirstOrDefault(x => x.IsValid && x.Source?.Handle == this.Owner.Handle && x.Target?.IsValid == true); // TODO RoccoZero
+            var projectile = ProjectileManager.TrackingProjectiles.FirstOrDefault(x => x.IsValid && x.Source?.Handle == this.Owner.Handle && x.Target?.IsValid == true);
             if (projectile == null)
             {
                 return false;
@@ -269,7 +270,7 @@
                 (projectile.Position.Distance2D(projectileTarget.Position) / projectile.Speed) + (GameManager.Ping / 1000));
             var psiPosition = projectileTarget.Position.Extend2D(targetPredictedPosition, -this.Owner.Distance(projectileTarget.Position));
             this.Owner.BaseUnit.Move(psiPosition);
-            return true;*/
+            return true;
         }
     }
 }

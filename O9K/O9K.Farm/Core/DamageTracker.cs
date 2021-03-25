@@ -23,7 +23,7 @@
             EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
             EntityManager9.UnitMonitor.AttackEnd += this.OnUnitDied;
             EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
-            //ObjectManager.OnAddTrackingProjectile += this.OnAddTrackingProjectile; //TODO RoccoZero
+            ProjectileManager.TrackingProjectileAdded += OnAddTrackingProjectile;
         }
 
         public event EventHandler<UnitDamage> AttackCanceled;
@@ -33,14 +33,14 @@
             EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
             EntityManager9.UnitMonitor.AttackEnd -= this.OnUnitDied;
             EntityManager9.UnitMonitor.UnitDied -= this.OnUnitDied;
-            //ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile; //TODO RoccoZero
+            ProjectileManager.TrackingProjectileAdded -= OnAddTrackingProjectile;
         }
 
-        /*private void OnAddTrackingProjectile(TrackingProjectileEventArgs args)
+        private void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs e)
         {
             try
             {
-                var projectile = args.Projectile;
+                var projectile = e.TrackingProjectile;
                 if (!projectile.IsAutoAttackProjectile())
                 {
                     return;
@@ -92,11 +92,11 @@
                     damage.AddProjectile(projectile);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
-        }*/
+        }
 
         private void OnAttackStart(Unit9 unit)
         {
@@ -137,7 +137,7 @@
                             continue;
                         }
 
-                        if (damage is RangedDamage ranged /*&& ranged.Projectile != null*/) // TODO RoccoZero
+                        if (damage is RangedDamage ranged && ranged.Projectile != null)
                         {
                             continue;
                         }
