@@ -12,7 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
-    <PostBuildEvent>if exist "C:\Program Files\Divine\Divine.exe" call "C:\Program Files\Divine\Divine.exe" -PostBuildEvent -AssemblyName="$(AssemblyName)"</PostBuildEvent>
+    <PostBuildEvent>if exist "C:\Users\osman\Documents\GitHub\Divine.Client\bin\Release\Divine.exe" call "C:\Users\osman\Documents\GitHub\Divine.Client\bin\Release\Divine.exe" -PostBuildEvent -AssemblyName="$(AssemblyName)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
