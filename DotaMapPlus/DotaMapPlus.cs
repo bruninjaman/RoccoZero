@@ -11,6 +11,7 @@ namespace DotaMapPlus
         protected override void OnActivate()
         {
             Config = new Config();
+
         }
 
         /*protected override void OnDeactivate()
