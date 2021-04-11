@@ -29,7 +29,7 @@
             var opacity = this.GetOpacity();
 
             RendererManager.DrawTexture("o9k.notification_bg", notificationSize, opacity);
-            RendererManager.DrawTexture(this.unit.Name, textureSize, opacity);
+            RendererManager.DrawTexture(this.unit.Name, textureSize, TextureType.Unit, opacity);
 
             RendererManager.DrawTexture("o9k.health_enemy_bg", healthSize, opacity);
             RendererManager.DrawTexture("o9k.mana_bg", manaSize, opacity);

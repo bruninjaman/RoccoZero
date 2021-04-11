@@ -32,7 +32,7 @@
                     AbilityId = AbilityId.item_ward_observer,
                     UnitName = "npc_dota_observer_wards",
                     ShowRange = true,
-                    Range = (int)new SpecialData(AbilityId.item_ward_observer, "vision_range").GetValue(1) + 150,
+                    Range = (int)new SpecialData(AbilityId.item_ward_observer, "vision_range_tooltip").GetValue(1) + 150,
                     RangeColor = new Vector3(255, 255, 0),
                     Duration = (int)new SpecialData(AbilityId.item_ward_observer, "lifetime").GetValue(1)
                 }

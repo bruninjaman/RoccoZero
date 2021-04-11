@@ -33,7 +33,7 @@
 
         private readonly MenuSwitcher enabled;
 
-        private readonly List<EnemyHero> enemyHeroes = new List<EnemyHero>();
+        private readonly List<EnemyUnit> enemyUnits = new List<EnemyUnit>();
 
         private readonly IMinimap minimap;
 
@@ -110,7 +110,7 @@
             this.enabled.ValueChange -= this.EnabledOnValueChange;
         }
 
-        private void AddWard(EnemyHero enemy, string unitName)
+        private void AddWard(EnemyUnit enemy, string unitName)
         {
             if (!this.abilityData.Units.TryGetValue(unitName, out var data))
             {
@@ -198,12 +198,12 @@
             }
         }
 
-        private bool GaveWard(EnemyHero enemy)
+        private bool GaveWard(EnemyUnit enemy)
         {
-            return this.enemyHeroes.Any(
+            return this.enemyUnits.Any(
                 x => x.Unit.IsValid && !x.Equals(enemy) && x.Unit.IsVisible && x.Unit.IsAlive && x.Unit.Distance(enemy.Unit) <= 600
-                     && x.ObserversCount + x.SentryCount
-                     < x.CountWards(AbilityId.item_ward_observer) + x.CountWards(AbilityId.item_ward_sentry));
+                && x.ObserversCount + x.SentryCount
+                < x.CountWards(AbilityId.item_ward_observer) + x.CountWards(AbilityId.item_ward_sentry));
         }
 
         private void LoadTextures()
@@ -470,12 +470,12 @@
         {
             try
             {
-                if (!entity.IsHero || !entity.CanUseAbilities || entity.Team == this.allyTeam)
+                if ((!entity.IsHero && !entity.IsCourier) || !entity.CanUseAbilities || entity.Team == this.allyTeam)
                 {
                     return;
                 }
 
-                this.enemyHeroes.Add(new EnemyHero(entity));
+                this.enemyUnits.Add(new EnemyUnit(entity));
             }
             catch (Exception e)
             {
@@ -487,15 +487,15 @@
         {
             try
             {
-                if (!entity.IsHero || !entity.CanUseAbilities || entity.Team == this.allyTeam)
+                if ((!entity.IsHero && !entity.IsCourier) || !entity.CanUseAbilities || entity.Team == this.allyTeam)
                 {
                     return;
                 }
 
-                var unit = this.enemyHeroes.Find(x => x.Unit == entity);
+                var unit = this.enemyUnits.Find(x => x.Unit == entity);
                 if (unit != null)
                 {
-                    this.enemyHeroes.Remove(unit);
+                    this.enemyUnits.Remove(unit);
                 }
             }
             catch (Exception e)
@@ -535,7 +535,7 @@
         {
             try
             {
-                foreach (var enemy in this.enemyHeroes)
+                foreach (var enemy in this.enemyUnits)
                 {
                     if (!enemy.Unit.IsValid)
                     {
@@ -565,7 +565,7 @@
             }
         }
 
-        private bool PlacedWard(EnemyHero enemy, AbilityId id)
+        private bool PlacedWard(EnemyUnit enemy, AbilityId id)
         {
             var count = enemy.CountWards(id);
 
@@ -586,9 +586,9 @@
             return false;
         }
 
-        private bool TookWard(EnemyHero enemy)
+        private bool TookWard(EnemyUnit enemy)
         {
-            return this.enemyHeroes.Any(
+            return this.enemyUnits.Any(
                 x => x.Unit.IsValid && !x.Equals(enemy) && x.Unit.IsAlive && x.Unit.Distance(enemy.Unit) <= 600
                      && x.ObserversCount + x.SentryCount
                      > x.CountWards(AbilityId.item_ward_observer) + x.CountWards(AbilityId.item_ward_sentry));

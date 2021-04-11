@@ -17,6 +17,7 @@
         public MeatHook(Ability baseAbility)
             : base(baseAbility)
         {
+            this.DamageData = new SpecialData(baseAbility, "damage");
             this.RadiusData = new SpecialData(baseAbility, "hook_width");
             this.SpeedData = new SpecialData(baseAbility, "hook_speed");
         }

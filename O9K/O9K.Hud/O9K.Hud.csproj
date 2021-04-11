@@ -78,7 +78,7 @@
     <Compile Include="Helpers\TopPanel.cs" />
     <Compile Include="Modules\Map\AbilityMonitor\Abilities\Base\DrawableAbility.cs" />
     <Compile Include="Modules\Map\AbilityMonitor\Abilities\Base\DrawableUnitAbility.cs" />
-    <Compile Include="Modules\Map\AbilityMonitor\Abilities\Base\EnemyHero.cs" />
+    <Compile Include="Modules\Map\AbilityMonitor\Abilities\Base\EnemyUnit.cs" />
     <Compile Include="Modules\Map\AbilityMonitor\Abilities\Base\IDrawableAbility.cs" />
     <Compile Include="Modules\Map\AbilityMonitor\Abilities\Data\AbilityFullData.cs" />
     <Compile Include="Modules\Map\AbilityMonitor\Abilities\Data\AbilityData.cs" />

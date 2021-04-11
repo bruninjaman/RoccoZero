@@ -7,7 +7,7 @@
     using Divine;
     using Divine.SDK.Extensions;
 
-    internal class EnemyHero
+    internal class EnemyUnit
     {
         private const AbilityId DispenserId = AbilityId.item_ward_dispenser;
 
@@ -15,7 +15,7 @@
 
         private const AbilityId SentryId = AbilityId.item_ward_sentry;
 
-        public EnemyHero(Unit9 unit)
+        public EnemyUnit(Unit9 unit)
         {
             this.Unit = unit;
             //this.ObserversCount = this.CountWards(ObserverId);

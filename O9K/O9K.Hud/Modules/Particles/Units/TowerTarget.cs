@@ -49,7 +49,7 @@
         public void Dispose()
         {
             this.show.ValueChange -= this.ShowOnValueChange;
-            UpdateManager.DestroyIngameUpdate(this.handler);
+            UpdateManager.DestroyUpdate(this.handler);
             Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
         }
 
@@ -119,13 +119,13 @@
         {
             if (e.NewValue)
             {
-                this.handler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
+                this.handler = UpdateManager.CreateUpdate(25, false, this.OnUpdate);
                 Entity.NetworkPropertyChanged += this.OnNetworkPropertyChanged;
             }
             else
             {
                 Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
-                UpdateManager.DestroyIngameUpdate(this.handler);
+                UpdateManager.DestroyUpdate(this.handler);
                 this.effect?.Dispose();
                 this.effect = null;
             }
