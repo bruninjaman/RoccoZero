@@ -235,6 +235,7 @@
 
             switch (itemId)
             {
+
                 case AbilityId.item_energy_booster:
                 {
                     if (currentItems.Any(x => x.Id == AbilityId.item_arcane_boots))
