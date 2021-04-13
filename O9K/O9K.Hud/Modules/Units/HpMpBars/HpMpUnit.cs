@@ -136,6 +136,7 @@
                         //    restoreBar.Height + this.borderSize * 2);
 
                         //renderer.DrawFilledRectangle(borderBar, this.borderColor);
+
                         RendererManager.DrawFilledRectangle(restoreBar, this.healthRestoreColor);
                     }
                 }
@@ -144,7 +145,7 @@
                 {
                     RendererManager.DrawText(
                         hp.ToString("N0"),
-                        hpBar,
+                        new RectangleF(hpBar.X - (hpBar.Width / 2), hpBar.Y - (hpBar.Height / 2), hpBar.Width * 2, hpBar.Height * 2),
                         Color.White,
                         FontFlags.Center | FontFlags.VerticalCenter,
                         hpTextSize);
