@@ -1,95 +1,93 @@
-﻿namespace O9K.Hud.Modules.Notifications
-{
-    using System.Linq;
+﻿//namespace O9K.Hud.Modules.Notifications
+//{
+//    using System.Linq;
 
-    using Core.Data;
-    using Core.Helpers;
-    using Core.Managers.Menu;
-    using Core.Managers.Menu.EventArgs;
-    using Core.Managers.Menu.Items;
+//    using Core.Data;
+//    using Core.Helpers;
+//    using Core.Managers.Menu;
+//    using Core.Managers.Menu.EventArgs;
+//    using Core.Managers.Menu.Items;
 
-    using Divine;
+//    using Divine;
 
-    using Helpers.Notificator;
-    using Helpers.Notificator.Notifications;
+//    using Helpers.Notificator;
+//    using Helpers.Notificator.Notifications;
 
-    using MainMenu;
+//    using MainMenu;
 
-    using SharpDX;
+//    using SharpDX;
 
-    internal class Outposts : IHudModule
-    {
-        private readonly MenuSwitcher enabled;
+//    internal class Outposts : IHudModule
+//    {
+//        private readonly MenuSwitcher enabled;
 
-        private readonly INotificator notificator;
+//        private readonly INotificator notificator;
 
-        private readonly MenuSwitcher playSound;
+//        private readonly MenuSwitcher playSound;
 
-        private readonly Sleeper sleeper = new Sleeper();
+//        private readonly Sleeper sleeper = new Sleeper();
 
-        private Vector3[] positions;
+//        private Vector3[] positions;
 
-        public Outposts(INotificator notificator, IHudMenu hudMenu) // Disabled
-        {
-            return;
+//        public Outposts(INotificator notificator, IHudMenu hudMenu) // Disabled
+//        {
+//            this.notificator = notificator;
 
-            this.notificator = notificator;
+//            var menu = hudMenu.NotificationsMenu.Add(new Menu("Outpost"));
+//            menu.AddTranslation(Lang.Ru, "Аванпост");
+//            menu.AddTranslation(Lang.Cn, "前哨");
 
-            var menu = hudMenu.NotificationsMenu.Add(new Menu("Outpost"));
-            menu.AddTranslation(Lang.Ru, "Аванпост");
-            menu.AddTranslation(Lang.Cn, "前哨");
+//            this.enabled = menu.Add(new MenuSwitcher("Enabled")).SetTooltip("Notify to capture outpost");
+//            this.enabled.AddTranslation(Lang.Ru, "Включено");
+//            this.enabled.AddTooltipTranslation(Lang.Ru, "Оповещать об захвате аванпостов");
+//            this.enabled.AddTranslation(Lang.Cn, "启用");
+//            this.enabled.AddTooltipTranslation(Lang.Cn, "通知占领哨所");
 
-            this.enabled = menu.Add(new MenuSwitcher("Enabled")).SetTooltip("Notify to capture outpost");
-            this.enabled.AddTranslation(Lang.Ru, "Включено");
-            this.enabled.AddTooltipTranslation(Lang.Ru, "Оповещать об захвате аванпостов");
-            this.enabled.AddTranslation(Lang.Cn, "启用");
-            this.enabled.AddTooltipTranslation(Lang.Cn, "通知占领哨所");
+//            this.playSound = menu.Add(new MenuSwitcher("Play sound"));
+//            this.playSound.AddTranslation(Lang.Ru, "Со звуком");
+//            this.playSound.AddTranslation(Lang.Cn, "播放声音");
+//        }
 
-            this.playSound = menu.Add(new MenuSwitcher("Play sound"));
-            this.playSound.AddTranslation(Lang.Ru, "Со звуком");
-            this.playSound.AddTranslation(Lang.Cn, "播放声音");
-        }
+//        public void Activate()
+//        {
+//            this.positions = EntityManager.GetEntities<Building>()
+//                .Where(x => x.NetworkName == "CDOTA_BaseNPC_Watch_Tower")
+//                .Select(x => x.Position)
+//                .ToArray();
 
-        public void Activate()
-        {
-            this.positions = EntityManager.GetEntities<Building>()
-                .Where(x => x.NetworkName == "CDOTA_BaseNPC_Watch_Tower")
-                .Select(x => x.Position)
-                .ToArray();
+//            this.enabled.ValueChange += this.EnabledOnValueChange;
+//        }
 
-            this.enabled.ValueChange += this.EnabledOnValueChange;
-        }
+//        public void Dispose()
+//        {
+//            this.enabled.ValueChange -= this.EnabledOnValueChange;
+//            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
+//        }
 
-        public void Dispose()
-        {
-            this.enabled.ValueChange -= this.EnabledOnValueChange;
-            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
-        }
+//        private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
+//        {
+//            if (e.NewValue)
+//            {
+//                UpdateManager.CreateIngameUpdate(1000, this.OnUpdate);
+//            }
+//            else
+//            {
+//                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
+//            }
+//        }
 
-        private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
-        {
-            if (e.NewValue)
-            {
-                UpdateManager.CreateIngameUpdate(1000, this.OnUpdate);
-            }
-            else
-            {
-                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
-            }
-        }
+//        private void OnUpdate()
+//        {
+//            if (this.sleeper.IsSleeping)
+//            {
+//                return;
+//            }
 
-        private void OnUpdate()
-        {
-            if (this.sleeper.IsSleeping)
-            {
-                return;
-            }
-
-            if (GameManager.GameTime % GameData.OutpostExperienceTime > GameData.OutpostExperienceTime - 30)
-            {
-                this.notificator.PushNotification(new OutpostNotification(this.playSound, this.positions));
-                this.sleeper.Sleep(GameData.OutpostExperienceTime - 5);
-            }
-        }
-    }
-}
+//            if (GameManager.GameTime % GameData.OutpostExperienceTime > GameData.OutpostExperienceTime - 30)
+//            {
+//                this.notificator.PushNotification(new OutpostNotification(this.playSound, this.positions));
+//                this.sleeper.Sleep(GameData.OutpostExperienceTime - 5);
+//            }
+//        }
+//    }
+//}
