@@ -89,7 +89,7 @@
             this.ySize.AddTranslation(Lang.Ru, "Y размер");
             this.ySize.AddTranslation(Lang.Cn, "Y大小");
 
-            if (GameManager.GameMode == GameMode.Custom)
+            if (GameManager.LevelName == "maps/hero_demo_main.vpk")
             {
                 this.MapLeft = -3500;
                 this.MapBottom = -3600;
