@@ -23,8 +23,8 @@
         {
             this.unit = unit;
             this.particle = particle;
-            this.HeroTexture = unit.Name + "_rounded";
-            this.minimapHeroTexture = unit.Name + "_icon";
+            this.HeroTexture = unit.Name;
+            this.minimapHeroTexture = unit.Name;
         }
 
         public AbilityId AbilityId { get; set; }
@@ -68,7 +68,7 @@
             }
 
             RendererManager.DrawTexture("o9k.outline_red", position * 1.12f);
-            RendererManager.DrawTexture(this.HeroTexture, position);
+            RendererManager.DrawTexture(this.HeroTexture, position, TextureType.RoundUnit);
         }
 
         public void DrawOnMinimap(IMinimap minimap)
@@ -86,7 +86,7 @@
             }
 
             RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
-            RendererManager.DrawTexture(this.minimapHeroTexture, position);
+            RendererManager.DrawTexture(this.minimapHeroTexture, position, TextureType.MiniUnit);
         }
 
         public void RemoveRange()

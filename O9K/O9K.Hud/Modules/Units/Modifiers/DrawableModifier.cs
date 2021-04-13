@@ -23,6 +23,7 @@
             else
             {
                 this.TextureName = modifier.TextureName;
+                this.IsAbilityTextureName = true;
             }
 
             this.UpdateTimings();
@@ -41,6 +42,8 @@
         public bool IsHiddenAura { get; }
 
         public Modifier Modifier { get; }
+
+        public bool IsAbilityTextureName { get; }
 
         public float RemainingTime
         {

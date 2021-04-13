@@ -40,9 +40,9 @@
                 {
                     var drawableAbilityStart = new DrawableAbility
                     {
-                        AbilityTexture = this.AbilityId + "_rounded",
-                        HeroTexture = owner.Name + "_rounded",
-                        MinimapHeroTexture = owner.Name + "_icon",
+                        AbilityTexture = this.AbilityId.ToString(),
+                        HeroTexture = owner.Name,
+                        MinimapHeroTexture = owner.Name,
                         ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                         Position = startPosition.SetZ(350)
                     };
@@ -64,9 +64,9 @@
 
                 var drawableAbility = new DrawableFireRemnantAbility
                 {
-                    AbilityTexture = this.AbilityId + "_rounded",
-                    HeroTexture = owner.Name + "_rounded",
-                    MinimapHeroTexture = owner.Name + "_icon",
+                    AbilityTexture = this.AbilityId.ToString(),
+                    HeroTexture = owner.Name,
+                    MinimapHeroTexture = owner.Name,
                     Position = particle.GetControlPoint(this.ControlPoint).SetZ(350),
                     Duration = this.Duration,
                     ShowUntil = GameManager.RawGameTime + this.Duration,

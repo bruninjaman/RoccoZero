@@ -35,9 +35,9 @@
             var ownerName = owner.Name;
             var drawableAbility = new DrawableUnitAbility
             {
-                AbilityTexture = this.AbilityId + "_rounded",
-                HeroTexture = ownerName + "_rounded",
-                MinimapHeroTexture = ownerName + "_icon",
+                AbilityTexture = this.AbilityId.ToString(),
+                HeroTexture = ownerName,
+                MinimapHeroTexture = ownerName,
                 Position = unit.Position,
                 Unit = unit,
                 Duration = this.Duration,

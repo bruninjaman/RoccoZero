@@ -117,7 +117,7 @@
 
                     position.Y += textureSize + margin;
 
-                    RendererManager.DrawTexture(hero.Name + "_rounded", position);
+                    RendererManager.DrawTexture(hero.Name, position, TextureType.RoundUnit);
 
                     var outlinePosition = position * 1.25f;
                     RendererManager.DrawTexture("o9k.outline_hp", outlinePosition);

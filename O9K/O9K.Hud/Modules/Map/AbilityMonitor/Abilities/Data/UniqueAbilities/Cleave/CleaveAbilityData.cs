@@ -37,9 +37,9 @@
 
             var drawableAbility = new DrawableAbility
             {
-                AbilityTexture = this.AbilityId + "_rounded",
-                HeroTexture = ownerName + "_rounded",
-                MinimapHeroTexture = ownerName + "_icon",
+                AbilityTexture = this.AbilityId.ToString(),
+                HeroTexture = ownerName,
+                MinimapHeroTexture = ownerName,
                 ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                 Position = position.SetZ(350)
             };

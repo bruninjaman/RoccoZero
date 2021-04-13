@@ -13,7 +13,7 @@
     {
         public const int AegisExpirationTime = 5 * 60;
 
-        public const int BountyRuneRespawnTime = 5 * 60;
+        public const int BountyRuneRespawnTime = 3 * 60;
 
         public const int BuybackCooldown = 8 * 60;
 
@@ -29,7 +29,7 @@
 
         public const int MaxHeroLevel = 30;
 
-        public const int OutpostExperienceTime = 10 * 60;
+        public const int OutpostExperienceTime = 1 * 60;
 
         public const int RoshanMaxRespawnTime = 11 * 60;
 

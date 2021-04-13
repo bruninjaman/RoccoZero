@@ -15,7 +15,7 @@
         public AbilityHeroNotification(string heroName, string abilityName, string targetName)
         {
             this.heroName = heroName;
-            this.abilityName = abilityName + "_rounded";
+            this.abilityName = abilityName;
             this.targetName = targetName;
             this.TimeToShow = 3;
         }
@@ -28,9 +28,9 @@
             var opacity = this.GetOpacity();
 
             RendererManager.DrawTexture("o9k.notification_bg", position, opacity);
-            RendererManager.DrawTexture(this.heroName, heroPosition, opacity);
-            RendererManager.DrawTexture(this.abilityName, abilityPosition, opacity);
-            RendererManager.DrawTexture(this.targetName, targetPosition, opacity);
+            RendererManager.DrawTexture(this.heroName, heroPosition, TextureType.Unit, opacity);
+            RendererManager.DrawTexture(this.abilityName, abilityPosition, TextureType.RoundAbility, opacity);
+            RendererManager.DrawTexture(this.targetName, targetPosition, TextureType.Unit, opacity);
         }
 
         private static RectangleF GetAbilityPosition(RectangleF position, RectangleF heroPosition, RectangleF itemPosition)

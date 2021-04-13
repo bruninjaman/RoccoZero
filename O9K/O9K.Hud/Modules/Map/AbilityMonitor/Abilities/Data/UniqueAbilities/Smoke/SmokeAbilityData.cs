@@ -29,7 +29,7 @@
 
             var drawableAbility = new SimpleDrawableAbility
             {
-                AbilityTexture = this.AbilityId + "_rounded",
+                AbilityTexture = this.AbilityId.ToString(),
                 ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                 Position = (this.RawParticlePosition ? particle.Position : particle.GetControlPoint(this.ControlPoint)).SetZ(350)
             };

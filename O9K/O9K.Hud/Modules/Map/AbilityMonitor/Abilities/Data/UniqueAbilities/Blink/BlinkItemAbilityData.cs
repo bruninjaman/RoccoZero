@@ -47,9 +47,9 @@
                 var owner = enemyBlinks[0].Owner;
                 var drawableAbility = new DrawableAbility
                 {
-                    AbilityTexture = this.AbilityId + "_rounded",
-                    HeroTexture = owner.Name + "_rounded",
-                    MinimapHeroTexture = owner.Name + "_icon",
+                    AbilityTexture = this.AbilityId.ToString(),
+                    HeroTexture = owner.Name,
+                    MinimapHeroTexture = owner.Name,
                     ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                     Position = GameManager.RawGameTime - owner.LastVisibleTime < 0.5f
                                    ? owner.InFront(enemyBlinks[0].Range - 200)
@@ -68,9 +68,9 @@
                 {
                     var drawableAbility = new DrawableAbility
                     {
-                        AbilityTexture = this.AbilityId + "_rounded",
-                        HeroTexture = owner.Name + "_rounded",
-                        MinimapHeroTexture = owner.Name + "_icon",
+                        AbilityTexture = this.AbilityId.ToString(),
+                        HeroTexture = owner.Name,
+                        MinimapHeroTexture = owner.Name,
                         ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                         Position = owner.InFront(enemyBlinks[0].Range - 200)
                     };
@@ -82,7 +82,7 @@
                 {
                     var drawableAbility = new SimpleDrawableAbility
                     {
-                        AbilityTexture = this.AbilityId + "_rounded",
+                        AbilityTexture = this.AbilityId.ToString(),
                         ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                         Position = (this.RawParticlePosition ? particle.Position : particle.GetControlPoint(this.ControlPoint)).SetZ(350)
                     };

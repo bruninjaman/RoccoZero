@@ -36,7 +36,7 @@
             }
 
             RendererManager.DrawTexture("o9k.ping", arrowPosition, opacity);
-            RendererManager.DrawTexture(this.abilityName, abilityPosition, opacity);
+            RendererManager.DrawTexture(this.abilityName, abilityPosition, TextureType.Ability, opacity);
         }
 
         private static RectangleF GetAbilityPosition(RectangleF position, RectangleF heroPosition)

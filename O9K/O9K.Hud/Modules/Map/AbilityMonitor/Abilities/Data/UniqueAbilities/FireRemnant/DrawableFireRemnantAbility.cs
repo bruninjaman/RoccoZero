@@ -57,7 +57,7 @@
             var pct = (int)(((GameManager.RawGameTime - this.addedTime) / this.Duration) * 100);
             RendererManager.DrawTexture("o9k.outline_red", position * 1.2f);
             RendererManager.DrawTexture("o9k.outline_black" + pct, position * 1.25f);
-            RendererManager.DrawTexture(this.AbilityTexture, position);
+            RendererManager.DrawTexture(this.AbilityTexture, position, TextureType.RoundAbility);
         }
 
         public override void DrawOnMinimap(IMinimap minimap)
@@ -74,7 +74,7 @@
             }
 
             RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
-            RendererManager.DrawTexture(this.AbilityTexture, position);
+            RendererManager.DrawTexture(this.AbilityTexture, position, TextureType.RoundAbility);
         }
     }
 }

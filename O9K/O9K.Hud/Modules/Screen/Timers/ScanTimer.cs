@@ -140,48 +140,56 @@
 
         private void OnAddEntity(EntityAddedEventArgs e)
         {
-            try
+            if (this.sleeper)
             {
-                if (this.sleeper)
+                return;
+            }
+
+            var unit = e.Entity as Unit;
+            if (unit == null || !unit.IsValid)
+            {
+                return;
+            }
+
+            UpdateManager.BeginInvoke(() =>
+            {
+                try
                 {
-                    return;
-                }
+                    if (unit.Team == this.ownerTeam || unit.DayVision != 0 || unit.Name != "npc_dota_thinker")
+                    {
+                        return;
+                    }
+                    
+                    if (unit.IsVisible && unit.Modifiers.All(x => x.Name != "modifier_radar_thinker"))
+                    {
+                        return;
+                    }
 
-                var unit = e.Entity as Unit;
-                if (unit == null || unit.Team == this.ownerTeam || unit.DayVision != 0 || unit.Name != "npc_dota_thinker")
-                {
-                    return;
-                }
+                    this.scanPosition = unit.Position;
 
-                if (unit.IsVisible && unit.Modifiers.All(x => x.Name != "modifier_radar_thinker"))
-                {
-                    return;
-                }
+                    if (this.showOnMap)
+                    {
+                        this.scanRadius = ParticleManager.CreateParticle("particles/ui_mouseactions/drag_selected_ring.vpcf", this.scanPosition);
+                        this.scanRadius.SetControlPoint(1, new Vector3(255, 0, 0));
+                        this.scanRadius.SetControlPoint(2, new Vector3(-GameData.ScanRadius, 255, 0));
+                    }
 
-                this.scanPosition = unit.Position;
+                    this.sleeper.Sleep(this.ownerTeam == Team.Radiant ? GameManager.ScanCooldownDire : GameManager.ScanCooldownRadiant);
 
-                if (this.showOnMap)
-                {
-                    this.scanRadius = ParticleManager.CreateParticle("particles/ui_mouseactions/drag_selected_ring.vpcf", this.scanPosition);
-                    this.scanRadius.SetControlPoint(1, new Vector3(255, 0, 0));
-                    this.scanRadius.SetControlPoint(2, new Vector3(-GameData.ScanRadius, 255, 0));
-                }
+                    RendererManager.Draw += this.OnDrawPosition;
 
-                this.sleeper.Sleep(this.ownerTeam == Team.Radiant ? GameManager.ScanCooldownDire : GameManager.ScanCooldownRadiant);
-
-                RendererManager.Draw += this.OnDrawPosition;
-
-                UpdateManager.BeginInvoke(GameData.ScanActiveTime * 1000,
-                    () =>
+                    UpdateManager.BeginInvoke(GameData.ScanActiveTime * 1000,
+                        () =>
                         {
                             RendererManager.Draw -= this.OnDrawPosition;
                             this.scanRadius?.Dispose();
                         });
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            });
         }
 
         private void OnDrawPosition()
@@ -216,7 +224,6 @@
             try
             {
                 var cd = this.ownerTeam == Team.Radiant ? GameManager.ScanCooldownDire : GameManager.ScanCooldownRadiant;
-
                 if (cd > 0)
                 {
                     if (!this.showRemaining)

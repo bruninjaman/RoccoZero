@@ -29,8 +29,10 @@
 
         private Vector3[] positions;
 
-        public Outposts(INotificator notificator, IHudMenu hudMenu)
+        public Outposts(INotificator notificator, IHudMenu hudMenu) // Disabled
         {
+            return;
+
             this.notificator = notificator;
 
             var menu = hudMenu.NotificationsMenu.Add(new Menu("Outpost"));

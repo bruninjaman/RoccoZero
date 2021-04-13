@@ -50,9 +50,9 @@
 
                                 var drawableAbility = new DrawableAbility
                                 {
-                                    AbilityTexture = this.AbilityId + "_rounded",
-                                    HeroTexture = owner.Name + "_rounded",
-                                    MinimapHeroTexture = owner.Name + "_icon",
+                                    AbilityTexture = this.AbilityId.ToString(),
+                                    HeroTexture = owner.Name,
+                                    MinimapHeroTexture = owner.Name,
                                     ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                                     Position = owner.InFront(ability.Range)
                                 };
@@ -64,9 +64,9 @@
                             {
                                 var drawableAbility = new DrawableAbility
                                 {
-                                    AbilityTexture = this.AbilityId + "_rounded",
-                                    HeroTexture = owner.Name + "_rounded",
-                                    MinimapHeroTexture = owner.Name + "_icon",
+                                    AbilityTexture = this.AbilityId.ToString(),
+                                    HeroTexture = owner.Name,
+                                    MinimapHeroTexture = owner.Name,
                                     ShowUntil = GameManager.RawGameTime + this.TimeToShow,
                                     Position = particlePosition
                                 };

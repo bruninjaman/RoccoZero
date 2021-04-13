@@ -32,7 +32,7 @@
             var opacity = this.GetOpacity();
 
             RendererManager.DrawTexture("o9k.notification_bg", position, opacity);
-            RendererManager.DrawTexture(this.heroName, heroPosition, UnitTextureType.Default, opacity);
+            RendererManager.DrawTexture(this.heroName, heroPosition, TextureType.Unit, opacity);
             RendererManager.DrawTexture("o9k.gold", goldPosition, opacity);
             RendererManager.DrawTexture(this.itemName, itemPosition, TextureType.Ability, opacity);
         }

@@ -209,7 +209,7 @@
 
             this.loadedTextures.Add(textureKey);
 
-            RendererManager.LoadTexture(textureKey + "_rounded", TextureType.RoundAbility);
+            RendererManager.LoadTexture(textureKey, TextureType.RoundAbility);
 
             return true;
         }
@@ -217,7 +217,7 @@
         private void LoadTextures()
         {
             RendererManager.LoadTextureFromAssembly(
-                "o9k.modifier_truesight_rounded",
+                "o9k.modifier_truesight",
                 "modifier_truesight.png",
                 new TextureProperties
                 {
@@ -283,7 +283,14 @@
 
                     foreach (var modifier in unit.Modifiers.ToArray())
                     {
-                        RendererManager.DrawTexture(modifier.TextureName, start, TextureType.RoundAbility);
+                        if (modifier.IsAbilityTextureName)
+                        {
+                            RendererManager.DrawTexture(modifier.TextureName, start, TextureType.RoundAbility);
+                        }
+                        else
+                        {
+                            RendererManager.DrawTexture(modifier.TextureName, start);
+                        }
 
                         if (!modifier.IgnoreTime)
                         {
