@@ -80,7 +80,7 @@
                 var rec = new Rectangle9(position, new Vector2(30 * ratio));
                 var outlinePosition = rec * 1.17f;
 
-                RendererManager.DrawTexture(nameof(AbilityId.abyssal_underlord_dark_rift) + "_rounded", rec);
+                RendererManager.DrawTexture(AbilityId.abyssal_underlord_dark_rift, rec, AbilityTextureType.Round);
                 RendererManager.DrawTexture("o9k.modifier_bg", rec);
                 RendererManager.DrawTexture("o9k.outline_green", outlinePosition);
                 RendererManager.DrawTexture("o9k.outline_black" + pct, outlinePosition);

@@ -162,7 +162,7 @@
                         continue;
                     }
 
-                    RendererManager.DrawTexture(name + "_rounded", new RectangleF(start.X, start.Y, size, size));
+                    RendererManager.DrawTexture(name, new RectangleF(start.X, start.Y, size, size), TextureType.RoundAbility);
                     RendererManager.DrawTexture("o9k.outline", new RectangleF(start.X, start.Y, size, size));
                     start += new Vector2(size + 2, 0);
                 }
@@ -182,7 +182,7 @@
                     continue;
                 }
 
-                RendererManager.DrawTexture(name + "_rounded", new RectangleF(start.X, start.Y, size, size));
+                RendererManager.DrawTexture(name, new RectangleF(start.X, start.Y, size, size), TextureType.RoundAbility);
                 RendererManager.DrawTexture("o9k.outline", new RectangleF(start.X, start.Y, size, size));
                 start += new Vector2(size + 2, 0);
             }
@@ -242,7 +242,7 @@
                     var pct = (int)((this.hero.Mana / this.ultimate.ManaCost) * 100);
                     var outlinePosition = cdPosition * 1.1f;
 
-                    RendererManager.DrawTexture(this.ultimate.Name + "_rounded", cdPosition);
+                    RendererManager.DrawTexture(this.ultimate.Id, cdPosition, AbilityTextureType.Round);
                     RendererManager.DrawTexture("o9k.outline_black100", outlinePosition);
                     RendererManager.DrawTexture("o9k.outline_blue_pct" + pct, outlinePosition);
 

@@ -12,7 +12,7 @@
 
     internal sealed class Teleport
     {
-        private const string AbilityTexture = nameof(AbilityId.item_tpscroll) + "_rounded";
+        private const string AbilityTexture = nameof(AbilityId.item_tpscroll);
 
         private readonly Color color;
 
@@ -35,8 +35,8 @@
             this.teleportPosition = position;
             this.duration = duration;
             this.displayUntil = GameManager.RawGameTime + duration;
-            this.mapTexture = this.HeroId + "_rounded";
-            this.minimapTexture = this.HeroId + "_icon";
+            this.mapTexture = this.HeroId.ToString();
+            this.minimapTexture = this.HeroId.ToString();
             this.color = start ? Color.DarkOrange : Color.Red;
         }
 
@@ -67,14 +67,14 @@
             }
 
             RendererManager.DrawTexture("o9k.outline_red", position * 1.12f);
-            RendererManager.DrawTexture(this.mapTexture, position);
+            RendererManager.DrawTexture(this.mapTexture, position, TextureType.RoundUnit);
 
             var abilityTexturePosition = position * 0.5f;
             abilityTexturePosition.X += abilityTexturePosition.Width * 0.8f;
             abilityTexturePosition.Y += abilityTexturePosition.Height * 0.6f;
 
             RendererManager.DrawTexture("o9k.outline_green_pct100", abilityTexturePosition * 1.2f);
-            RendererManager.DrawTexture(AbilityTexture, abilityTexturePosition);
+            RendererManager.DrawTexture(AbilityTexture, abilityTexturePosition, TextureType.RoundAbility);
 
             position.Y += 50 * Hud.Info.ScreenRatio;
 
@@ -98,7 +98,7 @@
 
             RendererManager.DrawCircle(position.Center, radius, this.color, 3);
             RendererManager.DrawLine(position.Center, position.Center + range, this.color, 2);
-            RendererManager.DrawTexture(this.minimapTexture, position);
+            RendererManager.DrawTexture(this.minimapTexture, position, TextureType.MiniUnit);
         }
     }
 }

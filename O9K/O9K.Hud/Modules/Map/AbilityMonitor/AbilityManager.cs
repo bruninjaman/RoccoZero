@@ -209,14 +209,14 @@
         private void LoadTextures()
         {
             RendererManager.LoadTexture(
-                "o9k.minimap_item_ward_observer_rounded",
+                "o9k.minimap_item_ward_observer",
                 @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
                 new TextureProperties
                 {
                     ColorRatio = new Vector4(1f, 0.6f, 0f, 1f)
                 });
             RendererManager.LoadTexture(
-                "o9k.minimap_item_ward_sentry_rounded",
+                "o9k.minimap_item_ward_sentry",
                 @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
                 new TextureProperties
                 {
