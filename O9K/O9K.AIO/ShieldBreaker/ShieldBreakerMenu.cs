@@ -23,8 +23,8 @@
             this.linkensAbilityToggler.AddTranslation(Lang.Ru, "Способности");
             this.linkensAbilityToggler.AddTranslation(Lang.Cn, "技能");
 
-            this.spellShieldAbilityToggler = new MenuAbilityToggler("dummyToggler"); //ignore spell shield
-            //this.spellShieldAbilityToggler =  menu.Add(new MenuAbilityToggler("Spell shield", "spellShieldAbilities", null, false, true));
+            this.spellShieldAbilityToggler = new MenuAbilityToggler("dummyToggler");
+            this.spellShieldAbilityToggler =  menu.Add(new MenuAbilityToggler("Spell shield", "spellShieldAbilities", null, false, true));
 
             rootMenu.Add(menu);
         }
