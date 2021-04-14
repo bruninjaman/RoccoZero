@@ -84,6 +84,8 @@
                         return "item_bottle_bounty";
                     case RuneType.Arcane:
                         return "item_bottle_arcane";
+                    case RuneType.Water:
+                        return "item_bottle_water";
                 }
 
                 return base.TextureName;
