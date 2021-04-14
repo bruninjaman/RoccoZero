@@ -42,7 +42,7 @@
 
         public static bool CanBePurchased(this AbilityId itemId, Team team)
         {
-            var itemStockInfo = GameManager.ItemStockInfo.FirstOrDefault(x => x.AbilityId == itemId && x.Team == team);
+            var itemStockInfo = GameManager.ItemStockInfos.FirstOrDefault(x => x.AbilityId == itemId && x.Team == team);
             if (itemStockInfo != null && itemStockInfo.StockCount <= 0)
             {
                 return false;
