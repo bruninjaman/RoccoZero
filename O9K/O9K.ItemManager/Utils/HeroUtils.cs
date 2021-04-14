@@ -22,7 +22,7 @@
                 }
                 case AbilityId.item_bottle:
                 {
-                    return ((Bottle)item).StoredRune == RuneType.None;
+                    return ((Bottle)item).StoredRuneType == RuneType.None;
                 }
                 default:
                 {

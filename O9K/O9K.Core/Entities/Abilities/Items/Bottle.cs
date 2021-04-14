@@ -42,7 +42,7 @@
         {
             get
             {
-                return this.bottle.StoredRune == RuneType.Invisibility;
+                return this.bottle.StoredRuneType == RuneType.Invisibility;
             }
         }
 
@@ -56,7 +56,7 @@
         {
             get
             {
-                return this.bottle.StoredRune;
+                return this.bottle.StoredRuneType;
             }
         }
 
@@ -66,7 +66,7 @@
         {
             get
             {
-                switch (this.bottle.StoredRune)
+                switch (this.bottle.StoredRuneType)
                 {
                     case RuneType.None:
                         return base.TextureName;
