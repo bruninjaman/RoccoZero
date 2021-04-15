@@ -32,7 +32,7 @@
             else
             {
                 RendererManager.DrawTexture("o9k.notification_bg", position, opacity);
-                RendererManager.DrawTexture(this.heroName, heroPosition, opacity);
+                RendererManager.DrawTexture(this.heroName, heroPosition, TextureType.Unit, opacity);
             }
 
             RendererManager.DrawTexture("o9k.ping", arrowPosition, opacity);
