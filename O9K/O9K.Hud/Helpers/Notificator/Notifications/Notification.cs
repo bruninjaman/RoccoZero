@@ -99,13 +99,13 @@
         {
             UpdateManager.BeginInvoke(
                 async () =>
-                    {
-                        var hero = EntityManager.LocalHero;
+                {
+                    var hero = EntityManager.LocalHero;
 
-                        //hero.PlaySound("General.Ping"); TODO
-                        await Task.Delay(450);
-                        //hero.PlaySound("General.Ping");
-                    });
+                    //hero.PlaySound("General.Ping"); TODO
+                    await Task.Delay(450);
+                    //hero.PlaySound("General.Ping");
+                });
         }
     }
 }

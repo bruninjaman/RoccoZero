@@ -60,21 +60,22 @@
 
             RendererManager.LoadTexture("o9k.x", @"panorama\images\hud\reborn\ping_icon_retreat_psd.vtex_c");
             RendererManager.LoadTexture("rune_arcane", TextureType.RoundAbility);
-            RendererManager.LoadTexture("rune_arcane", TextureType.RoundAbility);
+            RendererManager.LoadTexture("rune_doubledamage", TextureType.RoundAbility);
             RendererManager.LoadTexture("rune_haste", TextureType.RoundAbility);
             RendererManager.LoadTexture("rune_invis", TextureType.RoundAbility);
             RendererManager.LoadTexture("rune_regen", TextureType.RoundAbility);
-            RendererManager.LoadTexture("npc_dota_roshan", UnitTextureType.Default);
-            RendererManager.LoadTexture("npc_dota_roshan", UnitTextureType.RoundUnit);
+            RendererManager.LoadTexture("npc_dota_roshan", "npc_dota_hero_roshan", TextureType.Unit);
+            RendererManager.LoadTexture("npc_dota_roshan", "npc_dota_hero_roshan", TextureType.RoundUnit);
 
             RendererManager.LoadTexture(AbilityId.item_bottle);
             RendererManager.LoadTexture("item_bottle_arcane", TextureType.Ability);
             RendererManager.LoadTexture("item_bottle_bounty", TextureType.Ability);
             RendererManager.LoadTexture("item_bottle_doubledamage", TextureType.Ability);
             RendererManager.LoadTexture("item_bottle_haste", TextureType.Ability);
-            RendererManager.LoadTexture("item_bottle_illusion");
+            RendererManager.LoadTexture("item_bottle_illusion", TextureType.Ability);
             RendererManager.LoadTexture("item_bottle_invisibility", TextureType.Ability);
             RendererManager.LoadTexture("item_bottle_regeneration", TextureType.Ability);
+            RendererManager.LoadTexture("item_bottle_water", TextureType.Ability);
 
             this.LoadAbilityTexture(AbilityId.item_smoke_of_deceit);
             this.LoadAbilityTexture(AbilityId.item_ward_sentry);
