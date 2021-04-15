@@ -55,7 +55,7 @@
             {
                 RendererManager.DrawTexture("o9k.speed_minimalistic", new RectangleF(iconPosition.X, iconPosition.Y, iconSize, iconSize));
 
-                var speed = mySpeed - this.Unit.Speed;
+                var speed = (int)(mySpeed - this.Unit.Speed);
                 if (speed >= 0)
                 {
                     RendererManager.DrawText(speed.ToString(), textPosition, Color.White, size);
