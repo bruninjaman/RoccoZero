@@ -55,7 +55,7 @@
                     return;
                 }
 
-                var effect = ParticleManager.CreateParticle(
+                /*var effect = ParticleManager.CreateParticle(
                     "materials/ensage_ui/particles/illusions_mod_v2.vpcf",
                     ParticleAttachment.CenterFollow,
                     entity.BaseUnit);
@@ -63,7 +63,9 @@
                 effect.SetControlPoint(1, new Vector3(255));
                 effect.SetControlPoint(2, new Vector3(65, 105, 255));
 
-                effect.Release();
+                effect.Release();*/
+
+                entity.BaseEntity.ColorTint = new Color(0, 0, 255, 255);
             }
             catch (Exception e)
             {
