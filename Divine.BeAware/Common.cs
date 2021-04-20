@@ -52,7 +52,7 @@ namespace Divine.BeAware
 
         public WindrunnerPowershot WindrunnerPowershot { get; }
 
-        public IllusionShow IllusionShow { get; }
+        //public IllusionShow IllusionShow { get; }
 
         public LinkenShow LinkenShow { get; }
 
@@ -101,7 +101,7 @@ namespace Divine.BeAware
             BloodseekerRupture = new BloodseekerRupture(this);
             WindrunnerPowershot = new WindrunnerPowershot(this);
 
-            IllusionShow = new IllusionShow(this);
+            //IllusionShow = new IllusionShow(this);
             LinkenShow = new LinkenShow(this);
             Additional = new Additional(this);
             TowerHelper = new TowerHelper(this);
@@ -141,7 +141,7 @@ namespace Divine.BeAware
                 TowerHelper.Dispose();
                 Additional.Dispose();
                 LinkenShow.Dispose();
-                IllusionShow.Dispose();
+                //IllusionShow.Dispose();
 
                 Verification.Dispose();
 

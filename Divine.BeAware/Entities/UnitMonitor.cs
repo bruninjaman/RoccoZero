@@ -28,7 +28,7 @@ namespace Divine.BeAware.Entities
 
         private readonly LinaLightStrikeArray LinaLightStrikeArray;
 
-        private readonly IllusionShow IllusionShow;
+        //private readonly IllusionShow IllusionShow;
 
         private readonly Verification Verification;
 
@@ -46,7 +46,7 @@ namespace Divine.BeAware.Entities
             LeshracSplitEarth = common.LeshracSplitEarth;
             LinaLightStrikeArray = common.LinaLightStrikeArray;
 
-            IllusionShow = common.IllusionShow;
+            //IllusionShow = common.IllusionShow;
 
             EntityManager.EntityAdded += OnEntityAdded;
         }
@@ -91,10 +91,10 @@ namespace Divine.BeAware.Entities
                         return;
                     }
 
-                    if (IllusionShow.Entity(unit))
+                    /*if (IllusionShow.Entity(unit))
                     {
                         return;
-                    }
+                    }*/
 
                     if (unit.ClassId != ClassId.CDOTA_BaseNPC)
                     {

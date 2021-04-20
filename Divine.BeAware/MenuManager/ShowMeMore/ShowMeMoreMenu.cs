@@ -12,7 +12,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore
             VisibleByEnemyMenu = new VisibleByEnemyMenu(showMeMoreMenu);
             TrueSightVisionMenu = new TrueSightVisionMenu(showMeMoreMenu);
             TowerHelperMenu = new TowerHelperMenu(showMeMoreMenu);
-            IllusionShowMenu = new IllusionShowMenu(showMeMoreMenu);
+            //IllusionShowMenu = new IllusionShowMenu(showMeMoreMenu);
             LinkenShowMenu = new LinkenShowMenu(showMeMoreMenu);
             RangeMenu = new RangeMenu(showMeMoreMenu);
             RoshanMenu = new RoshanMenu(showMeMoreMenu);
@@ -28,7 +28,7 @@ namespace Divine.BeAware.MenuManager.ShowMeMore
 
         public TowerHelperMenu TowerHelperMenu { get; }
 
-        public IllusionShowMenu IllusionShowMenu { get; }
+        //public IllusionShowMenu IllusionShowMenu { get; }
 
         public LinkenShowMenu LinkenShowMenu { get; }
 
