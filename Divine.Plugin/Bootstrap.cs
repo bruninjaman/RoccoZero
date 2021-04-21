@@ -16,8 +16,6 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 
-using CustomGame;
-
 using Divine.Extensions;
 using Divine.Menu;
 using Divine.Menu.Items;
