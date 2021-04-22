@@ -1,6 +1,7 @@
 ﻿namespace O9K.Hud.Modules.Particles.Units
 {
     using System;
+    using System.Collections.Generic;
 
     using Core.Entities.Units;
     using Core.Logger;
@@ -21,6 +22,8 @@
 
         private Team ownerTeam;
 
+        private readonly HashSet<Unit9> illusions = new HashSet<Unit9>();
+
         public Illusion(IHudMenu hudMenu)
         {
             this.show = hudMenu.ParticlesMenu.Add(new MenuSwitcher("Illusion", "illusion"));
@@ -38,6 +41,8 @@
         {
             this.show.ValueChange -= this.ShowOnValueChanging;
             EntityManager9.UnitAdded -= this.OnUnitAdded;
+            EntityManager9.UnitRemoved -= this.OnUnitRemoved;
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
         }
 
         private void OnUnitAdded(Unit9 entity)
@@ -55,16 +60,7 @@
                     return;
                 }
 
-                /*var effect = ParticleManager.CreateParticle(
-                    "materials/ensage_ui/particles/illusions_mod_v2.vpcf",
-                    ParticleAttachment.CenterFollow,
-                    entity.BaseUnit);
-
-                effect.SetControlPoint(1, new Vector3(255));
-                effect.SetControlPoint(2, new Vector3(65, 105, 255));
-
-                effect.Release();*/
-
+                this.illusions.Add(entity);
                 entity.BaseEntity.ColorTint = new Color(0, 0, 255, 255);
             }
             catch (Exception e)
@@ -73,15 +69,37 @@
             }
         }
 
+        private void OnUnitRemoved(Unit9 entity)
+        {
+            this.illusions.Remove(entity);
+        }
+
+        private void OnUpdate()
+        {
+            foreach (var unit in this.illusions)
+            {
+                if (!unit.IsValid)
+                {
+                    continue;
+                }
+
+                unit.BaseEntity.ColorTint = new Color(0, 0, 255, 255);
+            }
+        }
+
         private void ShowOnValueChanging(object sender, SwitcherEventArgs e)
         {
             if (e.NewValue)
             {
                 EntityManager9.UnitAdded += this.OnUnitAdded;
+                EntityManager9.UnitRemoved += this.OnUnitRemoved;
+                UpdateManager.CreateIngameUpdate(300, this.OnUpdate);
             }
             else
             {
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
+                EntityManager9.UnitRemoved -= this.OnUnitRemoved;
+                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             }
         }
     }

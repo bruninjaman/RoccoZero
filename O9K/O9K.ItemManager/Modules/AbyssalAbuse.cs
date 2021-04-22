@@ -64,7 +64,7 @@
             try
             {
                 var baseHero = this.owner.Hero.BaseHero;
-                var abyssal = baseHero.Inventory.Items.FirstOrDefault(x => x.Id == abyssalId);
+                var abyssal = baseHero.Inventory.MainItems.FirstOrDefault(x => x.Id == abyssalId);
                 if (abyssal == null)
                 {
                     return;
@@ -144,7 +144,7 @@
                 }
 
                 var baseHero = hero.BaseHero;
-                var items = baseHero.Inventory.Items.Concat(baseHero.Inventory.BackpackItems).ToList();
+                var items = baseHero.Inventory.MainItems.Concat(baseHero.Inventory.BackpackItems).ToList();
                 var disassembledAbyssal = items.Where(x => this.disassembledAbyssalIds.Contains(x.Id)).ToList();
                 if (disassembledAbyssal.Count != this.disassembledAbyssalIds.Count)
                 {

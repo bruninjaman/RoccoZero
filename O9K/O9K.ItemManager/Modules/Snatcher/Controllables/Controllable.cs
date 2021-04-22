@@ -63,7 +63,7 @@
                         return false;
                     }
 
-                    var item = this.Unit.BaseInventory.Items.OrderBy(x => x.Cost).FirstOrDefault(x => x.CanBeMovedToBackpack());
+                    var item = this.Unit.BaseInventory.MainItems.OrderBy(x => x.Cost).FirstOrDefault(x => x.CanBeMovedToBackpack());
                     if (item == null)
                     {
                         return false;

@@ -328,7 +328,7 @@
 
                 var center = position.Center + new Vector2(0, position.Height * 0.65f);
                 var items = this.roshan?.IsValid == true && this.roshan.BaseInventory != null
-                                ? this.roshan.BaseInventory.Items.Select(x => x.Id).ToArray()
+                                ? this.roshan.BaseInventory.MainItems.Select(x => x.Id).ToArray()
                                 : this.roshanDrop[this.roshansKilled];
                 var abilitiesSize = 20 * Hud.Info.ScreenRatio;
                 var gap = 4 * Hud.Info.ScreenRatio;

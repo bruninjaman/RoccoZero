@@ -568,12 +568,11 @@
         private bool PlacedWard(EnemyUnit enemy, AbilityId id)
         {
             var count = enemy.CountWards(id);
-
             if (count < enemy.GetWardsCount(id))
             {
                 enemy.SetWardsCount(id, count);
 
-                if (!this.GaveWard(enemy) && !enemy.DroppedWard(id))
+                if (!this.GaveWard(enemy) && !enemy.DroppedWard(id) && !enemy.Unit.IsCourier)
                 {
                     return true;
                 }
