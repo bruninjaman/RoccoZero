@@ -43,8 +43,6 @@
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             UpdateManager.DestroyIngameUpdate(this.OnUpdate);
-
-
         }
 
         private void OnUnitAdded(Unit9 entity)
