@@ -48,7 +48,6 @@ namespace Divine.Plugin
 
             var humanizer = new Humanizer.Humanizer();
             humanizer.OnActivate();
-
             //new TogetherWeStand(MenuManager.CreateRootMenu("TogetherWeStand"));
         }
 
