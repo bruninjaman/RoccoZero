@@ -5,8 +5,8 @@
     using Core.Entities.Units;
 
     using Divine;
-    using Ensage.SDK.Geometry;
 
+    using O9K.Core.Geometry;
     using O9K.Evader.Abilities.Base.Evadable;
 
     using SharpDX;

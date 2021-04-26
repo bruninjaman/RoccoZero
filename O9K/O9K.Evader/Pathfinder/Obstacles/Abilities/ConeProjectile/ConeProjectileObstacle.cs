@@ -7,8 +7,9 @@
     using Core.Extensions;
 
     using Divine;
-    using Ensage.SDK.Geometry;
+    using Divine.SDK.Extensions;
 
+    using O9K.Core.Geometry;
     using O9K.Evader.Abilities.Base.Evadable;
 
     using SharpDX;
@@ -124,7 +125,7 @@
                 //}
 
                 var rectangle = (Polygon.Trapezoid)this.Polygon;
-                rectangle.Start = currentPosition.To2D();
+                rectangle.Start = currentPosition.ToVector2();
                 rectangle.UpdatePolygon();
             }
         }

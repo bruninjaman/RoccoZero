@@ -10,7 +10,7 @@
     using Core.Logger;
 
     using Divine;
-    using Ensage.SDK.Extensions;
+    using Divine.SDK.Extensions;
 
     using Metadata;
 
@@ -33,8 +33,8 @@
         public TreeDanceUsable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
             : base(ability, pathfinder, menu)
         {
-            this.trees = ObjectManager.GetEntities<Tree>().ToArray();
-            Player.OnExecuteOrder += this.OnExecuteOrder;
+            this.trees = EntityManager.GetEntities<Tree>().ToArray();
+            OrderManager.OrderAdding += OnOrderAdding;
         }
 
         private ActiveAbility Ult
@@ -52,7 +52,7 @@
 
         public void Dispose()
         {
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= OnOrderAdding;
         }
 
         public override float GetRequiredTime(Unit9 ally, Unit9 enemy, IObstacle obstacle)
@@ -79,26 +79,27 @@
             return this.ActiveAbility.UseAbility(this.tree, false, true);
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!args.Process || args.IsQueued || args.OrderId != OrderId.AbilityLocation)
+                var order = e.Order;
+                if (!e.Process || order.IsQueued || order.Type != OrderType.CastPosition)
                 {
                     return;
                 }
 
-                if (args.Ability.Handle != this.Ult?.Handle)
+                if (order.Ability.Handle != this.Ult?.Handle)
                 {
                     return;
                 }
 
                 this.ultEndTime = GameManager.RawGameTime + this.ult.Duration;
-                this.ultPosition = args.TargetPosition;
+                this.ultPosition = order.Position;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
     }

@@ -8,8 +8,9 @@
     using Core.Logger;
 
     using Divine;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
+    using Divine.SDK.Extensions;
+
+    using O9K.Core.Geometry;
 
     using Pathfinder.Obstacles.Abilities.LinearProjectile;
 
@@ -28,6 +29,7 @@
         public override void AddUnit(Unit unit)
         {
             UpdateManager.BeginInvoke(
+                300,
                 () =>
                     {
                         try
@@ -37,7 +39,7 @@
                                 return;
                             }
 
-                            if (this.Position.Extend2D(unit.NetworkPosition, this.Range).Distance2D(this.EndPosition) < 500)
+                            if (this.Position.Extend2D(unit.Position, this.Range).Distance2D(this.EndPosition) < 500)
                             {
                                 this.ObstacleUnit = unit;
                             }
@@ -46,8 +48,7 @@
                         {
                             Logger.Error(e);
                         }
-                    },
-                300);
+                    });
         }
 
         public override void Update()
@@ -71,7 +72,7 @@
 
                 //this.Pathfinder.NavMesh.UpdateObstacle(this.NavMeshId.Value, currentPosition, this.Radius);
                 var rectangle = (Polygon.Rectangle)this.Polygon;
-                rectangle.Start = currentPosition.To2D();
+                rectangle.Start = currentPosition.ToVector2();
                 rectangle.UpdatePolygon();
             }
         }

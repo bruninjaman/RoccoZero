@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Abilities.Base;
@@ -10,13 +9,10 @@
     using Core.Entities.Heroes;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
 
     using Divine;
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Renderer;
 
     using Evader.EvadeModes;
 
@@ -29,7 +25,6 @@
 
     using SharpDX;
 
-    [Export(typeof(IDebugger))]
     internal class Debugger : IEvaderService, IDebugger
     {
         private const float TextSize = 18f;
@@ -46,7 +41,6 @@
 
         private Owner owner;
 
-        [ImportingConstructor]
         public Debugger(
             IPathfinder pathfinder,
             IMainMenu menu,
@@ -105,8 +99,8 @@
             RendererManager.Draw -= this.DrawEvadableAbilities;
             RendererManager.Draw -= this.DrawIntersections;
             RendererManager.Draw -= this.DrawUsableAbilities;
-            Drawing.OnDraw -= this.DrawAbilityObstacles;
-            Drawing.OnDraw -= this.DrawMap;
+            RendererManager.Draw -= this.DrawAbilityObstacles;
+            RendererManager.Draw -= this.DrawMap;
         }
 
         private void DrawAbilitiesOnValueChanged(object sender, SwitcherEventArgs e)
@@ -121,15 +115,15 @@
                     fix.DrawCircle(Vector3.Zero, 100);
                 }
 
-                Drawing.OnDraw += this.DrawAbilityObstacles;
+                RendererManager.Draw += this.DrawAbilityObstacles;
             }
             else
             {
-                Drawing.OnDraw -= this.DrawAbilityObstacles;
+                RendererManager.Draw -= this.DrawAbilityObstacles;
             }
         }
 
-        private void DrawAbilityObstacles(EventArgs args)
+        private void DrawAbilityObstacles()
         {
             try
             {
@@ -156,7 +150,7 @@
                     .Distinct()
                     .ToList())
                 {
-                    var position = Drawing.WorldToScreen(unit.Position);
+                    var position = RendererManager.WorldToScreen(unit.Position);
                     if (position.IsZero)
                     {
                         continue;
@@ -174,13 +168,13 @@
                             text += " (Modifier " + (modifier.ModifierEnemyCounter ? "enemy" : "ally") + ")";
                         }
 
-                        renderer.DrawText(
-                            (position += new Vector2(0, 20)) + new Vector2(20, 0),
+                        RendererManager.DrawText(
                             text,
+                            (position += new Vector2(0, 20)) + new Vector2(20, 0),
                             ability.Ability.BaseAbility.IsInAbilityPhase ? Color.LawnGreen :
                             ability.Ability.CanBeCasted() ? Color.White : Color.Gray,
-                            TextSize,
-                            "Arial");
+                            "Arial",
+                            TextSize);
                     }
                 }
             }
@@ -194,11 +188,11 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.DrawEvadableAbilities;
+                RendererManager.Draw += this.DrawEvadableAbilities;
             }
             else
             {
-                this.context.Renderer.Draw -= this.DrawEvadableAbilities;
+                RendererManager.Draw -= this.DrawEvadableAbilities;
             }
         }
 
@@ -206,11 +200,11 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.ShowEvadeResult;
+                RendererManager.Draw += this.ShowEvadeResult;
             }
             else
             {
-                this.context.Renderer.Draw -= this.ShowEvadeResult;
+                RendererManager.Draw -= this.ShowEvadeResult;
             }
         }
 
@@ -226,7 +220,7 @@
                         continue;
                     }
 
-                    var position = Drawing.WorldToScreen(unit.Position);
+                    var position = RendererManager.WorldToScreen(unit.Position);
                     if (position.IsZero)
                     {
                         continue;
@@ -234,13 +228,12 @@
 
                     foreach (var obstacle in obstacles)
                     {
-                        renderer.DrawText(
+                        RendererManager.DrawText(
+                             obstacle.EvadableAbility.Ability.DisplayName + " (" + obstacle.Id + ") " + obstacle.GetEvadeTime(unit, false).ToString("n2"),
                             (position += new Vector2(0, 20)) + new Vector2(-120, 0),
-                            obstacle.EvadableAbility.Ability.DisplayName + " (" + obstacle.Id + ") "
-                            + obstacle.GetEvadeTime(unit, false).ToString("n2"),
                             this.actionManager.IsObstacleIgnored(unit, obstacle) ? Color.Gray : Color.White,
-                            TextSize,
-                            "Arial");
+                            "Arial",
+                            TextSize);
                     }
                 }
             }
@@ -254,15 +247,15 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.DrawIntersections;
+                RendererManager.Draw += this.DrawIntersections;
             }
             else
             {
-                this.context.Renderer.Draw -= this.DrawIntersections;
+                RendererManager.Draw -= this.DrawIntersections;
             }
         }
 
-        private void DrawMap(EventArgs args)
+        private void DrawMap()
         {
             try
             {
@@ -275,29 +268,29 @@
                         Vector2 p;
                         p.X = (this.pathfinder.NavMesh.CellSize * (i - (CellCount / 2))) + center.X;
                         p.Y = (this.pathfinder.NavMesh.CellSize * (j - (CellCount / 2))) + center.Y;
-                        SharpDX.Color color;
+                        Color color;
 
                         var isFlying = this.owner.Hero.MoveCapability == MoveCapability.Fly
                                        || (this.owner.Hero.UnitState & UnitState.Flying) != 0;
                         var flag = this.pathfinder.NavMesh.GetCellFlags(p);
-                        if (!isFlying && (flag & NavMeshCellFlags.Walkable) != 0)
+                        if (!isFlying && (flag & MapMeshCellFlags.Walkable) != 0)
                         {
-                            color = (flag & NavMeshCellFlags.Tree) != 0 ? SharpDX.Color.Purple : SharpDX.Color.Green;
-                            if ((flag & NavMeshCellFlags.GridFlagObstacle) != 0)
+                            color = (flag & MapMeshCellFlags.Tree) != 0 ? SharpDX.Color.Purple : SharpDX.Color.Green;
+                            if ((flag & MapMeshCellFlags.GridFlagObstacle) != 0)
                             {
-                                color = SharpDX.Color.Pink;
+                                color = Color.Pink;
                             }
                         }
-                        else if (isFlying && (flag & NavMeshCellFlags.MovementBlocker) == 0)
+                        else if (isFlying && (flag & MapMeshCellFlags.MovementBlocker) == 0)
                         {
-                            color = SharpDX.Color.Green;
+                            color = Color.Green;
                         }
                         else
                         {
-                            color = SharpDX.Color.Red;
+                            color = Color.Red;
                         }
 
-                        Drawing.DrawRect(new Vector2(i * 10, 50 + ((CellCount - j - 1) * 10)), new Vector2(9), color, false);
+                        RendererManager.DrawFilledRectangle(new RectangleF(i * 10, 50 + ((CellCount - j - 1) * 10), 9, 9), color);
                     }
                 }
 
@@ -307,11 +300,7 @@
 
                 if (heroX >= 0 && heroX < CellCount && heroY >= 0 && heroY < CellCount)
                 {
-                    Drawing.DrawRect(
-                        new Vector2(heroX * 10, 50 + ((CellCount - heroY - 1) * 10)),
-                        new Vector2(9),
-                        SharpDX.Color.Blue,
-                        false);
+                    RendererManager.DrawFilledRectangle(new RectangleF(heroX * 10, 50 + ((CellCount - heroY - 1) * 10), 9, 9), Color.Blue);
                 }
 
                 //this.pathfinder.NavMesh.GetCellPosition(GameManager.MousePosition - center, out var mouseX, out var mouseY);
@@ -337,11 +326,11 @@
         {
             if (e.NewValue)
             {
-                Drawing.OnDraw += this.DrawMap;
+                RendererManager.Draw += this.DrawMap;
             }
             else
             {
-                Drawing.OnDraw -= this.DrawMap;
+                RendererManager.Draw -= this.DrawMap;
             }
         }
 
@@ -358,7 +347,7 @@
 
                 foreach (var unit in units)
                 {
-                    var position = Drawing.WorldToScreen(unit.Position);
+                    var position = RendererManager.WorldToScreen(unit.Position);
                     if (position.IsZero)
                     {
                         continue;
@@ -368,7 +357,7 @@
 
                     if (this.actionManager.IsInputBlocked(unit))
                     {
-                        renderer.DrawText(position + new Vector2(150, 20), "Blocked", Color.Red, TextSize, "Arial");
+                        RendererManager.DrawText("Blocked", position + new Vector2(150, 20), Color.Red, "Arial", TextSize);
                     }
 
                     var blinks = this.abilityManager.UsableBlinkAbilities.Where(x => x.Ability.Owner.Equals(unit))
@@ -377,17 +366,17 @@
 
                     if (blinks.Count > 0)
                     {
-                        renderer.DrawText((position += new Vector2(0, 20)) + new Vector2(10, 0), "Blinks:", Color.White, TextSize, "Arial");
+                        RendererManager.DrawText("Blinks:", (position += new Vector2(0, 20)) + new Vector2(10, 0), Color.White, "Arial", TextSize);
 
                         foreach (var ability in blinks)
                         {
-                            renderer.DrawText(
-                                (position += new Vector2(0, 20)) + new Vector2(20, 0),
+                            RendererManager.DrawText(
                                 ability.Ability.DisplayName,
+                                (position += new Vector2(0, 20)) + new Vector2(20, 0),
                                 ability.Ability.BaseAbility.IsInAbilityPhase ? Color.LawnGreen :
                                 ability.Ability.CanBeCasted() ? Color.White : Color.Gray,
-                                TextSize,
-                                "Arial");
+                                "Arial",
+                                TextSize);
                         }
                     }
 
@@ -397,22 +386,22 @@
 
                     if (counters.Count > 0)
                     {
-                        renderer.DrawText(
-                            (position += new Vector2(0, 20)) + new Vector2(10, 0),
+                        RendererManager.DrawText(
                             "Counters:",
+                            (position += new Vector2(0, 20)) + new Vector2(10, 0),
                             Color.White,
-                            TextSize,
-                            "Arial");
+                            "Arial",
+                            TextSize);
 
                         foreach (var ability in counters)
                         {
-                            renderer.DrawText(
-                                (position += new Vector2(0, 20)) + new Vector2(20, 0),
+                            RendererManager.DrawText(
                                 ability.Ability.DisplayName,
+                                (position += new Vector2(0, 20)) + new Vector2(20, 0),
                                 ability.Ability.BaseAbility.IsInAbilityPhase ? Color.LawnGreen :
                                 ability.Ability.CanBeCasted() ? Color.White : Color.Gray,
-                                TextSize,
-                                "Arial");
+                                "Arial",
+                                TextSize);
                         }
                     }
 
@@ -422,22 +411,22 @@
 
                     if (disables.Count > 0)
                     {
-                        renderer.DrawText(
-                            (position += new Vector2(0, 20)) + new Vector2(10, 0),
+                        RendererManager.DrawText(
                             "Disables:",
+                            (position += new Vector2(0, 20)) + new Vector2(10, 0),
                             Color.White,
-                            TextSize,
-                            "Arial");
+                            "Arial",
+                            TextSize);
 
                         foreach (var ability in disables)
                         {
-                            renderer.DrawText(
-                                (position += new Vector2(0, 20)) + new Vector2(20, 0),
+                            RendererManager.DrawText(
                                 ability.Ability.DisplayName,
+                                (position += new Vector2(0, 20)) + new Vector2(20, 0),
                                 ability.Ability.BaseAbility.IsInAbilityPhase ? Color.LawnGreen :
                                 ability.Ability.CanBeCasted() ? Color.White : Color.Gray,
-                                TextSize,
-                                "Arial");
+                                "Arial",
+                                TextSize);
                         }
                     }
                 }
@@ -452,15 +441,15 @@
         {
             if (e.NewValue)
             {
-                this.context.Renderer.Draw += this.DrawUsableAbilities;
+                RendererManager.Draw += this.DrawUsableAbilities;
             }
             else
             {
-                this.context.Renderer.Draw -= this.DrawUsableAbilities;
+                RendererManager.Draw -= this.DrawUsableAbilities;
             }
         }
 
-        private void ShowEvadeResult(IRenderer renderer)
+        private void ShowEvadeResult()
         {
             try
             {
@@ -518,18 +507,18 @@
                         }
                     }
 
-                    var size = renderer.MeasureText(text, TextSize + 2);
+                    var size = RendererManager.MeasureText(text, TextSize + 2);
                     position += new Vector2(0, TextSize + 2);
 
-                    renderer.DrawLine(
+                    RendererManager.DrawLine(
                         position - new Vector2(size.X + 20, ((TextSize + 2) / -2) - 3),
                         position - new Vector2(0, ((TextSize + 2) / -2) - 3),
-                        Color.FromArgb(220, 0, 0, 0),
+                        new Color(0, 0, 0, 220),
                         TextSize + 2);
 
-                    renderer.DrawText(
-                        position - new Vector2(size.X + 10, 0),
+                    RendererManager.DrawText(
                         text,
+                        position - new Vector2(size.X + 10, 0),
                         result.State == EvadeResult.EvadeState.Failed ? Color.Red : Color.Green,
                         TextSize + 2);
                 }

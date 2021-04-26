@@ -18,7 +18,6 @@
 
     using Pathfinder.Obstacles;
 
-    [Export(typeof(IActionManager))]
     internal class ActionManager : IEvaderService, IActionManager
     {
         private readonly MultiSleeper abilityInputBlocked = new MultiSleeper();

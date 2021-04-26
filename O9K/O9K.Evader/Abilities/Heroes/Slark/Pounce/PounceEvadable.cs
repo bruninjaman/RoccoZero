@@ -12,7 +12,6 @@
     using Core.Logger;
 
     using Divine;
-    using Ensage.SDK.Helpers;
 
     using Metadata;
 
@@ -61,6 +60,7 @@
                 var startPosition = this.Owner.Position;
 
                 UpdateManager.BeginInvoke(
+                    10,
                     () =>
                         {
                             try
@@ -84,8 +84,7 @@
                             {
                                 Logger.Error(e);
                             }
-                        },
-                    10);
+                        });
             }
             else
             {

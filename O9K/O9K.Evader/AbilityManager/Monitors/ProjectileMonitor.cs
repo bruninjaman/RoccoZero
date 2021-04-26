@@ -25,19 +25,19 @@
             this.myTeam = EntityManager9.Owner.Team;
             this.evadableAbilities = evadableAbilities;
 
-            ObjectManager.OnAddTrackingProjectile += this.OnAddTrackingProjectile;
+            ProjectileManager.TrackingProjectileAdded += this.OnAddTrackingProjectile;
         }
 
         public void Dispose()
         {
-            ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile;
+            ProjectileManager.TrackingProjectileAdded -= this.OnAddTrackingProjectile;
         }
 
-        private void OnAddTrackingProjectile(TrackingProjectileEventArgs args)
+        private void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs args)
         {
             try
             {
-                var projectile = args.Projectile;
+                var projectile = args.TrackingProjectile;
                 if (projectile.IsAutoAttackProjectile())
                 {
                     return;
@@ -49,7 +49,7 @@
                     return;
                 }
 
-                var source = args.Projectile.Source;
+                var source = projectile.Source;
                 if (source != null)
                 {
                     //// enemy ability, but added though ally

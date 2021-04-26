@@ -6,12 +6,13 @@
     using Core.Entities.Units;
 
     using Divine;
-    using Ensage.SDK.Geometry;
+    using Divine.SDK.Extensions;
 
     using Helpers;
 
     using Metadata;
 
+    using O9K.Core.Geometry;
     using O9K.Evader.Abilities.Base.Evadable;
 
     using SharpDX;
@@ -119,7 +120,7 @@
                 return false;
             }
 
-            if (!this.Polygon.IsOutside(unit.Position.To2D()))
+            if (!this.Polygon.IsOutside(unit.Position.ToVector2()))
             {
                 return true;
             }
@@ -129,7 +130,7 @@
                 return false;
             }
 
-            return !this.Polygon.IsOutside(unit.InFront(100).To2D());
+            return !this.Polygon.IsOutside(unit.InFront(100).ToVector2());
         }
     }
 }

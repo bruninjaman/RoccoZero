@@ -3,8 +3,9 @@
     using Core.Extensions;
 
     using Divine;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Geometry;
+    using Divine.SDK.Extensions;
+
+    using O9K.Core.Geometry;
 
     using Pathfinder.Obstacles.Abilities.AreaOfEffect;
     using Pathfinder.Obstacles.Types;

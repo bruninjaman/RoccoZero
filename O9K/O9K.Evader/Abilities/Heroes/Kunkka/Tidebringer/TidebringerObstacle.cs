@@ -5,7 +5,8 @@
     using Core.Entities.Units;
 
     using Divine;
-    using Ensage.SDK.Geometry;
+
+    using O9K.Core.Geometry;
 
     using Pathfinder.Obstacles.Abilities;
     using Pathfinder.Obstacles.Types;

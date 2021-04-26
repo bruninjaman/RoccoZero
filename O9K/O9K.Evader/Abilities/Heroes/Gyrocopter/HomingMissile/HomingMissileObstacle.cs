@@ -63,12 +63,12 @@
 
         public override float GetEvadeTime(Unit9 ally, bool blink)
         {
-            return Math.Max(ally.Distance(this.missileUnit.NetworkPosition) - (50 + GameManager.Ping), 0.1f) / this.Speed;
+            return Math.Max(ally.Distance(this.missileUnit.Position) - (50 + GameManager.Ping), 0.1f) / this.Speed;
         }
 
         public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
         {
-            var position = this.missileUnit.NetworkPosition;
+            var position = this.missileUnit.Position;
             if (this.initialPosition == position)
             {
                 return false;

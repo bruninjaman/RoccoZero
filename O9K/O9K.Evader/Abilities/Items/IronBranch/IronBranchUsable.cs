@@ -35,7 +35,7 @@
             {
                 if (this.kineticField?.IsValid != true)
                 {
-                    this.kineticField = ObjectManager.GetEntitiesFast<Unit>()
+                    this.kineticField = EntityManager.GetEntities<Unit>()
                         .Where(x => x.IsValid && x.Team != this.Ability.Owner.Team && x.NetworkName == "CDOTA_BaseNPC")
                         .SelectMany(x => x.Modifiers)
                         .FirstOrDefault(x => x.IsValid && x.Name == "modifier_disruptor_kinetic_field_thinker");
@@ -51,7 +51,7 @@
             {
                 if (this.pounce?.IsValid != true)
                 {
-                    this.pounce = ObjectManager.Particles.FirstOrDefault(x => x.IsValid && x.Name.Contains("pounce_leash.vpcf"));
+                    this.pounce = ParticleManager.Particles.FirstOrDefault(x => x.IsValid && x.Name.Contains("pounce_leash.vpcf"));
                 }
 
                 return this.pounce;

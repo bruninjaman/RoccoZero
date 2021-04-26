@@ -9,6 +9,8 @@
 
     using Modes;
 
+    using O9K.Core.Managers.Context;
+
     using Pathfinder.Obstacles;
 
     internal enum EvadeMode
@@ -24,7 +26,6 @@
         GoldSpend
     }
 
-    [Export(typeof(IEvadeModeManager))]
     internal class EvadeModeManager : IEvaderService, IEvadeModeManager
     {
         private readonly IAbilityManager abilityManager;
@@ -40,13 +41,12 @@
         private readonly IPathfinder pathfinder;
 
         public EvadeModeManager(
-            IAssemblyEventManager9 eventManager,
             IAbilityManager abilityManager,
             IPathfinder pathfinder,
             IActionManager actionManager,
             IMainMenu menu)
         {
-            this.eventManager = eventManager;
+            this.eventManager = Context9.AssemblyEventManager;
             this.abilityManager = abilityManager;
             this.pathfinder = pathfinder;
             this.actionManager = actionManager;

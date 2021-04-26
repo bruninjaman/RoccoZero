@@ -10,7 +10,7 @@
     using Core.Extensions;
     using Core.Managers.Entity;
 
-    using Ensage.SDK.Geometry;
+    using Divine.SDK.Extensions;
 
     using Metadata;
 

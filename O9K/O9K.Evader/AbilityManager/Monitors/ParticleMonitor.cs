@@ -183,23 +183,22 @@
             this.evadableAbilities = evadable;
             this.owner = EntityManager9.Owner;
 
-            Entity.OnParticleAdded += this.OnParticleAdded;
-            Entity.OnParticleReleased += this.OnParticleReleased;
+            ParticleManager.ParticleAdded += this.OnParticleAdded;
 
             //Entity.OnParticleAdded += this.OnParticleAddedTemp;
         }
 
         public void Dispose()
         {
-            Entity.OnParticleAdded -= this.OnParticleAdded;
-            Entity.OnParticleReleased -= this.OnParticleReleased;
+            ParticleManager.ParticleAdded -= this.OnParticleAdded;
+            //Entity.OnParticleReleased -= this.OnParticleReleased;
         }
 
-        private void OnParticleAdded(Entity sender, ParticleAddedEventArgs args)
+        private void OnParticleAdded(ParticleAddedEventArgs args)
         {
             try
             {
-                var particleName = args.Name;
+                var particleName = args.Particle.Name;
 
                 if (!this.addedParticles.TryGetValue(particleName, out var abilityId))
                 {
@@ -234,7 +233,7 @@
 
             try
             {
-                var name = args.Name;
+                var name = args.Particle.Name;
 
                 foreach (var key in this.particles.Keys)
                 {
@@ -253,7 +252,7 @@
             }
         }
 
-        private void OnParticleReleased(Entity sender, ParticleReleasedEventArgs args)
+        /*private void OnParticleReleased(ParticleReleasedEventArgs args)
         {
             try
             {
@@ -289,6 +288,6 @@
             {
                 Logger.Error(e);
             }
-        }
+        }*/
     }
 }

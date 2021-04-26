@@ -3,8 +3,9 @@
     using Core.Entities.Units;
 
     using Divine;
-    using Ensage.SDK.Geometry;
+    using Divine.SDK.Extensions;
 
+    using O9K.Core.Geometry;
     using O9K.Evader.Abilities.Base.Evadable;
 
     using SharpDX;
@@ -54,7 +55,7 @@
         {
             var rectangle = (Polygon.Rectangle)this.Polygon;
             this.EndPosition = this.Caster.InFront(this.Range);
-            rectangle.End = this.EndPosition.To2D();
+            rectangle.End = this.EndPosition.ToVector2();
             rectangle.UpdatePolygon();
         }
     }

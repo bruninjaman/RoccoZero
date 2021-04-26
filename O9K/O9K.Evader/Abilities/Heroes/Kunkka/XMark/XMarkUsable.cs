@@ -10,7 +10,6 @@
     using Core.Logger;
 
     using Divine;
-    using Ensage.SDK.Helpers;
 
     using Metadata;
 
@@ -48,6 +47,7 @@
                     }
 
                     UpdateManager.BeginInvoke(
+                        delay,
                         () =>
                             {
                                 try
@@ -63,8 +63,7 @@
                                 {
                                     Logger.Error(e);
                                 }
-                            },
-                        delay);
+                            });
                 }
             }
 

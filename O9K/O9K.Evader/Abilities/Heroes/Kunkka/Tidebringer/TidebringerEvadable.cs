@@ -10,7 +10,6 @@
     using Core.Logger;
 
     using Divine;
-    using Ensage.SDK.Helpers;
 
     using Metadata;
 
@@ -59,11 +58,12 @@
             var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
             UpdateManager.BeginInvoke(
+                10,
                 () =>
                     {
                         try
                         {
-                            if (!this.Tidebringer.IsTidebringerAnimation(this.Owner.BaseUnit.Animation.Name))
+                            if (!this.Tidebringer.IsTidebringerAnimation(this.Owner.BaseUnit.AnimationName))
                             {
                                 return;
                             }
@@ -82,8 +82,8 @@
                         {
                             Logger.Error(e);
                         }
-                    },
-                10);
+                    }
+                );
         }
 
         public override void PhaseCancel()

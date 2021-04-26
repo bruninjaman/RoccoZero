@@ -9,7 +9,7 @@
     using Core.Managers.Entity;
 
     using Divine;
-    using Ensage.SDK.Extensions;
+    using Divine.SDK.Extensions;
 
     using Metadata;
 

@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Items;
     using Core.Entities.Units;
 
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Metadata;
 
@@ -45,6 +45,7 @@
             }
 
             UpdateManager.BeginInvoke(
+                3000,
                 () =>
                     {
                         if (!this.radiance.IsValid || !this.radiance.Enabled)
@@ -53,8 +54,7 @@
                         }
 
                         this.radiance.UseAbility(false, true);
-                    },
-                3000);
+                    });
 
             return true;
         }

@@ -17,8 +17,7 @@
     using Core.Managers.Menu.Items;
 
     using Divine;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
+    using Divine.SDK.Extensions;
 
     using Metadata;
 
@@ -151,11 +150,11 @@
             this.hpToggle.AddTranslation(Lang.Ru, "Порог здоровья для переключения");
             this.hpToggle.AddTranslation(Lang.Cn, "要切换的运行状况阈值");
 
-            UpdateManager.Subscribe(this.OnUpdate);
-            Player.OnExecuteOrder += this.OnExecuteOrder;
-            Unit.OnModifierAdded += this.OnModifierAdded;
-            ObjectManager.OnAddTrackingProjectile += this.OnAddTrackingProjectile;
-            ObjectManager.OnRemoveTrackingProjectile += this.OnRemoveTrackingProjectile;
+            UpdateManager.CreateIngameUpdate(this.OnUpdate);
+            OrderManager.OrderAdding += this.OnOrderAdding;
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
+            ProjectileManager.TrackingProjectileAdded += this.OnAddTrackingProjectile;
+            ProjectileManager.TrackingProjectileRemoved += this.OnRemoveTrackingProjectile;
             EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
             EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
 
@@ -216,11 +215,11 @@
 
         public void Dispose()
         {
-            UpdateManager.Unsubscribe(this.OnUpdate);
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
-            Unit.OnModifierAdded -= this.OnModifierAdded;
-            ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile;
-            ObjectManager.OnRemoveTrackingProjectile -= this.OnRemoveTrackingProjectile;
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
+            OrderManager.OrderAdding -= this.OnOrderAdding;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ProjectileManager.TrackingProjectileAdded -= this.OnAddTrackingProjectile;
+            ProjectileManager.TrackingProjectileRemoved -= this.OnRemoveTrackingProjectile;
             EntityManager9.UnitMonitor.UnitDied -= this.OnUnitDied;
             EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
         }
@@ -237,12 +236,12 @@
             if (obstacle?.IsModifierObstacle == true && obstacle.EvadableAbility.Ability.Id == AbilityId.doom_bringer_doom)
             {
                 var slot = this.Owner.BaseInventory.FreeBackpackSlots.FirstOrDefault();
-                if (slot == ItemSlot.InventorySlot_1)
+                if (slot == ItemSlot.MainSlot_1)
                 {
                     slot = ItemSlot.BackPack_1;
                 }
 
-                this.Ability.BaseItem.MoveItem(slot);
+                this.Ability.BaseItem.Move(slot);
                 return true;
             }
 
@@ -252,7 +251,7 @@
             {
                 if (this.ActiveAbility.UseAbility(false, true))
                 {
-                    UpdateManager.BeginInvoke(() => this.ActiveAbility.UseAbility(false, true), 50);
+                    UpdateManager.BeginInvoke(50, () => this.ActiveAbility.UseAbility(false, true));
                     return true;
                 }
 
@@ -331,7 +330,7 @@
             return false;
         }
 
-        private void OnAddTrackingProjectile(TrackingProjectileEventArgs args)
+        private void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs args)
         {
             if (!this.Menu.AbilitySettings.IsCounterEnabled(this.Ability.Name))
             {
@@ -340,7 +339,7 @@
 
             try
             {
-                var projectile = args.Projectile;
+                var projectile = args.TrackingProjectile;
                 if (projectile.Target?.Handle != this.Owner.Handle)
                 {
                     return;
@@ -385,36 +384,34 @@
 
         private void OnDraw(EventArgs args)
         {
-#pragma warning disable 618
             if (this.canToggle)
             {
-                Drawing.DrawText(
+                RendererManager.DrawText(
                     "Can toggle",
-                    "Arial",
-                    Drawing.WorldToScreen(this.Owner.Position),
-                    new Vector2(25),
+                    RendererManager.WorldToScreen(this.Owner.Position),
                     Color.White,
-                    FontFlags.None);
+                    "Arial",
+                    25);
             }
-#pragma warning restore 618
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (args.OrderId != OrderId.ToggleAbility || args.Ability.Handle != this.Ability.Handle)
+                var order = e.Order;
+                if (order.Type != OrderType.CastToggle || order.Ability.Handle != this.Ability.Handle)
                 {
                     return;
                 }
 
                 if (this.toggling.IsSleeping || !this.canToggle)
                 {
-                    args.Process = false;
+                    e.Process = false;
                     return;
                 }
 
-                if (!args.IsPlayerInput)
+                if (e.IsCustom)
                 {
                     return;
                 }
@@ -430,13 +427,13 @@
                     this.toggling.Sleep(ArmletFullEnableTime);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs args)
         {
             if (!this.Menu.AbilitySettings.IsCounterEnabled(this.Ability.Name))
             {
@@ -445,7 +442,7 @@
 
             try
             {
-                if (sender.Handle != this.Owner.Handle)
+                if (args.Modifier.Owner.Handle != this.Owner.Handle)
                 {
                     return;
                 }
@@ -468,11 +465,11 @@
             }
         }
 
-        private void OnRemoveTrackingProjectile(TrackingProjectileEventArgs args)
+        private void OnRemoveTrackingProjectile(TrackingProjectileRemovedEventArgs args)
         {
             try
             {
-                this.projectiles.Remove(args.Projectile);
+                this.projectiles.Remove(args.TrackingProjectile);
             }
             catch (Exception e)
             {

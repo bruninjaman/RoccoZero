@@ -6,9 +6,11 @@
     using Core.Extensions;
 
     using Divine;
-    using Ensage.SDK.Geometry;
+    using Divine.SDK.Extensions;
 
     using Helpers;
+
+    using O9K.Core.Geometry;
 
     using Pathfinder.Obstacles.Abilities;
     using Pathfinder.Obstacles.Types;
@@ -164,7 +166,7 @@
         {
             var rectangle = (Polygon.Rectangle)this.Polygon;
             this.EndPosition = this.Caster.InFront(this.Range);
-            rectangle.End = this.EndPosition.To2D();
+            rectangle.End = this.EndPosition.ToVector2();
             rectangle.UpdatePolygon();
         }
     }

@@ -43,10 +43,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Desktop\Divine\Output\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="O9K.Core">
-      <HintPath>..\O9K.Core\bin\Debug\O9K.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\..\..\..\..\Desktop\Divine\Output\SharpDX.dll</HintPath>
       <Private>False</Private>
@@ -990,6 +986,7 @@
     <Compile Include="ActionManager\ActionManager.cs" />
     <Compile Include="Helpers\StateDrawer.cs" />
     <Compile Include="Metadata\IDebugger.cs" />
+    <Compile Include="NavMeshPathfinding.cs" />
     <Compile Include="Pathfinder\Obstacles\Abilities\AreaOfEffect\AreaOfEffectModifierObstacle.cs" />
     <Compile Include="Pathfinder\Obstacles\Abilities\AreaOfEffect\AreaOfEffectObstacle.cs" />
     <Compile Include="Pathfinder\Obstacles\Abilities\AreaOfEffect\AreaOfEffectSpeedObstacle.cs" />
@@ -1080,6 +1077,11 @@
     <Compile Include="Settings\SettingsMenu.cs" />
     <Compile Include="Settings\UsableAbilitiesMenu.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\O9K.Core\O9K.Core.csproj">
+      <Project>{9789a144-cbd0-4dd5-8f78-2870ba4ca6d5}</Project>
+      <Name>O9K.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

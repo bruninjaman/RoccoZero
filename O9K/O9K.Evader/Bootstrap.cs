@@ -10,18 +10,30 @@
 
     using Metadata;
 
+    using O9K.Evader.Evader.EvadeModes;
+    using O9K.Evader.Settings;
+
     //[ExportPlugin("O9K // Evader", priority: int.MaxValue)]
     internal class Bootstrap : Bootstrapper
     {
-        private readonly IEnumerable<IEvaderService> evaderServices;
-
-        public Bootstrap([ImportMany] IEnumerable<IEvaderService> services)
-        {
-            this.evaderServices = services;
-        }
+        private readonly List<IEvaderService> evaderServices = new List<IEvaderService>();
 
         protected override void OnActivate()
         {
+            var menuManager = new MenuManager();
+            var pathfinder = new Pathfinder.Pathfinder();
+            var actionManager = new ActionManager.ActionManager(menuManager);
+            var abilityManager = new AbilityManager.AbilityManager(pathfinder, actionManager, menuManager);
+            var evadeModeManager = new EvadeModeManager(abilityManager, pathfinder, actionManager, menuManager);
+            var debugger = new Helpers.Debugger(pathfinder, menuManager, abilityManager, actionManager);
+
+            evaderServices.Add(menuManager);
+            evaderServices.Add(pathfinder);
+            evaderServices.Add(actionManager);
+            evaderServices.Add(abilityManager);
+            evaderServices.Add(evadeModeManager);
+            evaderServices.Add(debugger);
+
             try
             {
                 foreach (var service in this.evaderServices.OrderBy(x => x.LoadOrder))

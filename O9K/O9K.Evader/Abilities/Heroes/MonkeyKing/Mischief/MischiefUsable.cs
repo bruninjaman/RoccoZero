@@ -6,7 +6,6 @@
     using Core.Entities.Units;
 
     using Divine;
-    using Ensage.SDK.Helpers;
 
     using Metadata;
 
@@ -59,14 +58,14 @@
             }
 
             UpdateManager.BeginInvoke(
+                300,
                 () =>
                     {
                         if (this.ActiveAbility.CanBeCasted())
                         {
                             this.ActiveAbility.UseAbility();
                         }
-                    },
-                300);
+                    });
 
             return true;
         }

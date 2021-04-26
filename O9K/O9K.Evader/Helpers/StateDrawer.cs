@@ -1,15 +1,12 @@
 ﻿namespace O9K.Evader.Helpers
 {
     using System;
-    using System.ComponentModel.Composition;
 
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
-    using Core.Managers.Menu.EventArgs;
     using Core.Managers.Renderer.Utils;
 
-    using Ensage.SDK.Renderer;
+    using Divine;
 
     using Metadata;
 
@@ -19,12 +16,8 @@
 
     using SharpDX;
 
-    using Color = System.Drawing.Color;
-
     internal class StateDrawer : IEvaderService
     {
-        private readonly IContext9 context;
-
         private readonly HotkeysMenu hotkeysMenu;
 
         private readonly RectangleF startPosition;
@@ -39,11 +32,9 @@
 
         private bool showProactive;
 
-        [ImportingConstructor]
-        public StateDrawer(IMainMenu menu, IContext9 context)
+        public StateDrawer(IMainMenu menu)
         {
             this.hotkeysMenu = menu.Hotkeys;
-            this.context = context;
 
             this.textSize = 22 * Hud.Info.ScreenRatio;
             this.startPosition = new Rectangle9(0, Hud.Info.ScreenSize.Y * 0.05f, Hud.Info.ScreenSize.X * 0.995f, this.textSize);
@@ -57,7 +48,7 @@
             this.hotkeysMenu.PathfinderMode.ValueChange += this.PathfinderModeOnValueChanged;
             this.hotkeysMenu.ProactiveEvade.ValueChange += this.ProactiveEvadeOnValueChange;
 
-            this.context.Renderer.Draw += this.RendererOnDraw;
+            RendererManager.Draw += this.RendererOnDraw;
         }
 
         public void Dispose()
@@ -66,7 +57,7 @@
             this.hotkeysMenu.PathfinderMode.ValueChange -= this.PathfinderModeOnValueChanged;
             this.hotkeysMenu.ProactiveEvade.ValueChange -= this.ProactiveEvadeOnValueChange;
 
-            this.context.Renderer.Draw -= this.RendererOnDraw;
+            RendererManager.Draw -= this.RendererOnDraw;
         }
 
         private void BkbEnabledOnValueChanged(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
@@ -100,7 +91,7 @@
             this.showProactive = e.NewValue;
         }
 
-        private void RendererOnDraw(IRenderer renderer)
+        private void RendererOnDraw()
         {
             try
             {
@@ -113,11 +104,11 @@
 
                 if (this.showProactive)
                 {
-                    renderer.DrawText(position, "Evader (Proactive)", Color.OrangeRed, RendererFontFlags.Right, this.textSize);
+                    RendererManager.DrawText("Evader (Proactive)", position, Color.OrangeRed, FontFlags.Right, this.textSize);
                 }
                 else
                 {
-                    renderer.DrawText(position, "Evader", Color.LawnGreen, RendererFontFlags.Right, this.textSize);
+                    RendererManager.DrawText("Evader", position, Color.LawnGreen, FontFlags.Right, this.textSize);
                 }
 
                 position.Y += this.textSize;
@@ -125,19 +116,19 @@
                 switch (this.pathfinderMode)
                 {
                     case Pathfinder.EvadeMode.All:
-                        renderer.DrawText(position, "Dodge", Color.LawnGreen, RendererFontFlags.Right, this.textSize);
+                        RendererManager.DrawText("Dodge", position, Color.LawnGreen, FontFlags.Right, this.textSize);
                         break;
                     case Pathfinder.EvadeMode.Disables:
-                        renderer.DrawText(position, "Dodge (Disables)", Color.OrangeRed, RendererFontFlags.Right, this.textSize);
+                        RendererManager.DrawText("Dodge (Disables)", position, Color.OrangeRed, FontFlags.Right, this.textSize);
                         break;
                     case Pathfinder.EvadeMode.None:
-                        renderer.DrawText(position, "Dodge (None)", Color.Red, RendererFontFlags.Right, this.textSize);
+                        RendererManager.DrawText("Dodge (None)", position, Color.Red, FontFlags.Right, this.textSize);
                         break;
                 }
 
                 position.Y += this.textSize;
 
-                renderer.DrawText(position, "BKB", this.showBkb ? Color.LawnGreen : Color.Red, RendererFontFlags.Right, this.textSize);
+                RendererManager.DrawText("BKB", position, this.showBkb ? Color.LawnGreen : Color.Red, FontFlags.Right, this.textSize);
             }
             catch (Exception e)
             {

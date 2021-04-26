@@ -12,8 +12,6 @@
     using Core.Managers.Entity;
 
     using Divine;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
 
     using Metadata;
 
@@ -23,12 +21,12 @@
     {
         private readonly List<Unit9> bombs = new List<Unit9>();
 
-        private readonly IUpdateHandler techiesRemotesHandler;
+        private readonly UpdateHandler techiesRemotesHandler;
 
         public RemoteMinesEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
             : base(ability, pathfinder, menu)
         {
-            this.techiesRemotesHandler = UpdateManager.Subscribe(this.TechiesRemotesOnUpdate, 0, false);
+            this.techiesRemotesHandler = UpdateManager.CreateIngameUpdate(0, false, this.TechiesRemotesOnUpdate);
             EntityManager9.UnitAdded += this.OnUnitAdded;
             EntityManager9.UnitRemoved += this.OnUnitRemoved;
 
@@ -56,7 +54,7 @@
         {
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-            UpdateManager.Unsubscribe(this.techiesRemotesHandler);
+            UpdateManager.DestroyIngameUpdate(this.techiesRemotesHandler);
         }
 
         public override void PhaseCancel()
@@ -88,7 +86,7 @@
 
                 if ((entity.UnitState & UnitState.OutOfGame) != 0)
                 {
-                    UpdateManager.BeginInvoke(() => this.AddBomb(entity), 3300);
+                    UpdateManager.BeginInvoke(3300, () => this.AddBomb(entity));
                     return;
                 }
 

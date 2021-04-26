@@ -3,8 +3,7 @@
     using Core.Extensions;
 
     using Divine;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Geometry;
+    using Divine.SDK.Extensions;
 
     using SharpDX;
 
@@ -81,7 +80,7 @@
                 return;
             }
 
-            this.circle = new Particle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", position);
+            this.circle = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", position);
             this.circle.SetControlPoint(1, ParticleColor);
             this.circle.SetControlPoint(2, new Vector3(radius * -1, 255, 0));
         }
@@ -211,7 +210,7 @@
 
         private Particle DrawArc(Vector3 startPosition, Vector3 endPosition, float radius)
         {
-            var arc = new Particle(@"materials\ensage_ui\particles\semicircle_v2.vpcf", startPosition);
+            var arc = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\semicircle_v2.vpcf", startPosition);
             arc.SetControlPoint(1, endPosition);
             arc.SetControlPoint(2, new Vector3(radius * 1.12f, 0, 0));
             arc.SetControlPoint(3, ParticleColor);
@@ -222,7 +221,7 @@
 
         private Particle DrawLine(Vector3 startPosition, Vector3 endPosition)
         {
-            var line = new Particle(@"materials\ensage_ui\particles\line.vpcf", startPosition);
+            var line = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\line.vpcf", startPosition);
             line.SetControlPoint(2, endPosition);
             line.SetControlPoint(3, new Vector3(255, 15, 0));
             line.SetControlPoint(4, ParticleColor);

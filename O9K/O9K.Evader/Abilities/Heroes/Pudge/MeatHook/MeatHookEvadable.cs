@@ -9,7 +9,6 @@
     using Core.Logger;
 
     using Divine;
-    using Ensage.SDK.Helpers;
 
     using Metadata;
 
@@ -56,6 +55,7 @@
             var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
             UpdateManager.BeginInvoke(
+
                 () =>
                     {
                         try

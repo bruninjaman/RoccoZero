@@ -28,7 +28,6 @@
 
     using Monitors;
 
-    [Export(typeof(IAbilityManager))]
     internal class AbilityManager : IAbilityManager, IEvaderService
     {
         private readonly Dictionary<AbilityId, Type> abilityTypes = new Dictionary<AbilityId, Type>();

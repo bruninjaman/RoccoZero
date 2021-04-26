@@ -23,6 +23,8 @@
     using Pathfinder.Obstacles;
     using Pathfinder.Obstacles.Abilities.LinearProjectile;
 
+    using Vector2Extensions = Divine.SDK.Extensions.Vector2Extensions;
+
     internal class Evader : IEvaderService
     {
         private readonly IActionManager actionManager;
@@ -246,7 +248,7 @@
                 var enemyPosition = linearObstacle.Position.Extend2D(unit.Position, 75).ToVector2();
                 var unitPosition = unit.Position.Extend2D(linearObstacle.Position, 75).ToVector2();
 
-                var projection = Geometry.ProjectOn(otherUnitPosition, enemyPosition, unitPosition);
+                var projection = Vector2Extensions.ProjectOn(otherUnitPosition, enemyPosition, unitPosition);
 
                 var movePosition = projection.IsOnSegment
                                        ? projection.LinePoint.ToVector3()

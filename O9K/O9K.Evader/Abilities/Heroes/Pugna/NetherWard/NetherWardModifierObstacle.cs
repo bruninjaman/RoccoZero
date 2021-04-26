@@ -26,30 +26,32 @@
             }
 
             this.netherWard = (NetherWard)this.EvadableAbility.Ability;
-            Player.OnExecuteOrder += this.OnExecuteOrder;
+
+            OrderManager.OrderAdding += this.OnOrderAdding;
         }
 
         public void Dispose()
         {
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!args.Process)
+                if (!e.Process)
                 {
                     return;
                 }
 
-                var order = args.OrderId;
-                if (order != OrderId.Ability && order != OrderId.AbilityLocation && order != OrderId.AbilityTarget)
+                var order = e.Order;
+                var orderType = order.Type;
+                if (orderType != OrderType.Cast && orderType != OrderType.CastPosition && orderType != OrderType.CastTarget)
                 {
                     return;
                 }
 
-                var ability = EntityManager9.GetAbility(args.Ability.Handle);
+                var ability = EntityManager9.GetAbility(order.Ability.Handle);
                 if (ability == null)
                 {
                     return;
@@ -69,13 +71,13 @@
 
                 if (damage > 300 || owner.Health - damage <= 0)
                 {
-                    args.Process = false;
+                    e.Process = false;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Player.OnExecuteOrder -= this.OnExecuteOrder;
-                Logger.Error(e);
+                OrderManager.OrderAdding -= this.OnOrderAdding;
+                Logger.Error(ex);
             }
         }
     }

@@ -10,7 +10,6 @@
     using Core.Logger;
 
     using Divine;
-    using Ensage.SDK.Helpers;
 
     using Metadata;
 
@@ -44,6 +43,7 @@
             var startPosition = this.Owner.Position;
 
             UpdateManager.BeginInvoke(
+                50,
                 () =>
                     {
                         try
@@ -67,8 +67,7 @@
                         {
                             Logger.Error(e);
                         }
-                    },
-                50);
+                    });
         }
 
         public override void PhaseCancel()

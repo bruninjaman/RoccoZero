@@ -8,8 +8,9 @@
     using Core.Helpers;
 
     using Divine;
-    using Ensage.SDK.Geometry;
+    using Divine.SDK.Extensions;
 
+    using O9K.Core.Geometry;
     using O9K.Evader.Abilities.Base.Evadable;
 
     using SharpDX;
@@ -135,7 +136,7 @@
 
                 //this.Pathfinder.NavMesh.UpdateObstacle(this.NavMeshId.Value, currentPosition, this.Radius);
                 var rectangle = (Polygon.Rectangle)this.Polygon;
-                rectangle.Start = currentPosition.To2D();
+                rectangle.Start = currentPosition.ToVector2();
                 rectangle.UpdatePolygon();
             }
         }

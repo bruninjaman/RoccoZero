@@ -10,7 +10,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Metadata;
 
@@ -19,12 +19,12 @@
         public SpeedBurstUsable(Ability9 ability, IMainMenu menu)
             : base(ability, menu)
         {
-            UpdateManager.Subscribe(this.OnUpdate, 500);
+            UpdateManager.CreateIngameUpdate(500, this.OnUpdate);
         }
 
         public void Dispose()
         {
-            UpdateManager.Unsubscribe(this.OnUpdate);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
         }
 
         private void OnUpdate()

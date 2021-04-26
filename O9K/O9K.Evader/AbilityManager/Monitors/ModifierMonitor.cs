@@ -63,25 +63,25 @@
             { "modifier_clumsy_net_ensnare", AbilityId.item_clumsy_net },
 
             // force 
-            { "item_glimmer_cape", AbilityId.ability_base },
-            { "modifier_ancientapparition_coldfeet_freeze", AbilityId.ability_base },
-            { "modifier_kunkka_torrent_slow", AbilityId.ability_base },
-            { "modifier_razor_static_link_debuff", AbilityId.ability_base },
-            { "modifier_skeleton_king_hellfire_blast", AbilityId.ability_base },
-            { "modifier_item_meteor_hammer_burn", AbilityId.ability_base },
-            { "modifier_bane_nightmare_invulnerable", AbilityId.ability_base },
-            { "modifier_beastmaster_primal_roar_speed", AbilityId.ability_base },
-            { "modifier_beastmaster_primal_roar_slow", AbilityId.ability_base },
-            { "modifier_bounty_hunter_track_effect", AbilityId.ability_base },
-            { "modifier_jakiro_dual_breath_slow", AbilityId.ability_base },
-            { "modifier_medusa_stone_gaze", AbilityId.ability_base },
-            { "modifier_medusa_stone_gaze_facing", AbilityId.ability_base },
-            { "modifier_silencer_last_word_disarm", AbilityId.ability_base },
-            { "modifier_templar_assassin_meld", AbilityId.ability_base },
-            { "modifier_winter_wyvern_winters_curse", AbilityId.ability_base },
-            { "modifier_abaddon_frostmourne_debuff", AbilityId.ability_base },
-            { "modifier_huskar_inner_fire_knockback", AbilityId.ability_base },
-            { "modifier_lion_finger_of_death_delay", AbilityId.ability_base },
+            { "item_glimmer_cape", AbilityId.dota_base_ability },
+            { "modifier_ancientapparition_coldfeet_freeze", AbilityId.dota_base_ability },
+            { "modifier_kunkka_torrent_slow", AbilityId.dota_base_ability },
+            { "modifier_razor_static_link_debuff", AbilityId.dota_base_ability },
+            { "modifier_skeleton_king_hellfire_blast", AbilityId.dota_base_ability },
+            { "modifier_item_meteor_hammer_burn", AbilityId.dota_base_ability },
+            { "modifier_bane_nightmare_invulnerable", AbilityId.dota_base_ability },
+            { "modifier_beastmaster_primal_roar_speed", AbilityId.dota_base_ability },
+            { "modifier_beastmaster_primal_roar_slow", AbilityId.dota_base_ability },
+            { "modifier_bounty_hunter_track_effect", AbilityId.dota_base_ability },
+            { "modifier_jakiro_dual_breath_slow", AbilityId.dota_base_ability },
+            { "modifier_medusa_stone_gaze", AbilityId.dota_base_ability },
+            { "modifier_medusa_stone_gaze_facing", AbilityId.dota_base_ability },
+            { "modifier_silencer_last_word_disarm", AbilityId.dota_base_ability },
+            { "modifier_templar_assassin_meld", AbilityId.dota_base_ability },
+            { "modifier_winter_wyvern_winters_curse", AbilityId.dota_base_ability },
+            { "modifier_abaddon_frostmourne_debuff", AbilityId.dota_base_ability },
+            { "modifier_huskar_inner_fire_knockback", AbilityId.dota_base_ability },
+            { "modifier_lion_finger_of_death_delay", AbilityId.dota_base_ability },
         };
 
         private readonly Dictionary<string, AbilityId> abilityObstacleModifiers = new Dictionary<string, AbilityId>
@@ -135,12 +135,12 @@
             this.evadable = evadable;
             this.owner = EntityManager9.Owner;
 
-            Unit.OnModifierAdded += this.OnModifierAdded;
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
         }
 
         public void Dispose()
         {
-            Unit.OnModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
         }
 
         public AbilityId? GetAbilityId(string modifierName, string modifierTextureName)
@@ -170,7 +170,7 @@
 
                         abilityId = this.TryParse(name, modifierName, index < 0);
 
-                        if (index > 0 && abilityId == AbilityId.ability_base)
+                        if (index > 0 && abilityId == AbilityId.dota_base_ability)
                         {
                             abilityId = this.TryParse(name.Substring(0, index), modifierName);
                         }
@@ -180,7 +180,7 @@
                 }
             }
 
-            if (abilityId == AbilityId.ability_base)
+            if (abilityId == AbilityId.dota_base_ability)
             {
                 //Console.WriteLine("cant parse: " + modifierName + " " + modifierTextureName);
                 return null;
@@ -189,7 +189,7 @@
             return abilityId;
         }
 
-        private void OnModifierAdded(Unit sender, ModifierChangedEventArgs args)
+        private void OnModifierAdded(ModifierAddedEventArgs args)
         {
             try
             {
@@ -203,12 +203,12 @@
                         return;
                     }
 
-                    if (sender.Team == this.owner.Team && !modifierObstacleAbility.AllyModifierObstacle)
+                    if (modifier.Owner.Team == this.owner.Team && !modifierObstacleAbility.AllyModifierObstacle)
                     {
                         return;
                     }
 
-                    modifierObstacleAbility.AddModifierObstacle(modifier, sender);
+                    modifierObstacleAbility.AddModifierObstacle(modifier, (Unit)modifier.Owner);
                     return;
                 }
 
@@ -217,7 +217,7 @@
                     return;
                 }
 
-                var modifierOwner = EntityManager9.GetUnit(sender.Handle);
+                var modifierOwner = EntityManager9.GetUnit(modifier.Owner.Handle);
                 if (modifierOwner == null)
                 {
                     return;
@@ -265,7 +265,7 @@
             }
             else if (forceCache)
             {
-                this.abilityModifiers[fullName] = AbilityId.ability_base;
+                this.abilityModifiers[fullName] = AbilityId.dota_base_ability;
             }
 
             return abilityId;

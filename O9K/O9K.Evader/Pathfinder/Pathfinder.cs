@@ -19,7 +19,6 @@
 
     using SharpDX;
 
-    [Export(typeof(IPathfinder))]
     internal class Pathfinder : IPathfinder, IEvaderService
     {
         public enum EvadeMode

@@ -1,7 +1,5 @@
 ﻿namespace O9K.Evader.Settings
 {
-    using System;
-    using System.ComponentModel.Composition;
 
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
@@ -10,17 +8,17 @@
 
     using Metadata;
 
-    [Export(typeof(IMainMenu))]
+    using O9K.Core.Managers.Context;
+
     internal class MenuManager : IEvaderService, IMainMenu
     {
+        private readonly IMenuManager9 menuManager;
+
         private readonly Menu menu;
 
-        private readonly Lazy<IMenuManager9> menuManager;
-
-        [ImportingConstructor]
-        public MenuManager(Lazy<IMenuManager9> menuManager)
+        public MenuManager()
         {
-            this.menuManager = menuManager;
+            this.menuManager = Context9.MenuManager;
 
             this.menu = new Menu("Evader", "O9K.Evader").SetTexture(AbilityId.techies_minefield_sign);
 
@@ -48,12 +46,12 @@
 
         public void Activate()
         {
-            this.menuManager.Value.AddRootMenu(this.menu);
+            this.menuManager.AddRootMenu(this.menu);
         }
 
         public void Dispose()
         {
-            this.menuManager.Value.RemoveRootMenu(this.menu);
+            this.menuManager.RemoveRootMenu(this.menu);
         }
     }
 }
