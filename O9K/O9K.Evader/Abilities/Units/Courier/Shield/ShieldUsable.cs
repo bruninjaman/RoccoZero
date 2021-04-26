@@ -9,7 +9,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -19,17 +19,22 @@
             : base(ability, menu)
         {
             EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
-            ObjectManager.OnAddTrackingProjectile += this.OnAddTrackingProjectile;
+            ProjectileManager.TrackingProjectileAdded += this.OnAddTrackingProjectile;
         }
 
         public void Dispose()
         {
             EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
-            ObjectManager.OnAddTrackingProjectile -= this.OnAddTrackingProjectile;
+            ProjectileManager.TrackingProjectileAdded -= this.OnAddTrackingProjectile;
         }
 
-        private void OnAddTrackingProjectile(TrackingProjectileEventArgs args)
+        private void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs args)
         {
+            if (args.IsCollection)
+            {
+                return;
+            }
+
             try
             {
                 if (!this.Menu.AbilitySettings.IsCounterEnabled(this.Ability.Name))
@@ -37,7 +42,7 @@
                     return;
                 }
 
-                var projectile = args.Projectile;
+                var projectile = args.TrackingProjectile;
                 if (projectile == null || projectile.Source == null)
                 {
                     return;

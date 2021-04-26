@@ -8,7 +8,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 

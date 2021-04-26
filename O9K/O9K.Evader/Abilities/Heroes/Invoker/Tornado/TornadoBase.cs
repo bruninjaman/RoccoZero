@@ -8,7 +8,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.invoker_tornado)]
     internal class TornadoBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>, IUsable<CounterEnemyAbility>

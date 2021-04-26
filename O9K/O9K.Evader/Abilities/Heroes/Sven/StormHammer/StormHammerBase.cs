@@ -8,7 +8,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.sven_storm_bolt)]
     internal class StormHammerBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>, IUsable<CounterEnemyAbility>

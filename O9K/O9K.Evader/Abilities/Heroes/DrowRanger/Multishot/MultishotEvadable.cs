@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Abilities.Heroes.DrowRanger;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -54,8 +54,8 @@
 
             var obstacle = new MultishotObstacle(this, this.Owner.Position, modifier)
             {
-                EndCastTime = Game.RawGameTime,
-                EndObstacleTime = Game.RawGameTime + remainingTime
+                EndCastTime = GameManager.RawGameTime,
+                EndObstacleTime = GameManager.RawGameTime + remainingTime
             };
 
             this.Pathfinder.AddObstacle(obstacle);

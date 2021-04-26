@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.puck_illusory_orb)]
     internal class IllusoryOrbBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

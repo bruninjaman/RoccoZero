@@ -8,7 +8,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.pugna_decrepify)]
     internal class DecrepifyBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>, IUsable<CounterAbility>

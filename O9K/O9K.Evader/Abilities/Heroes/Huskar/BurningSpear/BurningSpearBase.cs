@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.huskar_burning_spear)]
     internal class BurningSpearBase : EvaderBaseAbility, IEvadable

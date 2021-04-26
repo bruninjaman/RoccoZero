@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.warlock_rain_of_chaos)]
     internal class ChaoticOfferingBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

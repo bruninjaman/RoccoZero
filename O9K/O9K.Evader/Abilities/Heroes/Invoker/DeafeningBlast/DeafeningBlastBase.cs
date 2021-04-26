@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.invoker_deafening_blast)]
     internal class DeafeningBlastBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

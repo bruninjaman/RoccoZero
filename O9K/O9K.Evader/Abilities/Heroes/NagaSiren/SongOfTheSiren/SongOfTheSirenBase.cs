@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.naga_siren_song_of_the_siren)]
     internal class SongOfTheSirenBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

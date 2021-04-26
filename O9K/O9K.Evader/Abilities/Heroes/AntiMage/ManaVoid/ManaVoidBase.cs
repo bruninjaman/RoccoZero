@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.antimage_mana_void)]
     internal class ManaVoidBase : EvaderBaseAbility, IEvadable

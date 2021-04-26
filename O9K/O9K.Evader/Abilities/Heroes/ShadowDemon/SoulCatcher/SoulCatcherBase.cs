@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.shadow_demon_soul_catcher)]
     internal class SoulCatcherBase : EvaderBaseAbility, IEvadable

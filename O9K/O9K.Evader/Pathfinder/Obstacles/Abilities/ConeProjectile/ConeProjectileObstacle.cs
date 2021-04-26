@@ -6,7 +6,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Geometry;
 
     using O9K.Evader.Abilities.Base.Evadable;
@@ -77,7 +77,7 @@
 
             this.Drawer.DrawArcRectangle(this.Position, this.EndPosition, this.Radius, this.EndRadius);
 
-            var time = Game.RawGameTime - this.EndCastTime;
+            var time = GameManager.RawGameTime - this.EndCastTime;
             if (time < 0)
             {
                 return;
@@ -89,13 +89,13 @@
 
         public override float GetDisableTime(Unit9 enemy)
         {
-            return this.EndCastTime - Game.RawGameTime;
+            return this.EndCastTime - GameManager.RawGameTime;
         }
 
         public override float GetEvadeTime(Unit9 ally, bool blink)
         {
             var distance = Math.Max(ally.Distance(this.Position) - this.GetProjectileRadius(ally.Position), 0);
-            return (this.EndCastTime + this.ActivationDelay + (distance / this.Speed)) - Game.RawGameTime;
+            return (this.EndCastTime + this.ActivationDelay + (distance / this.Speed)) - GameManager.RawGameTime;
         }
 
         public void Update()
@@ -109,7 +109,7 @@
             }
             else if (this.NavMeshId != null)
             {
-                var time = Game.RawGameTime - this.EndCastTime /*- 0.35f*/;
+                var time = GameManager.RawGameTime - this.EndCastTime /*- 0.35f*/;
                 if (time < 0)
                 {
                     return;

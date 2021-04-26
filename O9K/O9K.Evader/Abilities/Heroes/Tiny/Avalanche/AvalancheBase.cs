@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.tiny_avalanche)]
     internal class AvalancheBase : EvaderBaseAbility, /* IEvadable, */IUsable<DisableAbility>

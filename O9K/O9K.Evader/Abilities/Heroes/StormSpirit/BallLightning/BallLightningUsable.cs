@@ -9,7 +9,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
+    using Divine;
 
     using Grimstroke.PhantomsEmbrace;
 

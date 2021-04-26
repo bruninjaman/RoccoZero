@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.pugna_nether_blast)]
     internal class NetherBlastBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

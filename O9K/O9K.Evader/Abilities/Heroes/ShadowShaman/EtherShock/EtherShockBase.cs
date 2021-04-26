@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.shadow_shaman_ether_shock)]
     internal class EtherShockBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

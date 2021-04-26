@@ -5,7 +5,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -30,7 +30,7 @@
 
         public virtual void AddProjectile(TrackingProjectile projectile, Unit9 target)
         {
-            if (this.TargetableObstacle != null && this.EndCastTime + 0.5f > Game.RawGameTime)
+            if (this.TargetableObstacle != null && this.EndCastTime + 0.5f > GameManager.RawGameTime)
             {
                 this.TargetableObstacle.AddProjectile(projectile, target);
             }
@@ -48,7 +48,7 @@
                 if (obstacle is AbilityObstacle ability)
                 {
                     //todo move ignore time to usable abilities ?
-                    return Game.RawGameTime > ability.EndCastTime + 0.05f;
+                    return GameManager.RawGameTime > ability.EndCastTime + 0.05f;
                 }
             }
 

@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.rubick_spell_steal)]
     internal class SpellStealBase : EvaderBaseAbility, IEvadable

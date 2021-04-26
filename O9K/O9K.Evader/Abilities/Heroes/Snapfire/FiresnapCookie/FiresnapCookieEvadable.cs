@@ -9,7 +9,7 @@
     using Core.Entities.Units;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -58,7 +58,7 @@
 
         public void AddModifierObstacle(Modifier modifier, Unit sender)
         {
-            var time = Game.RawGameTime - modifier.ElapsedTime;
+            var time = GameManager.RawGameTime - modifier.ElapsedTime;
             var unit = EntityManager9.GetUnit(sender.Handle);
             if (unit == null)
             {

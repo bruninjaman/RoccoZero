@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.ursa_enrage)]
     internal class EnrageBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

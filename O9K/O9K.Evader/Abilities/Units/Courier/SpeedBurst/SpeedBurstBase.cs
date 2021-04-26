@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.courier_burst)]
     internal class SpeedBurstBase : EvaderBaseAbility, IUsable<CounterAbility>

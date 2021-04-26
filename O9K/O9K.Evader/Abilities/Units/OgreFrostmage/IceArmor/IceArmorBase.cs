@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.ogre_magi_frost_armor)]
     internal class IceArmorBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.weaver_shukuchi)]
     internal class ShukuchiBase : EvaderBaseAbility, IUsable<CounterAbility>, IUsable<DodgeAbility>

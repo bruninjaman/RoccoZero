@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.keeper_of_the_light_blinding_light)]
     internal class BlindingLightBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

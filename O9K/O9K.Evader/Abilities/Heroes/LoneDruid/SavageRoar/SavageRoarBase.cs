@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.lone_druid_savage_roar)]
     [AbilityId(AbilityId.lone_druid_savage_roar_bear)]

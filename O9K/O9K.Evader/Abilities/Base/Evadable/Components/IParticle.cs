@@ -1,9 +1,9 @@
 ﻿namespace O9K.Evader.Abilities.Base.Evadable.Components
 {
-    using Ensage;
+    using Divine;
 
     internal interface IParticle
     {
-        void AddParticle(ParticleEffect particle, string name);
+        void AddParticle(Particle particle, string name);
     }
 }

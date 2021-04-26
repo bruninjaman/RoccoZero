@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.ancient_apparition_chilling_touch)]
     internal class ChillingTouchBase : EvaderBaseAbility, IUsable<CounterEnemyAbility>

@@ -6,7 +6,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -57,7 +57,7 @@
         public override float GetRequiredTime(Unit9 ally, Unit9 enemy, IObstacle obstacle)
         {
             this.movePosition = this.Owner.Position.Extend2D(enemy.Position, 25);
-            return this.Owner.GetTurnTime(this.movePosition) + (Game.Ping / 2000f) + 0.05f;
+            return this.Owner.GetTurnTime(this.movePosition) + (GameManager.Ping / 2000f) + 0.05f;
         }
 
         public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)

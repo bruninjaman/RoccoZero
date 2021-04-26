@@ -4,7 +4,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using O9K.Evader.Abilities.Base.Evadable;
 
@@ -26,7 +26,7 @@
         public override float GetEvadeTime(Unit9 ally, bool blink)
         {
             var distance = Math.Max(ally.Distance(this.Position) - this.damageRadius, 0);
-            return (this.EndCastTime + this.ActivationDelay + (distance / this.Speed)) - Game.RawGameTime;
+            return (this.EndCastTime + this.ActivationDelay + (distance / this.Speed)) - GameManager.RawGameTime;
         }
     }
 }

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.lina_dragon_slave)]
     internal class DragonSlaveBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

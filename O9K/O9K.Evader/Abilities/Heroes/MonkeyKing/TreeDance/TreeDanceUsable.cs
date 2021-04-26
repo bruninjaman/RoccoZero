@@ -9,7 +9,7 @@
     using Core.Entities.Units;
     using Core.Logger;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Extensions;
 
     using Metadata;
@@ -62,7 +62,7 @@
             this.tree = this.trees
                 .Where(
                     x => x.IsValid && x.IsAlive && ally.Distance(x.Position) < this.ActiveAbility.CastRange
-                         && (Game.RawGameTime > this.ultEndTime || x.Distance2D(this.ultPosition) < this.ult.Radius - 50))
+                         && (GameManager.RawGameTime > this.ultEndTime || x.Distance2D(this.ultPosition) < this.ult.Radius - 50))
                 .OrderBy(x => x.Distance2D(this.FountainPosition))
                 .FirstOrDefault(x => ally.GetTurnTime(x.Position) + 0.1f < remainingTime);
 
@@ -93,7 +93,7 @@
                     return;
                 }
 
-                this.ultEndTime = Game.RawGameTime + this.ult.Duration;
+                this.ultEndTime = GameManager.RawGameTime + this.ult.Duration;
                 this.ultPosition = args.TargetPosition;
             }
             catch (Exception e)

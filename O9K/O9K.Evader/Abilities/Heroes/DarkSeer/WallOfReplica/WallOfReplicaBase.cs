@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.dark_seer_wall_of_replica)]
     internal class WallOfReplicaBase : EvaderBaseAbility, IEvadable

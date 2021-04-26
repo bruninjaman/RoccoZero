@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -47,7 +47,7 @@
             this.Pathfinder.AddObstacle(obstacle);
         }
 
-        public void AddParticle(ParticleEffect particle, string name)
+        public void AddParticle(Particle particle, string name)
         {
             this.Pathfinder.CancelObstacle(this.Ability.Handle);
         }

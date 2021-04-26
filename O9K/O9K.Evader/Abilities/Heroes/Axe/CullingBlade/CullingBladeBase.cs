@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.axe_culling_blade)]
     internal class CullingBladeBase : EvaderBaseAbility, IEvadable

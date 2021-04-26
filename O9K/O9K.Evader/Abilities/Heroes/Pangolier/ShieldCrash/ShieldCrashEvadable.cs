@@ -9,7 +9,7 @@
     using Core.Extensions;
     using Core.Logger;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Helpers;
 
     using Metadata;
@@ -38,9 +38,9 @@
             this.Counters.Remove(Abilities.ShadowRealm);
         }
 
-        public void AddParticle(ParticleEffect particle, string name)
+        public void AddParticle(Particle particle, string name)
         {
-            var time = Game.RawGameTime - (Game.Ping / 2000);
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
             var startPosition = this.Owner.Position;
 
             UpdateManager.BeginInvoke(

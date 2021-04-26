@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.skywrath_mage_ancient_seal)]
     internal class AncientSealBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

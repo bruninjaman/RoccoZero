@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.magnataur_skewer)]
     internal class SkewerBase : EvaderBaseAbility, IEvadable, IUsable<BlinkAbility>

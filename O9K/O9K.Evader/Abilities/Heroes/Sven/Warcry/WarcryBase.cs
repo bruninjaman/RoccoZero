@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.sven_warcry)]
     internal class WarcryBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

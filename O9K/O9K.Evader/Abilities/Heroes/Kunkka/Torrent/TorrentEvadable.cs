@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -52,7 +52,7 @@
 
         public void AddModifierObstacle(Modifier modifier, Unit sender)
         {
-            var time = Game.RawGameTime - modifier.ElapsedTime;
+            var time = GameManager.RawGameTime - modifier.ElapsedTime;
 
             var obstacle = new AreaOfEffectObstacle(this, sender.Position)
             {

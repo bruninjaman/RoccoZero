@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Reflection;
 
@@ -22,9 +21,8 @@
     using Core.Managers.Assembly;
     using Core.Managers.Context;
     using Core.Managers.Entity;
-    using Core.Managers.Menu.EventArgs;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -57,8 +55,7 @@
 
         private UnitMonitor unitMonitor;
 
-        [ImportingConstructor]
-        public AbilityManager(IContext9 context, IPathfinder pathfinder, IActionManager actionManager, IMainMenu menu)
+        public AbilityManager(IPathfinder pathfinder, IActionManager actionManager, IMainMenu menu)
         {
             foreach (var type in Assembly.GetExecutingAssembly()
                 .GetTypes()
@@ -70,7 +67,7 @@
                 }
             }
 
-            this.assemblyEventManager = context.AssemblyEventManager;
+            this.assemblyEventManager = Context9.AssemblyEventManager;
             this.pathfinder = pathfinder;
             this.actionManager = actionManager;
             this.menu = menu;
@@ -344,7 +341,7 @@
             }
         }
 
-        private void ProactiveEvadeOnValueChange(object sender, KeyEventArgs e)
+        private void ProactiveEvadeOnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             try
             {

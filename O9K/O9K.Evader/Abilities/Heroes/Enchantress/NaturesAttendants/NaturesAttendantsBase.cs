@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.enchantress_natures_attendants)]
     internal class NaturesAttendantsBase : EvaderBaseAbility, IUsable<CounterAbility>

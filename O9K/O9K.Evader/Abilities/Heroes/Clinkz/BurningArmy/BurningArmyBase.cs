@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.clinkz_burning_army)]
     internal class BurningArmyBase : EvaderBaseAbility, IEvadable

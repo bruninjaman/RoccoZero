@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.medusa_mystic_snake)]
     internal class MysticSnakeBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

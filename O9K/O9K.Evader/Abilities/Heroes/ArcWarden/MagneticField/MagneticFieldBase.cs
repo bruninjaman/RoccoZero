@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.arc_warden_magnetic_field)]
     internal class MagneticFieldBase : EvaderBaseAbility, IUsable<CounterAbility>

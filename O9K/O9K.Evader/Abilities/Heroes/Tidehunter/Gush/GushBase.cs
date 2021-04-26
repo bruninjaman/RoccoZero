@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.tidehunter_gush)]
     internal class GushBase : EvaderBaseAbility /*, IEvadable*/, IUsable<CounterEnemyAbility>

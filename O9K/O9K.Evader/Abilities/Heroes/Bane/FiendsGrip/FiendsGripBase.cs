@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.bane_fiends_grip)]
     internal class FiendsGripBase : EvaderBaseAbility, IEvadable

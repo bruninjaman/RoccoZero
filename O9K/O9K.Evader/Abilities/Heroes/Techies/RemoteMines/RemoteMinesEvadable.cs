@@ -11,7 +11,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Handlers;
     using Ensage.SDK.Helpers;
 
@@ -146,7 +146,7 @@
 
                     this.RemoveBomb(bomb);
 
-                    var time = Game.RawGameTime - (Game.Ping / 2000) - 0.05f;
+                    var time = GameManager.RawGameTime - (GameManager.Ping / 2000) - 0.05f;
 
                     var obstacle = new AreaOfEffectObstacle(this, bomb.Position)
                     {

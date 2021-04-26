@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.disruptor_thunder_strike)]
     internal class ThunderStrikeBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

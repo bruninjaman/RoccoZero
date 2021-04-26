@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.courier_shield)]
     internal class ShieldBase : EvaderBaseAbility, IUsable<CounterAbility>

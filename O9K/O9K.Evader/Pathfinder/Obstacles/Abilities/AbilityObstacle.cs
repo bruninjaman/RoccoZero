@@ -5,7 +5,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Geometry;
 
     using Helpers;
@@ -60,7 +60,7 @@
         {
             get
             {
-                return Game.RawGameTime >= this.EndObstacleTime;
+                return GameManager.RawGameTime >= this.EndObstacleTime;
             }
         }
 

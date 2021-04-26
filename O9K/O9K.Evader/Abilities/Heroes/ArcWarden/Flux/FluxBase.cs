@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.arc_warden_flux)]
     internal class FluxBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

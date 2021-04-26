@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.sven_gods_strength)]
     internal class GodsStrengthBase : EvaderBaseAbility, IEvadable

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.leshrac_lightning_storm)]
     internal class LightningStormBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.kunkka_ghostship)]
     internal class GhostshipBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

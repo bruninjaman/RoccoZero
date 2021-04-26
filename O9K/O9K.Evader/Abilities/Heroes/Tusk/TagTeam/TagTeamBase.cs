@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.tusk_tag_team)]
     internal class TagTeamBase : EvaderBaseAbility, IEvadable

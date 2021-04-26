@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.chaos_knight_chaos_bolt)]
     internal class ChaosBoltBase : EvaderBaseAbility, IEvadable

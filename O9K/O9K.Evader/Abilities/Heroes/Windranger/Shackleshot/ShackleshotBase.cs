@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.windrunner_shackleshot)]
     internal class ShackleshotBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

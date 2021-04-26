@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.shadow_shaman_mass_serpent_ward)]
     internal class MassSerpentWardBase : EvaderBaseAbility, IEvadable

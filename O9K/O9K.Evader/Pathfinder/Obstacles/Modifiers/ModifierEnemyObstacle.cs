@@ -2,7 +2,7 @@
 {
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using O9K.Evader.Abilities.Base;
 
@@ -13,7 +13,7 @@
         {
             this.Caster = modifierOwner;
             this.Range = range;
-            this.CreateTime = Game.RawGameTime;
+            this.CreateTime = GameManager.RawGameTime;
         }
 
         protected float CreateTime { get; set; }
@@ -27,7 +27,7 @@
                 return false;
             }
 
-            if (Game.RawGameTime < this.CreateTime + 0.3f)
+            if (GameManager.RawGameTime < this.CreateTime + 0.3f)
             {
                 return false;
             }

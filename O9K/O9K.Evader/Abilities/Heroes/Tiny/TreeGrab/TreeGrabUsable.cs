@@ -8,7 +8,7 @@
     using Core.Entities.Units;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Extensions;
 
     using Metadata;

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.bane_brain_sap)]
     internal class BrainSapBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

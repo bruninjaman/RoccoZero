@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.warlock_shadow_word)]
     internal class ShadowWordBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

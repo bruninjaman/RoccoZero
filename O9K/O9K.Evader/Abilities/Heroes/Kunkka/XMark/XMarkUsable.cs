@@ -9,7 +9,7 @@
     using Core.Entities.Units;
     using Core.Logger;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Helpers;
 
     using Metadata;

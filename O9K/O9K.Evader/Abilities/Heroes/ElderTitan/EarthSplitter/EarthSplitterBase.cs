@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.elder_titan_earth_splitter)]
     internal class EarthSplitterBase : EvaderBaseAbility, IEvadable

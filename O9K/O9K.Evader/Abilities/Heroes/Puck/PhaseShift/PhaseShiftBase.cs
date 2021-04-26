@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.puck_phase_shift)]
     internal class PhaseShiftBase : EvaderBaseAbility, IUsable<CounterAbility>

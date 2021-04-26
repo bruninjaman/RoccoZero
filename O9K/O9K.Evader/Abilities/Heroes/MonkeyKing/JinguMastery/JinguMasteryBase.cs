@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.monkey_king_jingu_mastery)]
     internal class JinguMasteryBase : EvaderBaseAbility, IEvadable

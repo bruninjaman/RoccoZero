@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.phantom_assassin_blur)]
     internal class BlurBase : EvaderBaseAbility, IUsable<CounterAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.razor_plasma_field)]
     internal class PlasmaFieldBase : EvaderBaseAbility /*,IEvadable*/, IUsable<CounterEnemyAbility>

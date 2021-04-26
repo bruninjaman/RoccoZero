@@ -10,7 +10,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -58,7 +58,7 @@
 
         public override void AddProjectile(TrackingProjectile projectile, Unit9 target)
         {
-            if (this.TargetableObstacle?.Projectile != null && this.EndCastTime + 0.5f > Game.RawGameTime)
+            if (this.TargetableObstacle?.Projectile != null && this.EndCastTime + 0.5f > GameManager.RawGameTime)
             {
                 this.TargetableObstacle.AddProjectile(projectile, target);
             }

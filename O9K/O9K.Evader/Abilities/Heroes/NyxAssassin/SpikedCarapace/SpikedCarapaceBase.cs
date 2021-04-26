@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.nyx_assassin_spiked_carapace)]
     internal class SpikedCarapaceBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

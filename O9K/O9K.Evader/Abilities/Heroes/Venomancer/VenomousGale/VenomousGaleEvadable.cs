@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -39,14 +39,14 @@
             this.Pathfinder.AddObstacle(obstacle);
         }
 
-        public void AddParticle(ParticleEffect particle, string name)
+        public void AddParticle(Particle particle, string name)
         {
             if (!this.Owner.IsVisible)
             {
                 return;
             }
 
-            var time = Game.RawGameTime - (Game.Ping / 2000);
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
             var obstacle = new LinearProjectileObstacle(this, this.Ability.Owner.Position)
             {

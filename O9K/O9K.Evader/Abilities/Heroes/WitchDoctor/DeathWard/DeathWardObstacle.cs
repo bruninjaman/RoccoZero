@@ -2,7 +2,7 @@
 {
     using Base.Evadable;
 
-    using Ensage;
+    using Divine;
 
     using Pathfinder.Obstacles.Abilities.AreaOfEffect;
 

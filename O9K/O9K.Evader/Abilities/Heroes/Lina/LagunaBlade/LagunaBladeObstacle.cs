@@ -4,7 +4,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Pathfinder.Obstacles.Abilities.Targetable;
 
@@ -22,7 +22,7 @@
                 return this.GetDisableTime(null);
             }
 
-            return this.EndObstacleTime - Game.RawGameTime;
+            return this.EndObstacleTime - GameManager.RawGameTime;
         }
     }
 }

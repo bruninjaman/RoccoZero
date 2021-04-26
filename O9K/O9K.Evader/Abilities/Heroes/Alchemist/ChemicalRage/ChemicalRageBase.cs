@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.alchemist_chemical_rage)]
     internal class ChemicalRageBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

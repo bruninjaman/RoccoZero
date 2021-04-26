@@ -9,9 +9,8 @@
     using Core.Entities.Units;
     using Core.Extensions;
     using Core.Helpers;
-    using Core.Managers.Menu.EventArgs;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -91,7 +90,7 @@
                 return result;
             }
 
-            var remainingTime = obstacle.GetEvadeTime(ally, true) - (Game.Ping / 2000f);
+            var remainingTime = obstacle.GetEvadeTime(ally, true) - (GameManager.Ping / 2000f);
             if (remainingTime <= 0)
             {
                 result.State = EvadeResult.EvadeState.Failed;
@@ -201,7 +200,7 @@
             return turnTime + (distance / (speed + speedBuffAbility.SpeedBuffAbility.GetSpeedBuff(ally)));
         }
 
-        private void PathfinderModeOnValueChanged(object sender, KeyEventArgs e)
+        private void PathfinderModeOnValueChanged(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             if (!e.NewValue)
             {

@@ -1,6 +1,6 @@
 ﻿namespace O9K.Evader.Abilities
 {
-    using Ensage;
+    using Divine;
 
     internal static partial class Abilities
     {

@@ -11,8 +11,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Metadata;
 
@@ -45,9 +44,9 @@
 
         public override bool CanBeDodged { get; } = false;
 
-        public void AddParticle(ParticleEffect particle, string name)
+        public void AddParticle(Particle particle, string name)
         {
-            var time = Game.RawGameTime - (Game.Ping / 2000);
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
             UpdateManager.BeginInvoke(
                 () =>

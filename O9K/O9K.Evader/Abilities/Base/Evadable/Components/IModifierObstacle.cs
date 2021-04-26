@@ -1,6 +1,6 @@
 ﻿namespace O9K.Evader.Abilities.Base.Evadable.Components
 {
-    using Ensage;
+    using Divine;
 
     internal interface IModifierObstacle
     {

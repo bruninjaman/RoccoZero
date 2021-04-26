@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.winter_wyvern_winters_curse)]
     internal class WintersCurseBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

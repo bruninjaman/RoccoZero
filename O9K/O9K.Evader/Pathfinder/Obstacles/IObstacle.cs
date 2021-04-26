@@ -4,7 +4,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using O9K.Evader.Abilities.Base.Evadable;
 

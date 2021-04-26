@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Abilities.Heroes.WitchDoctor;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -51,7 +51,7 @@
 
         public void AddModifierObstacle(Modifier modifier, Unit sender)
         {
-            var time = Game.RawGameTime - (Game.Ping / 2000f);
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000f);
             var obstacle = new DeathWardObstacle(this, sender.Position, modifier)
             {
                 EndCastTime = time + this.deathWard.ChannelTime,

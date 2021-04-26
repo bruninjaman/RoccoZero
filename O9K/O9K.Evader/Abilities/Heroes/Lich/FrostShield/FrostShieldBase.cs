@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.lich_frost_shield)]
     internal class FrostShieldBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

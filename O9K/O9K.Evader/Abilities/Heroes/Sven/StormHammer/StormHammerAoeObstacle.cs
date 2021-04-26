@@ -5,7 +5,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Geometry;
 
     using Helpers;
@@ -45,7 +45,7 @@
             this.Speed = ability.RangedAbility.Speed;
             this.Radius = ability.RangedAbility.Radius + RadiusIncrease;
             this.Range = ability.RangedAbility.Range + RangeIncrease;
-            this.EndObstacleTime = Game.RawGameTime + (this.Range / this.Speed);
+            this.EndObstacleTime = GameManager.RawGameTime + (this.Range / this.Speed);
 
             this.AddProjectile(projectile, target);
         }
@@ -93,7 +93,7 @@
             this.Drawer.DrawArcRectangle(this.Position, this.EndPosition, this.Radius);
             this.Drawer.UpdateRectanglePosition(this.Position, this.EndPosition, this.Radius);
 
-            var time = (Game.RawGameTime - this.EndCastTime - this.ActivationDelay) + (this.Radius / 2 / this.Speed);
+            var time = (GameManager.RawGameTime - this.EndCastTime - this.ActivationDelay) + (this.Radius / 2 / this.Speed);
             if (time < 0)
             {
                 return;
@@ -105,7 +105,7 @@
 
         public override float GetDisableTime(Unit9 enemy)
         {
-            return this.EndCastTime - Game.RawGameTime;
+            return this.EndCastTime - GameManager.RawGameTime;
         }
 
         public override float GetEvadeTime(Unit9 ally, bool blink)
@@ -125,8 +125,8 @@
                     }
                 }
 
-                var distance = Math.Max(ally.Distance(this.Position) - ((Game.Ping / 1000) * this.Speed) - range, 0);
-                return (this.EndCastTime + (distance / this.Speed)) - Game.RawGameTime;
+                var distance = Math.Max(ally.Distance(this.Position) - ((GameManager.Ping / 1000) * this.Speed) - range, 0);
+                return (this.EndCastTime + (distance / this.Speed)) - GameManager.RawGameTime;
             }
 
             if (this.Projectile.IsValid)
@@ -144,7 +144,7 @@
                     }
                 }
 
-                return Math.Max(this.Target.Distance(this.Projectile.Position) - ((Game.Ping / 1000) * this.Speed) - range, 0) / this.Speed;
+                return Math.Max(this.Target.Distance(this.Projectile.Position) - ((GameManager.Ping / 1000) * this.Speed) - range, 0) / this.Speed;
             }
 
             return 0;

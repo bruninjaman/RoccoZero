@@ -11,7 +11,7 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -62,14 +62,14 @@
             this.Pathfinder.AddObstacle(obstacle);
         }
 
-        public void AddParticle(ParticleEffect particle, string name)
+        public void AddParticle(Particle particle, string name)
         {
             if (this.unitAddTime <= 0)
             {
                 return;
             }
 
-            var time = Game.RawGameTime - (Game.Ping / 2000);
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
             var startPosition = particle.GetControlPoint(0);
             var endPosition = particle.GetControlPoint(1);
             var direction = startPosition + endPosition;
@@ -91,7 +91,7 @@
 
         public void AddUnit(Unit unit)
         {
-            this.unitAddTime = Game.RawGameTime - (Game.Ping / 2000);
+            this.unitAddTime = GameManager.RawGameTime - (GameManager.Ping / 2000);
         }
 
         protected override void AddObstacle()

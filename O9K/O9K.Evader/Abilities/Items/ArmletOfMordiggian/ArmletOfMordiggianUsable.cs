@@ -16,7 +16,7 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Geometry;
     using Ensage.SDK.Helpers;
 
@@ -166,7 +166,7 @@
         {
             get
             {
-                return (Game.Ping / 2) + 50;
+                return (GameManager.Ping / 2) + 50;
             }
         }
 
@@ -274,7 +274,7 @@
 
         private bool IsAffectedByDot()
         {
-            var ping = Game.Ping / 1000;
+            var ping = GameManager.Ping / 1000;
 
             try
             {
@@ -290,7 +290,7 @@
                         continue;
                     }
 
-                    var elapsedTime = (Game.RawGameTime - initialTime) % tick;
+                    var elapsedTime = (GameManager.RawGameTime - initialTime) % tick;
 
                     if (elapsedTime + 0.2 > tick || elapsedTime < 0.1)
                     {
@@ -375,7 +375,7 @@
                     return;
                 }
 
-                this.attacks[unit] = Game.RawGameTime - (Game.Ping / 2000);
+                this.attacks[unit] = GameManager.RawGameTime - (GameManager.Ping / 2000);
             }
             catch (Exception e)
             {
@@ -459,7 +459,7 @@
                 }
                 else if (this.selfDot.ContainsKey(name))
                 {
-                    this.initialDotTimings[name] = Game.RawGameTime - args.Modifier.ElapsedTime;
+                    this.initialDotTimings[name] = GameManager.RawGameTime - args.Modifier.ElapsedTime;
                 }
             }
             catch (Exception e)
@@ -494,7 +494,7 @@
 
         private void OnUpdate()
         {
-            if (!this.Menu.AbilitySettings.IsCounterEnabled(this.Ability.Name) || Game.IsPaused)
+            if (!this.Menu.AbilitySettings.IsCounterEnabled(this.Ability.Name) || GameManager.IsPaused)
             {
                 return;
             }
@@ -539,7 +539,7 @@
                     var attackStart = attack.Value;
                     var attackPoint = unit.GetAttackPoint(this.Owner);
                     var secondsPerAttack = unit.BaseUnit.SecondsPerAttack;
-                    var time = Game.RawGameTime;
+                    var time = GameManager.RawGameTime;
 
                     var damageTime = attackStart + attackPoint;
                     if (unit.IsRanged)

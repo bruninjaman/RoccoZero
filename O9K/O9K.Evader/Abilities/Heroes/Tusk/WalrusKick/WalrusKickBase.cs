@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.tusk_walrus_kick)]
     internal class WalrusKickBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

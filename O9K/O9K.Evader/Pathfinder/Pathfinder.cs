@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Units;
@@ -10,11 +9,8 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Metadata;
 
@@ -41,7 +37,7 @@
 
         private uint obstacleAutoId;
 
-        private IUpdateHandler updateHandler;
+        private UpdateHandler updateHandler;
 
         public event EventHandler<IObstacle> AbilityCanceled;
 
@@ -62,7 +58,7 @@
         public void Activate()
         {
             this.NavMesh = new NavMeshPathfinding();
-            this.updateHandler = UpdateManager.Subscribe(this.OnUpdate, 0, false);
+            this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
             EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
 
             foreach (var building in EntityManager9.Units.Where(x => x.IsBuilding && x.IsAlive))
@@ -195,7 +191,7 @@
 
         public void Dispose()
         {
-            UpdateManager.Unsubscribe(this.updateHandler);
+            UpdateManager.DestroyIngameUpdate(this.updateHandler);
             EntityManager9.UnitMonitor.UnitDied -= this.OnUnitDied;
 
             this.NavMesh.Dispose();
@@ -213,7 +209,7 @@
             return this.NavMesh.CalculatePathFromObstacle(
                 position,
                 unit.Position,
-                unit.BaseUnit.NetworkRotationRad,
+                unit.BaseUnit.RotationRad,
                 speed,
                 unit.TurnRate,
                 remainingTime * 1000,

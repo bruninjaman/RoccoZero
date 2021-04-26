@@ -7,7 +7,7 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Geometry;
 
     using O9K.Evader.Abilities.Base.Evadable;
@@ -74,7 +74,7 @@
 
             this.Drawer.DrawArcRectangle(this.Position, this.EndPosition, this.Radius);
 
-            var time = (Game.RawGameTime - this.EndCastTime - this.ActivationDelay) + (this.Radius / 2 / this.Speed);
+            var time = (GameManager.RawGameTime - this.EndCastTime - this.ActivationDelay) + (this.Radius / 2 / this.Speed);
             if (time < 0)
             {
                 return;
@@ -86,19 +86,19 @@
 
         public override float GetDisableTime(Unit9 enemy)
         {
-            return this.EndCastTime - Game.RawGameTime;
+            return this.EndCastTime - GameManager.RawGameTime;
         }
 
         public float GetEvadeTime(Vector3 position)
         {
             var distance = Math.Max(position.Distance2D(this.Position) - this.Radius, 0);
-            return (this.EndCastTime + this.ActivationDelay + (distance / this.Speed)) - Game.RawGameTime;
+            return (this.EndCastTime + this.ActivationDelay + (distance / this.Speed)) - GameManager.RawGameTime;
         }
 
         public override float GetEvadeTime(Unit9 ally, bool blink)
         {
             var distance = Math.Max(ally.Distance(this.Position) - this.Radius, 0);
-            return (this.EndCastTime + this.ActivationDelay + (distance / this.Speed)) - Game.RawGameTime;
+            return (this.EndCastTime + this.ActivationDelay + (distance / this.Speed)) - GameManager.RawGameTime;
         }
 
         public virtual void Update()
@@ -125,7 +125,7 @@
             else if (this.NavMeshId != null)
             {
                 ////todo check activation delay of all obstacles
-                var time = Game.RawGameTime - this.EndCastTime - this.ActivationDelay /*- 0.35f*/;
+                var time = GameManager.RawGameTime - this.EndCastTime - this.ActivationDelay /*- 0.35f*/;
                 if (time < 0)
                 {
                     return;

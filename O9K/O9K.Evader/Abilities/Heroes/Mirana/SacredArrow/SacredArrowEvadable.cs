@@ -8,7 +8,7 @@
     using Core.Entities.Abilities.Heroes.Mirana;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -62,7 +62,7 @@
         {
             if (!this.Owner.IsVisible)
             {
-                var time = Game.RawGameTime - (Game.Ping / 2000);
+                var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
                 var obstacle = new LinearProjectileUnitObstacle(this, unit)
                 {

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.antimage_blink)]
     internal class BlinkBase : EvaderBaseAbility, IEvadable, IUsable<BlinkAbility>

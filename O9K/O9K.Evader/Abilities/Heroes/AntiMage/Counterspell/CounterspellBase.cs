@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.antimage_counterspell)]
     internal class CounterspellBase : EvaderBaseAbility, IUsable<CounterAbility>

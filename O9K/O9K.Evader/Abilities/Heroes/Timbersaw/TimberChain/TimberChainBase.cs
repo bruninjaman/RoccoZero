@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.shredder_timber_chain)]
     internal class TimberChainBase : EvaderBaseAbility, IEvadable

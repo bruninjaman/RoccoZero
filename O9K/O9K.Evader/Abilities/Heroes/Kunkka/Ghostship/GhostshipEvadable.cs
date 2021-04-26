@@ -9,7 +9,7 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -74,7 +74,7 @@
 
             this.sleeper.Sleep(0.1f);
 
-            var time = Game.RawGameTime - (Game.Ping / 2000) - 0.1f;
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000) - 0.1f;
 
             var obstacle = new GhostshipObstacle(this, unit)
             {

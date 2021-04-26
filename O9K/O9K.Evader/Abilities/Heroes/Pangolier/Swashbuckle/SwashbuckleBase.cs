@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.pangolier_swashbuckle)]
     internal class SwashbuckleBase : EvaderBaseAbility, IUsable<BlinkAbility>

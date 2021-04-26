@@ -1,7 +1,6 @@
 ﻿namespace O9K.Evader.Evader.EvadeModes
 {
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Managers.Assembly;
@@ -40,7 +39,6 @@
 
         private readonly IPathfinder pathfinder;
 
-        [ImportingConstructor]
         public EvadeModeManager(
             IAssemblyEventManager9 eventManager,
             IAbilityManager abilityManager,

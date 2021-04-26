@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.brewmaster_storm_dispel_magic)]
     internal class DispelMagicBase : EvaderBaseAbility, IUsable<CounterAbility>, IUsable<DisableAbility>

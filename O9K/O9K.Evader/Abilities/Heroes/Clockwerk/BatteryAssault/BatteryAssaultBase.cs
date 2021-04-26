@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.rattletrap_battery_assault)]
     internal class BatteryAssaultBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

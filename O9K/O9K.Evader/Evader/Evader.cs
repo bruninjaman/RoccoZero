@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities.Heroes;
@@ -14,11 +13,8 @@
     using Core.Managers.Entity;
     using Core.Prediction.Collision;
 
-    using Ensage;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using EvadeModes;
 
@@ -45,18 +41,16 @@
 
         private Owner owner;
 
-        private IUpdateHandler updateHandler;
+        private UpdateHandler updateHandler;
 
-        [ImportingConstructor]
         public Evader(
-            IContext9 context,
             IEvadeModeManager evadeModeManager,
             IPathfinder pathfinder,
             IActionManager actionManager,
             IMainMenu menu,
             IDebugger debugger)
         {
-            this.assemblyEventManager = context.AssemblyEventManager;
+            this.assemblyEventManager = Context9.AssemblyEventManager;
             this.evadeModeManager = evadeModeManager;
             this.pathfinder = pathfinder;
             this.actionManager = actionManager;
@@ -72,14 +66,14 @@
 
             EntityManager9.UnitAdded += this.OnUnitAdded;
             EntityManager9.UnitRemoved += this.OnUnitRemoved;
-            this.updateHandler = UpdateManager.Subscribe(this.OnUpdate, 0, false);
+            this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
             this.pathfinder.AbilityCanceled += this.OnAbilityCanceled;
             this.pathfinder.ObstacleAdded += this.OnObstacleAdded;
         }
 
         public void Dispose()
         {
-            UpdateManager.Unsubscribe(this.updateHandler);
+            UpdateManager.DestroyIngameUpdate(this.updateHandler);
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             this.pathfinder.ObstacleAdded -= this.OnObstacleAdded;
@@ -163,7 +157,7 @@
 
         private void OnUpdate()
         {
-            if (Game.IsPaused)
+            if (GameManager.IsPaused)
             {
                 return;
             }
@@ -248,9 +242,9 @@
                     continue;
                 }
 
-                var otherUnitPosition = otherUnit.Position.To2D();
-                var enemyPosition = linearObstacle.Position.Extend2D(unit.Position, 75).To2D();
-                var unitPosition = unit.Position.Extend2D(linearObstacle.Position, 75).To2D();
+                var otherUnitPosition = otherUnit.Position.ToVector2();
+                var enemyPosition = linearObstacle.Position.Extend2D(unit.Position, 75).ToVector2();
+                var unitPosition = unit.Position.Extend2D(linearObstacle.Position, 75).ToVector2();
 
                 var projection = Geometry.ProjectOn(otherUnitPosition, enemyPosition, unitPosition);
 

@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.queenofpain_scream_of_pain)]
     internal class ScreamOfPainBase : EvaderBaseAbility, IEvadable

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -57,7 +57,7 @@
                 return;
             }
 
-            var time = Game.RawGameTime - (Game.Ping / 2000);
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
             var obstacle = new LinearProjectileUnitObstacle(this, unit)
             {

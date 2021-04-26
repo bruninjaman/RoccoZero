@@ -7,15 +7,13 @@
     using Core.Entities.Units;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     using Evader.EvadeModes;
 
     using Metadata;
 
     using Pathfinder.Obstacles;
-
-    using PlaySharp.Toolkit.Helper.Annotations;
 
     using Usable;
     using Usable.BlinkAbility;
@@ -81,7 +79,7 @@
         {
             get
             {
-                return Game.RawGameTime - this.EndCastTime;
+                return GameManager.RawGameTime - this.EndCastTime;
             }
         }
 
@@ -137,7 +135,7 @@
 
         protected IMainMenu Menu { get; }
 
-        public virtual bool IgnoreRemainingTime(IObstacle obstacle, [CanBeNull] UsableAbility usableAbility)
+        public virtual bool IgnoreRemainingTime(IObstacle obstacle, UsableAbility usableAbility)
         {
             return obstacle.IsModifierObstacle || obstacle.IsProactiveObstacle;
         }
@@ -184,7 +182,7 @@
                 return true;
             }
 
-            if (this.TimeIgnore > 0 && Game.GameTime / 60 > this.TimeIgnore)
+            if (this.TimeIgnore > 0 && GameManager.GameTime / 60 > this.TimeIgnore)
             {
                 return true;
             }
@@ -211,7 +209,7 @@
 
         public virtual void PhaseStart()
         {
-            this.StartCastTime = Game.RawGameTime - (Game.Ping / 2000);
+            this.StartCastTime = GameManager.RawGameTime - (GameManager.Ping / 2000);
             this.EndCastTime = this.StartCastTime + this.ActiveAbility.CastPoint;
 
             this.AddObstacle();

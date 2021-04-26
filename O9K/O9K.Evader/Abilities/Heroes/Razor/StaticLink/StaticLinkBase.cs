@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.razor_static_link)]
     internal class StaticLinkBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

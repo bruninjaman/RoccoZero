@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.ember_spirit_activate_fire_remnant)]
     internal class ActivateFireRemnantBase : EvaderBaseAbility, IUsable<BlinkAbility>

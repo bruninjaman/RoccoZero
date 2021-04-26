@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.mars_arena_of_blood)]
     internal class ArenaOfBloodBase : EvaderBaseAbility, IEvadable

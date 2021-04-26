@@ -9,7 +9,7 @@
     using Core.Entities.Abilities.Heroes.Kunkka;
     using Core.Logger;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Helpers;
 
     using Metadata;
@@ -48,7 +48,7 @@
 
         public void AttackEnd()
         {
-            if (Game.RawGameTime < this.tidebringerEndTime)
+            if (GameManager.RawGameTime < this.tidebringerEndTime)
             {
                 this.Pathfinder.CancelObstacle(this.Ability.Handle);
             }
@@ -56,7 +56,7 @@
 
         public void AttackStart()
         {
-            var time = Game.RawGameTime - (Game.Ping / 2000);
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
             UpdateManager.BeginInvoke(
                 () =>

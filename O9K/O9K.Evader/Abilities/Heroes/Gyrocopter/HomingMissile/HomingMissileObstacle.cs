@@ -9,7 +9,7 @@
     using Core.Entities.Units;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using Pathfinder.Obstacles.Abilities;
 
@@ -31,7 +31,7 @@
             this.homingMissileAbility = (HomingMissile)ability.Ability;
             this.missileUnit = missileUnit;
             this.initialPosition = missileUnit.Position;
-            this.initialTime = Game.RawGameTime + this.homingMissileAbility.ActivationDelay;
+            this.initialTime = GameManager.RawGameTime + this.homingMissileAbility.ActivationDelay;
         }
 
         public override bool IsExpired
@@ -46,7 +46,7 @@
         {
             get
             {
-                return this.homingMissileAbility.Speed + (this.homingMissileAbility.Acceleration * (Game.RawGameTime - this.initialTime));
+                return this.homingMissileAbility.Speed + (this.homingMissileAbility.Acceleration * (GameManager.RawGameTime - this.initialTime));
             }
         }
 
@@ -63,7 +63,7 @@
 
         public override float GetEvadeTime(Unit9 ally, bool blink)
         {
-            return Math.Max(ally.Distance(this.missileUnit.NetworkPosition) - (50 + Game.Ping), 0.1f) / this.Speed;
+            return Math.Max(ally.Distance(this.missileUnit.NetworkPosition) - (50 + GameManager.Ping), 0.1f) / this.Speed;
         }
 
         public override bool IsIntersecting(Unit9 unit, bool checkPrediction)

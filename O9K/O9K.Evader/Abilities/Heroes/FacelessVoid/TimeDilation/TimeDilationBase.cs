@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.faceless_void_time_dilation)]
     internal class TimeDilationBase : EvaderBaseAbility, IEvadable

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.morphling_adaptive_strike_agi)]
     internal class AdaptiveStrikeAgilityBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

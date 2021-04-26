@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -66,7 +66,7 @@
 
         public override void AddProjectile(TrackingProjectile projectile, Unit9 target)
         {
-            if (this.targetableObstacle != null && this.EndCastTime + 0.5f > Game.RawGameTime)
+            if (this.targetableObstacle != null && this.EndCastTime + 0.5f > GameManager.RawGameTime)
             {
                 this.targetableObstacle.AddProjectile(projectile, target);
                 this.stormHammerAoeObstacle.AddProjectile(projectile, target);

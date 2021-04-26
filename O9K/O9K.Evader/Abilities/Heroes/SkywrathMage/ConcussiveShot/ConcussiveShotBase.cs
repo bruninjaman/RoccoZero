@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.skywrath_mage_concussive_shot)]
     internal class ConcussiveShotBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

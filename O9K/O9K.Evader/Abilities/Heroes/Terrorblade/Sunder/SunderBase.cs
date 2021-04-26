@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.terrorblade_sunder)]
     internal class SunderBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

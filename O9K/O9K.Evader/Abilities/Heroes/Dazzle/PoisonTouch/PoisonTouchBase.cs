@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.dazzle_poison_touch)]
     internal class PoisonTouchBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

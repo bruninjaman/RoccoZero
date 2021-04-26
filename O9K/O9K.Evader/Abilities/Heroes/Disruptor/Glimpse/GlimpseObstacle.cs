@@ -4,7 +4,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Pathfinder.Obstacles.Abilities;
 
@@ -29,7 +29,7 @@
 
         public override float GetEvadeTime(Unit9 ally, bool blink)
         {
-            return this.EndObstacleTime - Game.RawGameTime;
+            return this.EndObstacleTime - GameManager.RawGameTime;
         }
 
         public override bool IsIntersecting(Unit9 unit, bool checkPrediction)

@@ -8,7 +8,7 @@
     using Core.Extensions;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Extensions;
     using Ensage.SDK.Geometry;
 
@@ -52,7 +52,7 @@
             else if (this.NavMeshId != null)
             {
                 ////todo check activation delay of all obstacles
-                var time = Game.RawGameTime - this.EndCastTime - this.ActivationDelay /*- 0.35f*/;
+                var time = GameManager.RawGameTime - this.EndCastTime - this.ActivationDelay /*- 0.35f*/;
                 if (time < 0)
                 {
                     return;

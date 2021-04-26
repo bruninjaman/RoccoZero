@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.troll_warlord_whirling_axes_ranged)]
     internal class WhirlingAxesRangedBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

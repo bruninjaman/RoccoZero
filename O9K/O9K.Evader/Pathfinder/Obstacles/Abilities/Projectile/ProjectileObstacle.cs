@@ -4,7 +4,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using O9K.Evader.Abilities.Base.Evadable;
 
@@ -67,7 +67,7 @@
                     }
                 }
 
-                return Math.Max(ally.Distance(this.Projectile.Position) - ((Game.Ping / 1000) * this.Speed) - range, 0) / this.Speed;
+                return Math.Max(ally.Distance(this.Projectile.Position) - ((GameManager.Ping / 1000) * this.Speed) - range, 0) / this.Speed;
             }
 
             return 0;

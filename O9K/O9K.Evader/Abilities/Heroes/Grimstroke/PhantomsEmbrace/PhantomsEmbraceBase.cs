@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.grimstroke_ink_creature)]
     internal class PhantomsEmbraceBase : EvaderBaseAbility, IEvadable

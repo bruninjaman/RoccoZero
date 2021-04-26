@@ -69,13 +69,13 @@
             this.context.Renderer.Draw -= this.RendererOnDraw;
         }
 
-        private void BkbEnabledOnValueChanged(object sender, KeyEventArgs e)
+        private void BkbEnabledOnValueChanged(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             this.stateSleeper.Sleep(5);
             this.showBkb = e.NewValue;
         }
 
-        private void PathfinderModeOnValueChanged(object sender, KeyEventArgs e)
+        private void PathfinderModeOnValueChanged(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             this.stateSleeper.Sleep(5);
 
@@ -94,7 +94,7 @@
             }
         }
 
-        private void ProactiveEvadeOnValueChange(object sender, KeyEventArgs e)
+        private void ProactiveEvadeOnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
         {
             this.stateSleeper.Sleep(5);
             this.showProactive = e.NewValue;

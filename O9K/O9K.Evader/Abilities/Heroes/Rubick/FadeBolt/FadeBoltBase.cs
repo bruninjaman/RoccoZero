@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.rubick_fade_bolt)]
     internal class FadeBoltBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.bounty_hunter_wind_walk)]
     internal class ShadowWalkBase : EvaderBaseAbility, IUsable<CounterAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.dazzle_shallow_grave)]
     internal class ShallowGraveBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

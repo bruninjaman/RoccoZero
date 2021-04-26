@@ -4,7 +4,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Geometry;
 
     using Helpers;
@@ -88,7 +88,7 @@
         {
             if (this.Projectile == null)
             {
-                return this.EndCastTime - Game.RawGameTime;
+                return this.EndCastTime - GameManager.RawGameTime;
             }
 
             return 0;
@@ -111,8 +111,8 @@
                     }
                 }
 
-                var distance = Math.Max(ally.Distance(this.Position) - ((Game.Ping / 1000) * this.Speed) - range, 0);
-                return (this.EndCastTime + (distance / this.Speed)) - Game.RawGameTime;
+                var distance = Math.Max(ally.Distance(this.Position) - ((GameManager.Ping / 1000) * this.Speed) - range, 0);
+                return (this.EndCastTime + (distance / this.Speed)) - GameManager.RawGameTime;
             }
 
             if (this.Projectile.IsValid)
@@ -130,7 +130,7 @@
                     }
                 }
 
-                return Math.Max(ally.Distance(this.Projectile.Position) - ((Game.Ping / 1000) * this.Speed) - range, 0) / this.Speed;
+                return Math.Max(ally.Distance(this.Projectile.Position) - ((GameManager.Ping / 1000) * this.Speed) - range, 0) / this.Speed;
             }
 
             return 0;

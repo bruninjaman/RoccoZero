@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.techies_land_mines)]
     internal class ProximityMinesBase : EvaderBaseAbility //, IEvadable

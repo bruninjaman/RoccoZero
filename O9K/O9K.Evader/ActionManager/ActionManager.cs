@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Entities;
@@ -13,9 +12,7 @@
     using Core.Logger;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Handlers;
-    using Ensage.SDK.Helpers;
+    using Divine;
 
     using Metadata;
 
@@ -28,19 +25,19 @@
 
         private readonly Sleeper actionCheck = new Sleeper();
 
-        private readonly HashSet<OrderId> ignoredActions = new HashSet<OrderId>
+        private readonly HashSet<OrderType> ignoredActions = new HashSet<OrderType>
         {
-            OrderId.UpgradeAbility,
-            OrderId.ToggleAutoCast,
-            OrderId.BuyItem,
-            OrderId.DisassembleItem,
-            OrderId.SetItemCombiningLock,
-            OrderId.SellItem,
-            OrderId.MoveItem,
-            OrderId.DropFromStash,
-            OrderId.Announce,
-            OrderId.GlyphOfFortification,
-            OrderId.Scan
+            OrderType.UpgradeSpell,
+            OrderType.CastToggleAutocast,
+            OrderType.BuyItem,
+            OrderType.DisassembleItem,
+            OrderType.SetItemCombiningLock,
+            OrderType.SellItem,
+            OrderType.MoveItem,
+            OrderType.DropFromStash,
+            OrderType.Announce,
+            OrderType.Glyph,
+            OrderType.Scan
         };
 
         private readonly Dictionary<Unit9, MultiSleeper> ignoredModifierObstacles = new Dictionary<Unit9, MultiSleeper>();
@@ -57,9 +54,8 @@
 
         private Ability9 cancelChannelingAbility;
 
-        private IUpdateHandler stopHandler;
+        private UpdateHandler stopHandler;
 
-        [ImportingConstructor]
         public ActionManager(IMainMenu menu)
         {
             this.overrideKey = menu.Hotkeys.OverrideDodgeMode;
@@ -67,13 +63,13 @@
 
         public LoadOrder LoadOrder { get; } = LoadOrder.ActionManager;
 
-        private IUpdateHandler StopHandler
+        private UpdateHandler StopHandler
         {
             get
             {
                 if (this.stopHandler == null)
                 {
-                    this.stopHandler = UpdateManager.Subscribe(this.StopChanneling, 0, false);
+                    this.stopHandler = UpdateManager.CreateIngameUpdate(0, false, this.StopChanneling);
                 }
 
                 return this.stopHandler;
@@ -82,7 +78,7 @@
 
         public void Activate()
         {
-            Player.OnExecuteOrder += this.OnExecuteOrder;
+            OrderManager.OrderAdding += OnOrderAdding;
         }
 
         public void BlockInput(Unit9 unit, float seconds)
@@ -125,16 +121,16 @@
         {
             this.cancelChannelingAbility = ability;
             this.StopHandler.IsEnabled = true;
-            UpdateManager.BeginInvoke(() => this.stopHandler.IsEnabled = false, (int)(timeout * 1000));
+            UpdateManager.BeginInvoke((int)(timeout * 1000), () => this.stopHandler.IsEnabled = false);
         }
 
         public void Dispose()
         {
-            Player.OnExecuteOrder -= this.OnExecuteOrder;
+            OrderManager.OrderAdding -= OnOrderAdding;
 
             if (this.stopHandler != null)
             {
-                UpdateManager.Unsubscribe(this.stopHandler);
+                UpdateManager.DestroyIngameUpdate(this.stopHandler);
             }
         }
 
@@ -232,20 +228,22 @@
             }
         }
 
-        private void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        private void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!this.actionCheck.IsSleeping || this.ignoredActions.Contains(args.OrderId))
+                var order = e.Order;
+                var orderType = e.Order.Type;
+                if (!this.actionCheck.IsSleeping || this.ignoredActions.Contains(orderType))
                 {
                     return;
                 }
 
-                if (args.OrderId == OrderId.ToggleAbility)
+                if (order.Type == OrderType.CastToggle)
                 {
-                    if (this.abilityInputBlocked.IsSleeping(args.Ability.Handle))
+                    if (this.abilityInputBlocked.IsSleeping(order.Ability.Handle))
                     {
-                        args.Process = false;
+                        e.Process = false;
                     }
 
                     return;
@@ -256,14 +254,14 @@
                     return;
                 }
 
-                if (args.Entities.Any(x => this.unitInputBlocked.IsSleeping(x.Handle)))
+                if (order.Units.Any(x => this.unitInputBlocked.IsSleeping(x.Handle)))
                 {
-                    args.Process = false;
+                    e.Process = false;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Error(e);
+                Logger.Error(ex);
             }
         }
 

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.lion_impale)]
     internal class EarthSpikeBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

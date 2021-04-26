@@ -10,7 +10,7 @@
     using Core.Entities.Units;
     using Core.Logger;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Helpers;
 
     using Metadata;
@@ -81,14 +81,14 @@
             this.startPosition = Vector3.Zero;
         }
 
-        public void AddParticle(ParticleEffect particle, string name)
+        public void AddParticle(Particle particle, string name)
         {
             if (this.Owner.IsVisible)
             {
                 return;
             }
 
-            this.startTime = Game.RawGameTime - (Game.Ping / 2000);
+            this.startTime = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
             UpdateManager.BeginInvoke(
                 () =>

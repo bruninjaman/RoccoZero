@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.broodmother_insatiable_hunger)]
     internal class InsatiableHungerBase : EvaderBaseAbility, IEvadable

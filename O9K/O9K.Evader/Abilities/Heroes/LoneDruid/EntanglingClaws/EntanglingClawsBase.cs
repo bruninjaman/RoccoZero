@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.lone_druid_spirit_bear_entangle)]
     internal class EntanglingClawsBase : EvaderBaseAbility, IEvadable

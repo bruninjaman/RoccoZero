@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.treant_natures_grasp)]
     internal class NaturesGraspBase : EvaderBaseAbility, IUsable<CounterEnemyAbility>

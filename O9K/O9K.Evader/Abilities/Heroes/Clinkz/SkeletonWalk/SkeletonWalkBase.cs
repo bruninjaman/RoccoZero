@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.clinkz_wind_walk)]
     internal class SkeletonWalkBase : EvaderBaseAbility, IUsable<CounterAbility>, IUsable<DodgeAbility>

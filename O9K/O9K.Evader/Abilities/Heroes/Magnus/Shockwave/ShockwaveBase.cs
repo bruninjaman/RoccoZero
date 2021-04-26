@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.magnataur_shockwave)]
     internal class ShockwaveBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

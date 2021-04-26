@@ -8,7 +8,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -39,9 +39,9 @@
             this.Pathfinder.AddObstacle(obstacle);
         }
 
-        public void AddParticle(ParticleEffect particle, string name)
+        public void AddParticle(Particle particle, string name)
         {
-            var time = Game.RawGameTime - (Game.Ping / 2000);
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
             var casterPosition = particle.GetControlPoint(0);
             var landPosition = particle.GetControlPoint(1);
 

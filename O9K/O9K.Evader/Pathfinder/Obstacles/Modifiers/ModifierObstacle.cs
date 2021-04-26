@@ -5,7 +5,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using O9K.Evader.Abilities.Base;
     using O9K.Evader.Abilities.Base.Evadable;
@@ -29,7 +29,7 @@
             this.Disables = ability.ModifierDisables.ToArray();
             this.Blinks = ability.ModifierBlinks.ToArray();
             this.IgnoreModifierRemainingTime = modifier.Duration < 0;
-            this.Delay = Game.Ping / 2000f;
+            this.Delay = GameManager.Ping / 2000f;
         }
 
         public AbilityId[] Blinks { get; set; }

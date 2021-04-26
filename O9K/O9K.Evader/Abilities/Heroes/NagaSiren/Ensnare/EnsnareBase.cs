@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.naga_siren_ensnare)]
     internal class EnsnareBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

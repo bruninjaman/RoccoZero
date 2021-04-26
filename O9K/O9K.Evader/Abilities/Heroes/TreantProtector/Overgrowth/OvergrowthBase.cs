@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.treant_overgrowth)]
     internal class OvergrowthBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

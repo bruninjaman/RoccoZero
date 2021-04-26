@@ -6,7 +6,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -49,7 +49,7 @@
                 return false;
             }
 
-            if (ally.IsTeleporting && ally.ChannelEndTime < Game.RawGameTime + remainingTime)
+            if (ally.IsTeleporting && ally.ChannelEndTime < GameManager.RawGameTime + remainingTime)
             {
                 return false;
             }

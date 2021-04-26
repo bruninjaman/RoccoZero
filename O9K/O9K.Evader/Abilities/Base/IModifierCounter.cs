@@ -5,7 +5,7 @@
     using Core.Entities.Units;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
+    using Divine;
 
     internal interface IModifierCounter
     {

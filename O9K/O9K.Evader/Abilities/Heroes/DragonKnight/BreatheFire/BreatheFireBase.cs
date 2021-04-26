@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.dragon_knight_breathe_fire)]
     internal class BreatheFireBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

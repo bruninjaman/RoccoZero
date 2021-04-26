@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.legion_commander_duel)]
     internal class DuelBase : EvaderBaseAbility, IEvadable

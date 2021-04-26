@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.queenofpain_shadow_strike)]
     internal class ShadowStrikeBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

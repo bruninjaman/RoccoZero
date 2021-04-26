@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.witch_doctor_maledict)]
     internal class MaledictBase : EvaderBaseAbility, IEvadable

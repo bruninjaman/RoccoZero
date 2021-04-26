@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.kunkka_x_marks_the_spot)]
     internal class XMarkBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

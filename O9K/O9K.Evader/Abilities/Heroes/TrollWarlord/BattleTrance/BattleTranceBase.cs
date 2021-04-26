@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.troll_warlord_battle_trance)]
     internal class BattleTranceBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

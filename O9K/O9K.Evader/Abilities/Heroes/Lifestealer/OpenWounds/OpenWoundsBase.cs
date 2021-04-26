@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.life_stealer_open_wounds)]
     internal class OpenWoundsBase : EvaderBaseAbility, IEvadable

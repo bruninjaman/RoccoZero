@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.centaur_hoof_stomp)]
     internal class HoofStompBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

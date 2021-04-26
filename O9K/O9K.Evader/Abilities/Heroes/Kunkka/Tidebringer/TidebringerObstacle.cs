@@ -4,7 +4,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Geometry;
 
     using Pathfinder.Obstacles.Abilities;
@@ -61,12 +61,12 @@
 
         public override float GetDisableTime(Unit9 enemy)
         {
-            return this.EndCastTime - Game.RawGameTime;
+            return this.EndCastTime - GameManager.RawGameTime;
         }
 
         public override float GetEvadeTime(Unit9 ally, bool blink)
         {
-            return this.EndCastTime - Game.RawGameTime;
+            return this.EndCastTime - GameManager.RawGameTime;
         }
 
         public void Update()

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.void_spirit_astral_step)]
     internal class AstralStepBase : EvaderBaseAbility, IEvadable, IUsable<BlinkAbility>

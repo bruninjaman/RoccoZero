@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.shadow_demon_demonic_purge)]
     internal class DemonicPurgeBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.tusk_ice_shards)]
     internal class IceShardsBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

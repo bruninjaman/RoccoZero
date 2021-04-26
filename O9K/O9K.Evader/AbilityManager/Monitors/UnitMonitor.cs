@@ -11,7 +11,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     internal class UnitMonitor : IDisposable
     {
@@ -31,15 +31,15 @@
             this.evadableAbilities = evadableAbilities;
             this.heroTeam = EntityManager9.Owner.Team;
 
-            ObjectManager.OnAddEntity += this.OnAddEntity;
+            EntityManager.EntityAdded += this.OnAddEntity;
         }
 
         public void Dispose()
         {
-            ObjectManager.OnAddEntity -= this.OnAddEntity;
+            EntityManager.EntityAdded -= this.OnAddEntity;
         }
 
-        private void OnAddEntity(EntityEventArgs args)
+        private void OnAddEntity(EntityAddedEventArgs args)
         {
             try
             {

@@ -7,7 +7,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Geometry;
 
     using Pathfinder.Obstacles.Abilities.LinearProjectile;
@@ -32,7 +32,7 @@
 
             this.Drawer.DrawArcRectangle(this.Position, this.EndPosition, this.Radius);
 
-            var time = (Game.RawGameTime - this.EndCastTime - this.GetChannelTime()) + (this.Radius / 2 / this.Speed);
+            var time = (GameManager.RawGameTime - this.EndCastTime - this.GetChannelTime()) + (this.Radius / 2 / this.Speed);
             if (time < 0)
             {
                 return;
@@ -44,13 +44,13 @@
 
         public override float GetDisableTime(Unit9 enemy)
         {
-            return this.EndCastTime - Game.RawGameTime;
+            return this.EndCastTime - GameManager.RawGameTime;
         }
 
         public override float GetEvadeTime(Unit9 ally, bool blink)
         {
             var distance = Math.Max(ally.Distance(this.Position) - this.Radius, 0);
-            return (this.EndCastTime + this.GetChannelTime() + (distance / this.Speed)) - Game.RawGameTime;
+            return (this.EndCastTime + this.GetChannelTime() + (distance / this.Speed)) - GameManager.RawGameTime;
         }
 
         public override void Update()
@@ -65,7 +65,7 @@
             else if (this.NavMeshId != null)
             {
                 ////todo check activation delay of all obstacles
-                var time = Game.RawGameTime - this.EndCastTime - this.GetChannelTime() /*- 0.35f*/;
+                var time = GameManager.RawGameTime - this.EndCastTime - this.GetChannelTime() /*- 0.35f*/;
                 if (time < 0)
                 {
                     return;
@@ -89,7 +89,7 @@
 
             if (this.channelTime <= 0)
             {
-                this.channelTime = Math.Min(Game.RawGameTime - this.EndCastTime, this.ActivationDelay);
+                this.channelTime = Math.Min(GameManager.RawGameTime - this.EndCastTime, this.ActivationDelay);
                 this.EndObstacleTime -= this.ActivationDelay - this.channelTime;
             }
 

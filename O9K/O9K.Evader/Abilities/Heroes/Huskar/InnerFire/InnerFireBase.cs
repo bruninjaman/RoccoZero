@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.huskar_inner_fire)]
     internal class InnerFireBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.shadow_shaman_voodoo)]
     internal class HexBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.snapfire_lil_shredder)]
     internal class LilShredderBase : EvaderBaseAbility, IEvadable

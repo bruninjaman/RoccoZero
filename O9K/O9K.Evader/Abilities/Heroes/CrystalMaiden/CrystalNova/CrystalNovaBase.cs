@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.crystal_maiden_crystal_nova)]
     internal class CrystalNovaBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

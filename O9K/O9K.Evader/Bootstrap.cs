@@ -2,22 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Core.Logger;
 
-    using Ensage.SDK.Service;
-    using Ensage.SDK.Service.Metadata;
+    using Divine;
 
     using Metadata;
 
-    [ExportPlugin("O9K // Evader", priority: int.MaxValue)]
-    internal class Bootstrap : Plugin
+    //[ExportPlugin("O9K // Evader", priority: int.MaxValue)]
+    internal class Bootstrap : Bootstrapper
     {
         private readonly IEnumerable<IEvaderService> evaderServices;
 
-        [ImportingConstructor]
         public Bootstrap([ImportMany] IEnumerable<IEvaderService> services)
         {
             this.evaderServices = services;

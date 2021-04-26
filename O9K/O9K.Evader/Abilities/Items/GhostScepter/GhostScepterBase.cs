@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.item_ghost)]
     internal class GhostScepterBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

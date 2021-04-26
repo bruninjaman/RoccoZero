@@ -9,7 +9,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -46,7 +46,7 @@
 
         public void AddUnit(Unit unit)
         {
-            var time = Game.RawGameTime - (Game.Ping / 2000);
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
             var obstacle = new AreaOfEffectObstacle(this, unit.Position)
             {

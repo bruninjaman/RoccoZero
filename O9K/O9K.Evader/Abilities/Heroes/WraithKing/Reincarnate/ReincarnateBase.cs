@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.skeleton_king_reincarnation)]
     internal class ReincarnateBase : EvaderBaseAbility, IEvadable

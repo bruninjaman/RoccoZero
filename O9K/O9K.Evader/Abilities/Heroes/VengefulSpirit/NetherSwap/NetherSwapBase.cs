@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.vengefulspirit_nether_swap)]
     internal class NetherSwapBase : EvaderBaseAbility, IUsable<DisableAbility>, IEvadable

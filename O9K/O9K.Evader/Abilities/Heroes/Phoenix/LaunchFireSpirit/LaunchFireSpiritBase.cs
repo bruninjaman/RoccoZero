@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.phoenix_launch_fire_spirit)]
     internal class LaunchFireSpiritBase : EvaderBaseAbility, IEvadable

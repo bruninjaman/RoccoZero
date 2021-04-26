@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.juggernaut_blade_fury)]
     internal class BladeFuryBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

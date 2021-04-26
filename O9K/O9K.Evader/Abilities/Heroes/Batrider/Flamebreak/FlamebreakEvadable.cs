@@ -8,9 +8,8 @@
     using Core.Entities.Abilities.Base;
     using Core.Logger;
 
-    using Ensage;
-    using Ensage.SDK.Geometry;
-    using Ensage.SDK.Helpers;
+    using Divine;
+    using Divine.SDK.Extensions;
 
     using Metadata;
 
@@ -27,9 +26,9 @@
             this.Counters.UnionWith(Abilities.MagicShield);
         }
 
-        public void AddParticle(ParticleEffect particle, string name)
+        public void AddParticle(Particle particle, string name)
         {
-            var time = Game.RawGameTime - (Game.Ping / 2000);
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
             UpdateManager.BeginInvoke(
                 () =>

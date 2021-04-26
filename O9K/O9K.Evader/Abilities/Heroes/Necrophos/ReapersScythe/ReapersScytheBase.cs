@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.necrolyte_reapers_scythe)]
     internal class ReapersScytheBase : EvaderBaseAbility, IUsable<DisableAbility>, IEvadable

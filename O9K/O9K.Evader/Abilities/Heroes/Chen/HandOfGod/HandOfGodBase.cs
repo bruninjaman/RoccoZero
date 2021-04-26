@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.chen_hand_of_god)]
     internal class HandOfGodBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

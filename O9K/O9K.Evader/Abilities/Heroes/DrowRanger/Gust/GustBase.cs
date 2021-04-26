@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.drow_ranger_wave_of_silence)]
     internal class GustBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

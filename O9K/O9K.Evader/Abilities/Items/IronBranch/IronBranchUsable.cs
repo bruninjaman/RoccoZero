@@ -8,7 +8,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Ensage;
+    using Divine;
 
     using Metadata;
 
@@ -20,7 +20,7 @@
     {
         private Modifier kineticField;
 
-        private ParticleEffect pounce;
+        private Particle pounce;
 
         private Vector3 usePosition;
 
@@ -45,13 +45,13 @@
             }
         }
 
-        private ParticleEffect Pounce
+        private Particle Pounce
         {
             get
             {
                 if (this.pounce?.IsValid != true)
                 {
-                    this.pounce = ObjectManager.ParticleEffects.FirstOrDefault(x => x.IsValid && x.Name.Contains("pounce_leash.vpcf"));
+                    this.pounce = ObjectManager.Particles.FirstOrDefault(x => x.IsValid && x.Name.Contains("pounce_leash.vpcf"));
                 }
 
                 return this.pounce;

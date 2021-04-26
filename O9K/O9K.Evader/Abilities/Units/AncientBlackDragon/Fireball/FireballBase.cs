@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.black_dragon_fireball)]
     internal class FireballBase : EvaderBaseAbility, IEvadable

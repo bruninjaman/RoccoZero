@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.brewmaster_primal_split)]
     internal class PrimalSplitBase : EvaderBaseAbility, IEvadable

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.abaddon_aphotic_shield)]
     internal class AphoticShieldBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

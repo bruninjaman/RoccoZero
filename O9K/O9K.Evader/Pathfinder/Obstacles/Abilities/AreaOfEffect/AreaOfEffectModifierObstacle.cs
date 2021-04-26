@@ -2,7 +2,7 @@
 {
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using O9K.Evader.Abilities.Base.Evadable;
 
@@ -14,7 +14,7 @@
             : base(ability, position, radiusIncrease)
         {
             this.Modifier = modifier;
-            this.Delay = Game.Ping / 2000f;
+            this.Delay = GameManager.Ping / 2000f;
         }
 
         public override bool IsExpired

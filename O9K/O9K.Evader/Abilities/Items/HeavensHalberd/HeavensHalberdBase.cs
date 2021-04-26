@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.item_heavens_halberd)]
     internal class HeavensHalberdBase : EvaderBaseAbility, IUsable<DisableAbility>

@@ -10,7 +10,7 @@
     using Core.Entities.Units;
     using Core.Logger;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Helpers;
 
     using Metadata;
@@ -39,7 +39,7 @@
             this.Pathfinder.AddObstacle(obstacle);
         }
 
-        public void AddParticle(ParticleEffect particle, string name)
+        public void AddParticle(Particle particle, string name)
         {
             if (name.Contains("ground"))
             {
@@ -47,7 +47,7 @@
                 return;
             }
 
-            var time = Game.RawGameTime - (Game.Ping / 2000);
+            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
             UpdateManager.BeginInvoke(
                 () =>

@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.bristleback_viscous_nasal_goo)]
     internal class ViscousNasalGooBase : EvaderBaseAbility, IEvadable

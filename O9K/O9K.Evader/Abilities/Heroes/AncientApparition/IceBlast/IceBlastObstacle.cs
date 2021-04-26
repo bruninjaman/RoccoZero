@@ -2,7 +2,7 @@
 {
     using Base.Evadable;
 
-    using Ensage.SDK.Geometry;
+    using O9K.Core.Geometry;
 
     using Pathfinder.Obstacles.Abilities.AreaOfEffect;
 

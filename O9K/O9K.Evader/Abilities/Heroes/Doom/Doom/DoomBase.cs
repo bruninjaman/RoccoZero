@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.doom_bringer_doom)]
     internal class DoomBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

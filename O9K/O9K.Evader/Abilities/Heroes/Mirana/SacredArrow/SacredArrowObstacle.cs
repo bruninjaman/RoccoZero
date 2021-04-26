@@ -7,7 +7,7 @@
     using Core.Extensions;
     using Core.Logger;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Geometry;
     using Ensage.SDK.Helpers;
 
@@ -61,7 +61,7 @@
             }
             else if (this.NavMeshId != null)
             {
-                var time = Game.RawGameTime - this.EndCastTime /*- 0.35f*/;
+                var time = GameManager.RawGameTime - this.EndCastTime /*- 0.35f*/;
                 if (time < 0)
                 {
                     return;

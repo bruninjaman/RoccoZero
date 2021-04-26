@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.ancient_apparition_cold_feet)]
     internal class ColdFeetBase : EvaderBaseAbility, IEvadable

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.terrorblade_reflection)]
     internal class ReflectionBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

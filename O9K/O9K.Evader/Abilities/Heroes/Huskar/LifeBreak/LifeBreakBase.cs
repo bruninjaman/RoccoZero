@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Ensage;
+    using Divine;
 
     [AbilityId(AbilityId.huskar_life_break)]
     internal class LifeBreakBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

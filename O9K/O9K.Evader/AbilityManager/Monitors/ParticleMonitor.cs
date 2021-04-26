@@ -11,7 +11,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Ensage;
+    using Divine;
 
     internal class ParticleMonitor : IDisposable
     {
@@ -183,19 +183,19 @@
             this.evadableAbilities = evadable;
             this.owner = EntityManager9.Owner;
 
-            Entity.OnParticleEffectAdded += this.OnParticleEffectAdded;
-            Entity.OnParticleEffectReleased += this.OnParticleEffectReleased;
+            Entity.OnParticleAdded += this.OnParticleAdded;
+            Entity.OnParticleReleased += this.OnParticleReleased;
 
-            //Entity.OnParticleEffectAdded += this.OnParticleEffectAddedTemp;
+            //Entity.OnParticleAdded += this.OnParticleAddedTemp;
         }
 
         public void Dispose()
         {
-            Entity.OnParticleEffectAdded -= this.OnParticleEffectAdded;
-            Entity.OnParticleEffectReleased -= this.OnParticleEffectReleased;
+            Entity.OnParticleAdded -= this.OnParticleAdded;
+            Entity.OnParticleReleased -= this.OnParticleReleased;
         }
 
-        private void OnParticleEffectAdded(Entity sender, ParticleEffectAddedEventArgs args)
+        private void OnParticleAdded(Entity sender, ParticleAddedEventArgs args)
         {
             try
             {
@@ -220,7 +220,7 @@
                     return;
                 }
 
-                ability.AddParticle(args.ParticleEffect, particleName);
+                ability.AddParticle(args.Particle, particleName);
             }
             catch (Exception e)
             {
@@ -228,7 +228,7 @@
             }
         }
 
-        private void OnParticleEffectAddedTemp(Entity sender, ParticleEffectAddedEventArgs args)
+        private void OnParticleAddedTemp(Entity sender, ParticleAddedEventArgs args)
         {
             //todo delete
 
@@ -253,16 +253,16 @@
             }
         }
 
-        private void OnParticleEffectReleased(Entity sender, ParticleEffectReleasedEventArgs args)
+        private void OnParticleReleased(Entity sender, ParticleReleasedEventArgs args)
         {
             try
             {
-                if (!args.ParticleEffect.IsValid)
+                if (!args.Particle.IsValid)
                 {
                     return;
                 }
 
-                var particleName = args.ParticleEffect.Name;
+                var particleName = args.Particle.Name;
 
                 if (!this.releasedParticles.TryGetValue(particleName, out var abilityId))
                 {
@@ -283,7 +283,7 @@
                     return;
                 }
 
-                ability.AddParticle(args.ParticleEffect, particleName);
+                ability.AddParticle(args.Particle, particleName);
             }
             catch (Exception e)
             {

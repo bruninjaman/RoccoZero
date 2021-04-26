@@ -14,7 +14,7 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
 
-    using Ensage;
+    using Divine;
     using Ensage.SDK.Helpers;
     using Ensage.SDK.Renderer;
 
@@ -29,8 +29,6 @@
 
     using SharpDX;
 
-    using Color = System.Drawing.Color;
-
     [Export(typeof(IDebugger))]
     internal class Debugger : IEvaderService, IDebugger
     {
@@ -39,8 +37,6 @@
         private readonly IAbilityManager abilityManager;
 
         private readonly IActionManager actionManager;
-
-        private readonly IContext9 context;
 
         private readonly List<EvadeResult> evadeResults = new List<EvadeResult>();
 
@@ -52,7 +48,6 @@
 
         [ImportingConstructor]
         public Debugger(
-            IContext9 context,
             IPathfinder pathfinder,
             IMainMenu menu,
             IAbilityManager abilityManager,
@@ -60,7 +55,6 @@
         {
             this.pathfinder = (Pathfinder)pathfinder;
             this.settings = menu.Debug;
-            this.context = context;
             this.abilityManager = abilityManager;
             this.actionManager = actionManager;
         }
@@ -103,14 +97,14 @@
             }
 
             this.evadeResults.Add(evadeResult);
-            UpdateManager.BeginInvoke(() => this.evadeResults.Remove(evadeResult), 7500);
+            UpdateManager.BeginInvoke(7500, () => this.evadeResults.Remove(evadeResult));
         }
 
         public void Dispose()
         {
-            this.context.Renderer.Draw -= this.DrawEvadableAbilities;
-            this.context.Renderer.Draw -= this.DrawIntersections;
-            this.context.Renderer.Draw -= this.DrawUsableAbilities;
+            RendererManager.Draw -= this.DrawEvadableAbilities;
+            RendererManager.Draw -= this.DrawIntersections;
+            RendererManager.Draw -= this.DrawUsableAbilities;
             Drawing.OnDraw -= this.DrawAbilityObstacles;
             Drawing.OnDraw -= this.DrawMap;
         }
@@ -153,7 +147,7 @@
             }
         }
 
-        private void DrawEvadableAbilities(IRenderer renderer)
+        private void DrawEvadableAbilities()
         {
             try
             {
@@ -220,7 +214,7 @@
             }
         }
 
-        private void DrawIntersections(IRenderer renderer)
+        private void DrawIntersections()
         {
             try
             {
@@ -272,9 +266,7 @@
         {
             try
             {
-#pragma warning disable 618
-
-                var center = Game.MousePosition;
+                var center = GameManager.MousePosition;
                 const int CellCount = 40;
                 for (var i = 0; i < CellCount; ++i)
                 {
@@ -322,7 +314,7 @@
                         false);
                 }
 
-                //this.pathfinder.NavMesh.GetCellPosition(Game.MousePosition - center, out var mouseX, out var mouseY);
+                //this.pathfinder.NavMesh.GetCellPosition(GameManager.MousePosition - center, out var mouseX, out var mouseY);
                 //mouseX += CellCount / 2;
                 //mouseY += CellCount / 2;
 
@@ -334,8 +326,6 @@
                 //        SharpDX.Color.White,
                 //        false);
                 //}
-
-#pragma warning restore 618
             }
             catch (Exception e)
             {
@@ -355,7 +345,7 @@
             }
         }
 
-        private void DrawUsableAbilities(IRenderer renderer)
+        private void DrawUsableAbilities()
         {
             try
             {

@@ -4,7 +4,7 @@
 
     using Core.Entities.Units;
 
-    using Ensage;
+    using Divine;
 
     using Pathfinder.Obstacles.Modifiers;
 
@@ -13,7 +13,7 @@
         public BootsOfTravelObstacle(IModifierCounter ability, Modifier modifier, Unit9 modifierOwner, float range)
             : base(ability, modifier, modifierOwner, range)
         {
-            this.CreateTime = Game.RawGameTime + 0.5f;
+            this.CreateTime = GameManager.RawGameTime + 0.5f;
         }
     }
 }
