@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
 
     using Core.Logger;
 
@@ -33,6 +34,47 @@
             evaderServices.Add(abilityManager);
             evaderServices.Add(evadeModeManager);
             evaderServices.Add(debugger);
+
+            var mainEvaderServices = new Dictionary<Type, IEvaderService>()
+            {
+                { typeof(IMainMenu), menuManager },
+                { typeof(IPathfinder), pathfinder },
+                { typeof(IActionManager), actionManager },
+                { typeof(IAbilityManager), abilityManager },
+                { typeof(IEvadeModeManager), evadeModeManager },
+                { typeof(IDebugger), debugger }
+            };
+
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (!type.IsClass || !typeof(IEvaderService).IsAssignableFrom(type))
+                {
+                    continue;
+                }
+
+                if (type == typeof(MenuManager) ||
+                    type == typeof(Pathfinder.Pathfinder) ||
+                    type == typeof(ActionManager.ActionManager) ||
+                    type == typeof(AbilityManager.AbilityManager) ||
+                    type == typeof(EvadeModeManager) ||
+                    type == typeof(Helpers.Debugger))
+                {
+                    continue;
+                }
+
+                var constructor = type.GetConstructors()[0];
+
+                var parameters = constructor.GetParameters();
+                var objectParameters = new object[parameters.Length];
+
+                for (var i = 0; i < parameters.Length; i++)
+                {
+                    var parameter = parameters[i];
+                    objectParameters[i] = mainEvaderServices[parameter.ParameterType];
+                }
+
+                evaderServices.Add((IEvaderService)Activator.CreateInstance(type, objectParameters));
+            }
 
             try
             {
