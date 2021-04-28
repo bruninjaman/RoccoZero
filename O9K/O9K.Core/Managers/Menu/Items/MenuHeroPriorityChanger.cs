@@ -482,7 +482,8 @@
                     1.5f);
                 RendererManager.DrawTexture(
                     ability.Key,
-                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureHeroSize.X, this.MenuStyle.TextureHeroSize.Y));
+                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureHeroSize.X, this.MenuStyle.TextureHeroSize.Y),
+                    TextureType.Unit);
 
                 if (ability.Value)
                 {
