@@ -686,7 +686,7 @@
                     case "dota_player_kill":
                     case "dota_player_deny":
                         {
-                            var id = (uint)e.KeyValue.GetKeyValue("victim_userid").GetInt32();
+                            var id = e.KeyValue.GetKeyValue("victim_userid").GetInt32();
                             var handle = EntityManager.GetPlayerById(id)?.Hero?.Handle;
                             var unit = (Hero9)EntityManager9.GetUnitFast(handle);
 
@@ -711,7 +711,7 @@
                         break;
                     case "dota_buyback":
                         {
-                            var id = (uint)e.KeyValue.GetKeyValue("player_id").GetInt32();
+                            var id = e.KeyValue.GetKeyValue("player_id").GetInt32();
                             var handle = EntityManager.GetPlayerById(id)?.Hero?.Handle;
                             var unit = EntityManager9.GetUnitFast(handle);
 

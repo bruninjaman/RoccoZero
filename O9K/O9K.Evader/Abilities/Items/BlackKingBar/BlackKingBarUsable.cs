@@ -32,7 +32,7 @@
 
             if (ability.IsDisable())
             {
-                if (ally.StatusResist >= 0.75)
+                if (ally.StatusResistance >= 0.75)
                 {
                     return false;
                 }

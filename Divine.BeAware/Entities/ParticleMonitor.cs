@@ -473,7 +473,7 @@ namespace Divine.BeAware.Entities
             try
             {
                 var playerId = Colors.HeroColors.FindIndex(x => x == particleColor);
-                var hero = EntityManager.GetPlayerById((uint)playerId)?.Hero;
+                var hero = EntityManager.GetPlayerById(playerId)?.Hero;
                 if (hero == null)
                 {
                     Verification.EntityVerification(position, "npc_dota_hero_default", abilityId, playerId + 1, true, particleName);

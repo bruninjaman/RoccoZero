@@ -679,11 +679,11 @@
         /// <summary>
         ///     0.x%
         /// </summary>
-        public float StatusResist
+        public float StatusResistance
         {
             get
             {
-                return this.BaseUnit.StatusResist;
+                return this.BaseUnit.StatusResistance;
             }
         }
 
@@ -1009,13 +1009,13 @@
             {
                 case DamageType.Magical:
                 {
-                    amp *= 1 - this.BaseUnit.MagicDamageResist;
+                    amp *= 1 - this.BaseUnit.MagicalDamageResistance;
                     break;
                 }
 
                 case DamageType.Physical:
                 {
-                    amp *= 1 - (this.IsEthereal ? 1 : this.BaseUnit.DamageResist);
+                    amp *= 1 - (this.IsEthereal ? 1 : this.BaseUnit.PhysicalDamageResistance);
                     break;
                 }
             }

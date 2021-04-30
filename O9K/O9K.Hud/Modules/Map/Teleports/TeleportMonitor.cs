@@ -27,7 +27,7 @@
 
         private const float TeleportCheckRadius = 1150;
 
-        private readonly Dictionary<Color, uint> colors = new Dictionary<Color, uint>
+        private readonly Dictionary<Color, int> colors = new Dictionary<Color, int>
         {
             { new Color((int)(255 * 0.2f), (int)(255 * 0.46f), (int)(255 * 1f)), 0 },
             { new Color((int)(255 * 0.4f), (int)(255 * 1f), (int)(255 * 0.75f)), 1 },
