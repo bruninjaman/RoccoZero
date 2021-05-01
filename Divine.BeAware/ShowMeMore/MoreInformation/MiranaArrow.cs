@@ -28,10 +28,9 @@ namespace Divine.BeAware.ShowMeMore.MoreInformation
             MiranaArrowMenu = MoreInformationMenu.MiranaArrowMenu;
         }
 
-        public override bool Entity(Unit unit)
+        public override bool Particle(Particle particle, string name)
         {
-            return false;
-            if (unit.DayVision != 500)
+            if (!name.Contains("mirana_spell_arrow"))
             {
                 return false;
             }
@@ -41,56 +40,61 @@ namespace Divine.BeAware.ShowMeMore.MoreInformation
                 return true;
             }
 
-            var hero = EntityManager.GetEntities<Hero>().Where(x => x.Distance2D(unit) < 800).OrderBy(x => x.Distance2D(unit)).FirstOrDefault();
-            if (hero != null && (hero.IsAlly(LocalHero) || hero.HeroId == HeroId.npc_dota_hero_invoker || hero.HeroId == HeroId.npc_dota_hero_mars))
+            var hero = EntityManager.GetEntities<Hero>().FirstOrDefault(x => !x.IsAlly(LocalHero) && !x.IsIllusion && x.HeroId == HeroId.npc_dota_hero_mirana);
+            if (hero == null)
             {
                 return true;
             }
 
-            var position = unit.Position;
-            Arrow(unit, position, unit.Handle.ToString());
-
-            var pos = Pos(position, MiranaArrowMenu.OnWorldItem);
-            var minimapPos = MinimapPos(position, MiranaArrowMenu.OnMinimapItem);
-            Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_mirana", AbilityId.mirana_arrow, 0, MiranaArrowMenu.SideMessageItem, MiranaArrowMenu.SoundItem);
-
-            if (MiranaArrowMenu.WriteOnChatItem)
+            UpdateManager.BeginInvoke(() => 
             {
-                DisplayMessage();
-            }
+                var position = particle.GetControlPoint(0);
+
+                Arrow(particle, position, hero.Handle.ToString());
+
+                var pos = Pos(position, MiranaArrowMenu.OnWorldItem);
+                var minimapPos = MinimapPos(position, MiranaArrowMenu.OnMinimapItem);
+                Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_mirana", AbilityId.mirana_arrow, 0, MiranaArrowMenu.SideMessageItem, MiranaArrowMenu.SoundItem);
+
+                if (MiranaArrowMenu.WriteOnChatItem)
+                {
+                    DisplayMessage();
+                }
+            });
+
+
 
             return true;
         }
 
-        private async void Arrow(Unit unit, Vector3 position, string id)
+        private async void Arrow(Particle particle, Vector3 position, string id)
         {
+            var endPosition = position.Extend(position + particle.GetControlPoint(1), 3000);
+
             var color = Color;
-            DrawRange($"ArrowStart_{id}", position, 200, color, 170);
+            DrawRange($"ArrowStart_{id}", position, 100, color, 170);
+            DrawRange($"ArrowEnd_{id}", endPosition, 100, color, 170);
+            DrawLine($"Arrow_{id}", position, endPosition, 115, 185, Color.DarkRed);
 
             var rawGameTime = GameManager.RawGameTime;
             do
             {
-                var updatePosition = unit.Position;
-                var endPosition = position.Extend(updatePosition, 3000);
-                if (position.ToVector2() == updatePosition.ToVector2())
+                var distance = (GameManager.RawGameTime - rawGameTime) * 900;
+                if (distance > 3000)
                 {
-                    await Task.Delay(100);
-                    continue;
+                    break;
                 }
 
-                DrawRangeRemove($"ArrowStart_{id}");
-                DrawLine($"Arrow_{id}", position, endPosition, 150, 185, Color.DarkRed);
-
-                var pos = position.Extend(endPosition, (GameManager.RawGameTime - rawGameTime) * 857);
-                DrawRange($"ArrowMove_{id}", pos, 100, color, 170);
+                DrawRange($"ArrowMove_{id}", position.Extend(endPosition, distance), 100, color, 170);
                 await Task.Delay(20);
             }
-            while (unit.IsValid);
+            while (particle.IsValid);
 
             DrawRangeRemove($"ArrowStart_{id}");
+            DrawRangeRemove($"ArrowEnd_{id}");
             DrawRangeRemove($"ArrowMove_{id}");
             DrawLineRemove($"Arrow_{id}");
-        }
+        }   
 
         private void DisplayMessage()
         {

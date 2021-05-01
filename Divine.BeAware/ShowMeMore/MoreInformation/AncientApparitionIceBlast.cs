@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using Divine.BeAware.MenuManager.ShowMeMore.MoreInformation;
 using Divine.SDK.Extensions;
+using Divine.Zero.Loader;
 
 using SharpDX;
 
@@ -50,13 +51,21 @@ namespace Divine.BeAware.ShowMeMore.MoreInformation
                 return true;
             }
 
-            var startPosition = particle.GetControlPoint(0);
-            IceBlast(particle, startPosition);
+            UpdateManager.BeginInvoke(() =>
+            {
+                if (!particle.IsValid)
+                {
+                    return;
+                }
 
-            var pos = Pos(startPosition, AncientApparitionIceBlastMenu.OnWorldItem);
-            var minimapPos = MinimapPos(startPosition, AncientApparitionIceBlastMenu.OnMinimapItem);
+                var startPosition = particle.GetControlPoint(0);
+                IceBlast(particle, startPosition);
 
-            Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_ancient_apparition", AbilityId.ancient_apparition_ice_blast, 0, AncientApparitionIceBlastMenu.SideMessageItem, AncientApparitionIceBlastMenu.SoundItem);
+                var pos = Pos(startPosition, AncientApparitionIceBlastMenu.OnWorldItem);
+                var minimapPos = MinimapPos(startPosition, AncientApparitionIceBlastMenu.OnMinimapItem);
+
+                Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_ancient_apparition", AbilityId.ancient_apparition_ice_blast, 0, AncientApparitionIceBlastMenu.SideMessageItem, AncientApparitionIceBlastMenu.SoundItem);
+            });
 
             return true;
         }

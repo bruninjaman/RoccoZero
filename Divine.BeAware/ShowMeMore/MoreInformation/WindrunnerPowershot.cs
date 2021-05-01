@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 using Divine.BeAware.MenuManager.ShowMeMore.MoreInformation;
@@ -29,7 +28,7 @@ namespace Divine.BeAware.ShowMeMore.MoreInformation
 
         public override bool Particle(Particle particle, string name)
         {
-            if (!name.Contains("powershot_channel"))
+            if (!name.Contains("powershot_channel") && !name.Contains("windrunner_spell_powershot"))
             {
                 return false;
             }
@@ -40,7 +39,7 @@ namespace Divine.BeAware.ShowMeMore.MoreInformation
             }
 
             var hero = EntityManager.GetEntities<Hero>().FirstOrDefault(x => !x.IsAlly(LocalHero) && !x.IsIllusion && x.HeroId == HeroId.npc_dota_hero_windrunner);
-            if (hero == null || !hero.IsVisible)
+            if (hero == null)
             {
                 return true;
             }
@@ -49,7 +48,7 @@ namespace Divine.BeAware.ShowMeMore.MoreInformation
 
             Powershot(particle, startPosition, hero);
 
-            if (WindrunnerPowershotMenu.WhenIsVisibleItem || !hero.IsVisible)
+            if (!name.Contains("windrunner_spell_powershot") && (WindrunnerPowershotMenu.WhenIsVisibleItem || !hero.IsVisible))
             {
                 var pos = Pos(startPosition, WindrunnerPowershotMenu.OnWorldItem);
                 var minimapPos = MinimapPos(startPosition, WindrunnerPowershotMenu.OnMinimapItem);
@@ -64,7 +63,21 @@ namespace Divine.BeAware.ShowMeMore.MoreInformation
         {
             if (!hero.IsVisible)
             {
-                DrawRange("PowershotRange", startPosition, 2600, Color, 50);
+                UpdateManager.BeginInvoke(() =>
+                {
+                    if (!particle.IsValid)
+                    {
+                        return;
+                    }
+
+                    var position = particle.GetControlPoint(0);
+                    var endPosition = position.Extend(position + particle.GetControlPoint(1), 2600);
+
+                    DrawRange("PowershotStart", position, 125, Color, 180);
+                    DrawRange("PowershotEnd", endPosition, 125, Color, 180);
+
+                    DrawLine("Powershot", position, endPosition, 150, 210, Color);
+                });
             }
             else
             {

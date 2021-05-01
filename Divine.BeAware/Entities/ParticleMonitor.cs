@@ -27,6 +27,8 @@ namespace Divine.BeAware.Entities
 
         private readonly WindrunnerPowershot WindrunnerPowershot;
 
+        private readonly MiranaArrow MiranaArrow;
+
         private readonly Hero LocalHero = EntityManager.LocalHero;
 
         private readonly static Log Log = LogManager.GetCurrentClassLogger();
@@ -43,6 +45,7 @@ namespace Divine.BeAware.Entities
             PudgeHook = common.PudgeHook;
             AncientApparitionIceBlast = common.AncientApparitionIceBlast;
             WindrunnerPowershot = common.WindrunnerPowershot;
+            MiranaArrow = common.MiranaArrow;
 
             ParticleManager.ParticleAdded += OnParticleAdded;
         }
@@ -115,6 +118,11 @@ namespace Divine.BeAware.Entities
                 }
 
                 if (WindrunnerPowershot.Particle(particle, name))
+                {
+                    return;
+                }
+                
+                if (MiranaArrow.Particle(particle, name))
                 {
                     return;
                 }
@@ -416,6 +424,11 @@ namespace Divine.BeAware.Entities
                 var hero = FindHeroWithSpells(abilityId);
                 if (hero == null)
                 {
+                    if (abilityId == AbilityId.viper_poison_attack)
+                    {
+                        return;
+                    }
+
                     Verification.EntityVerification(position, "npc_dota_hero_default", abilityId, 0, isDangerousSpell, particleName);
                     return;
                 }
