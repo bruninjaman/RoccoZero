@@ -91,7 +91,7 @@
                 return this.BasePosition;
             }
 
-            var rotation = this.BaseUnit.RotationRad;
+            var rotation = this.BaseUnit.NetworkRotationRad;
             var polar = new Vector3((float)Math.Cos(rotation), (float)Math.Sin(rotation), 0);
 
             return this.BasePosition + (polar * ((GameManager.RawGameTime - this.LastVisibleTime) + delay) * this.Speed);

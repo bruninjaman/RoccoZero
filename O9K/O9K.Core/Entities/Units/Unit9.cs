@@ -936,7 +936,7 @@
 
         public virtual float GetAngle(Vector3 position, bool rotationDifference = false)
         {
-            var angle = Math.Abs(Math.Atan2(position.Y - this.Position.Y, position.X - this.Position.X) - this.BaseUnit.RotationRad);
+            var angle = Math.Abs(Math.Atan2(position.Y - this.Position.Y, position.X - this.Position.X) - this.BaseUnit.NetworkRotationRad);
             if (angle > Math.PI)
             {
                 angle = Math.Abs((Math.PI * 2) - angle);
@@ -1072,7 +1072,7 @@
                 return this.Position;
             }
 
-            var rotation = this.BaseUnit.RotationRad;
+            var rotation = this.BaseUnit.NetworkRotationRad;
             var polar = new Vector3((float)Math.Cos(rotation), (float)Math.Sin(rotation), 0);
 
             return this.Position + (polar * delay * this.Speed);
@@ -1108,7 +1108,7 @@
         public Vector3 InFront(float range, float angle = 0, bool rotationDifference = true)
         {
             var diff = MathUtil.DegreesToRadians((rotationDifference ? this.BaseUnit.RotationDifference : 0) + angle);
-            var alpha = this.BaseUnit.RotationRad + diff;
+            var alpha = this.BaseUnit.NetworkRotationRad + diff;
             var polar = new Vector3((float)Math.Cos(alpha), (float)Math.Sin(alpha), 0);
 
             return this.Position + (polar * range);

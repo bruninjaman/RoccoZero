@@ -159,6 +159,7 @@
             this.obstacles.Add(obstacle);
 
             this.updateHandler.IsEnabled = true;
+
             this.ObstacleAdded?.Invoke(this, true);
         }
 
@@ -208,7 +209,7 @@
             return this.NavMesh.CalculatePathFromObstacle(
                 position,
                 unit.Position,
-                unit.BaseUnit.RotationRad,
+                unit.BaseUnit.NetworkRotationRad,
                 speed,
                 unit.TurnRate,
                 remainingTime * 1000,

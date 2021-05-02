@@ -48,10 +48,10 @@
 
             if (target.Equals(this.lastTarget))
             {
-                if (Math.Abs(this.rotation - target.BaseUnit.RotationRad) > 0.1)
+                if (Math.Abs(this.rotation - target.BaseUnit.NetworkRotationRad) > 0.1)
                 {
                     this.rotationTime = GameManager.RawGameTime;
-                    this.rotation = target.BaseUnit.RotationRad;
+                    this.rotation = target.BaseUnit.NetworkRotationRad;
                     return false;
                 }
 
@@ -65,7 +65,7 @@
             {
                 this.lastTarget = target;
                 this.rotationTime = GameManager.RawGameTime;
-                this.rotation = target.BaseUnit.RotationRad;
+                this.rotation = target.BaseUnit.NetworkRotationRad;
                 return false;
             }
 

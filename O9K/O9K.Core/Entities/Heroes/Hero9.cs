@@ -211,7 +211,7 @@
 
         public override float GetAngle(Vector3 position, bool rotationDifference = false)
         {
-            var rotation = this.BaseUnit.RotationRad;
+            var rotation = this.BaseUnit.NetworkRotationRad;
             if (rotationDifference)
             {
                 rotation += MathUtil.DegreesToRadians(this.BaseUnit.RotationDifference);
@@ -256,7 +256,7 @@
             var rotationDifference = MathUtil.DegreesToRadians(this.BaseUnit.RotationDifference);
             delay = Math.Max(delay - this.GetTurnTime(Math.Abs(rotationDifference)), 0);
 
-            var rotation = this.BaseUnit.RotationRad + rotationDifference;
+            var rotation = this.BaseUnit.NetworkRotationRad + rotationDifference;
             var polar = new Vector3((float)Math.Cos(rotation), (float)Math.Sin(rotation), 0);
 
             return this.BasePosition + (polar * ((GameManager.RawGameTime - this.LastPositionUpdateTime) + delay) * this.Speed);
