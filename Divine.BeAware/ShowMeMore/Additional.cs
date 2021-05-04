@@ -54,7 +54,7 @@ namespace Divine.BeAware.ShowMeMore
 
             RoshanPanelPosition = HUDInfo.GetCustomTopPanelPosition(1, Team.Radiant) - (new Vector2(480, -4) * RendererManager.Scaling);
 
-            GameManager.FireEvent += OnFireEvent;
+            GameManager.GameEvent += OnGameEvent;
             UpdateManager.CreateIngameUpdate(1000, OnTimeEvent);
             RendererManager.Draw += OnDraw;
         }
@@ -63,7 +63,7 @@ namespace Divine.BeAware.ShowMeMore
         {
             RendererManager.Draw -= OnDraw;
             UpdateManager.DestroyIngameUpdate(OnTimeEvent);
-            GameManager.FireEvent += OnFireEvent;
+            GameManager.GameEvent += OnGameEvent;
         }
 
         private void OnDraw()
@@ -92,9 +92,9 @@ namespace Divine.BeAware.ShowMeMore
             }
         }
 
-        private void OnFireEvent(FireEventEventArgs e)
+        private void OnGameEvent(GameEventEventArgs e)
         {
-            var name = e.Name;
+            var name = e.GameEvent.Name;
             if (name == "dota_roshan_kill")
             {
                 RoshanDead = true;

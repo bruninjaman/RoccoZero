@@ -83,7 +83,7 @@
         {
             this.information.ValueChanged -= this.InformationOnPropertyChanged;
             this.autoUpdate.ValueChanged -= this.AutoUpdateOnPropertyChanged;
-            GameManager.FireEvent -= this.GameOnFireEvent;
+            GameManager.GameEvent -= this.GameOnGameEvent;
         }
 
         private void AutoUpdateOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
@@ -93,20 +93,20 @@
                 if (this.autoUpdate)
                 {
                     this.menu.AddAsterisk();
-                    GameManager.FireEvent += this.GameOnFireEvent;
+                    GameManager.GameEvent += this.GameOnGameEvent;
                     this.InformationOnPropertyChanged(null, null);
                 }
                 else
                 {
                     this.menu.RemoveAsterisk();
-                    GameManager.FireEvent -= this.GameOnFireEvent;
+                    GameManager.GameEvent -= this.GameOnGameEvent;
                 }
             });
         }
 
-        private void GameOnFireEvent(FireEventEventArgs e)
+        private void GameOnGameEvent(GameEventEventArgs e)
         {
-            if (e.Name != "dota_player_update_selected_unit" && e.Name != "dota_player_update_query_unit")
+            if (e.GameEvent.Name != "dota_player_update_selected_unit" && e.GameEvent.Name != "dota_player_update_query_unit")
             {
                 return;
             }

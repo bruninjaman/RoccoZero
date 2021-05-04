@@ -54,13 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrap.cs" />
-    <Compile Include="Divine.Humanizer\Camera.cs" />
-    <Compile Include="Divine.Humanizer\Helper.cs" />
-    <Compile Include="Divine.Humanizer\HUDInfo.cs" />
-    <Compile Include="Divine.Humanizer\Humanizer.cs" />
-    <Compile Include="Divine.Humanizer\Menu.cs" />
-    <Compile Include="Divine.Humanizer\OldFunctions.cs" />
-    <Compile Include="Divine.Humanizer\Screen.cs" />
     <Compile Include="MapMeshDrawer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -80,6 +73,6 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetPath)" "$(TargetDir)Plugins\" /Y</PostBuildEvent>
+    <PostBuildEvent>if exist "C:\Program Files\Divine\Divine.exe" call "C:\Program Files\Divine\Divine.exe" -PostBuildEvent -AssemblyName="$(AssemblyName)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

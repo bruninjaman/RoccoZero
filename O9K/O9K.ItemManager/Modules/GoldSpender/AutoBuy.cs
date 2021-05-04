@@ -113,7 +113,7 @@
         public void Dispose()
         {
             this.enabled.ValueChange -= this.EnabledOnValueChange;
-            GameManager.FireEvent -= this.OnFireEvent;
+            GameManager.GameEvent -= this.OnGameEvent;
             Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
             UpdateManager.DestroyIngameUpdate(this.OnUpdate);
         }
@@ -138,13 +138,13 @@
             if (e.NewValue)
             {
                 UpdateManager.CreateIngameUpdate(1000, this.OnUpdate);
-                GameManager.FireEvent += this.OnFireEvent;
+                GameManager.GameEvent += this.OnGameEvent;
                 Entity.NetworkPropertyChanged += this.OnNetworkPropertyChanged;
             }
             else
             {
                 UpdateManager.DestroyIngameUpdate(this.OnUpdate);
-                GameManager.FireEvent -= this.OnFireEvent;
+                GameManager.GameEvent -= this.OnGameEvent;
                 Entity.NetworkPropertyChanged -= this.OnNetworkPropertyChanged;
             }
         }
@@ -259,9 +259,9 @@
             return false;
         }
 
-        private void OnFireEvent(FireEventEventArgs args)
+        private void OnGameEvent(GameEventEventArgs args)
         {
-            if (args.Name != "dota_player_shop_changed")
+            if (args.GameEvent.Name != "dota_player_shop_changed")
             {
                 return;
             }

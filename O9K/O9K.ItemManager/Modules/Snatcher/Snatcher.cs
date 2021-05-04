@@ -160,7 +160,7 @@
             OrderManager.OrderAdding -= this.OnOrderAdding;
             this.toggleKey.ValueChange -= this.ToggleKeyOnValueChange;
             this.aegisKey.ValueChange -= this.AegisKeyOnValueChange;
-            GameManager.FireEvent -= this.OnFireEvent;
+            GameManager.GameEvent -= this.OnGameEvent;
             UpdateManager.Update -= this.AegisOnUpdate;
             RendererManager.Draw -= this.OnDraw;
         }
@@ -169,12 +169,12 @@
         {
             if (e.NewValue)
             {
-                GameManager.FireEvent += this.OnFireEvent;
+                GameManager.GameEvent += this.OnGameEvent;
                 UpdateManager.Update += this.AegisOnUpdate;
             }
             else
             {
-                GameManager.FireEvent -= this.OnFireEvent;
+                GameManager.GameEvent -= this.OnGameEvent;
                 UpdateManager.Update -= this.AegisOnUpdate;
             }
         }
@@ -237,7 +237,7 @@
                 this.toggleKey.ValueChange -= this.ToggleKeyOnValueChange;
                 UpdateManager.DestroyIngameUpdate(this.ToggleOnUpdate);
                 this.aegisKey.ValueChange -= this.AegisKeyOnValueChange;
-                GameManager.FireEvent -= this.OnFireEvent;
+                GameManager.GameEvent -= this.OnGameEvent;
                 UpdateManager.Update -= this.AegisOnUpdate;
                 RendererManager.Draw -= this.OnDraw;
             }
@@ -437,9 +437,9 @@
             }
         }
 
-        private void OnFireEvent(FireEventEventArgs e)
+        private void OnGameEvent(GameEventEventArgs e)
         {
-            if (e.Name != "dota_roshan_kill")
+            if (e.GameEvent.Name != "dota_roshan_kill")
             {
                 return;
             }

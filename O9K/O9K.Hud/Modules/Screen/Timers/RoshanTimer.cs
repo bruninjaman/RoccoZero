@@ -140,7 +140,7 @@
             RendererManager.Draw -= this.OnDrawDrop;
             this.showDrop.ValueChange -= this.ShowDropOnValueChange;
             this.printTime.ValueChange -= this.PrintTimeOnValueChange;
-            GameManager.FireEvent -= this.OnFireEvent;
+            GameManager.GameEvent -= this.OnGameEvent;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             InputManager.MouseKeyUp -= this.InputManagerOnMouseKeyUp;
@@ -155,7 +155,7 @@
                 this.showDrop.ValueChange += this.ShowDropOnValueChange;
                 this.printTime.ValueChange += this.PrintTimeOnValueChange;
                 EntityManager9.UnitAdded += this.OnUnitAdded;
-                GameManager.FireEvent += this.OnFireEvent;
+                GameManager.GameEvent += this.OnGameEvent;
             }
             else
             {
@@ -164,7 +164,7 @@
                 this.showDrop.ValueChange -= this.ShowDropOnValueChange;
                 InputManager.MouseKeyUp -= this.InputManagerOnMouseKeyUp;
                 this.printTime.ValueChange -= this.PrintTimeOnValueChange;
-                GameManager.FireEvent -= this.OnFireEvent;
+                GameManager.GameEvent -= this.OnGameEvent;
                 EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
                 EntityManager9.UnitAdded -= this.OnUnitAdded;
             }
@@ -348,9 +348,9 @@
             }
         }
 
-        private void OnFireEvent(FireEventEventArgs e)
+        private void OnGameEvent(GameEventEventArgs e)
         {
-            switch (e.Name)
+            switch (e.GameEvent.Name)
             {
                 case "dota_roshan_kill":
                 {

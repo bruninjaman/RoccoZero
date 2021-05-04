@@ -181,7 +181,7 @@
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
             ModifierManager.ModifierAdded += this.OnModifierAdded;
-            GameManager.FireEvent += this.OnFireEvent;
+            GameManager.GameEvent += this.OnGameEvent;
             RendererManager.Draw += this.OnDraw;
         }
 
@@ -191,7 +191,7 @@
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             ModifierManager.ModifierAdded -= this.OnModifierAdded;
-            GameManager.FireEvent -= this.OnFireEvent;
+            GameManager.GameEvent -= this.OnGameEvent;
             RendererManager.Draw -= this.OnDraw;
         }
 
@@ -450,16 +450,17 @@
             }
         }
 
-        private void OnFireEvent(FireEventEventArgs e)
+        private void OnGameEvent(GameEventEventArgs e)
         {
-            if (e.Name != "dota_buyback")
+            var gameEvent = e.GameEvent;
+            if (gameEvent.Name != "dota_buyback")
             {
                 return;
             }
 
             try
             {
-                var id = e.KeyValue.GetKeyValue("player_id").GetInt32();
+                var id = gameEvent.GetInt32("player_id");
                 this.units[id]?.BuybackSleeper.Sleep(GameData.BuybackCooldown);
             }
             catch (Exception ex)

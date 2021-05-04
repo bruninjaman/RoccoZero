@@ -124,7 +124,7 @@
             Entity.AnimationChanged += this.OnAnimationChanged;
             ModifierManager.ModifierAdded += this.OnModifierAdded;
             ModifierManager.ModifierRemoved += this.OnModifierRemoved;
-            GameManager.FireEvent += this.OnFireEvent;
+            GameManager.GameEvent += this.OnGameEvent;
             OrderManager.OrderAdding += this.OnOrderAdding;
 
             UpdateManager.CreateUpdate(OnUpdate);
@@ -151,7 +151,7 @@
             Entity.AnimationChanged -= this.OnAnimationChanged;
             ModifierManager.ModifierAdded -= this.OnModifierAdded;
             ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
-            GameManager.FireEvent -= this.OnFireEvent;
+            GameManager.GameEvent -= this.OnGameEvent;
             OrderManager.OrderAdding -= this.OnOrderAdding;
 
             UpdateManager.DestroyIngameUpdate(OnUpdate);
@@ -677,16 +677,18 @@
             }
         }
 
-        private void OnFireEvent(FireEventEventArgs e)
+        private void OnGameEvent(GameEventEventArgs e)
         {
             try
             {
-                switch (e.Name)
+                var gameEvent = e.GameEvent;
+
+                switch (gameEvent.Name)
                 {
                     case "dota_player_kill":
                     case "dota_player_deny":
                         {
-                            var id = e.KeyValue.GetKeyValue("victim_userid").GetInt32();
+                            var id = gameEvent.GetInt32("victim_userid");
                             var handle = EntityManager.GetPlayerById(id)?.Hero?.Handle;
                             var unit = (Hero9)EntityManager9.GetUnitFast(handle);
 
@@ -711,7 +713,7 @@
                         break;
                     case "dota_buyback":
                         {
-                            var id = e.KeyValue.GetKeyValue("player_id").GetInt32();
+                            var id = gameEvent.GetInt32("player_id");
                             var handle = EntityManager.GetPlayerById(id)?.Hero?.Handle;
                             var unit = EntityManager9.GetUnitFast(handle);
 

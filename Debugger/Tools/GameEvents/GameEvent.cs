@@ -13,7 +13,7 @@
 
     using SharpDX;
 
-    internal class FireEvent : IDebuggerTool
+    internal class GameEvent : IDebuggerTool
     {
         private readonly HashSet<string> ignored = new HashSet<string>
         {
@@ -30,7 +30,7 @@
 
         private Menu menu;
 
-        public FireEvent(IMainMenu mainMenu, ILog log)
+        public GameEvent(IMainMenu mainMenu, ILog log)
         {
             this.mainMenu = mainMenu;
             this.log = log;
@@ -40,10 +40,10 @@
 
         public void Activate()
         {
-            this.menu = this.mainMenu.GameEventsMenu.CreateMenu("Fire event");
+            this.menu = this.mainMenu.GameEventsMenu.CreateMenu("Game event");
 
             this.enabled = this.menu.CreateSwitcher("Enabled", false);
-            this.enabled.SetTooltip("Game.OnFireEvent");
+            this.enabled.SetTooltip("Game.OnGameEvent");
             this.enabled.ValueChanged += this.EnabledOnPropertyChanged;
 
             this.ignoreUseless = this.menu.CreateSwitcher("Ignore useless", true);
@@ -54,7 +54,7 @@
         public void Dispose()
         {
             this.enabled.ValueChanged -= this.EnabledOnPropertyChanged;
-            GameManager.FireEvent -= this.GameOnFireEvent;
+            GameManager.GameEvent -= this.GameOnGameEvent;
         }
 
         private void EnabledOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
@@ -64,33 +64,33 @@
                 if (this.enabled)
                 {
                     this.menu.AddAsterisk();
-                    GameManager.FireEvent += this.GameOnFireEvent;
+                    GameManager.GameEvent += this.GameOnGameEvent;
                 }
                 else
                 {
                     this.menu.RemoveAsterisk();
-                    GameManager.FireEvent -= this.GameOnFireEvent;
+                    GameManager.GameEvent -= this.GameOnGameEvent;
                 }
             });
         }
 
-        private void GameOnFireEvent(FireEventEventArgs e)
+        private void GameOnGameEvent(GameEventEventArgs e)
         {
             if (!this.IsValid(e))
             {
                 return;
             }
 
-            var item = new LogItem(LogType.GameEvent, Color.Yellow, "Fire event");
+            var item = new LogItem(LogType.GameEvent, Color.Yellow, "Game event");
 
-            item.AddLine("Name: " + e.Name, e.Name);
+            item.AddLine("Name: " + e.GameEvent.Name, e.GameEvent.Name);
 
             this.log.Display(item);
         }
 
-        private bool IsValid(FireEventEventArgs e)
+        private bool IsValid(GameEventEventArgs e)
         {
-            if (this.ignoreUseless && this.ignored.Contains(e.Name))
+            if (this.ignoreUseless && this.ignored.Contains(e.GameEvent.Name))
             {
                 return false;
             }
