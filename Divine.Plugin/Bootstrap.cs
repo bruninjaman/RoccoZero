@@ -45,7 +45,7 @@ namespace Divine.Plugin
         {
             LogManager.Info("Activate Divine.Plugin");
 
-            ConVarManager.SetValue("dota_new_player", 0);
+            ConVarManager.SetValue("dota_new_player", false);
         }
 
         private MenuHoldKey HoldKey;
