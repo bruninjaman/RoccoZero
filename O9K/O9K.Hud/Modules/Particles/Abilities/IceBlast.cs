@@ -97,10 +97,10 @@
         {
             try
             {
-                if (!particle.Released)
-                {
-                    return;
-                }
+                //if (!particle.Released)
+                //{
+                //    return;
+                //}
 
                 switch (particle.Name)
                 {

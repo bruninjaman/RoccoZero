@@ -42,7 +42,7 @@
         {
             try
             {
-                if (!particle.Released || particle.Name != "particles/units/heroes/hero_gyrocopter/gyro_calldown_first.vpcf")
+                if (/*!particle.Released || */particle.Name != "particles/units/heroes/hero_gyrocopter/gyro_calldown_first.vpcf")
                 {
                     return;
                 }

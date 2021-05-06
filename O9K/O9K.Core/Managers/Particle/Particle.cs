@@ -10,7 +10,7 @@
         {
             this.Effect = effect;
             this.Name = effectName;
-            this.Released = isReleased;
+            //this.Released = isReleased;
             // this.CreateTime = Game.RawGameTime;
 
             if (sender != null && !(sender is Player))
@@ -42,7 +42,7 @@
             }
         }
 
-        public bool Released { get; }
+        //public bool Released { get; }
 
         public Entity Sender { get; }
 

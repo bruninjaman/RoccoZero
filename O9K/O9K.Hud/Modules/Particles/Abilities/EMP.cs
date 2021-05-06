@@ -48,7 +48,7 @@
         {
             try
             {
-                if (particle.Released || particle.Name != "particles/units/heroes/hero_invoker/invoker_emp.vpcf")
+                if (/*particle.Released || */particle.Name != "particles/units/heroes/hero_invoker/invoker_emp.vpcf")
                 {
                     return;
                 }

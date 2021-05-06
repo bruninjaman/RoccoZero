@@ -11,6 +11,7 @@
     <AssemblyName>O9K.ItemManager</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <LangVersion>9.0</LangVersion>
     <TargetFrameworkProfile />
     <PostBuildEvent>if exist "C:\Users\osman\Documents\GitHub\Divine.Client\bin\Divine.exe" call "C:\Users\osman\Documents\GitHub\Divine.Client\bin\Divine.exe" -PostBuildEvent -AssemblyName="$(AssemblyName)"</PostBuildEvent>
   </PropertyGroup>

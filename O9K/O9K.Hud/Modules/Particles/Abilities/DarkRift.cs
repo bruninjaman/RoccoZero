@@ -134,7 +134,7 @@
         {
             try
             {
-                if (particle.Released || particle.Name != "particles/units/heroes/heroes_underlord/abbysal_underlord_darkrift_ambient.vpcf")
+                if (/*particle.Released || */particle.Name != "particles/units/heroes/heroes_underlord/abbysal_underlord_darkrift_ambient.vpcf")
                 {
                     return;
                 }

@@ -119,7 +119,7 @@
         {
             try
             {
-                if (!particle.Released || particle.Name != "particles/generic_gameplay/rune_bounty_owner.vpcf")
+                if (/*!particle.Released || */particle.Name != "particles/generic_gameplay/rune_bounty_owner.vpcf")
                 {
                     return;
                 }

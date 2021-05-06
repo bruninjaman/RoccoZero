@@ -55,25 +55,24 @@
                     return;
                 }
 
-                var particle9 = new Particle9(particle, particle.Name, particle.Owner, false);
-
                 UpdateManager.BeginInvoke(
                     () =>
+                    {
+                        try
                         {
-                            try
+                            if (!particle.IsValid)
                             {
-                                if (!particle.IsValid)
-                                {
-                                    return;
-                                }
+                                return;
+                            }
 
-                                this.ParticleAdded?.Invoke(particle9);
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Error(ex);
-                            }
-                        });
+
+                            this.ParticleAdded?.Invoke(new Particle9(particle, particle.Name, particle.Owner, false));
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex);
+                        }
+                    });
             }
             catch (Exception ex)
             {

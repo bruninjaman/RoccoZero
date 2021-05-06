@@ -45,7 +45,7 @@ namespace Divine.Plugin
         {
             LogManager.Info("Activate Divine.Plugin");
 
-            ConVarManager.SetValue("dota_creeps_no_spawning", 1);
+            ConVarManager.SetValue("dota_new_player", 0);
         }
 
         private MenuHoldKey HoldKey;

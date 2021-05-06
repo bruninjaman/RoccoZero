@@ -11,6 +11,7 @@
     <AssemblyName>O9K.Core</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <LangVersion>9.0</LangVersion>
     <TargetFrameworkProfile />
     <PostBuildEvent>if exist "C:\Program Files\Divine\Divine.exe" call "C:\Program Files\Divine\Divine.exe" -PostBuildEvent -AssemblyName="$(AssemblyName)"</PostBuildEvent>
   </PropertyGroup>

@@ -277,7 +277,7 @@
 
         private void MouseKeyUp(MouseEventArgs e)
         {
-            if (e.MouseKey != this.mouseKeyValue)
+            if (e.MouseKey != this.mouseKeyValue || !this.IsActive)
             {
                 return;
             }
@@ -301,7 +301,7 @@
 
         private void OnKeyDown(Divine.KeyEventArgs e)
         {
-            if (e.Key != this.keyValue)
+            if (e.Key != this.keyValue || this.IsActive)
             {
                 return;
             }
@@ -312,7 +312,7 @@
 
         private void OnKeyUp(Divine.KeyEventArgs e)
         {
-            if (e.Key != this.keyValue)
+            if (e.Key != this.keyValue || !this.IsActive)
             {
                 return;
             }
@@ -323,7 +323,7 @@
 
         private void OnMouseKeyDown(MouseEventArgs e)
         {
-            if (e.MouseKey != this.mouseKeyValue)
+            if (e.MouseKey != this.mouseKeyValue || this.IsActive)
             {
                 return;
             }
