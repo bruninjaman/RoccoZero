@@ -44,8 +44,6 @@ namespace Divine.Plugin
         protected override void OnActivate()
         {
             LogManager.Info("Activate Divine.Plugin");
-
-            ConVarManager.SetValue("dota_new_player", false);
         }
 
         private MenuHoldKey HoldKey;
@@ -55,6 +53,8 @@ namespace Divine.Plugin
             LogManager.Info("PreActivate Divine.Plugin");
 
             SystemManager.UnhandledException += OnUnhandledException;
+
+            ConVarManager.SetValue("dota_new_player", false);
 
             //RendererManager.LoadTextureFromAssembly("Divine.Plugin.Resources.aa.png", "Divine.Plugin.Resources.aa.png", new TextureProperties() { ColorRatio = new Vector4(0, 0, 0, 1) });
 
