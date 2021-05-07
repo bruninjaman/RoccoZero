@@ -54,7 +54,7 @@ namespace Divine.Plugin
 
             SystemManager.UnhandledException += OnUnhandledException;
 
-            ConVarManager.SetValue("dota_new_player", false);
+            GameManager.ExecuteCommand("dota_new_player false");
 
             //RendererManager.LoadTextureFromAssembly("Divine.Plugin.Resources.aa.png", "Divine.Plugin.Resources.aa.png", new TextureProperties() { ColorRatio = new Vector4(0, 0, 0, 1) });
 

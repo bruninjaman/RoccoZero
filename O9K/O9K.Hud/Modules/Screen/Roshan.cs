@@ -435,26 +435,6 @@
                         showSleeper.Sleep(10);
                     }
                     break;
-
-                /*case "npc_spawned":
-                    {
-                        this.lastEntityIndex = gameEvent.GetInt32("entindex");
-                    }
-                    break;
-                case "dota_item_spawned":
-                    {
-                        if (gameEvent.GetInt32("player_id") != -1 || this.lastEntityIndex == -1 || this.roshanEntityIndex != -1)
-                        {
-                            break;
-                        }
-
-                        roshanEntityIndex = lastEntityIndex;
-
-                        var time = GameManager.GameTime;
-                        health = 6000 + GetBonusHealth(time);
-                        lastTime = time;
-                    }
-                    break;*/
             }
         }
 

@@ -25,6 +25,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Divine">
+      <HintPath>..\..\..\..\Desktop\Divine\Output\Divine.dll</HintPath>
+    </Reference>
     <Reference Include="Divine.Menu, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Output\Divine.Menu.dll</HintPath>
@@ -61,10 +64,6 @@
     <ProjectReference Include="..\Divine.Zero\Divine.Zero.csproj">
       <Project>{65c10692-fa73-4303-a44c-1fc1b453ad22}</Project>
       <Name>Divine.Zero</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Divine\Divine.vcxproj">
-      <Project>{54377ec5-0919-4a94-8fe0-351d19a589e8}</Project>
-      <Name>Divine</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
