@@ -196,7 +196,7 @@
                     this.eventManager.InvokeForceBlockerResubscribe();
                     this.subscribed = true;
                 }
-                else if (ability.BaseAbility.AbilityData.GetManaCost(2) > 0 && !this.ignoredAbilities.Contains(ability.Id))
+                else if (ability.BaseAbility.AbilityData.GetManaCost(1) > 0 && !this.ignoredAbilities.Contains(ability.Id))
                 {
                     this.intToggler.AddAbility(ability.Id);
                     this.agiToggler.AddAbility(ability.Id, false);

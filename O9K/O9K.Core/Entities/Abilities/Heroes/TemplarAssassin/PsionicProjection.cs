@@ -13,7 +13,7 @@
         public PsionicProjection(Ability baseAbility)
             : base(baseAbility)
         {
-            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
         }
 
         public float ChannelTime { get; }

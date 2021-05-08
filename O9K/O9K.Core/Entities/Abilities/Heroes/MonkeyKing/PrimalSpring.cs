@@ -19,7 +19,7 @@
         public PrimalSpring(Ability baseAbility)
             : base(baseAbility)
         {
-            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
             this.RadiusData = new SpecialData(baseAbility, "impact_radius");
             this.DamageData = new SpecialData(baseAbility, "impact_damage");
             this.castRangeData = new SpecialData(baseAbility, "max_distance");

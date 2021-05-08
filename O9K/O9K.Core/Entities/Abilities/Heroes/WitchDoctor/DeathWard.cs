@@ -17,7 +17,7 @@
         {
             this.RadiusData = new SpecialData(baseAbility, "bounce_radius");
             this.DamageData = new SpecialData(baseAbility, "damage");
-            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
         }
 
         public float ChannelTime { get; }

@@ -56,7 +56,7 @@
             this.HpThreshold.AddTranslation(Lang.Cn, "生命值％（目标）");
             this.HpThreshold.AddTooltipTranslation(Lang.Cn, "当目标健康状况较差 % 时，使用能力");
 
-            if (ability.BaseAbility.AbilityData.GetManaCost(1) > 0)
+            if (ability.BaseAbility.AbilityData.GetManaCost(0) > 0)
             {
                 this.MpThreshold = menu.GetOrAdd(new MenuSlider("MP% threshold", 30, 1, 100));
                 this.MpThreshold.SetTooltip("Use when ability owner mp% is higher");

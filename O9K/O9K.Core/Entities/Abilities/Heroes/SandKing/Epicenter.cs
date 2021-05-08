@@ -16,7 +16,7 @@
             : base(baseAbility)
         {
             this.DamageData = new SpecialData(baseAbility, "epicenter_damage");
-            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
         }
 
         public float ChannelTime { get; }

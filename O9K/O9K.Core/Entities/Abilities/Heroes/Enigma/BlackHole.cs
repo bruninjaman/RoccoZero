@@ -17,7 +17,7 @@
             : base(baseAbility)
         {
             this.RadiusData = new SpecialData(baseAbility, "pull_radius");
-            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
         }
 
         public UnitState AppliesUnitState { get; } = UnitState.Stunned;

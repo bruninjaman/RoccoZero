@@ -22,7 +22,7 @@
             this.SpeedData = new SpecialData(baseAbility, "bolt_speed");
             this.RadiusData = new SpecialData(baseAbility, "radius");
             this.aghanimsBonusCastRangeData = new SpecialData(baseAbility, "scepter_bonus_range");
-            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
         }
 
         public UnitState AppliesUnitState { get; } = UnitState.Rooted;

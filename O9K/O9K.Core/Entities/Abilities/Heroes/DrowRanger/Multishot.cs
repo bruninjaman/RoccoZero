@@ -19,7 +19,7 @@
             //todo better data
             this.RadiusData = new SpecialData(baseAbility, "arrow_width");
             this.SpeedData = new SpecialData(baseAbility, "arrow_speed");
-            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(1);
+            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
         }
 
         public override float CastRange
