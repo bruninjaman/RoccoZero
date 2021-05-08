@@ -1,4 +1,4 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.NeutralItems
 {
     using Base;
     using Base.Types;
