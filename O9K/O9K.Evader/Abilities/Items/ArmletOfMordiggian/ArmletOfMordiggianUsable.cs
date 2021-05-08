@@ -585,7 +585,6 @@
                 var nearEnemies = EntityManager9.Units.Any(
                     x => (x.IsUnit || x.IsTower) && x.IsAlive && !x.IsAlly(this.Owner) && x.Distance(this.Owner.Position) < 1000);
 
-                Console.WriteLine((this.Owner.Health < (roshanMode && isLastRoshanAttack ? 400 : this.hpToggle)) + "  " + this.canToggle);
                 if ((this.Owner.Health < (roshanMode && isLastRoshanAttack ? 400 : this.hpToggle)) && this.canToggle && (nearEnemies || !this.manualDisable))
                 {
                     if (!roshanMode || !isLastStun)
