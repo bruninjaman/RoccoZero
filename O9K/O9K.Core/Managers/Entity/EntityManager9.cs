@@ -36,10 +36,11 @@
             {
                 if (typeof(Ability9).IsAssignableFrom(type))
                 {
-                    foreach (var attribute in type.GetCustomAttributes<AbilityIdAttribute>())
+                    /*foreach (var attribute in type.GetCustomAttributes<AbilityIdAttribute>())
                     {
+                        Console.WriteLine(attribute.AbilityId + "  " + type);
                         abilityTypes.Add(attribute.AbilityId, type);
-                    }
+                    }*/
                 }
                 else if (typeof(Hero9).IsAssignableFrom(type))
                 {
