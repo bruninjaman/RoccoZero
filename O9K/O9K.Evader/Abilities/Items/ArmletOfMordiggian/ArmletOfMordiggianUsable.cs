@@ -25,6 +25,8 @@
 
     using SharpDX;
 
+    using Roshan = Core.Entities.Units.Unique.Roshan;
+
     internal class ArmletOfMordiggianUsable : CounterAbility, IDisposable
     {
         private const float ArmletFullEnableTime = 0.6f;
@@ -56,6 +58,8 @@
         };
 
         private readonly MenuSlider hpToggle;
+
+        private readonly MenuSwitcher roshanMode;
 
         private readonly Dictionary<string, float> initialDotTimings = new Dictionary<string, float>();
 
@@ -149,6 +153,10 @@
             this.hpToggle = settings.GetOrAdd(new MenuSlider("Toggle hp threshold", "hpToggle" + ability.Name, 222, 75, 400));
             this.hpToggle.AddTranslation(Lang.Ru, "Порог здоровья для переключения");
             this.hpToggle.AddTranslation(Lang.Cn, "要切换的运行状况阈值");
+
+            this.roshanMode = settings.GetOrAdd(new MenuSwitcher("Roshan mode", "RoshanMode" + ability.Name, false));
+            this.roshanMode.AddTranslation(Lang.Ru, "Режим рошана");
+            this.roshanMode.AddTranslation(Lang.Cn, "肉山模式");
 
             UpdateManager.CreateIngameUpdate(this.OnUpdate);
             OrderManager.OrderAdding += this.OnOrderAdding;
@@ -448,6 +456,11 @@
                 }
 
                 var name = args.Modifier.Name;
+                if (name == "modifier_bashed" && args.Modifier.Caster is Divine.Roshan)
+                {
+                    isLastStun = true;
+                    isLastRoshanAttack = true;
+                }
 
                 if (name == "modifier_fountain_aura_buff" && this.armlet.Enabled && this.canToggle && !this.toggling.IsSleeping)
                 {
@@ -489,6 +502,10 @@
             }
         }
 
+        private bool isLastRoshanAttack;
+
+        private bool isLastStun;
+
         private void OnUpdate()
         {
             if (!this.Menu.AbilitySettings.IsCounterEnabled(this.Ability.Name) || GameManager.IsPaused)
@@ -527,6 +544,7 @@
                 }
 
                 var noAutoAttacks = true;
+
                 foreach (var attack in this.attacks.Where(
                     x => x.Key.IsValid && x.Key.IsAlive && x.Key.Distance(this.Owner) <= x.Key.GetAttackRange(this.Owner, 200)
                          && x.Key.GetAngle(this.Owner.Position) < 0.5
@@ -557,6 +575,7 @@
                                               && echoSabre.Cooldown - echoSabre.RemainingCooldown <= attackPoint * 2))
                     {
                         noAutoAttacks = false;
+                        isLastRoshanAttack = unit is Roshan;
                         break;
                     }
                 }
@@ -566,9 +585,15 @@
                 var nearEnemies = EntityManager9.Units.Any(
                     x => (x.IsUnit || x.IsTower) && x.IsAlive && !x.IsAlly(this.Owner) && x.Distance(this.Owner.Position) < 1000);
 
-                if (this.Owner.Health < this.hpToggle && this.canToggle && (nearEnemies || !this.manualDisable))
+                if ((this.Owner.Health < (roshanMode && isLastRoshanAttack ? 500 : this.hpToggle)) && this.canToggle && (nearEnemies || !this.manualDisable))
                 {
-                    this.Use(null, null, null);
+                    if (!roshanMode || !isLastStun)
+                    {
+                        this.Use(null, null, null);
+                    }
+
+                    isLastStun = false;
+                    isLastRoshanAttack = false;
                 }
             }
             catch (Exception e)
