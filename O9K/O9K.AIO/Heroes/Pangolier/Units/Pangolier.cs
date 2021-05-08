@@ -55,6 +55,9 @@
                 { AbilityId.item_abyssal_blade, x => this.abyssal = new DisableAbility(x) },
                 { AbilityId.item_mjollnir, x => this.mjollnir = new ShieldAbility(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkDaggerPangolier(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerPangolier(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerPangolier(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerPangolier(x) },
             };
 
             this.MoveComboAbilities.Add(AbilityId.pangolier_swashbuckle, x => this.moveSwashbuckle = new SwashbuckleBlink(x));

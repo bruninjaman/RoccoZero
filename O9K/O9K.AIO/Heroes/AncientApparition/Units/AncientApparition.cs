@@ -43,6 +43,8 @@
 
         private DebuffAbility vortex;
 
+        private DisableAbility gungir;
+
         public AncientApparition(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -54,8 +56,10 @@
                 { AbilityId.ancient_apparition_ice_blast, x => this.blast = new IceBlast(x) },
 
                 { AbilityId.item_cyclone, x => this.eul = new DisableAbility(x) },
+                { AbilityId.item_wind_waker, x => this.eul = new DisableAbility(x) },
                 { AbilityId.item_sheepstick, x => this.hex = new DisableAbility(x) },
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbility(x) },
                 { AbilityId.item_spirit_vessel, x => this.vessel = new DebuffAbility(x) },
                 { AbilityId.item_urn_of_shadows, x => this.urn = new DebuffAbility(x) },
                 { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
@@ -108,6 +112,11 @@
             }
 
             if (abilityHelper.UseAbility(this.atos))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.gungir))
             {
                 return true;
             }

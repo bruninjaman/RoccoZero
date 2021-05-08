@@ -45,6 +45,9 @@
                 { AbilityId.earthshaker_echo_slam, x => this.echo = new EchoSlam(x) },
 
                 { AbilityId.item_blink, x => this.blink = new BlinkDaggerShaker(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerShaker(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerShaker(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerShaker(x) },
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
             };
         }

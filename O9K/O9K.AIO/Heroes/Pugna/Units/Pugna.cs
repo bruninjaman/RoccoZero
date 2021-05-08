@@ -46,6 +46,8 @@
 
         private AoeAbility ward;
 
+        private DisableAbility gungir;
+
         public Pugna(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -57,6 +59,9 @@
                 { AbilityId.pugna_life_drain, x => this.drain = new TargetableAbility(x) },
 
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) },
                 { AbilityId.item_sheepstick, x => this.hex = new DisableAbility(x) },
                 { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
@@ -64,6 +69,7 @@
                 { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
                 { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbility(x) },
             };
         }
 
@@ -114,6 +120,11 @@
             }
 
             if (abilityHelper.UseAbility(this.atos))
+            {
+                return true;
+            }
+            
+            if (abilityHelper.UseAbility(this.gungir))
             {
                 return true;
             }

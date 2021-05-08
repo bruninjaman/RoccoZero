@@ -13,7 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <LangVersion>9.0</LangVersion>
     <TargetFrameworkProfile />
-    <PostBuildEvent>if exist "C:\Users\osman\Documents\GitHub\Divine.Client\bin\Divine.exe" call "C:\Users\osman\Documents\GitHub\Divine.Client\bin\Divine.exe" -PostBuildEvent -AssemblyName="$(AssemblyName)"</PostBuildEvent>
+    <PostBuildEvent>if exist "C:\Program Files\Divine\Divine.exe" call "C:\Program Files\Divine\Divine.exe" -PostBuildEvent -AssemblyName="$(AssemblyName)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -130,7 +130,7 @@
     <Compile Include="Entities\Abilities\Heroes\Brewmaster\Spirits\SpellImmunity.cs" />
     <Compile Include="Entities\Abilities\Heroes\Brewmaster\Spirits\WindWalk.cs" />
     <Compile Include="Entities\Abilities\Heroes\Bristleback\Warpath.cs" />
-    <Compile Include="Entities\Abilities\Heroes\Broodmother\IncapacitatingBite.cs" />
+    <Compile Include="Entities\Abilities\Heroes\Broodmother\SilkenBola.cs" />
     <Compile Include="Entities\Abilities\Heroes\CentaurWarrunner\Retaliate.cs" />
     <Compile Include="Entities\Abilities\Heroes\ChaosKnight\ChaosStrike.cs" />
     <Compile Include="Entities\Abilities\Heroes\CrystalMaiden\ArcaneAura.cs" />
@@ -229,6 +229,12 @@
     <Compile Include="Entities\Abilities\Items\AegisOfTheImmortal.cs" />
     <Compile Include="Entities\Abilities\Items\AghanimsScepter.cs" />
     <Compile Include="Entities\Abilities\Items\AnimalCourier.cs" />
+    <Compile Include="Entities\Abilities\Items\EternalShroud.cs" />
+    <Compile Include="Entities\Abilities\Items\FalconBlade.cs" />
+    <Compile Include="Entities\Abilities\Items\Gleipnir.cs" />
+    <Compile Include="Entities\Abilities\Items\HelmOfTheOverlord.cs" />
+    <Compile Include="Entities\Abilities\Items\MageSlayer.cs" />
+    <Compile Include="Entities\Abilities\Items\OrbOfCorrosion.cs" />
     <Compile Include="Entities\Abilities\Items\OverwhelmingBlink.cs" />
     <Compile Include="Entities\Abilities\Items\SwiftBlink.cs" />
     <Compile Include="Entities\Abilities\Items\AssaultCuirass.cs" />
@@ -266,7 +272,7 @@
     <Compile Include="Entities\Abilities\Items\HealingSalve.cs" />
     <Compile Include="Entities\Abilities\Items\HeartOfTarrasque.cs" />
     <Compile Include="Entities\Abilities\Items\HelmOfIronWill.cs" />
-    <Compile Include="Entities\Abilities\Items\HelmOfOheDominator.cs" />
+    <Compile Include="Entities\Abilities\Items\HelmOfTheDominator.cs" />
     <Compile Include="Entities\Abilities\Items\HolyLocket.cs" />
     <Compile Include="Entities\Abilities\Items\Hyperstone.cs" />
     <Compile Include="Entities\Abilities\Items\IronBranch.cs" />
@@ -326,6 +332,8 @@
     <Compile Include="Entities\Abilities\Items\VoodooMask.cs" />
     <Compile Include="Entities\Abilities\Items\WardDispenser.cs" />
     <Compile Include="Entities\Abilities\Items\WindLace.cs" />
+    <Compile Include="Entities\Abilities\Items\WindWaker.cs" />
+    <Compile Include="Entities\Abilities\Items\WitchBlade.cs" />
     <Compile Include="Entities\Abilities\Items\WraithBand.cs" />
     <Compile Include="Entities\Abilities\Items\Yasha.cs" />
     <Compile Include="Entities\Abilities\Items\YashaAndKaya.cs" />

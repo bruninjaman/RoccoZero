@@ -46,6 +46,8 @@
 
         private DebuffAbility veil;
 
+        private DisableAbility gungir;
+
         public Leshrac(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -82,10 +84,15 @@
                 { AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x) },
                 { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_cyclone, x => this.euls = new EulsScepterOfDivinity(x) },
+                { AbilityId.item_wind_waker, x => this.euls = new EulsScepterOfDivinity(x) },
                 { AbilityId.item_sheepstick, x => this.hex = new DisableAbility(x) },
                 { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbility(x) },
             };
 
             this.MoveComboAbilities.Add(AbilityId.leshrac_split_earth, _ => this.splitEarth);
@@ -124,6 +131,11 @@
             {
                 return true;
             }
+            
+            if (abilityHelper.UseAbility(this.gungir))
+            {
+                return true;
+            }
 
             if (abilityHelper.UseAbilityIfAny(this.euls, this.splitEarth))
             {
@@ -149,7 +161,7 @@
                 return true;
             }
 
-            if (abilityHelper.UseAbilityIfNone(this.splitEarth, this.lightning, this.euls, this.atos))
+            if (abilityHelper.UseAbilityIfNone(this.splitEarth, this.lightning, this.euls, this.atos, this.gungir))
             {
                 return true;
             }

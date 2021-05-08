@@ -52,6 +52,9 @@
                 { AbilityId.chaos_knight_phantasm, x => this.phantasm = new UntargetableAbility(x) },
 
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) },
                 { AbilityId.item_manta, x => this.manta = new BuffAbility(x) },
                 { AbilityId.item_armlet, x => this.armlet = new BuffAbility(x) },

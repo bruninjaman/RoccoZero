@@ -38,6 +38,8 @@
 
         private NukeAbility starstorm;
 
+        private DisableAbility gungir;
+
         public Mirana(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -51,7 +53,11 @@
                 { AbilityId.item_diffusal_blade, x => this.diffusal = new DebuffAbility(x) },
                 { AbilityId.item_manta, x => this.manta = new BuffAbility(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbility(x) },
             };
 
             this.MoveComboAbilities.Add(AbilityId.mirana_leap, _ => this.leap);
@@ -62,6 +68,11 @@
             var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
 
             if (abilityHelper.UseAbility(this.atos))
+            {
+                return true;
+            }
+            
+            if (abilityHelper.UseAbility(this.gungir))
             {
                 return true;
             }

@@ -16,10 +16,8 @@
     using Core.Helpers;
 
     using Divine;
-
-    using Modes.Combo;
-
-    using TargetManager;
+using Modes.Combo;
+using TargetManager;
 
     [UnitName(nameof(HeroId.npc_dota_hero_venomancer))]
     internal class Venomancer : ControllableUnit
@@ -53,6 +51,9 @@
 
                 { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerAOE(x) },
                 { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },

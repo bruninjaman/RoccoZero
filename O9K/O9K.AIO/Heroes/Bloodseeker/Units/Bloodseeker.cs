@@ -16,10 +16,8 @@
     using Core.Helpers;
 
     using Divine;
-
-    using Modes.Combo;
-
-    using TargetManager;
+using Modes.Combo;
+using TargetManager;
 
     [UnitName(nameof(HeroId.npc_dota_hero_bloodseeker))]
     internal class Bloodseeker : ControllableUnit
@@ -53,6 +51,7 @@
                 { AbilityId.item_blade_mail, x => this.bladeMail = new ShieldAbility(x) },
                 { AbilityId.item_abyssal_blade, x => this.abyssal = new DisableAbility(x) },
                 { AbilityId.item_cyclone, x => this.euls = new EulsScepterOfDivinity(x) },
+                { AbilityId.item_wind_waker, x => this.euls = new EulsScepterOfDivinity(x) },
                 { AbilityId.item_mjollnir, x => this.mjollnir = new ShieldAbility(x) },
             };
         }

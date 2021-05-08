@@ -42,6 +42,8 @@
 
         private DebuffAbility word;
 
+        private DisableAbility gungir;
+
         public Warlock(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -57,6 +59,7 @@
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_sheepstick, x => this.hex = new DisableAbility(x) },
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbility(x) },
             };
         }
 
@@ -70,6 +73,11 @@
             }
 
             if (abilityHelper.UseAbility(this.atos))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.gungir))
             {
                 return true;
             }

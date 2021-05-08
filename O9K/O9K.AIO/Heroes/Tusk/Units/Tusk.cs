@@ -64,6 +64,9 @@
                 { AbilityId.tusk_walrus_kick, x => this.kick = new Kick(x) },
 
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_spirit_vessel, x => this.vessel = new DebuffAbility(x) },
                 { AbilityId.item_urn_of_shadows, x => this.urn = new DebuffAbility(x) },
                 { AbilityId.item_solar_crest, x => this.solar = new DebuffAbility(x) },

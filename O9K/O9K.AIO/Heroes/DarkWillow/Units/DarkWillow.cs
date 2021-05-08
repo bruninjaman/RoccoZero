@@ -60,6 +60,8 @@
 
         private DebuffAbility vessel;
 
+        private DisableAbility gungir;
+
         public DarkWillow(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -72,7 +74,11 @@
                 { AbilityId.dark_willow_terrorize, x => this.terror = new DisableAbility(x) },
 
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_cyclone, x => this.eul = new EulsScepterOfDivinityDarkWillow(x) },
+                { AbilityId.item_wind_waker, x => this.eul = new EulsScepterOfDivinityDarkWillow(x) },
                 { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_spirit_vessel, x => this.vessel = new DebuffAbility(x) },
@@ -82,6 +88,7 @@
                 { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
                 { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbility(x) },
             };
 
             this.MoveComboAbilities.Add(AbilityId.dark_willow_shadow_realm, x => this.moveRealm = new ShieldAbility(x));
@@ -113,6 +120,11 @@
             }
 
             if (abilityHelper.UseAbility(this.atos))
+            {
+                return true;
+            }
+            
+            if (abilityHelper.UseAbility(this.gungir))
             {
                 return true;
             }

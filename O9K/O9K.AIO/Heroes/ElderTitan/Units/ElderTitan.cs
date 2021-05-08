@@ -36,6 +36,8 @@
 
         private DisableAbility stomp;
 
+        private DisableAbility gungir;
+
         public ElderTitan(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -47,8 +49,10 @@
 
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_cyclone, x => this.euls = new EulsScepterOfDivinity(x) },
+                { AbilityId.item_wind_waker, x => this.euls = new EulsScepterOfDivinity(x) },
                 { AbilityId.item_meteor_hammer, x => this.hammer = new DisableAbility(x) },
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbility(x) },
             };
         }
 
@@ -67,6 +71,11 @@
             }
 
             if (abilityHelper.UseAbility(this.atos))
+            {
+                return true;
+            }
+            
+            if (abilityHelper.UseAbility(this.gungir))
             {
                 return true;
             }

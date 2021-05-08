@@ -38,6 +38,8 @@
 
         private DisableAbility eul;
 
+        private DisableAbility wind;
+
         private DisableAbility hex;
 
         private ShieldAbility mjollnir;
@@ -80,6 +82,7 @@
                 { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },
                 { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
                 { AbilityId.item_cyclone, x => this.eul = new DisableAbility(x) },
+                { AbilityId.item_wind_waker, x => this.eul = new DisableAbility(x) },
                 { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) },
                 { AbilityId.item_spirit_vessel, x => this.vessel = new DebuffAbility(x) },
                 { AbilityId.item_urn_of_shadows, x => this.urn = new DebuffAbility(x) },

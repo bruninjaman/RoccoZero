@@ -46,6 +46,8 @@
 
         private AoeAbility storm;
 
+        private DisableAbility gungir;
+
         public Razor(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -60,6 +62,7 @@
                 { AbilityId.item_hurricane_pike, x => this.pike = new HurricanePike(x) },
                 { AbilityId.item_blade_mail, x => this.bladeMail = new ShieldAbility(x) },
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbility(x) },
                 { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) },
                 { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },
                 { AbilityId.item_heavens_halberd, x => this.halberd = new DisableAbility(x) },
@@ -91,6 +94,11 @@
             }
 
             if (abilityHelper.UseAbility(this.atos))
+            {
+                return true;
+            }
+            
+            if (abilityHelper.UseAbility(this.gungir))
             {
                 return true;
             }

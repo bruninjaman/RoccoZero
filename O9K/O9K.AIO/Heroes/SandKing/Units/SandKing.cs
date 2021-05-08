@@ -53,6 +53,9 @@
 
                 { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },
                 { AbilityId.item_sheepstick, x => this.hex = new DisableAbility(x) },

@@ -50,7 +50,11 @@
 
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_cyclone, x => this.euls = new EulsScepterOfDivinity(x) },
+                { AbilityId.item_wind_waker, x => this.euls = new EulsScepterOfDivinity(x) }
             };
 
             this.MoveComboAbilities.Add(AbilityId.shadow_shaman_voodoo, _ => this.hex);

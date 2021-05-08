@@ -6,10 +6,10 @@
 
     using Metadata;
 
-    [AbilityId(AbilityId.item_helm_of_the_dominator)]
-    public class HelmOfOheDominator : RangedAbility
+    [AbilityId(AbilityId.item_helm_of_the_overlord)]
+    public class HelmOfTheOverlord : RangedAbility
     {
-        public HelmOfOheDominator(Ability baseAbility)
+        public HelmOfTheOverlord(Ability baseAbility)
             : base(baseAbility)
         {
         }

@@ -3,6 +3,7 @@
     using System;
 
     using Divine;
+using Divine.SDK.Extensions;
     using Divine.SDK.Localization;
 
     using Entities.Units;
@@ -22,6 +23,8 @@
 
         protected SpecialData RadiusData;
 
+        private readonly float castPoint;
+
         private string displayName;
 
         protected Ability9(Ability baseAbility)
@@ -34,7 +37,7 @@
             this.MaximumLevel = baseAbility.MaximumLevel;
             this.DamageData = new SpecialData(baseAbility, baseAbility.AbilityData.GetDamage);
             this.DurationData = new SpecialData(baseAbility, baseAbility.AbilityData.GetDuration);
-            this.CastPoint = baseAbility.OverrideCastPoint < 0 ? this.BaseAbility.AbilityData.GetCastPoint(0) : 0;
+            this.castPoint = baseAbility.OverrideCastPoint < 0 ? this.BaseAbility.AbilityData.GetCastPoint(0) : 0;
 
             if (baseAbility is Item item)
             {
@@ -96,7 +99,21 @@
 
         public virtual bool CanHitSpellImmuneEnemy { get; }
 
-        public virtual float CastPoint { get; }
+        public virtual float CastPoint
+        {
+            get
+            {
+                var arcaneBlinkBuff = Owner.GetModifier("modifier_item_arcane_blink_buff");
+                var castImprovement = 1f;
+
+                if (arcaneBlinkBuff != null)
+                {
+                    castImprovement -= arcaneBlinkBuff.Ability.GetAbilitySpecialData("cast_pct_improvement") / 100f;
+                }
+
+                return this.castPoint * castImprovement;
+            }
+        }
 
         public virtual float CastRange
         {

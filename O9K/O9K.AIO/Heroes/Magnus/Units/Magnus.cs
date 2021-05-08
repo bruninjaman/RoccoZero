@@ -73,6 +73,9 @@
                 },
 
                 { AbilityId.item_blink, x => this.blink = new BlinkDaggerMagnus(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerMagnus(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerMagnus(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerMagnus(x) },
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_shivas_guard, x => this.shiva = new ShivasGuard(x) },
                 { AbilityId.item_refresher, x => this.refresher = new UntargetableAbility(x) },

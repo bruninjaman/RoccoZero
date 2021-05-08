@@ -69,6 +69,9 @@
                 { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
                 { AbilityId.item_armlet, x => this.armlet = new BuffAbility(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
             };
 
             this.ancientCamps = Context9.JungleManager.JungleCamps.Where(x => x.IsAncient).Select(x => x.CreepsPosition).ToArray();

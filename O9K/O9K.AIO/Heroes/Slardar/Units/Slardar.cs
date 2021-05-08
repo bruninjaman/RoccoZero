@@ -63,6 +63,9 @@
 
                 { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerAOE(x) },
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_blade_mail, x => this.bladeMail = new ShieldAbility(x) },
                 { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) },

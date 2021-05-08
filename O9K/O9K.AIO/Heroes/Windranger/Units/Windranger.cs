@@ -16,10 +16,8 @@
     using Core.Helpers;
 
     using Divine;
-
-    using Modes.Combo;
-
-    using TargetManager;
+using Modes.Combo;
+using TargetManager;
 
     using BaseWindranger = Core.Entities.Heroes.Unique.Windranger;
 
@@ -88,6 +86,9 @@
 
                 { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkDaggerWindranger(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerWindranger(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerWindranger(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerWindranger(x) },
                 //{ AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
                 { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },

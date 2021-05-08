@@ -54,6 +54,8 @@
 
         private TricksOfTheTrade tricks;
 
+        private DisableAbility gungir;
+
         public Riki(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -67,10 +69,14 @@
                 { AbilityId.item_abyssal_blade, x => this.abyssal = new DisableAbility(x) },
                 { AbilityId.item_diffusal_blade, x => this.diffusal = new DebuffAbility(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
                 { AbilityId.item_solar_crest, x => this.solar = new DebuffAbility(x) },
                 { AbilityId.item_medallion_of_courage, x => this.medallion = new DebuffAbility(x) },
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbility(x) },
                 { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
                 { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
             };
@@ -87,6 +93,11 @@
             }
 
             if (abilityHelper.UseAbility(this.atos))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.gungir))
             {
                 return true;
             }

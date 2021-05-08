@@ -49,6 +49,9 @@
 
                 { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerAOE(x) },
                 { AbilityId.item_abyssal_blade, x => this.abyssal = new DisableAbility(x) },
             };
 

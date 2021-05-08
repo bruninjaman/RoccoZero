@@ -56,6 +56,8 @@
 
         private DebuffAbility veil;
 
+        private DisableAbility gungir;
+
         public Grimstroke(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -68,6 +70,9 @@
                 { (AbilityId)7852, x => this.portrait = new TargetableAbility(x) },
 
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x) },
                 { AbilityId.item_sheepstick, x => this.hex = new DisableAbility(x) },
                 { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },
@@ -75,6 +80,7 @@
                 { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
                 { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbility(x) },
                 { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
                 { AbilityId.item_heavens_halberd, x => this.halberd = new DisableAbility(x) },
                 { AbilityId.item_dagon_5, x => this.dagon = new GrimstrokeDagon(x) },
@@ -121,6 +127,11 @@
             }
 
             if (abilityHelper.UseAbility(this.atos))
+            {
+                return true;
+            }
+            
+            if (abilityHelper.UseAbility(this.gungir))
             {
                 return true;
             }

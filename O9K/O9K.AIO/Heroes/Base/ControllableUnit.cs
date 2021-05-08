@@ -65,6 +65,8 @@
 
         private MoveBuffAbility moveSilverEdge;
 
+        private DisableAbility moveGungir;
+
         public ControllableUnit(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
         {
             this.Owner = owner;
@@ -76,6 +78,9 @@
             this.MoveComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
             {
                 { AbilityId.item_blink, x => this.moveBlink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.moveBlink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.moveBlink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.moveBlink = new BlinkAbility(x) },
                 { AbilityId.item_force_staff, x => this.moveForceStaff = new ForceStaff(x) },
                 { AbilityId.item_hurricane_pike, x => this.movePike = new ForceStaff(x) },
 
@@ -92,6 +97,7 @@
                 { AbilityId.item_diffusal_blade, x => this.moveDiffusal = new DebuffAbility(x) },
                 { AbilityId.item_abyssal_blade, x => this.moveAbyssal = new DisableAbility(x) },
                 { AbilityId.item_rod_of_atos, x => this.moveAtos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.moveGungir = new DisableAbility(x) },
                 { AbilityId.item_orchid, x => this.moveOrchid = new DisableAbility(x) },
                 { AbilityId.item_sheepstick, x => this.moveHex = new DisableAbility(x) },
                 { AbilityId.item_bloodthorn, x => this.moveBloodthorn = new Bloodthorn(x) },
@@ -616,6 +622,11 @@
             }
 
             if (abilityHelper.UseAbility(this.moveAtos))
+            {
+                return true;
+            }
+            
+            if (abilityHelper.UseAbility(this.moveGungir))
             {
                 return true;
             }

@@ -23,6 +23,7 @@
 
     using Modes.Combo;
     using Modes.MoveCombo;
+using O9K.Core.Entities;
 
     using SharpDX;
 
@@ -118,6 +119,7 @@
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
+            EntityManager9.AbilityMonitor.InventoryChanged -= OnInventoryChanged;
             ProjectileManager.TrackingProjectileAdded -= this.OnAddTrackingProjectile;
 
             foreach (var disposable in this.controllableUnits.OfType<IDisposable>())
@@ -135,6 +137,7 @@
             EntityManager9.AbilityAdded -= this.OnAbilityAdded;
             EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
             EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
+            EntityManager9.AbilityMonitor.InventoryChanged -= OnInventoryChanged;
             ProjectileManager.TrackingProjectileAdded -= this.OnAddTrackingProjectile;
 
             foreach (var disposable in this.controllableUnits.OfType<IDisposable>())
@@ -152,6 +155,7 @@
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
             EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
+            EntityManager9.AbilityMonitor.InventoryChanged += OnInventoryChanged;
             ProjectileManager.TrackingProjectileAdded += this.OnAddTrackingProjectile;
         }
 
@@ -479,6 +483,23 @@
             catch (Exception e)
             {
                 Logger.Error(e);
+            }
+        }
+
+        private void OnInventoryChanged(object sender, EventArgs e)
+        {
+            foreach (var controllableUnit in this.controllableUnits)
+            {
+                foreach (var ability in controllableUnit.Owner.Abilities)
+                {
+                    if (!ability.IsItem || ability is not ActiveAbility activeAbility || !activeAbility.IsAvailable)
+                    {
+                        continue;
+                    }
+
+                    
+                    controllableUnit?.AddAbility(activeAbility, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
+                }
             }
         }
 

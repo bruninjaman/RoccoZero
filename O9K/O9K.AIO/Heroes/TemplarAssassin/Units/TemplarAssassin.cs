@@ -65,6 +65,9 @@
                 { AbilityId.templar_assassin_psionic_trap, x => this.trap = new Abilities.PsionicTrap(x) },
 
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
                 { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
                 { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },

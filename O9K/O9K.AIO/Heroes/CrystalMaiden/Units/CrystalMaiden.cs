@@ -40,6 +40,8 @@
 
         private NukeAbility nova;
 
+        private DisableAbility gungir;
+
         public CrystalMaiden(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -51,9 +53,13 @@
 
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkDaggerCM(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerCM(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerCM(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerCM(x) },
                 { AbilityId.item_glimmer_cape, x => this.glimmer = new ShieldAbility(x) },
                 { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) },
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbility(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbility(x) },
             };
 
             this.MoveComboAbilities.Add(AbilityId.crystal_maiden_frostbite, _ => this.frostbite);
@@ -85,6 +91,11 @@
                 {
                     return true;
                 }
+                
+                if (abilityHelper.HasMana(this.field, this.gungir) && abilityHelper.UseAbility(this.gungir))
+                {
+                    return true;
+                }
 
                 if (abilityHelper.HasMana(this.field, this.frostbite) && abilityHelper.UseAbility(this.frostbite))
                 {
@@ -108,6 +119,11 @@
             }
 
             if (abilityHelper.UseAbility(this.atos))
+            {
+                return true;
+            }
+            
+            if (abilityHelper.UseAbility(this.gungir))
             {
                 return true;
             }

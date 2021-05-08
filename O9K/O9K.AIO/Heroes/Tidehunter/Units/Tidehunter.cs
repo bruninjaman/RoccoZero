@@ -16,10 +16,8 @@
     using Core.Helpers;
 
     using Divine;
-
-    using Modes.Combo;
-
-    using TargetManager;
+using Modes.Combo;
+using TargetManager;
 
     [UnitName(nameof(HeroId.npc_dota_hero_tidehunter))]
     internal class Tidehunter : ControllableUnit
@@ -52,6 +50,9 @@
                 { AbilityId.tidehunter_ravage, x => this.ravage = new Ravage(x) },
 
                 { AbilityId.item_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerAOE(x) },
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_blade_mail, x => this.bladeMail = new ShieldAbility(x) },
                 { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },

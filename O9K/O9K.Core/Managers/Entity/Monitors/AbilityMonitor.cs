@@ -175,6 +175,8 @@
 
         public event EventHandler AbilityChannel;
 
+        public event System.EventHandler InventoryChanged;
+
         public void Dispose()
         {
             Entity.NetworkPropertyChanged += OnNetworkPropertyChanged;
@@ -247,6 +249,7 @@
                 }
 
                 item.IsAvailable = true;
+                UpdateManager.BeginInvoke(100, () => InventoryChanged?.Invoke(null, EventArgs.Empty));
             }
             catch (Exception ex)
             {
@@ -507,6 +510,7 @@
                                 if (item.Owner == owner)
                                 {
                                     item.IsAvailable = true;
+                                    UpdateManager.BeginInvoke(100, () => InventoryChanged?.Invoke(null, EventArgs.Empty));
                                     continue;
                                 }
 
@@ -527,6 +531,7 @@
                                 if (item.Owner == owner)
                                 {
                                     item.IsAvailable = false;
+                                    UpdateManager.BeginInvoke(100, () => InventoryChanged?.Invoke(null, EventArgs.Empty));
                                     continue;
                                 }
 
@@ -538,6 +543,7 @@
                             foreach (var item in owner.AbilitiesFast.Where(x => x.IsItem && x.IsAvailable && !checkedItems.Contains(x.Handle)))
                             {
                                 item.IsAvailable = false;
+                                UpdateManager.BeginInvoke(100, () => InventoryChanged?.Invoke(null, EventArgs.Empty));
                             }
                         });
                     }
@@ -558,6 +564,7 @@
                     }
 
                     ability.IsAvailable = this.GetInventoryItems(owner.BaseInventory).Any(x => x.Handle == ability.Handle);
+                    UpdateManager.BeginInvoke(100, () => InventoryChanged?.Invoke(null, EventArgs.Empty));
                 }
                 catch (Exception e)
                 {

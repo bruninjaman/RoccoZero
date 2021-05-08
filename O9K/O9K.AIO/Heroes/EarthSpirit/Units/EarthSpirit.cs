@@ -70,6 +70,9 @@
                 //{ AbilityId.earth_spirit_petrify, x => this.petrify = new NukeAbility(x) },
 
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
                 { AbilityId.item_spirit_vessel, x => this.vessel = new DebuffAbility(x) },
                 { AbilityId.item_urn_of_shadows, x => this.urn = new DebuffAbility(x) },
