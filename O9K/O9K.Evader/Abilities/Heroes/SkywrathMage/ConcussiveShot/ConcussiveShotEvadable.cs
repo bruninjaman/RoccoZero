@@ -31,6 +31,7 @@
             this.ModifierCounters.UnionWith(Abilities.MagicShield);
             this.ModifierCounters.Remove(Abilities.EulsScepterOfDivinity);
             this.ModifierCounters.Remove(Abilities.WindWaker);
+            this.ModifierCounters.Remove(Abilities.Stormcrafter);
         }
 
         public bool ModifierAllyCounter { get; } = true;

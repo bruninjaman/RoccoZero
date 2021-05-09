@@ -14,12 +14,13 @@
             AbilityId.satyr_trickster_purge,
             AbilityId.omniknight_repel,
             AbilityId.oracle_fortunes_end,
-            AbilityId.slark_dark_pact,
             AbilityId.abaddon_aphotic_shield,
             //AbilityId.legion_commander_press_the_attack,
             //AbilityId.item_guardian_greaves,
             AbilityId.item_cyclone,
             AbilityId.item_wind_waker,
+            AbilityId.item_stormcrafter,
+            AbilityId.item_book_of_shadows,
         };
 
         public static IEnumerable<AbilityId> AllyStrongPurge { get; } = new[]
@@ -27,6 +28,7 @@
             AbilityId.abaddon_aphotic_shield,
             AbilityId.omniknight_repel,
             AbilityId.legion_commander_press_the_attack,
+            AbilityId.slark_dark_pact,
             //    AbilityId.abaddon_borrowed_time,
             AbilityId.ursa_enrage,
             AbilityId.grimstroke_spirit_walk,
@@ -40,6 +42,7 @@
             AbilityId.item_overwhelming_blink,
             AbilityId.item_swift_blink,
             AbilityId.item_arcane_blink,
+            AbilityId.item_fallen_sky,
             AbilityId.void_spirit_astral_step,
             AbilityId.sandking_burrowstrike,
             AbilityId.wisp_tether,
@@ -153,11 +156,13 @@
             AbilityId.lion_voodoo,
             AbilityId.item_cyclone,
             AbilityId.item_wind_waker,
+            AbilityId.item_fallen_sky,
             AbilityId.shadow_shaman_voodoo,
             AbilityId.invoker_cold_snap,
             AbilityId.lone_druid_savage_roar,
             AbilityId.lone_druid_savage_roar_bear,
             AbilityId.rubick_telekinesis,
+            AbilityId.item_book_of_shadows,
 
             // disable
             AbilityId.void_spirit_aether_remnant,
@@ -226,6 +231,7 @@
             AbilityId.item_cyclone,
             AbilityId.item_wind_waker,
             AbilityId.invoker_tornado,
+            AbilityId.item_book_of_shadows,
 
             // AbilityId.sven_storm_bolt // todo add talent purge
         };
@@ -345,7 +351,9 @@
 
         public static IEnumerable<AbilityId> FullAoeDisable { get; } = new[]
         {
-            AbilityId.enigma_black_hole, AbilityId.faceless_void_chronosphere, AbilityId.winter_wyvern_winters_curse,
+            AbilityId.enigma_black_hole,
+            AbilityId.faceless_void_chronosphere,
+            AbilityId.winter_wyvern_winters_curse,
         };
 
         public static IEnumerable<AbilityId> Heal { get; } = new[]
@@ -379,6 +387,7 @@
             AbilityId.item_overwhelming_blink,
             AbilityId.item_swift_blink,
             AbilityId.item_arcane_blink,
+            AbilityId.item_fallen_sky,
             AbilityId.antimage_blink,
             AbilityId.queenofpain_blink,
             AbilityId.void_spirit_astral_step,
@@ -410,6 +419,7 @@
             AbilityId.life_stealer_assimilate,
             AbilityId.item_cyclone,
             AbilityId.item_wind_waker,
+            AbilityId.item_stormcrafter,
             AbilityId.bane_nightmare,
         };
 
@@ -439,10 +449,11 @@
             AbilityId.tinker_laser,
             AbilityId.huskar_inner_fire,
             AbilityId.item_ethereal_blade,
+            AbilityId.item_book_of_shadows,
             AbilityId.pugna_decrepify,
             AbilityId.oracle_fates_edict,
             AbilityId.keeper_of_the_light_blinding_light,
-            AbilityId.snapfire_scatterblast,
+            //AbilityId.snapfire_scatterblast,
 
             // AbilityId.phoenix_launch_fire_spirit, //todo add?
         };
@@ -451,6 +462,7 @@
         {
             AbilityId.item_ghost,
             AbilityId.item_ethereal_blade,
+            AbilityId.item_book_of_shadows,
             AbilityId.necrolyte_sadist,
             AbilityId.pugna_decrepify,
             AbilityId.item_solar_crest,
@@ -471,6 +483,7 @@
             AbilityId.shadow_shaman_voodoo,
             AbilityId.item_cyclone,
             AbilityId.item_wind_waker,
+            AbilityId.item_fallen_sky,
             AbilityId.sandking_burrowstrike,
             AbilityId.lone_druid_savage_roar,
             AbilityId.lone_druid_savage_roar_bear,
@@ -489,6 +502,7 @@
             AbilityId.item_overwhelming_blink,
             AbilityId.item_swift_blink,
             AbilityId.item_arcane_blink,
+            AbilityId.item_fallen_sky,
             AbilityId.nyx_assassin_burrow,
         };
 
@@ -539,6 +553,7 @@
             AbilityId.shadow_shaman_voodoo,
             AbilityId.item_cyclone,
             AbilityId.item_wind_waker,
+            AbilityId.item_fallen_sky,
             AbilityId.sandking_burrowstrike,
             AbilityId.lone_druid_savage_roar,
             AbilityId.lone_druid_savage_roar_bear,
@@ -698,6 +713,7 @@
             AbilityId.windrunner_windrun, // todo mkb check ?
             AbilityId.item_ghost,
             AbilityId.item_ethereal_blade,
+            AbilityId.item_book_of_shadows,
             AbilityId.necrolyte_sadist,
             AbilityId.pugna_decrepify,
             AbilityId.winter_wyvern_cold_embrace,
@@ -730,6 +746,7 @@
             AbilityId.phantom_lancer_doppelwalk,
             AbilityId.item_cyclone,
             AbilityId.item_wind_waker,
+            AbilityId.item_stormcrafter,
             AbilityId.tusk_snowball,
             AbilityId.slark_dark_pact,
             AbilityId.slark_shadow_dance,
@@ -744,7 +761,7 @@
             AbilityId.grimstroke_spirit_walk,
             AbilityId.bristleback_bristleback,
             AbilityId.spirit_breaker_bulldoze,
-            (AbilityId)419 //Swiftslash
+            AbilityId.juggernaut_swift_slash
         };
 
         public static IEnumerable<AbilityId> Stun { get; } = new[]

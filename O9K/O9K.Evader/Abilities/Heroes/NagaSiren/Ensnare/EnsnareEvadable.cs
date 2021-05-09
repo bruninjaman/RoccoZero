@@ -36,6 +36,7 @@
             this.Counters.Remove(Abilities.Refraction);
             this.Counters.Remove(Abilities.EulsScepterOfDivinity);
             this.Counters.Remove(Abilities.WindWaker);
+            this.Counters.Remove(Abilities.Stormcrafter);
             this.Counters.Remove(Abilities.MantaStyle);
 
             this.ModifierCounters.Add(Abilities.MantaStyle);

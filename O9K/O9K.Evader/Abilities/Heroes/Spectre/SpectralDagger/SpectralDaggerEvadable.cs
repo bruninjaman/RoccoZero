@@ -15,6 +15,7 @@
             this.Counters.UnionWith(Abilities.Shield);
             this.Counters.Add(Abilities.EulsScepterOfDivinity);
             this.Counters.Add(Abilities.WindWaker);
+            this.Counters.Add(Abilities.Stormcrafter);
             this.Counters.UnionWith(Abilities.MagicShield);
             this.Counters.UnionWith(Abilities.Heal);
             this.Counters.Add(Abilities.Armlet);

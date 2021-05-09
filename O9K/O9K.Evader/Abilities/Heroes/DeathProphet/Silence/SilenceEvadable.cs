@@ -31,6 +31,7 @@
             this.Counters.Remove(Abilities.Enrage);
             this.Counters.Remove(Abilities.EulsScepterOfDivinity);
             this.Counters.Remove(Abilities.WindWaker);
+            this.Counters.Remove(Abilities.Stormcrafter);
 
             this.ModifierCounters.Add(Abilities.MantaStyle);
             this.ModifierCounters.UnionWith(Abilities.AllyPurge);

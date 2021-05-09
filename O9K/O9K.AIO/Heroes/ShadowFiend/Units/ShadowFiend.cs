@@ -266,7 +266,6 @@
 
             if (target.IsInvulnerable)
             {
-                Console.WriteLine(target.GetInvulnerabilityDuration());
                 var time = target.GetInvulnerabilityDuration();
                 if (time <= 0)
                 {

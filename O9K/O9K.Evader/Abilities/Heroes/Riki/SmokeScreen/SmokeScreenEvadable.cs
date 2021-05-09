@@ -32,11 +32,13 @@
             this.Counters.Remove(Abilities.Enrage);
             this.Counters.Remove(Abilities.EulsScepterOfDivinity);
             this.Counters.Remove(Abilities.WindWaker);
+            this.Counters.Remove(Abilities.Stormcrafter);
 
             this.ModifierCounters.Add(Abilities.HurricanePike);
             this.ModifierCounters.UnionWith(Abilities.StrongShield);
             this.ModifierCounters.Remove(Abilities.EulsScepterOfDivinity);
             this.ModifierCounters.Remove(Abilities.WindWaker);
+            this.ModifierCounters.Remove(Abilities.Stormcrafter);
             this.ModifierCounters.Remove(Abilities.Enrage);
 
             this.ModifierDisables.UnionWith(Abilities.PhysDisable);

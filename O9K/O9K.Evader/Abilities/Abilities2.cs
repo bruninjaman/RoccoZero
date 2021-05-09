@@ -16,6 +16,8 @@
 
         public static AbilityId BattleFury { get; } = AbilityId.item_bfury;
 
+        public static AbilityId BookOfShadows { get; } = AbilityId.item_book_of_shadows;
+
         public static AbilityId BlackKingBar { get; } = AbilityId.item_black_king_bar;
 
         public static AbilityId BladeMail { get; } = AbilityId.item_blade_mail;
@@ -63,6 +65,8 @@
         public static AbilityId EulsScepterOfDivinity { get; } = AbilityId.item_cyclone;
         
         public static AbilityId WindWaker { get; } = AbilityId.item_wind_waker;
+        
+        public static AbilityId Stormcrafter { get; } = AbilityId.item_stormcrafter;
 
         public static AbilityId FatesEdict { get; } = AbilityId.oracle_fates_edict;
 

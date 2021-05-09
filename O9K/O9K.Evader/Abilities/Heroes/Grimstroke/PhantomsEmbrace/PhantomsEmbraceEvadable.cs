@@ -32,6 +32,7 @@
             this.ModifierCounters.Add(Abilities.MantaStyle);
             this.ModifierCounters.Add(Abilities.EulsScepterOfDivinity);
             this.ModifierCounters.Add(Abilities.WindWaker);
+            this.ModifierCounters.Add(Abilities.Stormcrafter);
             this.ModifierCounters.Add(Abilities.HeavenlyGrace);
             this.ModifierCounters.Add(Abilities.AphoticShield);
         }

@@ -875,6 +875,8 @@
     <Compile Include="Abilities\Items\Bloodstone\BloodstoneBase.cs" />
     <Compile Include="Abilities\Items\Bloodthorn\BloodthornBase.cs" />
     <Compile Include="Abilities\Items\Bloodthorn\BloodthornEvadable.cs" />
+    <Compile Include="Abilities\Items\BookOfShadows\BookOfShadowsBase.cs" />
+    <Compile Include="Abilities\Items\BookOfShadows\BookOfShadowsEvadable.cs" />
     <Compile Include="Abilities\Items\BootsOfTravel\BootsOfTravelBase.cs" />
     <Compile Include="Abilities\Items\BootsOfTravel\BootsOfTravelEvadable.cs" />
     <Compile Include="Abilities\Items\BootsOfTravel\BootsOfTravelObstacle.cs" />
@@ -893,6 +895,7 @@
     <Compile Include="Abilities\Items\EtherealBlade\EtherealBladeEvadable.cs" />
     <Compile Include="Abilities\Items\EtherealBlade\EtherealBladeUsableCounter.cs" />
     <Compile Include="Abilities\Items\FaerieFire\FaerieFireBase.cs" />
+    <Compile Include="Abilities\Items\FallenSky\FallenSkyBase.cs" />
     <Compile Include="Abilities\Items\Flicker\FlickerBase.cs" />
     <Compile Include="Abilities\Items\ForceBoots\ForceBootsBase.cs" />
     <Compile Include="Abilities\Items\ForceStaff\ForceStaffBase.cs" />
@@ -961,6 +964,7 @@
     <Compile Include="Abilities\Items\SolarCrest\SolarCrestEvadable.cs" />
     <Compile Include="Abilities\Items\SpiritVessel\SpiritVesselBase.cs" />
     <Compile Include="Abilities\Items\SpiritVessel\SpiritVesselEvadable.cs" />
+    <Compile Include="Abilities\Items\Stormcrafter\StormcrafterBase.cs" />
     <Compile Include="Abilities\Items\SwiftBlink\SwiftBlinkBase.cs" />
     <Compile Include="Abilities\Items\Tango\TangoBase.cs" />
     <Compile Include="Abilities\Items\Tango\TangoUsable.cs" />

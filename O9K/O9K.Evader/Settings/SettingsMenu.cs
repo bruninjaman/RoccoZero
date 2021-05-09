@@ -26,13 +26,8 @@
                     new Dictionary<AbilityId, bool>
                     {
                         { AbilityId.item_phase_boots, true },
-                        { AbilityId.item_bullwhip, true },
                         { AbilityId.item_blink, true },
-                        { AbilityId.item_overwhelming_blink, true },
-                        { AbilityId.item_swift_blink, true },
-                        { AbilityId.item_arcane_blink, true },
                         { AbilityId.item_cyclone, true },
-                        { AbilityId.item_wind_waker, true },
                         { AbilityId.item_sheepstick, true },
                     }));
             this.defaultPriority.AddTranslation(Lang.Ru, "Приоритет");
@@ -75,17 +70,12 @@
                         this.DefaultPriority.Add(EvadeMode.Disable);
                         break;
                     case nameof(AbilityId.item_cyclone):
-                    case nameof(AbilityId.item_wind_waker):
                         this.DefaultPriority.Add(EvadeMode.Counter);
                         break;
                     case nameof(AbilityId.item_blink):
-                    case nameof(AbilityId.item_overwhelming_blink):
-                    case nameof(AbilityId.item_swift_blink):
-                    case nameof(AbilityId.item_arcane_blink):
                         this.DefaultPriority.Add(EvadeMode.Blink);
                         break;
                     case nameof(AbilityId.item_phase_boots):
-                    case nameof(AbilityId.item_bullwhip):
                         this.DefaultPriority.Add(EvadeMode.Dodge);
                         break;
                 }
