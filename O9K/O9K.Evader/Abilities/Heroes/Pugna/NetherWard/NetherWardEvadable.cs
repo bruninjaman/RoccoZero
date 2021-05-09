@@ -15,6 +15,7 @@
             : base(ability, pathfinder, menu)
         {
             this.ModifierCounters.Add(Abilities.HoodOfDefiance);
+            this.ModifierCounters.Add(Abilities.EternalShroud);
         }
 
         public override bool ModifierAllyCounter { get; } = true;

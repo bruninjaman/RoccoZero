@@ -32,6 +32,7 @@
             this.Counters.UnionWith(Abilities.Invisibility);
 
             this.Counters.Remove(Abilities.EulsScepterOfDivinity);
+            this.Counters.Remove(Abilities.WindWaker);
             this.Counters.Remove(Abilities.BlackKingBar);
             this.Counters.Remove(Abilities.Bristleback);
 

@@ -37,6 +37,7 @@
             this.Counters.Add(Abilities.PhaseShift);
             this.Counters.Add(Abilities.Snowball);
             this.Counters.Add(Abilities.EulsScepterOfDivinity);
+            this.Counters.Add(Abilities.WindWaker);
             this.Counters.UnionWith(Abilities.Invulnerability);
             this.Counters.UnionWith(Abilities.MagicImmunity);
 

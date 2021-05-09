@@ -19,6 +19,7 @@
         {
             this.Counters.Add(Abilities.PhaseShift);
             this.Counters.Add(Abilities.EulsScepterOfDivinity);
+            this.Counters.Add(Abilities.WindWaker);
             this.Counters.Add(Abilities.SleightOfFist);
 
             this.ModifierCounters.UnionWith(Abilities.AllyPurge);

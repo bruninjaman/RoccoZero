@@ -18,6 +18,7 @@
             : base(ability, pathfinder, menu)
         {
             this.ModifierDisables.Add(Abilities.EulsScepterOfDivinity);
+            this.ModifierDisables.Add(Abilities.WindWaker);
             this.ModifierDisables.Add(Abilities.Glimpse);
         }
 

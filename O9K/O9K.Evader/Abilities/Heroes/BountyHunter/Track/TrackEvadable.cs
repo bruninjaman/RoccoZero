@@ -21,6 +21,7 @@
 
             this.ModifierCounters.UnionWith(Abilities.AllyPurge);
             this.ModifierCounters.Remove(Abilities.EulsScepterOfDivinity);
+            this.ModifierCounters.Remove(Abilities.WindWaker);
         }
 
         public bool ModifierAllyCounter { get; } = true;

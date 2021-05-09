@@ -17,7 +17,6 @@
             this.ModifierCounters.Add(Abilities.Midas);
             this.ModifierCounters.Add(Abilities.Devour);
             this.ModifierCounters.Add(Abilities.DemonicConversion);
-            this.ModifierCounters.Add(Abilities.Dominator);
         }
 
         public override bool ModifierEnemyCounter { get; } = true;

@@ -19,6 +19,7 @@
             //AbilityId.legion_commander_press_the_attack,
             //AbilityId.item_guardian_greaves,
             AbilityId.item_cyclone,
+            AbilityId.item_wind_waker,
         };
 
         public static IEnumerable<AbilityId> AllyStrongPurge { get; } = new[]
@@ -36,6 +37,9 @@
         {
             AbilityId.ember_spirit_activate_fire_remnant,
             AbilityId.item_blink,
+            AbilityId.item_overwhelming_blink,
+            AbilityId.item_swift_blink,
+            AbilityId.item_arcane_blink,
             AbilityId.void_spirit_astral_step,
             AbilityId.sandking_burrowstrike,
             AbilityId.wisp_tether,
@@ -148,6 +152,7 @@
             AbilityId.item_sheepstick,
             AbilityId.lion_voodoo,
             AbilityId.item_cyclone,
+            AbilityId.item_wind_waker,
             AbilityId.shadow_shaman_voodoo,
             AbilityId.invoker_cold_snap,
             AbilityId.lone_druid_savage_roar,
@@ -219,6 +224,7 @@
             AbilityId.satyr_trickster_purge,
             AbilityId.brewmaster_storm_dispel_magic,
             AbilityId.item_cyclone,
+            AbilityId.item_wind_waker,
             AbilityId.invoker_tornado,
 
             // AbilityId.sven_storm_bolt // todo add talent purge
@@ -370,6 +376,9 @@
         {
             AbilityId.ember_spirit_activate_fire_remnant,
             AbilityId.item_blink,
+            AbilityId.item_overwhelming_blink,
+            AbilityId.item_swift_blink,
+            AbilityId.item_arcane_blink,
             AbilityId.antimage_blink,
             AbilityId.queenofpain_blink,
             AbilityId.void_spirit_astral_step,
@@ -387,6 +396,7 @@
             AbilityId.item_glimmer_cape,
             AbilityId.item_invis_sword,
             AbilityId.item_silver_edge,
+            AbilityId.item_trickster_cloak,
             AbilityId.nyx_assassin_vendetta,
             //  AbilityId.brewmaster_storm_wind_walk //todo add ?
         };
@@ -399,6 +409,7 @@
             AbilityId.brewmaster_storm_cyclone,
             AbilityId.life_stealer_assimilate,
             AbilityId.item_cyclone,
+            AbilityId.item_wind_waker,
             AbilityId.bane_nightmare,
         };
 
@@ -415,6 +426,7 @@
         {
             AbilityId.ember_spirit_flame_guard,
             AbilityId.item_hood_of_defiance,
+            AbilityId.item_eternal_shroud,
             AbilityId.abaddon_aphotic_shield,
             AbilityId.item_glimmer_cape,
             AbilityId.bristleback_bristleback,
@@ -458,6 +470,7 @@
             AbilityId.lion_voodoo,
             AbilityId.shadow_shaman_voodoo,
             AbilityId.item_cyclone,
+            AbilityId.item_wind_waker,
             AbilityId.sandking_burrowstrike,
             AbilityId.lone_druid_savage_roar,
             AbilityId.lone_druid_savage_roar_bear,
@@ -471,7 +484,12 @@
 
         public static IEnumerable<AbilityId> ProactiveBlink { get; } = new[]
         {
-            AbilityId.ember_spirit_activate_fire_remnant, AbilityId.item_blink, AbilityId.nyx_assassin_burrow,
+            AbilityId.ember_spirit_activate_fire_remnant,
+            AbilityId.item_blink,
+            AbilityId.item_overwhelming_blink,
+            AbilityId.item_swift_blink,
+            AbilityId.item_arcane_blink,
+            AbilityId.nyx_assassin_burrow,
         };
 
         public static IEnumerable<AbilityId> ProactiveHexCounter { get; } = new[]
@@ -495,12 +513,14 @@
             AbilityId.ursa_enrage,
             AbilityId.item_manta,
             AbilityId.item_hood_of_defiance,
+            AbilityId.item_eternal_shroud,
             AbilityId.item_pipe,
             AbilityId.item_glimmer_cape,
             AbilityId.bounty_hunter_wind_walk,
             AbilityId.clinkz_wind_walk,
             AbilityId.item_invis_sword,
             AbilityId.item_silver_edge,
+            AbilityId.item_trickster_cloak,
             AbilityId.windrunner_windrun,
             AbilityId.weaver_shukuchi,
             AbilityId.templar_assassin_meld,
@@ -518,6 +538,7 @@
             AbilityId.lion_voodoo,
             AbilityId.shadow_shaman_voodoo,
             AbilityId.item_cyclone,
+            AbilityId.item_wind_waker,
             AbilityId.sandking_burrowstrike,
             AbilityId.lone_druid_savage_roar,
             AbilityId.lone_druid_savage_roar_bear,
@@ -555,6 +576,7 @@
         {
             AbilityId.crystal_maiden_frostbite,
             AbilityId.item_rod_of_atos,
+            AbilityId.item_gungir,
             AbilityId.naga_siren_ensnare,
             AbilityId.dark_troll_warlord_ensnare,
             AbilityId.ember_spirit_searing_chains,
@@ -662,6 +684,7 @@
         {
             AbilityId.ember_spirit_flame_guard,
             AbilityId.item_hood_of_defiance,
+            AbilityId.item_eternal_shroud,
             AbilityId.item_pipe,
             AbilityId.abaddon_aphotic_shield,
             AbilityId.item_glimmer_cape,
@@ -706,6 +729,7 @@
             AbilityId.templar_assassin_refraction,
             AbilityId.phantom_lancer_doppelwalk,
             AbilityId.item_cyclone,
+            AbilityId.item_wind_waker,
             AbilityId.tusk_snowball,
             AbilityId.slark_dark_pact,
             AbilityId.slark_shadow_dance,

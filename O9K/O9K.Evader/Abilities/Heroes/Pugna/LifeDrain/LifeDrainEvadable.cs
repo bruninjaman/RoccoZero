@@ -21,6 +21,7 @@
 
             this.ModifierCounters.Add(Abilities.PhaseShift);
             this.ModifierCounters.Add(Abilities.EulsScepterOfDivinity);
+            this.ModifierCounters.Add(Abilities.WindWaker);
             this.ModifierCounters.Add(Abilities.SleightOfFist);
             this.ModifierCounters.Add(Abilities.BallLightning);
             this.ModifierCounters.UnionWith(Abilities.Shield);

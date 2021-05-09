@@ -24,6 +24,7 @@
             this.Counters.Add(Abilities.Mischief);
             this.Counters.UnionWith(Abilities.VsDisableProjectile);
             this.Counters.Add(Abilities.EulsScepterOfDivinity);
+            this.Counters.Add(Abilities.WindWaker);
             this.Counters.UnionWith(Abilities.MagicImmunity);
             this.Counters.UnionWith(Abilities.Shield);
             this.Counters.UnionWith(Abilities.Heal);

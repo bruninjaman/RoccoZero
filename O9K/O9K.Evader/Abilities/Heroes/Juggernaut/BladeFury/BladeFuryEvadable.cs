@@ -18,6 +18,7 @@
         {
             this.ModifierCounters.UnionWith(Abilities.Shield);
             this.ModifierCounters.Add(Abilities.EulsScepterOfDivinity);
+            this.ModifierCounters.Add(Abilities.WindWaker);
             this.ModifierCounters.UnionWith(Abilities.MagicShield);
 
             this.ModifierCounters.Remove(Abilities.SpikedCarapace);

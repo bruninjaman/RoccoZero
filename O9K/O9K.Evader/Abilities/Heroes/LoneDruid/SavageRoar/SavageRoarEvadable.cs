@@ -20,6 +20,7 @@
             this.Counters.Add(Abilities.MantaStyle);
             this.Counters.Add(Abilities.PhaseShift);
             this.Counters.Add(Abilities.EulsScepterOfDivinity);
+            this.Counters.Add(Abilities.WindWaker);
             this.Counters.Add(Abilities.DarkPact);
             this.Counters.Add(Abilities.Refraction);
             this.Counters.UnionWith(Abilities.Invisibility);

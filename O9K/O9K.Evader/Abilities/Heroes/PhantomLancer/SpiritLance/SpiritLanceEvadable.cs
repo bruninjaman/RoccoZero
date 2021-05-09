@@ -21,6 +21,7 @@
             this.Counters.Add(Abilities.Meld);
             this.Counters.Add(Abilities.Shukuchi);
             this.Counters.Add(Abilities.EulsScepterOfDivinity);
+            this.Counters.Add(Abilities.WindWaker);
             this.Counters.UnionWith(Abilities.VsProjectile);
             this.Counters.Add(Abilities.AttributeShift);
             this.Counters.UnionWith(Abilities.Shield);

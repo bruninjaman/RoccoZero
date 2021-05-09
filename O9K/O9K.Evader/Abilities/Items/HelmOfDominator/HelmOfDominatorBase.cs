@@ -1,26 +1,26 @@
-﻿namespace O9K.Evader.Abilities.Items.HelmOfDominator
-{
-    using Base;
-    using Base.Usable.CounterAbility;
+﻿//namespace O9K.Evader.Abilities.Items.HelmOfDominator
+//{
+//    using Base;
+//    using Base.Usable.CounterAbility;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
+//    using Core.Entities.Abilities.Base;
+//    using Core.Entities.Metadata;
 
-    using Divine;
+//    using Divine;
 
-    using HandOfMidas;
+//    using HandOfMidas;
 
-    [AbilityId(AbilityId.item_helm_of_the_dominator)]
-    internal class HelmOfDominatorBase : EvaderBaseAbility, IUsable<CounterAbility>
-    {
-        public HelmOfDominatorBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+//    [AbilityId(AbilityId.item_helm_of_the_dominator)]
+//    internal class HelmOfDominatorBase : EvaderBaseAbility, IUsable<CounterAbility>
+//    {
+//        public HelmOfDominatorBase(Ability9 ability)
+//            : base(ability)
+//        {
+//        }
 
-        public CounterAbility GetUsableAbility()
-        {
-            return new HandOfMidasUsable(this.Ability, this.Menu);
-        }
-    }
-}
+//        public CounterAbility GetUsableAbility()
+//        {
+//            return new HandOfMidasUsable(this.Ability, this.Menu);
+//        }
+//    }
+//}

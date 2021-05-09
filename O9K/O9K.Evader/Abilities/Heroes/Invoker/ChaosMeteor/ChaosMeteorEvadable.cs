@@ -23,6 +23,7 @@
             this.Counters.Add(Abilities.PhaseShift);
             this.Counters.Add(Abilities.BallLightning);
             this.Counters.Add(Abilities.EulsScepterOfDivinity);
+            this.Counters.Add(Abilities.WindWaker);
             this.Counters.UnionWith(Abilities.StrongMagicShield);
             this.Counters.Add(Abilities.BladeMail);
 

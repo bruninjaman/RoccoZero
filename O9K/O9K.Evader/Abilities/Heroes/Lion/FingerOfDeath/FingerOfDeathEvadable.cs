@@ -45,6 +45,7 @@
             this.ModifierCounters.Add(Abilities.MantaStyle);
             this.ModifierCounters.Add(Abilities.Mischief);
             this.ModifierCounters.Add(Abilities.EulsScepterOfDivinity);
+            this.ModifierCounters.Add(Abilities.WindWaker);
             this.ModifierCounters.Add(Abilities.BladeMail);
         }
 

@@ -52,7 +52,7 @@
 
         public static AbilityId Disruption { get; } = AbilityId.shadow_demon_disruption;
 
-        public static AbilityId Dominator { get; } = AbilityId.item_helm_of_the_dominator;
+        //public static AbilityId Dominator { get; } = AbilityId.item_helm_of_the_dominator;
 
         public static AbilityId Doppelganger { get; } = AbilityId.phantom_lancer_doppelwalk;
 
@@ -61,6 +61,8 @@
         public static AbilityId EtherealBlade { get; } = AbilityId.item_ethereal_blade;
 
         public static AbilityId EulsScepterOfDivinity { get; } = AbilityId.item_cyclone;
+        
+        public static AbilityId WindWaker { get; } = AbilityId.item_wind_waker;
 
         public static AbilityId FatesEdict { get; } = AbilityId.oracle_fates_edict;
 
@@ -83,6 +85,8 @@
         public static AbilityId HeavenlyGrace { get; } = AbilityId.omniknight_repel;
 
         public static AbilityId HoodOfDefiance { get; } = AbilityId.item_hood_of_defiance;
+
+        public static AbilityId EternalShroud { get; } = AbilityId.item_eternal_shroud;
 
         public static AbilityId HurricanePike { get; } = AbilityId.item_hurricane_pike;
 

@@ -68,6 +68,7 @@
             this.modifierCounters.Add(Abilities.Mischief);
             this.modifierCounters.Add(Abilities.MantaStyle);
             this.modifierCounters.Add(Abilities.EulsScepterOfDivinity);
+            this.modifierCounters.Add(Abilities.WindWaker);
             this.modifierCounters.Add(Abilities.BladeMail);
 
             this.aghanimModifierCounters.Add(Abilities.SpikedCarapace);
@@ -78,6 +79,7 @@
             this.aghanimModifierCounters.Add(Abilities.Mischief);
             this.aghanimModifierCounters.Add(Abilities.MantaStyle);
             this.aghanimModifierCounters.Add(Abilities.EulsScepterOfDivinity);
+            this.aghanimModifierCounters.Add(Abilities.WindWaker);
             this.aghanimModifierCounters.Add(Abilities.Enrage);
             this.aghanimModifierCounters.Add(Abilities.BladeMail);
         }

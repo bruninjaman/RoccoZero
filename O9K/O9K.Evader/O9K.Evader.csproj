@@ -860,6 +860,7 @@
     <Compile Include="Abilities\Heroes\Zeus\ThundergodsWrath\ThundergodsWrathEvadable.cs" />
     <Compile Include="Abilities\Items\AbyssalBlade\AbyssalBladeBase.cs" />
     <Compile Include="Abilities\Items\AbyssalBlade\AbyssalBladeEvadable.cs" />
+    <Compile Include="Abilities\Items\ArcaneBlink\ArcaneBlinkBase.cs" />
     <Compile Include="Abilities\Items\ArmletOfMordiggian\ArmletOfMordiggianBase.cs" />
     <Compile Include="Abilities\Items\AeonDisk\AeonDiskBase.cs" />
     <Compile Include="Abilities\Items\AeonDisk\AeonDiskEvadable.cs" />
@@ -877,6 +878,7 @@
     <Compile Include="Abilities\Items\BootsOfTravel\BootsOfTravelBase.cs" />
     <Compile Include="Abilities\Items\BootsOfTravel\BootsOfTravelEvadable.cs" />
     <Compile Include="Abilities\Items\BootsOfTravel\BootsOfTravelObstacle.cs" />
+    <Compile Include="Abilities\Items\Bullwhip\BullwhipBase.cs" />
     <Compile Include="Abilities\Items\Cheese\CheeseBase.cs" />
     <Compile Include="Abilities\Items\Clarity\ClarityBase.cs" />
     <Compile Include="Abilities\Items\Clarity\ClarityEvadable.cs" />
@@ -896,6 +898,8 @@
     <Compile Include="Abilities\Items\ForceStaff\ForceStaffBase.cs" />
     <Compile Include="Abilities\Items\GhostScepter\GhostScepterBase.cs" />
     <Compile Include="Abilities\Items\GhostScepter\GhostScepterEvadable.cs" />
+    <Compile Include="Abilities\Items\Gleipnir\GleipnirBase.cs" />
+    <Compile Include="Abilities\Items\Gleipnir\GleipnirEvadable.cs" />
     <Compile Include="Abilities\Items\GlimmerCape\GlimmerCapeBase.cs" />
     <Compile Include="Abilities\Items\GlimmerCape\GlimmerCapeEvadable.cs" />
     <Compile Include="Abilities\Items\GuardianGreaves\GuardianGreavesBase.cs" />
@@ -907,6 +911,7 @@
     <Compile Include="Abilities\Items\HeavensHalberd\HeavensHalberdBase.cs" />
     <Compile Include="Abilities\Items\HelmOfDominator\HelmOfDominatorBase.cs" />
     <Compile Include="Abilities\Items\HelmOfDominator\HelmOfDominatorUsable.cs" />
+    <Compile Include="Abilities\Items\EternalShroud\EternalShroudBase.cs" />
     <Compile Include="Abilities\Items\HoodOfDefiance\HoodOfDefianceBase.cs" />
     <Compile Include="Abilities\Items\HurricanePike\HurricanePikeBase.cs" />
     <Compile Include="Abilities\Items\HurricanePike\HurricanePikeUsable.cs" />
@@ -932,6 +937,7 @@
     <Compile Include="Abilities\Items\Nullifier\NullifierEvadable.cs" />
     <Compile Include="Abilities\Items\OrchidMalevolence\OrchidMalevolenceBase.cs" />
     <Compile Include="Abilities\Items\OrchidMalevolence\OrchidMalevolenceEvadable.cs" />
+    <Compile Include="Abilities\Items\OverwhelmingBlink\OverwhelmingBlinkBase.cs" />
     <Compile Include="Abilities\Items\PhaseBoots\PhaseBootsBase.cs" />
     <Compile Include="Abilities\Items\PipeOfInsight\PipeOfInsightBase.cs" />
     <Compile Include="Abilities\Items\QuellingBlade\QuellingBladeBase.cs" />
@@ -955,10 +961,14 @@
     <Compile Include="Abilities\Items\SolarCrest\SolarCrestEvadable.cs" />
     <Compile Include="Abilities\Items\SpiritVessel\SpiritVesselBase.cs" />
     <Compile Include="Abilities\Items\SpiritVessel\SpiritVesselEvadable.cs" />
+    <Compile Include="Abilities\Items\SwiftBlink\SwiftBlinkBase.cs" />
     <Compile Include="Abilities\Items\Tango\TangoBase.cs" />
     <Compile Include="Abilities\Items\Tango\TangoUsable.cs" />
+    <Compile Include="Abilities\Items\TricksterCloak\TricksterCloakBase.cs" />
+    <Compile Include="Abilities\Items\TricksterCloak\TricksterCloakEvadable.cs" />
     <Compile Include="Abilities\Items\VeilOfDiscord\VeilOfDiscordBase.cs" />
     <Compile Include="Abilities\Items\VeilOfDiscord\VeilOfDiscordEvadable.cs" />
+    <Compile Include="Abilities\Items\WindWaker\WindWakerBase.cs" />
     <Compile Include="Abilities\Units\AncientBlackDragon\Fireball\FireballBase.cs" />
     <Compile Include="Abilities\Units\AncientBlackDragon\Fireball\FireballEvadable.cs" />
     <Compile Include="Abilities\Units\AncientThunderhide\Slam\SlamBase.cs" />
@@ -1085,5 +1095,6 @@
       <Name>O9K.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

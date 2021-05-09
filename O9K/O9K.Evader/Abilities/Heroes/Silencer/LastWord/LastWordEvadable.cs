@@ -31,6 +31,7 @@
             this.ModifierCounters.UnionWith(Abilities.AllyPurge);
             this.ModifierCounters.UnionWith(Abilities.Shield);
             this.ModifierCounters.Add(Abilities.EulsScepterOfDivinity);
+            this.ModifierCounters.Add(Abilities.WindWaker);
             this.ModifierCounters.UnionWith(Abilities.MagicShield);
 
             this.modifierCountersIgnoreTime.UnionWith(Abilities.AllyPurge);

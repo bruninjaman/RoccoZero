@@ -37,6 +37,7 @@
             this.Counters.Add(Abilities.BladeMail);
 
             this.Counters.Remove(Abilities.EulsScepterOfDivinity);
+            this.Counters.Remove(Abilities.WindWaker);
         }
 
         public void AddParticle(Particle particle, string name)

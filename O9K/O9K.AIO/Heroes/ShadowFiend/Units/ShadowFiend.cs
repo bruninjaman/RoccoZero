@@ -266,13 +266,15 @@
 
             if (target.IsInvulnerable)
             {
+                Console.WriteLine(target.GetInvulnerabilityDuration());
                 var time = target.GetInvulnerabilityDuration();
                 if (time <= 0)
                 {
                     return true;
                 }
 
-                var eulsModifier = target.GetModifier("modifier_eul_cyclone");
+                
+                var eulsModifier = target.BaseModifiers.FirstOrDefault(x => x.Name == "modifier_eul_cyclone" || x.Name == "modifier_wind_waker");
                 if (eulsModifier != null)
                 {
                     var particle = eulsModifier.Particles?.FirstOrDefault();

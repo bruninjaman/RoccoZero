@@ -32,6 +32,7 @@
             this.ModifierCounters.UnionWith(Abilities.Invulnerability);
 
             this.ModifierCounters.Remove(Abilities.EulsScepterOfDivinity);
+            this.ModifierCounters.Remove(Abilities.WindWaker);
             this.ModifierCounters.Remove(Abilities.DarkPact);
         }
 

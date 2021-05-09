@@ -9,8 +9,10 @@
 
     using Metadata;
 
+    using O9K.Core.Entities.Abilities.Base.Components;
+
     [AbilityId(AbilityId.item_wind_waker)]
-    public class WindWaker : RangedAbility, IDisable, IShield
+    public class WindWaker : RangedAbility, IDisable, IShield, IAppliesImmobility
     {
         public WindWaker(Ability baseAbility)
             : base(baseAbility)
@@ -19,6 +21,8 @@
         }
 
         public UnitState AppliesUnitState { get; } = UnitState.Invulnerable;
+
+        public string ImmobilityModifierName { get; } = "modifier_wind_waker";
 
         public string ShieldModifierName { get; } = "modifier_wind_waker";
 

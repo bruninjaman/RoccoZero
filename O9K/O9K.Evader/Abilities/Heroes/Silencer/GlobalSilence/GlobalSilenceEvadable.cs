@@ -29,6 +29,7 @@
             this.Counters.Remove(Abilities.Bristleback);
             this.Counters.Remove(Abilities.Enrage);
             this.Counters.Remove(Abilities.EulsScepterOfDivinity);
+            this.Counters.Remove(Abilities.WindWaker);
             this.Counters.Remove(Abilities.FatesEdict);
             this.Counters.Remove(Abilities.BlackKingBar);
 

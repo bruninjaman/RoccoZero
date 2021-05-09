@@ -32,6 +32,7 @@
             this.Counters.ExceptWith(Abilities.MagicImmunity);
             this.Counters.Remove(Abilities.DarkPact);
             this.Counters.Remove(Abilities.EulsScepterOfDivinity);
+            this.Counters.Remove(Abilities.WindWaker);
             this.Counters.Remove(Abilities.Blur);
 
             this.ModifierCounters.UnionWith(Abilities.Invulnerability);
