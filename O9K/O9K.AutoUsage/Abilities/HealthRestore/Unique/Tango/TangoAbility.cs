@@ -92,54 +92,36 @@
 
         private void OnEntityAdded(EntityAddedEventArgs e)
         {
-            UpdateManager.BeginInvoke(() =>
+            try
             {
-                try
+                if (e.Entity is not Tree tree || tree.Name != "dota_temp_tree")
                 {
-                    var entity = e.Entity;
-                    if (!entity.IsValid)
-                    {
-                        return;
-                    }
-
-                    if (!(entity is Tree tree) || tree.Name != "dota_temp_tree")
-                    {
-                        return;
-                    }
-
-                    this.trees.Add(tree);
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex);
-                }
-            });
+
+                this.trees.Add(tree);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private void OnEntityRemoved(EntityRemovedEventArgs e)
         {
-            UpdateManager.BeginInvoke(() =>
+            try
             {
-                try
+                if (e.Entity is not Tree tree || tree.Name != "dota_temp_tree")
                 {
-                    var entity = e.Entity;
-                    if (!entity.IsValid)
-                    {
-                        return;
-                    }
-
-                    if (!(entity is Tree tree) || tree.Name != "dota_temp_tree")
-                    {
-                        return;
-                    }
-
-                    this.trees.Remove(tree);
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex);
-                }
-            });
+
+                this.trees.Remove(tree);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
     }
 }

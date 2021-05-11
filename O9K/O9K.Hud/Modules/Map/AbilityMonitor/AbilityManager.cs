@@ -228,60 +228,52 @@
         {
             try
             {
-                UpdateManager.BeginInvoke(() =>
+                var unit = e.Entity as Unit;
+                if (unit == null || unit.Team == this.allyTeam)
                 {
-                    var unit = e.Entity as Unit;
-                    if (unit == null || unit.Team == this.allyTeam)
+                    return;
+                }
+
+                if (this.abilityData.Units.TryGetValue(unit.Name, out var data))
+                {
+                    data.AddDrawableAbility(this.drawableAbilities, unit, this.notificationsEnabled ? this.notificator : null);
+                }
+                else
+                {
+                    if (unit.NetworkName != "CDOTA_BaseNPC")
                     {
                         return;
                     }
 
-                    if (!unit.IsValid)
+                    var vision = unit.DayVision;
+                    if (vision <= 0)
                     {
                         return;
                     }
 
-                    if (this.abilityData.Units.TryGetValue(unit.Name, out var data))
+                    var ids = this.abilityData.AbilityUnitVision.Where(x => x.Value.Vision == unit.DayVision)
+                        .ToDictionary(x => x.Key, x => x.Value);
+                    var abilities = EntityManager9.Abilities.Where(
+                            x => x.Owner.Team != this.allyTeam && x.Owner.CanUseAbilities && ids.ContainsKey(x.Id)
+                                 && (!x.Owner.IsVisible || x.TimeSinceCasted < 0.5f + x.ActivationDelay))
+                        .ToList();
+
+                    if (abilities.Count != 1)
                     {
-                        data.AddDrawableAbility(this.drawableAbilities, unit, this.notificationsEnabled ? this.notificator : null);
+                        return;
                     }
-                    else
+
+                    if (!ids.TryGetValue(abilities[0].Id, out data))
                     {
-                        if (unit.NetworkName != "CDOTA_BaseNPC")
-                        {
-                            return;
-                        }
-
-                        var vision = unit.DayVision;
-                        if (vision <= 0)
-                        {
-                            return;
-                        }
-
-                        var ids = this.abilityData.AbilityUnitVision.Where(x => x.Value.Vision == unit.DayVision)
-                            .ToDictionary(x => x.Key, x => x.Value);
-                        var abilities = EntityManager9.Abilities.Where(
-                                x => x.Owner.Team != this.allyTeam && x.Owner.CanUseAbilities && ids.ContainsKey(x.Id)
-                                     && (!x.Owner.IsVisible || x.TimeSinceCasted < 0.5f + x.ActivationDelay))
-                            .ToList();
-
-                        if (abilities.Count != 1)
-                        {
-                            return;
-                        }
-
-                        if (!ids.TryGetValue(abilities[0].Id, out data))
-                        {
-                            return;
-                        }
-
-                        data.AddDrawableAbility(
-                            this.drawableAbilities,
-                            abilities[0],
-                            unit,
-                            this.notificationsEnabled ? this.notificator : null);
+                        return;
                     }
-                });
+
+                    data.AddDrawableAbility(
+                        this.drawableAbilities,
+                        abilities[0],
+                        unit,
+                        this.notificationsEnabled ? this.notificator : null);
+                }
             }
             catch (Exception ex)
             {
