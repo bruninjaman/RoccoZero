@@ -91,6 +91,11 @@
 
         private async void EntityOnParticleEffectAdded(ParticleAddedEventArgs e)
         {
+            if (e.IsCollection)
+            {
+                return;
+            }
+
             var particle = e.Particle;
 
             if (!this.IsValid(particle))

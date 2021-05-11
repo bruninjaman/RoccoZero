@@ -112,6 +112,11 @@
 
         private void InformationOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
         {
+            if (e.Value == information)
+            {
+                return;
+            }
+
             UpdateManager.BeginInvoke(() =>
             {
                 var unit = (this.player.QueryUnit ?? this.player.SelectedUnits.FirstOrDefault()) as Unit;

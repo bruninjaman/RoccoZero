@@ -82,6 +82,12 @@
     <Compile Include="Entities\Abilities\Heroes\Dawnbreaker\CelestialHammer.cs" />
     <Compile Include="Entities\Abilities\Heroes\Dawnbreaker\Starbreaker.cs" />
     <Compile Include="Entities\Abilities\Heroes\Enchantress\Sproink.cs" />
+    <Compile Include="Entities\Abilities\Heroes\Hoodwink\AcornShot.cs" />
+    <Compile Include="Entities\Abilities\Heroes\Hoodwink\Bushwhack.cs" />
+    <Compile Include="Entities\Abilities\Heroes\Hoodwink\Decoy.cs" />
+    <Compile Include="Entities\Abilities\Heroes\Hoodwink\EndSharpshooter.cs" />
+    <Compile Include="Entities\Abilities\Heroes\Hoodwink\HuntersBoomerang.cs" />
+    <Compile Include="Entities\Abilities\Heroes\Hoodwink\Scurry.cs" />
     <Compile Include="Entities\Abilities\Heroes\Io\BreakTether.cs" />
     <Compile Include="Entities\Abilities\Heroes\Juggernaut\SwiftSlash.cs" />
     <Compile Include="Entities\Abilities\Heroes\Kunkka\TorrentStorm.cs" />
@@ -97,6 +103,7 @@
     <Compile Include="Entities\Abilities\Heroes\Techies\MinefieldSign.cs" />
     <Compile Include="Entities\Abilities\Heroes\Techies\RemoteMine\PinpointDetonate.cs" />
     <Compile Include="Entities\Abilities\Heroes\TemplarAssassin\Trap.cs" />
+    <Compile Include="Entities\Abilities\Heroes\Hoodwink\Sharpshooter.cs" />
     <Compile Include="Entities\Abilities\Heroes\Terrorblade\TerrorWave.cs" />
     <Compile Include="Entities\Abilities\Heroes\TreantProtector\NaturesGuise.cs" />
     <Compile Include="Entities\Abilities\Heroes\Visage\StoneForm.cs" />

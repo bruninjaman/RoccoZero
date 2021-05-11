@@ -145,6 +145,11 @@
 
         private async void UnitOnModifierAdded(ModifierAddedEventArgs e)
         {
+            if (e.IsCollection)
+            {
+                return;
+            }
+
             await Task.Delay(1);
             var modifier = e.Modifier;
 

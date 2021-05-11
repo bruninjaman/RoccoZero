@@ -51,6 +51,8 @@
 
         private MenuSlider positionY;
 
+        private MenuSwitcher hideSwitcher;
+
         private float screenSizeX;
 
         private int scrollPosition;
@@ -97,13 +99,19 @@
             this.screenSizeX = HUDInfo.ScreenSize.X;
             this.positionX = menu.CreateSlider("Position x", (int)(this.screenSizeX * 0.75), 0, (int)this.screenSizeX);
             this.positionY = menu.CreateSlider("Position y", 100, 0, (int)HUDInfo.ScreenSize.Y);
-            this.positionY.ValueChanged += this.PositionYOnPropertyChanged;
+            this.hideSwitcher = menu.CreateSwitcher("Hide");
+            this.hideSwitcher.IsHidden = true;
+
+            menu.CreateSlider("Position y", 100, 0, (int)HUDInfo.ScreenSize.Y);
 
             this.overlayButton = new ToggleButton(
                 "Hide",
                 "Show",
                 new Vector2(this.screenSizeX - 100, this.positionY - 50),
                 new Vector2(100, 30));
+
+            this.overlayButton.Enabled = this.hideSwitcher;
+
             this.pauseButton = new ToggleButton(
                 "Pause",
                 "Continue",
@@ -155,7 +163,8 @@
                 return false;
             }
 
-            return GameManager.MouseScreenPosition.IsUnderRectangle(this.positionX - 20, this.positionY - 20, 2000, 1000);
+            var screenSize = RendererManager.ScreenSize;
+            return GameManager.MouseScreenPosition.IsUnderRectangle(this.positionX - 20, this.positionY - 20, screenSize.X, screenSize.Y);
         }
 
         private void DrawingOnDraw()
@@ -246,6 +255,7 @@
                 if (this.overlayButton.IsMouseUnderButton())
                 {
                     this.overlayButton.Enabled = !this.overlayButton.Enabled;
+                    this.hideSwitcher.Value = this.overlayButton.Enabled;
                     e.Process = false;
                     return;
                 }

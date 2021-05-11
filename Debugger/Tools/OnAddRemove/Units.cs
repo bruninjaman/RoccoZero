@@ -92,6 +92,11 @@
 
         private void EntityManagerOnEntityAdded(EntityAddedEventArgs e)
         {
+            if (e.IsCollection)
+            {
+                return;
+            }
+
             if (e.Entity is not Unit unit)
             {
                 return;

@@ -15,14 +15,16 @@
     [AbilityId(AbilityId.special_bonus_spell_amplify_4)]
     [AbilityId(AbilityId.special_bonus_spell_amplify_5)]
     [AbilityId(AbilityId.special_bonus_spell_amplify_6)]
-    [AbilityId((AbilityId)522)] // 7
+    [AbilityId(AbilityId.special_bonus_spell_amplify_7)]
     [AbilityId(AbilityId.special_bonus_spell_amplify_8)]
+    [AbilityId(AbilityId.special_bonus_spell_amplify_9)]
     [AbilityId(AbilityId.special_bonus_spell_amplify_10)]
-    [AbilityId((AbilityId)444)] // 11
+    [AbilityId(AbilityId.special_bonus_spell_amplify_11)]
     [AbilityId(AbilityId.special_bonus_spell_amplify_12)]
     [AbilityId(AbilityId.special_bonus_spell_amplify_14)]
     [AbilityId(AbilityId.special_bonus_spell_amplify_15)]
-    [AbilityId((AbilityId)465)] // 16
+    [AbilityId(AbilityId.special_bonus_spell_amplify_16)]
+    [AbilityId(AbilityId.special_bonus_spell_amplify_18)]
     [AbilityId(AbilityId.special_bonus_spell_amplify_20)]
     [AbilityId(AbilityId.special_bonus_spell_amplify_25)]
     public class SpellAmplifyTalent : Talent, IHasDamageAmplify
