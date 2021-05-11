@@ -222,8 +222,8 @@
                     return;
                 }
 
-                OrderManager.OrderAdding += this.OnOrderAdding;
-                OrderManager.OrderAdding += this.OnPowerTreadsOrderAdding;
+                OrderManager.OrderAdding -= this.OnOrderAdding;
+                OrderManager.OrderAdding -= this.OnPowerTreadsOrderAdding;
                 UpdateManager.DestroyIngameUpdate(this.OnUpdate);
                 this.subscribed = false;
             }
@@ -500,7 +500,7 @@
                         {
                             await this.SwitchPowerTreads(switchCount);
 
-                            if (isPlayerInput)
+                            //if (isPlayerInput)
                             {
                                 this.ignoreNextOrder = true;
                                 this.orderSync.IgnoreSoulRingOrder = true;
@@ -544,7 +544,7 @@
                         {
                             await this.SwitchPowerTreads(switchCount);
 
-                            if (isPlayerInput)
+                            //if (isPlayerInput)
                             {
                                 this.ignoreNextOrder = true;
                                 this.orderSync.IgnoreSoulRingOrder = true;
@@ -588,7 +588,7 @@
                         {
                             await this.SwitchPowerTreads(switchCount);
 
-                            if (isPlayerInput)
+                            //if (isPlayerInput)
                             {
                                 this.ignoreNextOrder = true;
                                 this.orderSync.IgnoreSoulRingOrder = true;
@@ -632,7 +632,7 @@
                         {
                             await this.SwitchPowerTreads(switchCount);
 
-                            if (isPlayerInput)
+                            //if (isPlayerInput)
                             {
                                 this.ignoreNextOrder = true;
                                 this.orderSync.IgnoreSoulRingOrder = true;

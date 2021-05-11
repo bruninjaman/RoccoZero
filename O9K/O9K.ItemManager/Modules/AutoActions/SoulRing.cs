@@ -304,7 +304,7 @@
 
             this.soulRing.UseAbility();
 
-            if (isPlayerInput)
+            //if (isPlayerInput)
             {
                 UpdateManager.BeginInvoke(Delay, () =>
                 {
@@ -326,7 +326,7 @@
 
             this.soulRing.UseAbility();
 
-            if (isPlayerInput)
+            //if (isPlayerInput)
             {
                 UpdateManager.BeginInvoke(Delay, () =>
                 {
@@ -348,7 +348,7 @@
 
             this.soulRing.UseAbility();
 
-            if (isPlayerInput)
+            //if (isPlayerInput)
             {
                 UpdateManager.BeginInvoke(Delay, () =>
                 {
@@ -370,7 +370,7 @@
 
             this.soulRing.UseAbility();
 
-            if (isPlayerInput)
+            //if (isPlayerInput)
             {
                 UpdateManager.BeginInvoke(Delay, () =>
                 {
