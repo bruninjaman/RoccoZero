@@ -17,6 +17,15 @@
         public GushEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
             : base(ability, pathfinder, menu)
         {
+            this.Counters.UnionWith(Abilities.VsProjectile);
+            this.Counters.Add(Abilities.Meld);
+            this.Counters.Add(Abilities.Shukuchi);
+            this.Counters.UnionWith(Abilities.Shield);
+            this.Counters.UnionWith(Abilities.Heal);
+            this.Counters.UnionWith(Abilities.Suicide);
+
+            this.ModifierCounters.UnionWith(Abilities.AllyPurge);
+            this.ModifierCounters.UnionWith(Abilities.MagicShield);
         }
 
         public bool ModifierAllyCounter { get; } = true;
