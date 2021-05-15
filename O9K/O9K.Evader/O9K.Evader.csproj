@@ -36,21 +36,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Divine">
-      <HintPath>..\..\..\..\..\Desktop\Divine\Output\Divine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Divine\References\Divine.dll</HintPath>
     </Reference>
     <Reference Include="Divine.SDK">
-      <HintPath>..\..\..\..\..\Desktop\Divine\Output\Divine.SDK.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Divine\References\Divine.SDK.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Desktop\Divine\Output\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\..\..\..\..\Desktop\Divine\Output\SharpDX.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Divine\References\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\..\..\..\..\Desktop\Divine\Output\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Divine\References\SharpDX.Mathematics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
