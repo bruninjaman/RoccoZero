@@ -10,12 +10,11 @@
     using Divine;
 
     [AbilityId(AbilityId.tidehunter_gush)]
-    internal class GushBase : EvaderBaseAbility /*, IEvadable*/, IUsable<CounterEnemyAbility>
+    internal class GushBase : EvaderBaseAbility , IEvadable, IUsable<CounterEnemyAbility>
     {
         public GushBase(Ability9 ability)
             : base(ability)
         {
-            //todo fix evadable
         }
 
         public EvadableAbility GetEvadableAbility()
