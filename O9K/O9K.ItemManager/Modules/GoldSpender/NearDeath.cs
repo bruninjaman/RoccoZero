@@ -242,7 +242,7 @@
             {
                 if (item == AbilityId.attribute_bonus)
                 {
-                    list.AddRange(Player.QuickBuyItems);
+                    list.AddRange(owner.Player.QuickBuyItems);
                     continue;
                 }
 

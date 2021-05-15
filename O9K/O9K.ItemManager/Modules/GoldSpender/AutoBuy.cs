@@ -160,11 +160,11 @@
                 {
                     if (this.strictOrder)
                     {
-                        list.AddRange(Player.QuickBuyItems);
+                        list.AddRange(owner.Player.QuickBuyItems);
                     }
                     else
                     {
-                        var quickBuy = Player.QuickBuyItems.ToArray();
+                        var quickBuy = owner.Player.QuickBuyItems.ToArray();
                         list.AddRange(quickBuy.Where(x => !x.IsRecipe() || quickBuy.All(z => z.IsRecipe())));
                     }
 
