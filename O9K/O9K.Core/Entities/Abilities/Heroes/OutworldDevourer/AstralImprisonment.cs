@@ -19,7 +19,6 @@
             : base(baseAbility)
         {
             this.DamageData = new SpecialData(baseAbility, "damage");
-            this.RadiusData = new SpecialData(baseAbility, "radius");
         }
 
         public UnitState AppliesUnitState { get; } = UnitState.Stunned | UnitState.Invulnerable;
