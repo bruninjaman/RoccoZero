@@ -36,9 +36,9 @@ namespace O9K.AIO.Heroes.Invoker.Units
         private UntargetableAbility wex;
         private UntargetableAbility exort;
 
-        private UntargetableAbility refresher;
+        private RefresherAbility refresher;
 
-        private UntargetableAbility refresherShard;
+        private RefresherAbility refresherShard;
         private DisableAbility orchid;
         private Nullifier nullifier;
         private Bloodthorn bloodthorn;
@@ -118,9 +118,9 @@ namespace O9K.AIO.Heroes.Invoker.Units
                 {AbilityId.invoker_chaos_meteor, x => meteor = new MeteorAbility(x)},
                 {AbilityId.invoker_sun_strike, x => sunStrike = new SunStrikeAbility(x)},
                 {AbilityId.invoker_ice_wall, x => iceWall = new UntargetableAbility(x)},
-                {AbilityId.item_refresher, x => this.refresher = new UntargetableAbility(x)},
+                {AbilityId.item_refresher, x => this.refresher = new RefresherAbility(x)},
                 {AbilityId.invoker_deafening_blast, x => this.blast = new BlastAbility(x)},
-                {AbilityId.item_refresher_shard, x => this.refresherShard = new UntargetableAbility(x)},
+                {AbilityId.item_refresher_shard, x => this.refresherShard = new RefresherAbility(x)},
                 {AbilityId.invoker_alacrity, x => this.alacrity = new BuffAbility(x)},
                 {AbilityId.invoker_forge_spirit, x => this.forges = new UntargetableAbility(x)},
                 {AbilityId.invoker_invoke, x => this.invoke = new UntargetableAbility(x)},
@@ -131,7 +131,8 @@ namespace O9K.AIO.Heroes.Invoker.Units
 
         public override bool Combo(TargetManager.TargetManager targetManager, ComboModeMenu comboModeMenu)
         {
-            var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
+            Console.WriteLine("IN COMBO");
+            var abilityHelper = new InvokerAbilityHelper(targetManager, comboModeMenu, this);
             if (abilityHelper.UseAbility(blink, 550, 350))
             {
                 return true;
@@ -182,33 +183,42 @@ namespace O9K.AIO.Heroes.Invoker.Units
             if (target == null)
                 return false;
 
-            if (!meteorLaunched.IsSleeping && abilityHelper.UseAbilityIfAny(this.euls, sunStrike, meteor, iceWall, emp))
+            if (!meteorLaunched.IsSleeping && abilityHelper.UseAbilityIfCondition(this.euls, sunStrike, meteor, iceWall, emp))
             {
-                ComboSleeper.Sleep(0.2f);
+                // Console.WriteLine($"euls casted: {euls.Ability.GetHitTime(target)}");
+                ComboSleeper.Sleep(euls.Ability.GetHitTime(target));
                 return true;
             }
 
-            if (!meteorLaunched.IsSleeping && abilityHelper.UseAbilityIfAny(this.tornado, sunStrike, meteor, iceWall, emp))
+            if (!meteorLaunched.IsSleeping && abilityHelper.UseAbilityIfCondition(this.tornado, sunStrike, meteor, iceWall, emp))
             {
+                // Console.WriteLine($"tornado casted: {tornado.Ability.GetHitTime(target)}");
                 ComboSleeper.Sleep(tornado.Ability.GetHitTime(target));
                 return true;
             }
 
             var duration = target.GetInvulnerabilityDuration();
-            if (duration > 1.8)
+            // if (duration > 0)
+            //     Console.WriteLine($"duration: {duration}");
+            if (duration > sunStrike.Ability.GetHitTime(target))
             {
                 if (abilityHelper.CanBeCasted(sunStrike, false, false))
                 {
+                    // Console.WriteLine($"sunStrike: доступен");
                     if (abilityHelper.ReInvokeIfOnLastPosition(sunStrike, meteor, blast))
                     {
+                        // Console.WriteLine($"sunStrike: реинвокаем на 4й слот");
                         ComboSleeper.Sleep(0.1f);
                         return true;
                     }
 
+                    // Console.WriteLine($"sunStrike: не заинвокан");
                     if (!abilityHelper.IsInvoked(sunStrike))
                     {
+                        // Console.WriteLine($"sunStrike: сейвовый инвок");
                         if (abilityHelper.SafeInvoke(sunStrike, meteor, blast))
                         {
+                            // Console.WriteLine($"sunStrike: сейвовый инвок. Успех!");
                             ComboSleeper.Sleep(0.1f);
                             return true;
                         }
@@ -219,50 +229,88 @@ namespace O9K.AIO.Heroes.Invoker.Units
                 }
             }
 
-            if (duration > 1.4)
+            var meteorHitTime = meteor.Ability.GetCastDelay(target) + meteor.Ability.ActivationDelay;
+            // Console.WriteLine($"meteorHitTime: {meteorHitTime}");
+            
+            if (duration > meteorHitTime)
             {
                 if (abilityHelper.CanBeCasted(meteor, false, false))
                 {
+                    // Console.WriteLine($"meteor: Не в кд");
                     if (abilityHelper.ReInvokeIfOnLastPosition(meteor, sunStrike))
                     {
+                        // Console.WriteLine($"meteor: реинвок на 4й слот");
                         ComboSleeper.Sleep(0.2f);
                         return true;
                     }
-                    
-                    if (!abilityHelper.IsInvoked(blast) && abilityHelper.CanBeCasted(blast, false, false))
+
+                    if (!abilityHelper.IsInvoked(meteor))
                     {
-                        if (abilityHelper.IsInvoked(meteor) && abilityHelper.CanBeCasted(meteor, false, false))
+                        // Console.WriteLine($"meteor: не инвокнут");
+                        if (abilityHelper.IsInvoked(blast))
                         {
-                            if (abilityHelper.SafeInvoke(blast, meteor))
+                            // Console.WriteLine($"blast: инвокнут");
+                            if (abilityHelper.SafeInvoke(meteor, blast))
                             {
+                                // Console.WriteLine($"meteor: safe invoke");
                                 ComboSleeper.Sleep(0.2f);
                                 return true;
                             }
 
-                            ComboSleeper.Sleep(0.2f);
+                            // ComboSleeper.Sleep(0.2f);
+                            return false;
+                        }
+                        else
+                        {
+                            // Console.WriteLine($"meteor: invoke");
+                            abilityHelper.Invoke(meteor);
+                            ComboSleeper.Sleep(0.1f);
+                            return false;
+                        }
+                    }
+                    
+                    if (!abilityHelper.IsInvoked(blast) && abilityHelper.CanBeCasted(blast, false, false))
+                    {
+                        // Console.WriteLine($"blast: не инвокнут но можно кастовать");
+                        if (abilityHelper.IsInvoked(meteor))
+                        {
+                            // Console.WriteLine($"meteor: инвокнут, пробуем сейв инвок");
+                            if (abilityHelper.SafeInvoke(blast, meteor))
+                            {
+                                // Console.WriteLine($"blast: сейв инвок");
+                                ComboSleeper.Sleep(0.2f);
+                                return true;
+                            }
+
+                            // ComboSleeper.Sleep(0.2f);
                             return false;
                         }
                     }
 
-                    ComboSleeper.Sleep(0.1f);
+                    // ComboSleeper.Sleep(0.1f);
                     return false;
                 }
+                else
+                {
+                    // Console.WriteLine($"meteor: В кд");
+                }
             }
-
+            // Console.WriteLine($"meteor");
             if (abilityHelper.UseAbilityIfCondition(meteor))
             {
-                meteorLaunched.Sleep(meteor.Ability.GetHitTime(LastTarget));
+                meteorLaunched.Sleep(meteor.Ability.GetHitTime(LastTarget) + 0.5f);
                 return true;
             }
 
-            
             if (abilityHelper.UseAbilityIfCondition(blast))
             {
+                Console.WriteLine("blast casted");
                 return true;
             }
 
             if (abilityHelper.UseAbilityIfCondition(sunStrike))
             {
+                // Console.WriteLine($"sunStrike: casted");
                 return true;
             }
 
@@ -271,11 +319,11 @@ namespace O9K.AIO.Heroes.Invoker.Units
                 return true;
             }
 
-            if (abilityHelper.UseAbility(tornado))
-            {
-                ComboSleeper.Sleep(0.2f);
-                return true;
-            }
+            // if (abilityHelper.UseAbility(tornado))
+            // {
+            //     ComboSleeper.Sleep(0.2f);
+            //     return true;
+            // }
 
 
             if (abilityHelper.UseAbilityIfCondition(emp))
@@ -299,6 +347,18 @@ namespace O9K.AIO.Heroes.Invoker.Units
             if (abilityHelper.UseAbility(forges))
             {
                 ComboSleeper.Sleep(0.3f);
+                return true;
+            }
+
+            if (abilityHelper.UseAbilityIfConditionWithoutCooldownCheck(refresher, meteor, sunStrike, blast, emp, coldSnap, tornado))
+            {
+                ComboSleeper.Sleep(0.1f);
+                return true;
+            }
+
+            if (abilityHelper.UseAbilityIfConditionWithoutCooldownCheck(refresherShard, meteor, sunStrike, blast, emp, coldSnap, tornado))
+            {
+                ComboSleeper.Sleep(0.1f);
                 return true;
             }
 

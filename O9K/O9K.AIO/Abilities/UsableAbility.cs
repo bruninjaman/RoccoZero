@@ -1,4 +1,6 @@
-﻿namespace O9K.AIO.Abilities
+﻿using System;
+
+namespace O9K.AIO.Abilities
 {
     using System.Collections.Generic;
 
@@ -68,6 +70,7 @@
             }
 
             var hitTime = this.Ability.GetHitTime(target);
+            Console.WriteLine($"immobile {immobile} hitTime {hitTime} {Ability.DisplayName}");
             if (target.IsInvulnerable)
             {
                 hitTime -= 0.1f;

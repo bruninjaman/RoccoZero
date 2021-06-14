@@ -1,4 +1,6 @@
-﻿namespace O9K.AIO.Abilities
+﻿using System;
+
+namespace O9K.AIO.Abilities
 {
     using Core.Entities.Abilities.Base;
     using Core.Helpers;
@@ -55,11 +57,12 @@
 
         public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
         {
+            // Console.WriteLine($"UseAbility. {Ability.DisplayName} -> 1");
             if (!this.Ability.UseAbility(targetManager.Target, targetManager.EnemyHeroes, HitChance.Low))
             {
                 return false;
             }
-
+            // Console.WriteLine($"UseAbility. {Ability.DisplayName} -> 2");
             var delay = this.Ability.GetCastDelay(targetManager.Target);
             comboSleeper.Sleep(delay);
             this.Sleeper.Sleep(delay + 0.5f);

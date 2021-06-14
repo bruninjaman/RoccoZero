@@ -75,6 +75,7 @@
     <Compile Include="Abilities\DisableAbility.cs" />
     <Compile Include="Abilities\DebuffAbility.cs" />
     <Compile Include="Abilities\BlinkAbility.cs" />
+    <Compile Include="Abilities\InvokerAbilityHelper.cs" />
     <Compile Include="Abilities\InvokerAoeAbility.cs" />
     <Compile Include="Abilities\Items\BlinkDaggerAOE.cs" />
     <Compile Include="Abilities\Items\Bloodthorn.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="Heroes\Grimstroke\Units\Grimstroke.cs" />
     <Compile Include="Heroes\Invoker\Abilities\BlastAbility.cs" />
     <Compile Include="Heroes\Invoker\Abilities\MeteorAbility.cs" />
+    <Compile Include="Heroes\Invoker\Abilities\RefresherAbility.cs" />
     <Compile Include="Heroes\Invoker\Abilities\SunStrikeAbility.cs" />
     <Compile Include="Heroes\Invoker\Abilities\TornadoAbility.cs" />
     <Compile Include="Heroes\Invoker\InvokerBase.cs" />

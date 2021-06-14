@@ -60,9 +60,9 @@ namespace O9K.AIO.Heroes.Invoker.Modes
                 var abilityId = args.Order.Ability.Id;
                 if (abilityId is AbilityId.invoker_quas or AbilityId.invoker_wex or AbilityId.invoker_exort or AbilityId.invoker_invoke or AbilityId.invoker_ghost_walk)
                 {
-                    sleeper.Sleep(.1500f);
-                    multySleeper.Sleep("attack", .250f);
-                    multySleeper.Sleep("move", .250f);
+                    sleeper.Sleep(1.5f);
+                    multySleeper.Sleep("attack", 1.250f);
+                    multySleeper.Sleep("move", 1.250f);
                 }
             }
 
