@@ -50,6 +50,8 @@
                 return this.invokeHelper.CanInvoke(false);
             }
         }
+        
+        public AbilitySlot GetAbilitySlot => invokeHelper.GetAbilitySlot;
 
         public override float CastRange
         {
@@ -107,9 +109,9 @@
             };
         }
 
-        public bool Invoke(List<AbilityId> currentOrbs = null, bool queue = false, bool bypass = false)
+        public bool Invoke(List<AbilityId> currentOrbs = null, bool queue = false, bool bypass = false, bool invokeIfOnLastPosition = false)
         {
-            return this.invokeHelper.Invoke(currentOrbs, queue, bypass);
+            return this.invokeHelper.Invoke(currentOrbs, queue, bypass, invokeIfOnLastPosition);
         }
 
         public override bool UseAbility(Vector3 position, bool queue = false, bool bypass = false)

@@ -69,6 +69,8 @@
                 return true;
             }
         }
+        
+        public AbilitySlot GetAbilitySlot => invokeHelper.GetAbilitySlot;
 
         public AbilityId[] RequiredOrbs { get; } = { AbilityId.invoker_quas, AbilityId.invoker_wex, AbilityId.invoker_exort };
 
@@ -85,9 +87,9 @@
             };
         }
 
-        public bool Invoke(List<AbilityId> currentOrbs = null, bool queue = false, bool bypass = false)
+        public bool Invoke(List<AbilityId> currentOrbs = null, bool queue = false, bool bypass = false, bool invokeIfOnLastPosition = false)
         {
-            return this.invokeHelper.Invoke(currentOrbs, queue, bypass);
+            return this.invokeHelper.Invoke(currentOrbs, queue, bypass, invokeIfOnLastPosition);
         }
 
         public override bool UseAbility(Vector3 position, bool queue = false, bool bypass = false)

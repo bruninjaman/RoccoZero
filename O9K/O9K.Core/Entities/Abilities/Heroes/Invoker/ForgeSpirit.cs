@@ -33,6 +33,8 @@
 
         public bool BuffsAlly { get; } = false;
 
+        public AbilitySlot GetAbilitySlot => invokeHelper.GetAbilitySlot;
+        
         public bool BuffsOwner { get; } = true;
 
         public bool CanBeInvoked
@@ -84,9 +86,9 @@
             return base.CanBeCasted(checkChanneling) && this.invokeHelper.CanInvoke(!this.IsInvoked);
         }
 
-        public bool Invoke(List<AbilityId> currentOrbs = null, bool queue = false, bool bypass = false)
+        public bool Invoke(List<AbilityId> currentOrbs = null, bool queue = false, bool bypass = false, bool invokeIfOnLastPosition = false)
         {
-            return this.invokeHelper.Invoke(currentOrbs, queue, bypass);
+            return this.invokeHelper.Invoke(currentOrbs, queue, bypass, invokeIfOnLastPosition);
         }
 
         public override bool UseAbility(bool queue = false, bool bypass = false)

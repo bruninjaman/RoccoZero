@@ -73,11 +73,16 @@
             return true;
         }
 
-        public bool Invoke(List<AbilityId> currentOrbs, bool queue, bool bypass)
+        public AbilitySlot GetAbilitySlot => this.invokableAbility.AbilitySlot;
+
+        public bool Invoke(List<AbilityId> currentOrbs, bool queue, bool bypass, bool invokeIfOnLastPosition)
         {
             if (this.IsInvoked)
             {
-                return true;
+                if (invokeIfOnLastPosition && GetAbilitySlot != AbilitySlot.Slot_5)
+                {
+                    return true;
+                }
             }
 
             if (this.invoke?.CanBeCasted() != true)

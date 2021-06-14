@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <LangVersion>9.0</LangVersion>
     <TargetFrameworkProfile />
+    <PostBuildEvent>if exist "C:\Program Files\Divine\Divine.exe" call "C:\Program Files\Divine\Divine.exe" -PostBuildEvent -AssemblyName="$(AssemblyName)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,14 +38,32 @@
     <Reference Include="Divine">
       <HintPath>..\..\..\..\..\Desktop\Divine\Output\References\Divine.dll</HintPath>
     </Reference>
+    <Reference Include="Divine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Divine\References\Divine.dll</HintPath>
+    </Reference>
+    <Reference Include="Divine.Menu, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Divine\References\Divine.Menu.dll</HintPath>
+    </Reference>
     <Reference Include="Divine.SDK">
       <HintPath>..\..\..\..\..\Desktop\Divine\Output\References\Divine.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Divine.SDK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Divine\References\Divine.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Divine.Zero, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Divine\References\Divine.Zero.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\..\..\..\..\Desktop\Divine\Output\References\SharpDX.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Divine\References\SharpDX.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX.Mathematics">
       <HintPath>..\..\..\..\..\Desktop\Divine\Output\References\SharpDX.Mathematics.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Divine\References\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="WindowsBase" />
@@ -56,6 +75,7 @@
     <Compile Include="Abilities\DisableAbility.cs" />
     <Compile Include="Abilities\DebuffAbility.cs" />
     <Compile Include="Abilities\BlinkAbility.cs" />
+    <Compile Include="Abilities\InvokerAoeAbility.cs" />
     <Compile Include="Abilities\Items\BlinkDaggerAOE.cs" />
     <Compile Include="Abilities\Items\Bloodthorn.cs" />
     <Compile Include="Abilities\Items\EtherealBlade.cs" />
@@ -154,6 +174,18 @@
     <Compile Include="Heroes\Grimstroke\Abilities\Soulbind.cs" />
     <Compile Include="Heroes\Grimstroke\GrimstrokeBase.cs" />
     <Compile Include="Heroes\Grimstroke\Units\Grimstroke.cs" />
+    <Compile Include="Heroes\Invoker\Abilities\BlastAbility.cs" />
+    <Compile Include="Heroes\Invoker\Abilities\MeteorAbility.cs" />
+    <Compile Include="Heroes\Invoker\Abilities\SunStrikeAbility.cs" />
+    <Compile Include="Heroes\Invoker\Abilities\TornadoAbility.cs" />
+    <Compile Include="Heroes\Invoker\InvokerBase.cs" />
+    <Compile Include="Heroes\Invoker\Modes\AutoGhostWalkMode.cs" />
+    <Compile Include="Heroes\Invoker\Modes\AutoGhostWalkModeMenu.cs" />
+    <Compile Include="Heroes\Invoker\Modes\AutoSunStrikeMode.cs" />
+    <Compile Include="Heroes\Invoker\Modes\AutoSunStrikeModeMenu.cs" />
+    <Compile Include="Heroes\Invoker\Modes\SmartSpheresMode.cs" />
+    <Compile Include="Heroes\Invoker\Modes\SmartSpheresModeModeMenu.cs" />
+    <Compile Include="Heroes\Invoker\Units\Invoker.cs" />
     <Compile Include="Heroes\Juggernaut\Abililities\Omnislash.cs" />
     <Compile Include="Heroes\Juggernaut\Modes\ControlWardMode.cs" />
     <Compile Include="Heroes\Base\BaseHero.cs" />
