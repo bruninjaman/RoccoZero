@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Windows.Input;
 
-using Divine;
+using Divine.GameConsole;
+using Divine.Input;
+using Divine.Input.EventArgs;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 
@@ -22,15 +23,15 @@ namespace DotaMapPlus
         public ZoomHack(RootMenu rootMenu)
         {
             var zoomHackMenu = rootMenu.CreateMenu("Zoom Hack");
-            ZoomKeyItem = zoomHackMenu.CreateHoldKey("Key", Key.LeftCtrl);
+            ZoomKeyItem = zoomHackMenu.CreateHoldKey("Key", System.Windows.Input.Key.LeftCtrl);
             ZoomSliderItem = zoomHackMenu.CreateSlider("Camera Distance", DefaultZoomValue, MinZoomValue, MaxZoomValue);
 
-            ConVarManager.SetValue("r_farz", 18000);
+            GameConsoleManager.SetValue("r_farz", 18000);
 
             ZoomSliderItem.ValueChanged += OnZoomSliderValueChanged;
             InputManager.MouseWheel += OnInputManagerMouseWheel;
 
-            GameManager.ExecuteCommand("dota_camera_disable_zoom true");
+            GameConsoleManager.ExecuteCommand("dota_camera_disable_zoom true");
         }
 
         /*public void Dispose()
@@ -45,14 +46,14 @@ namespace DotaMapPlus
 
         private void OnZoomSliderValueChanged(MenuSlider slider, SliderEventArgs e)
         {
-            ConVarManager.SetValue("dota_camera_distance", e.NewValue);
+            GameConsoleManager.SetValue("dota_camera_distance", e.NewValue);
         }
 
         private void OnInputManagerMouseWheel(MouseWheelEventArgs e)
         {
             if (ZoomKeyItem)
             {
-                var zoomValue = ConVarManager.GetInt32("dota_camera_distance");
+                var zoomValue = GameConsoleManager.GetInt32("dota_camera_distance");
 
                 if (e.Up)
                 {

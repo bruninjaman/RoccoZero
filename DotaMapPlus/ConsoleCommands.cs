@@ -1,4 +1,4 @@
-﻿using Divine;
+﻿using Divine.GameConsole;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 
@@ -37,17 +37,17 @@ namespace DotaMapPlus
 
         private void FogItemChanged(MenuSwitcher switcher, SwitcherEventArgs e)
         {
-            ConVarManager.SetValue("fog_enable", !e.Value);
+            GameConsoleManager.SetValue("fog_enable", !e.Value);
         }
 
         private void FilteringItemChanged(MenuSwitcher switcher, SwitcherEventArgs e)
         {
-            ConVarManager.SetValue("fow_client_nofiltering", e.Value);
+            GameConsoleManager.SetValue("fow_client_nofiltering", e.Value);
         }
 
         private void ParticleHackItemChanged(MenuSwitcher switcher, SwitcherEventArgs e)
         {
-            ConVarManager.SetValue("dota_use_particle_fow", !e.Value);
+            GameConsoleManager.SetValue("dota_use_particle_fow", !e.Value);
         }
     }
 }

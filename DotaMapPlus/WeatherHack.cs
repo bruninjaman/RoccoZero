@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Divine;
+using Divine.GameConsole;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 
@@ -26,7 +26,7 @@ namespace DotaMapPlus
 
         private void OnWeatherValueChanged(MenuSelector selector, SelectorEventArgs e)
         {
-            ConVarManager.SetValue("cl_weather", Array.IndexOf(WeatherNames, e.NewValue));
+            GameConsoleManager.SetValue("cl_weather", Array.IndexOf(WeatherNames, e.NewValue));
         }
 
         private readonly string[] WeatherNames =

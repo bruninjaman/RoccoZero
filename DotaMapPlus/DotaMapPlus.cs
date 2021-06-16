@@ -1,6 +1,4 @@
-﻿using System;
-
-using Divine;
+﻿using Divine.Service;
 
 namespace DotaMapPlus
 {
