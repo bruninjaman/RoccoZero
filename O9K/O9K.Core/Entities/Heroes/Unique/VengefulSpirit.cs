@@ -1,6 +1,8 @@
 ﻿namespace O9K.Core.Entities.Heroes.Unique
 {
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Managers.Entity;
 

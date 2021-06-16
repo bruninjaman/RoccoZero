@@ -3,12 +3,14 @@
     using System;
 
     using Core.Helpers;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Helpers;
-
-    using SharpDX;
 
     internal sealed class Teleport
     {
@@ -66,15 +68,15 @@
                 return;
             }
 
-            RendererManager.DrawTexture("o9k.outline_red", position * 1.12f);
-            RendererManager.DrawTexture(this.mapTexture, position, TextureType.RoundUnit);
+            RendererManager.DrawImage("o9k.outline_red", position * 1.12f);
+            RendererManager.DrawImage(this.mapTexture, position, ImageType.RoundUnit);
 
             var abilityTexturePosition = position * 0.5f;
             abilityTexturePosition.X += abilityTexturePosition.Width * 0.8f;
             abilityTexturePosition.Y += abilityTexturePosition.Height * 0.6f;
 
-            RendererManager.DrawTexture("o9k.outline_green_pct100", abilityTexturePosition * 1.2f);
-            RendererManager.DrawTexture(AbilityTexture, abilityTexturePosition, TextureType.RoundAbility);
+            RendererManager.DrawImage("o9k.outline_green_pct100", abilityTexturePosition * 1.2f);
+            RendererManager.DrawImage(AbilityTexture, abilityTexturePosition, ImageType.RoundAbility);
 
             position.Y += 50 * Hud.Info.ScreenRatio;
 
@@ -98,7 +100,7 @@
 
             RendererManager.DrawCircle(position.Center, radius, this.color, 3);
             RendererManager.DrawLine(position.Center, position.Center + range, this.color, 2);
-            RendererManager.DrawTexture(this.minimapTexture, position, TextureType.MiniUnit);
+            RendererManager.DrawImage(this.minimapTexture, position, ImageType.MiniUnit);
         }
     }
 }

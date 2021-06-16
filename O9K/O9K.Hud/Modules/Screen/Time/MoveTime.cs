@@ -1,25 +1,10 @@
-﻿//TODO
-//namespace O9K.Hud.Modules.Screen.Time
-//{
-//    using System;
-//    using System.Linq;
-//    using System.Windows.Input;
-
-//    using Core.Entities.Heroes;
-//    using Core.Helpers;
-//    using Core.Logger;
-//    using Core.Managers.Entity;
-//    using Core.Managers.Menu;
-//    using Core.Managers.Menu.Items;
-
-//    using Divine;
-//    using Divine.SDK.Managers.Update;
+﻿//    using Divine.SDK.Managers.Update;
 
 //    using Helpers;
 
 //    using MainMenu;
 
-//    using SharpDX;
+//    using Divine.Numerics;
 
 //    internal class MoveTime : IHudModule
 //    {
@@ -75,7 +60,7 @@
 //            /*RendererManager.TextureManager.LoadFromDota(
 //                "o9k.waypoint_white",
 //                @"panorama\images\hud\reborn\ping_icon_waypoint_psd.vtex_c",
-//                new TextureProperties
+//                new ImageProperties
 //                {
 //                    ColorRatio = new Vector4(1f, 1f, 1f, 1f)
 //                });*/
@@ -125,7 +110,7 @@
 //                var textureSize = new Vector2(size * 1.8f);
 
 //                position -= new Vector2(0, textureSize.Y * 0.15f);
-//                RendererManager.DrawTexture("o9k.waypoint_white", new RectangleF(position.X, position.Y, textureSize.X, textureSize.Y));
+//                RendererManager.DrawImage("o9k.waypoint_white", new RectangleF(position.X, position.Y, textureSize.X, textureSize.Y));
 //                RendererManager.DrawText(this.moveTime + "s", position + new Vector2(textureSize.X, 0), Color.White, size);
 //            }
 //            catch (Exception e)

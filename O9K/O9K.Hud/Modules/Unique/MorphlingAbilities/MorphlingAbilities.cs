@@ -16,14 +16,20 @@
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Divine;
-    using Divine.SDK.Localization;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Modifier;
+    using Divine.Modifier.EventArgs;
+    using Divine.Numerics;
+    using Divine.Order;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class MorphlingAbilities : IHudModule
     {
@@ -54,7 +60,7 @@
         {
 
             var abilitiesMenu = hudMenu.UniqueMenu
-                .Add(new Menu(LocalizationHelper.LocalizeName(HeroId.npc_dota_hero_morphling), "Morphling"))
+                .Add(new Menu(Divine.Helpers.LocalizationHelper.LocalizeName(HeroId.npc_dota_hero_morphling), "Morphling"))
                 .SetTexture(HeroId.npc_dota_hero_morphling);
 
             this.abilitiesEnabled = abilitiesMenu.Add(

@@ -2,11 +2,10 @@
 {
     using System;
 
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Numerics;
 
     using Entities.Units;
-
-    using SharpDX;
 
     public static class Vector3Extensions
     {

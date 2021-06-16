@@ -13,13 +13,14 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     using AbilityEventArgs = Core.Managers.Menu.EventArgs.AbilityEventArgs;
 
@@ -210,8 +211,8 @@
                                               (outlineSize.X - textureSize.X) / 2f,
                                               (outlineSize.Y - textureSize.Y) / 2f);
 
-                    RendererManager.DrawTexture("o9k.outline", new RectangleF(outlinePosition.X, outlinePosition.Y, outlineSize.X, outlineSize.Y));
-                    RendererManager.DrawTexture(ability.Name, new RectangleF(startPosition.X, startPosition.Y, textureSize.X, textureSize.Y), TextureType.RoundAbility);
+                    RendererManager.DrawImage("o9k.outline", new RectangleF(outlinePosition.X, outlinePosition.Y, outlineSize.X, outlineSize.Y));
+                    RendererManager.DrawImage(ability.Name, new RectangleF(startPosition.X, startPosition.Y, textureSize.X, textureSize.Y), ImageType.RoundAbility);
 
                     RendererManager.DrawText(
                         ability.Time,

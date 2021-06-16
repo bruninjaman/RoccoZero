@@ -4,8 +4,9 @@
     using System.Linq;
 
     using Base;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Entities.Units;
 
@@ -14,8 +15,6 @@
     using Managers.Entity;
 
     using Metadata;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.ancient_apparition_ice_blast)]
     public class IceBlast : CircleAbility

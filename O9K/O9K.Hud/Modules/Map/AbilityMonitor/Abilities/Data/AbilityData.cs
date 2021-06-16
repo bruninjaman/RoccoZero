@@ -4,10 +4,8 @@
 
     using Core.Data;
     using Core.Helpers;
-
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using UniqueAbilities.Blink;
     using UniqueAbilities.Cleave;

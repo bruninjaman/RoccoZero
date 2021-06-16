@@ -6,10 +6,10 @@
     using Core.Entities.Abilities.Base;
     using Core.Logger;
     using Core.Managers.Renderer.Utils;
-
-    using Divine;
-
-    using SharpDX;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Abilities.Components;
 
     internal class MorphlingAbility : IMorphlingAbility
     {
@@ -63,12 +63,12 @@
         {
             try
             {
-                RendererManager.DrawTexture(this.texture, position);
+                RendererManager.DrawImage(this.texture, position);
                 RendererManager.DrawRectangle(position - 1, Color.Black);
 
                 if (this.level == 0)
                 {
-                    RendererManager.DrawTexture("o9k.ability_0lvl_bg", position);
+                    RendererManager.DrawImage("o9k.ability_0lvl_bg", position);
                     return;
                 }
 
@@ -77,7 +77,7 @@
                     return;
                 }
 
-                RendererManager.DrawTexture("o9k.ability_cd_bg", position);
+                RendererManager.DrawImage("o9k.ability_cd_bg", position);
                 RendererManager.DrawText(
                     Math.Ceiling(this.RemainingCooldown).ToString("N0"),
                     position,

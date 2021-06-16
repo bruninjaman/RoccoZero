@@ -4,13 +4,14 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Helpers;
 
     using Newtonsoft.Json.Linq;
-
-    using SharpDX;
 
     public class Menu : MenuItem
     {
@@ -20,7 +21,7 @@
 
         private string textureKey;
 
-        private TextureType textureType;
+        private ImageType imageType;
 
         private Vector2 textureSize;
 
@@ -337,18 +338,18 @@
             //texture
             if (!string.IsNullOrEmpty(this.textureKey))
             {
-                RendererManager.DrawTexture(
+                RendererManager.DrawImage(
                     this.textureKey,
                     new RectangleF(
                         this.Position.X + this.MenuStyle.LeftIndent,
                         this.Position.Y + ((this.Size.Y - this.textureSize.Y) / 2),
                         this.textureSize.X,
                         this.textureSize.Y),
-                    this.textureType);
+                    this.imageType);
             }
 
             //arrow
-            RendererManager.DrawTexture(
+            RendererManager.DrawImage(
                 this.MenuStyle.TextureArrowKey,
                 new RectangleF(
                     (this.Position.X + this.Size.X) - this.MenuStyle.TextureArrowSize - this.MenuStyle.RightIndent,
@@ -381,16 +382,16 @@
         {
             if (this.textureKey.Contains("npc_dota"))
             {
-                textureType = TextureType.Unit;
-                RendererManager.LoadTexture(this.textureKey, textureType);
+                imageType = ImageType.Unit;
+                RendererManager.LoadImage(this.textureKey, imageType);
                 this.textureSize = this.MenuStyle.TextureHeroSize * new Vector2(1.4f, 1.2f);
             }
             else
             {
                 if (Enum.TryParse<AbilityId>(this.textureKey, out var id))
                 {
-                    textureType = TextureType.Ability;
-                    RendererManager.LoadTexture(id);
+                    imageType = ImageType.Ability;
+                    RendererManager.LoadImage(id);
                 }
 
                 this.textureSize = new Vector2(this.MenuStyle.TextureAbilitySize) * 1.2f;

@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     /// <summary>
     ///     Provides method to calculate the minimum enclosing circle.

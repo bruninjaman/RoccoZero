@@ -1,16 +1,17 @@
 ﻿namespace O9K.Core.Managers.Menu.Items
 {
     using System;
-    using System.Windows.Input;
 
-    using Divine;
+    using Divine.Input;
+    using Divine.Input.EventArgs;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Logger;
 
     using Newtonsoft.Json.Linq;
 
-    using SharpDX;
-
+    using Key = System.Windows.Input.Key;
     using KeyEventArgs = EventArgs.KeyEventArgs;
 
     public class MenuHoldKey : MenuItem
@@ -25,7 +26,7 @@
 
         private MouseKey mouseKeyValue;
 
-        public MenuHoldKey(string displayName, Key key = Key.None, bool heroUnique = false)
+        public MenuHoldKey(string displayName, System.Windows.Input.Key key = Key.None, bool heroUnique = false)
             : this(displayName, displayName, key, heroUnique)
         {
         }
@@ -230,7 +231,7 @@
                 this.MenuStyle.TextSize);
         }
 
-        private void GetKey(Divine.KeyEventArgs e)
+        private void GetKey(Divine.Input.EventArgs.KeyEventArgs e)
         {
             this.Key = e.Key == Key.Escape ? Key.None : e.Key;
             this.mouseKeyValue = MouseKey.None;
@@ -299,7 +300,7 @@
             this.ValueChange?.Invoke(this, new KeyEventArgs(false, true));
         }*/
 
-        private void OnKeyDown(Divine.KeyEventArgs e)
+        private void OnKeyDown(Divine.Input.EventArgs.KeyEventArgs e)
         {
             if (e.Key != this.keyValue || this.IsActive)
             {
@@ -310,7 +311,7 @@
             this.ValueChange?.Invoke(this, new KeyEventArgs(true, false));
         }
 
-        private void OnKeyUp(Divine.KeyEventArgs e)
+        private void OnKeyUp(Divine.Input.EventArgs.KeyEventArgs e)
         {
             if (e.Key != this.keyValue || !this.IsActive)
             {

@@ -1,8 +1,7 @@
 ﻿namespace O9K.Hud.Helpers
 {
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     internal static class Drawer
     {

@@ -9,9 +9,15 @@
     using Core.Logger;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Renderer;
+    using Divine.Update;
+    using Divine.Entity.EventArgs;
+    using Divine.Entity.Entities.Runes;
+    using Divine.Entity.Entities.Abilities.Items;
+    using Divine.Entity.Entities.Runes.Components;
 
     using Helpers;
 
@@ -94,12 +100,12 @@
 
         private void LoadTextures()
         {
-            RendererManager.LoadTextureFromAssembly("rune_regeneration_minimap", "rune_regeneration_minimap.png");
-            RendererManager.LoadTextureFromAssembly("rune_arcane_minimap", "rune_arcane_minimap.png");
-            RendererManager.LoadTextureFromAssembly("rune_double_damage_minimap", "rune_double_damage_minimap.png");
-            RendererManager.LoadTextureFromAssembly("rune_haste_minimap", "rune_haste_minimap.png");
-            RendererManager.LoadTextureFromAssembly("rune_illusion_minimap", "rune_illusion_minimap.png");
-            RendererManager.LoadTextureFromAssembly("rune_invisibility_minimap", "rune_invisibility_minimap.png");
+            RendererManager.LoadImageFromAssembly("rune_regeneration_minimap", "rune_regeneration_minimap.png");
+            RendererManager.LoadImageFromAssembly("rune_arcane_minimap", "rune_arcane_minimap.png");
+            RendererManager.LoadImageFromAssembly("rune_double_damage_minimap", "rune_double_damage_minimap.png");
+            RendererManager.LoadImageFromAssembly("rune_haste_minimap", "rune_haste_minimap.png");
+            RendererManager.LoadImageFromAssembly("rune_illusion_minimap", "rune_illusion_minimap.png");
+            RendererManager.LoadImageFromAssembly("rune_invisibility_minimap", "rune_invisibility_minimap.png");
         }
 
         private void OnAddEntity(EntityAddedEventArgs e)
@@ -135,7 +141,7 @@
                     if (this.showOnMinimap)
                     {
                         var position = this.minimap.WorldToMinimap(rune.Position, 20 * Hud.Info.ScreenRatio);
-                        RendererManager.DrawTexture(rune.RunePicked ? "o9k.x" : rune.Texture, position);
+                        RendererManager.DrawImage(rune.RunePicked ? "o9k.x" : rune.Texture, position);
                     }
 
                     if (this.showOnMap)
@@ -146,7 +152,7 @@
                             continue;
                         }
 
-                        RendererManager.DrawTexture(rune.RunePicked ? "o9k.x" : rune.Texture, position);
+                        RendererManager.DrawImage(rune.RunePicked ? "o9k.x" : rune.Texture, position);
                     }
                 }
             }

@@ -9,16 +9,18 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
-
-    using Divine;
-    using Divine.SDK.Extensions;
-    using Divine.SDK.Localization;
+    using Divine.Entity;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Helpers;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Runes;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class AllyBottle : IHudModule
     {
@@ -70,20 +72,20 @@
 
         private void LoadTextures()
         {
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.outline_hp",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 1f, 0f, 1f)
+                    ColorTint = new Color(0, 255, 0)
                 });
 
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.outline_mp",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0.6f, 1f, 1f),
+                    ColorTint = new Color(0, 153, 255),
                     IsSliced = true
                 });
         }
@@ -117,18 +119,18 @@
 
                     position.Y += textureSize + margin;
 
-                    RendererManager.DrawTexture(hero.Name, position, TextureType.RoundUnit);
+                    RendererManager.DrawImage(hero.Name, position, ImageType.RoundUnit);
 
                     var outlinePosition = position * 1.25f;
-                    RendererManager.DrawTexture("o9k.outline_hp", outlinePosition);
-                    RendererManager.DrawTexture("o9k.outline_black" + (int)(100 - (hero.HealthPercentage / 2f)), outlinePosition);
-                    RendererManager.DrawTexture("o9k.outline_mp" + (int)(hero.ManaPercentage / 2f), outlinePosition);
+                    RendererManager.DrawImage("o9k.outline_hp", outlinePosition);
+                    RendererManager.DrawImage("o9k.outline_black" + (int)(100 - (hero.HealthPercentage / 2f)), outlinePosition);
+                    RendererManager.DrawImage("o9k.outline_mp" + (int)(hero.ManaPercentage / 2f), outlinePosition);
 
                     var chargesText = bottle.Charges.ToString("N0");
                     var chargesPosition = position.SinkToBottomRight(position.Width * 0.4f, position.Height * 0.4f);
 
-                    RendererManager.DrawTexture("o9k.charge_bg", chargesPosition);
-                    RendererManager.DrawTexture("o9k.outline_green", chargesPosition * 1.07f);
+                    RendererManager.DrawImage("o9k.charge_bg", chargesPosition);
+                    RendererManager.DrawImage("o9k.outline_green", chargesPosition * 1.07f);
                     RendererManager.DrawText(
                         chargesText,
                         chargesPosition,

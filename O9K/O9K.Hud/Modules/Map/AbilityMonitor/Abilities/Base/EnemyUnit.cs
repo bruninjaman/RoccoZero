@@ -4,8 +4,10 @@
 
     using Core.Entities.Units;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.PhysicalItems;
+    using Divine.Extensions;
 
     internal class EnemyUnit
     {

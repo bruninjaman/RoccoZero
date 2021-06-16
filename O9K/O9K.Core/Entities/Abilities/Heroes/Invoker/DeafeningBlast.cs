@@ -7,16 +7,16 @@
 
     using Core.Helpers;
     using Core.Helpers.Damage;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Components;
 
     using Entities.Units;
 
     using Helpers;
 
     using Metadata;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.invoker_deafening_blast)]
     public class DeafeningBlast : ConeAbility, IInvokableAbility, IDisable, INuke

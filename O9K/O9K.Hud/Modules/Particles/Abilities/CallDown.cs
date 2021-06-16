@@ -7,14 +7,13 @@
     using Core.Logger;
     using Core.Managers.Context;
     using Core.Managers.Particle;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers.Notificator;
 
     using MainMenu;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.gyrocopter_call_down)]
     internal class CallDown : AbilityModule

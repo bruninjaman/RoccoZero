@@ -5,8 +5,11 @@
     using Base;
 
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Helpers.Notificator;
 

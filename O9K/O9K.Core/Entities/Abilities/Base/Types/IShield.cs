@@ -2,7 +2,7 @@
 {
     using Components.Base;
 
-    using Divine;
+    using Divine.Entity.Entities.Units.Components;
 
     public interface IShield : IActiveAbility
     {

@@ -1,9 +1,9 @@
 ﻿namespace O9K.Core.Managers.Menu
 {
     using System;
-    using System.Linq;
 
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Helpers;
 
@@ -12,8 +12,6 @@
     using Logger;
 
     using Newtonsoft.Json.Linq;
-
-    using SharpDX;
 
     internal sealed class MainMenu : Menu
     {
@@ -91,7 +89,7 @@
 
             for (var i = 1; i <= this.MenuItems.Count; i++)
             {
-                RendererManager.DrawTexture(this.MenuStyle.TextureIconKey, new RectangleF(iconPosition.X - iconSize.X * i, iconPosition.Y, iconSize.X, iconSize.Y));
+                RendererManager.DrawImage(this.MenuStyle.TextureIconKey, new RectangleF(iconPosition.X - iconSize.X * i, iconPosition.Y, iconSize.X, iconSize.Y));
             }
 
             RendererManager.DrawText(this.DisplayName, textPosition, Color.White, this.MenuStyle.Font, this.MenuStyle.TextSize);
@@ -266,9 +264,9 @@
 
         private void LoadResources()
         {
-            RendererManager.LoadTexture(this.MenuStyle.TextureArrowKey, @"panorama\images\control_icons\double_arrow_right_png.vtex_c");
-            RendererManager.LoadTexture(this.MenuStyle.TextureLeftArrowKey, @"panorama\images\control_icons\arrow_dropdown_png.vtex_c");
-            RendererManager.LoadTexture(this.MenuStyle.TextureIconKey, @"panorama\images\hud\reborn\tournament_pip_on_psd.vtex_c");
+            RendererManager.LoadImage(this.MenuStyle.TextureArrowKey, @"panorama\images\control_icons\double_arrow_right_png.vtex_c");
+            RendererManager.LoadImage(this.MenuStyle.TextureLeftArrowKey, @"panorama\images\control_icons\arrow_dropdown_png.vtex_c");
+            RendererManager.LoadImage(this.MenuStyle.TextureIconKey, @"panorama\images\hud\reborn\tournament_pip_on_psd.vtex_c");
         }
 
         /*private void RootMenuExpandMessage(RootMenuExpandMessage args)

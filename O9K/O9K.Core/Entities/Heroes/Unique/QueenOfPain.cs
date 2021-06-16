@@ -5,7 +5,11 @@
     using Abilities.Base;
     using Abilities.Talents;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Particle;
+    using Divine.Particle.EventArgs;
 
     using Helpers;
 

@@ -11,15 +11,20 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
-
-    using Divine;
-    using Divine.SDK.Localization;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Helpers;
+    using Divine.Modifier;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
+    using Divine.Modifier.EventArgs;
+    using Divine.Modifier.Modifiers;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal partial class Modifiers : IHudModule
     {
@@ -209,55 +214,55 @@
 
             this.loadedTextures.Add(textureKey);
 
-            RendererManager.LoadTexture(textureKey, TextureType.RoundAbility);
+            RendererManager.LoadImage(textureKey, ImageType.RoundAbility);
 
             return true;
         }
 
         private void LoadTextures()
         {
-            RendererManager.LoadTextureFromAssembly(
+            RendererManager.LoadImageFromAssembly(
                 "o9k.modifier_truesight",
                 "modifier_truesight.png",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ConvertType = TextureConvertType.Round
+                    ConvertType = ImageConvertType.Round
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.modifier_bg",
                 @"panorama\images\masks\softedge_circle_sharp_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0f, 0.45f)
+                    ColorTint = new Color(0, 229, 0, 114),
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.outline_green",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0.9f, 0f, 1f)
+                    ColorTint = new Color(0, 229, 0),
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.outline_red",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0.9f, 0f, 0f, 1f)
+                    ColorTint = new Color(229, 0, 0),
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.outline_yellow",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0.9f, 0.9f, 0f, 1f),
+                    ColorTint = new Color(229, 229, 0),
                     Brightness = 50
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.outline_black",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0f, 1f),
+                    ColorTint = new Color(0, 0, 0),
                     IsSliced = true
                 });
         }
@@ -285,11 +290,11 @@
                     {
                         if (modifier.IsAbilityTextureName)
                         {
-                            RendererManager.DrawTexture(modifier.TextureName, start, TextureType.RoundAbility);
+                            RendererManager.DrawImage(modifier.TextureName, start, ImageType.RoundAbility);
                         }
                         else
                         {
-                            RendererManager.DrawTexture(modifier.TextureName, start);
+                            RendererManager.DrawImage(modifier.TextureName, start);
                         }
 
                         if (!modifier.IgnoreTime)
@@ -299,7 +304,7 @@
                             if (this.showTime)
                             {
                                 var timePosition = start * 1.5f;
-                                RendererManager.DrawTexture("o9k.modifier_bg", timePosition);
+                                RendererManager.DrawImage("o9k.modifier_bg", timePosition);
                                 RendererManager.DrawText(
                                     remainingTime < 10 ? remainingTime.ToString("N1") : remainingTime.ToString("N0"),
                                     timePosition,
@@ -311,12 +316,12 @@
                             var pct = (int)(100 - ((remainingTime / modifier.Duration) * 100));
                             var outlinePosition = start * 1.17f;
 
-                            RendererManager.DrawTexture(modifier.IsDebuff ? "o9k.outline_red" : "o9k.outline_green", outlinePosition);
-                            RendererManager.DrawTexture("o9k.outline_black" + pct, outlinePosition);
+                            RendererManager.DrawImage(modifier.IsDebuff ? "o9k.outline_red" : "o9k.outline_green", outlinePosition);
+                            RendererManager.DrawImage("o9k.outline_black" + pct, outlinePosition);
                         }
                         else
                         {
-                            RendererManager.DrawTexture(modifier.IsDebuff ? "o9k.outline_red" : "o9k.outline_green", start * 1.17f);
+                            RendererManager.DrawImage(modifier.IsDebuff ? "o9k.outline_red" : "o9k.outline_green", start * 1.17f);
                         }
 
                         start += new Vector2(0, this.size + 5);

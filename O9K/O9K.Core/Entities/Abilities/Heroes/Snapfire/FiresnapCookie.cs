@@ -4,8 +4,10 @@
 
     using Base;
     using Base.Types;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Components;
 
     using Entities.Units;
 
@@ -14,8 +16,6 @@
     using Metadata;
 
     using Prediction.Data;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.snapfire_firesnap_cookie)]
     public class FiresnapCookie : AreaOfEffectAbility, IDisable, INuke

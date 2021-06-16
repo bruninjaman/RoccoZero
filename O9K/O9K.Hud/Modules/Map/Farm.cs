@@ -7,20 +7,24 @@
     using Core.Entities.Heroes;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
-    using Core.Managers.Particle;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Creeps.Neutrals;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Game;
+    using Divine.Game.EventArgs;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class Farm : IHudModule
     {
@@ -69,7 +73,7 @@
         public void Activate()
         {
             this.owner = EntityManager9.Owner;
-            RendererManager.LoadTexture("o9k.attack", @"panorama\images\hud\reborn\ping_icon_attack_psd.vtex_c");
+            RendererManager.LoadImage("o9k.attack", @"panorama\images\hud\reborn\ping_icon_attack_psd.vtex_c");
 
             //Context9.ParticleManger.ParticleAdded += this.OnParticleAdded;
             GameManager.GameEvent += OnGameEvent;
@@ -110,8 +114,8 @@
                             return;
                         }
 
-                        RendererManager.DrawTexture("o9k.outline_red", minimapPosition * 1.08f);
-                        RendererManager.DrawTexture(heroId, minimapPosition, UnitTextureType.MiniUnit);
+                        RendererManager.DrawImage("o9k.outline_red", minimapPosition * 1.08f);
+                        RendererManager.DrawImage(heroId, minimapPosition, UnitImageType.MiniUnit);
                     }
 
                     if (this.showOnMap)
@@ -122,15 +126,15 @@
                             continue;
                         }
 
-                        RendererManager.DrawTexture("o9k.outline_red", screenPosition * 1.12f);
-                        RendererManager.DrawTexture(heroId, screenPosition, UnitTextureType.RoundUnit);
+                        RendererManager.DrawImage("o9k.outline_red", screenPosition * 1.12f);
+                        RendererManager.DrawImage(heroId, screenPosition, UnitImageType.RoundUnit);
 
                         var attackPosition = screenPosition * 0.5f;
                         attackPosition.X += attackPosition.Width * 0.8f;
                         attackPosition.Y += attackPosition.Height * 0.6f;
 
-                        RendererManager.DrawTexture("o9k.outline_green_pct100", attackPosition * 1.2f);
-                        RendererManager.DrawTexture("o9k.attack", attackPosition);
+                        RendererManager.DrawImage("o9k.outline_green_pct100", attackPosition * 1.2f);
+                        RendererManager.DrawImage("o9k.attack", attackPosition);
                     }
                 }
             }

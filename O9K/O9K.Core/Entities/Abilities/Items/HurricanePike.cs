@@ -5,8 +5,14 @@
     using Base;
     using Base.Components;
     using Base.Types;
-
-    using Divine;
+    using Divine.Modifier;
+    using Divine.Numerics;
+    using Divine.Order;
+    using Divine.Modifier.EventArgs;
+    using Divine.Order.EventArgs;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Order.Orders.Components;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Entities.Units;
 
@@ -18,8 +24,6 @@
     using Managers.Entity;
 
     using Metadata;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.item_hurricane_pike)]
     public class HurricanePike : RangedAbility, IBlink, IHasRangeIncrease

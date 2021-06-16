@@ -12,14 +12,13 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Components;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class NetWorth : IHudModule
     {
@@ -64,17 +63,17 @@
 
         private void LoadTextures()
         {
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.net_worth_bg_top",
                 @"panorama\images\masks\chat_preview_opacity_mask_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0f, 0.6f)
+                    ColorTint = new Color(0, 0, 0, 153)
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.net_worth_arrow_ally",
                 @"panorama\images\hud\reborn\arrow_gold_dif_psd.vtex_c");
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.net_worth_arrow_enemy",
                 @"panorama\images\hud\reborn\arrow_plus_stats_red_psd.vtex_c");
         }
@@ -175,8 +174,8 @@
                 var textSize = 15 * ratio;
                 var measureText = (position.Width - (RendererManager.MeasureText(text, textSize).X + (24 * ratio))) / 2f;
 
-                RendererManager.DrawTexture("o9k.net_worth_bg_top", position);
-                RendererManager.DrawTexture(
+                RendererManager.DrawImage("o9k.net_worth_bg_top", position);
+                RendererManager.DrawImage(
                     this.ownerTeam == team ? "o9k.net_worth_arrow_ally" : "o9k.net_worth_arrow_enemy",
                     new RectangleF(position.X + measureText, position.Y + (4 * ratio), 12 * ratio, 12 * ratio));
 

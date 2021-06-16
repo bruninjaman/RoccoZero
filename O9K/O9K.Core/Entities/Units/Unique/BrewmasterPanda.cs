@@ -1,12 +1,11 @@
 ﻿namespace O9K.Core.Entities.Units.Unique
 {
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Units;
 
     using Helpers;
 
     using Metadata;
-
-    using SharpDX;
 
     [UnitName("npc_dota_brewmaster_fire_1")]
     [UnitName("npc_dota_brewmaster_fire_2")]

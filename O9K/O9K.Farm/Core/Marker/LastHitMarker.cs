@@ -154,7 +154,7 @@
 
                                 foreach (var ability in drawAbilities)
                                 {
-                                    RendererManager.DrawTexture(ability, new RectangleF(startPosition.X, startPosition.Y, barSize.Y, barSize.Y), TextureType.Ability);
+                                    RendererManager.DrawImage(ability, new RectangleF(startPosition.X, startPosition.Y, barSize.Y, barSize.Y), ImageType.Ability);
                                     startPosition += new Vector2(barSize.Y, 0);
                                 }
                             }
@@ -175,7 +175,7 @@
 
                                 foreach (var ability in damage.AbilityDamage.Select(x => x.Key))
                                 {
-                                    RendererManager.DrawTexture(ability.Name, new RectangleF(startPosition.X, startPosition.Y, barSize.Y, barSize.Y));
+                                    RendererManager.DrawImage(ability.Name, new RectangleF(startPosition.X, startPosition.Y, barSize.Y, barSize.Y));
                                     startPosition += new Vector2(barSize.Y, 0);
                                 }
                             }

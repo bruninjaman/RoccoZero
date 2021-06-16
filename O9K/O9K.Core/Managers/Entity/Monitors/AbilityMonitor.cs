@@ -3,8 +3,16 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Divine;
+    using Divine.Entity;
+    using Divine.Game;
+    using Divine.Update;
+    using Divine.Entity.Entities;
+    using Divine.Entity.EventArgs;
+    using Divine.Entity.Entities.EventArgs;
+    using Divine.Entity.Entities.PhysicalItems;
+    using Divine.Entity.Entities.Abilities.Items;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Entity.Entities.Abilities.Items.Components;
 
     using Entities.Abilities.Base;
     using Entities.Abilities.Base.Components;
@@ -24,27 +32,27 @@
 
         private readonly ItemSlot[] inventoryItemSlots =
         {
-            ItemSlot.MainSlot_1,
-            ItemSlot.MainSlot_2,
-            ItemSlot.MainSlot_3,
-            ItemSlot.MainSlot_4,
-            ItemSlot.MainSlot_5,
-            ItemSlot.MainSlot_6,
+            ItemSlot.MainSlot1,
+            ItemSlot.MainSlot2,
+            ItemSlot.MainSlot3,
+            ItemSlot.MainSlot4,
+            ItemSlot.MainSlot5,
+            ItemSlot.MainSlot6,
             ItemSlot.TownPortalScrollSlot,
             ItemSlot.NeutralItemSlot
         };
 
         private readonly ItemSlot[] stashItemSlots =
         {
-            ItemSlot.BackPack_1,
-            ItemSlot.BackPack_2,
-            ItemSlot.BackPack_3,
-            ItemSlot.StashSlot_1,
-            ItemSlot.StashSlot_2,
-            ItemSlot.StashSlot_3,
-            ItemSlot.StashSlot_4,
-            ItemSlot.StashSlot_5,
-            ItemSlot.StashSlot_6
+            ItemSlot.BackPack1,
+            ItemSlot.BackPack2,
+            ItemSlot.BackPack3,
+            ItemSlot.StashSlot1,
+            ItemSlot.StashSlot2,
+            ItemSlot.StashSlot3,
+            ItemSlot.StashSlot4,
+            ItemSlot.StashSlot5,
+            ItemSlot.StashSlot6
         };
 
         public AbilityMonitor()

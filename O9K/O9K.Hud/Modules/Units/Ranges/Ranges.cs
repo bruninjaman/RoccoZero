@@ -12,7 +12,8 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using MainMenu;
 
@@ -31,8 +32,8 @@
 
         public void Activate()
         {
-            RendererManager.LoadTexture("o9k.attack", @"panorama\images\hud\reborn\ping_icon_attack_psd.vtex_c");
-            RendererManager.LoadTexture("o9k.exp_plus", @"panorama\images\hud\reborn\levelup_plus_fill_psd.vtex_c");
+            RendererManager.LoadImage("o9k.attack", @"panorama\images\hud\reborn\ping_icon_attack_psd.vtex_c");
+            RendererManager.LoadImage("o9k.exp_plus", @"panorama\images\hud\reborn\levelup_plus_fill_psd.vtex_c");
 
             EntityManager9.UnitAdded += this.OnUnitAdded;
             EntityManager9.UnitRemoved += this.OnUnitRemoved;

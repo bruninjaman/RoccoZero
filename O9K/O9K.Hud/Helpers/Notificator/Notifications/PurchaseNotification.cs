@@ -1,10 +1,9 @@
 ﻿namespace O9K.Hud.Helpers.Notificator.Notifications
 {
     using Core.Entities.Abilities.Base;
-
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Abilities.Items;
 
     internal sealed class PurchaseNotification : Notification
     {
@@ -31,10 +30,10 @@
             var goldPosition = GetGoldPosition(position, heroPosition, itemPosition);
             var opacity = this.GetOpacity();
 
-            RendererManager.DrawTexture("o9k.notification_bg", position, opacity);
-            RendererManager.DrawTexture(this.heroName, heroPosition, TextureType.Unit, opacity);
-            RendererManager.DrawTexture("o9k.gold", goldPosition, opacity);
-            RendererManager.DrawTexture(this.itemName, itemPosition, TextureType.Ability, opacity);
+            RendererManager.DrawImage("o9k.notification_bg", position, opacity);
+            RendererManager.DrawImage(this.heroName, heroPosition, ImageType.Unit, opacity);
+            RendererManager.DrawImage("o9k.gold", goldPosition, opacity);
+            RendererManager.DrawImage(this.itemName, itemPosition, ImageType.Ability, opacity);
         }
 
         public override bool OnClick()

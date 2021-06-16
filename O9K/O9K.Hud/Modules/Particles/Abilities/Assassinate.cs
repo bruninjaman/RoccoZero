@@ -5,9 +5,12 @@
 
     using Core.Entities.Metadata;
     using Core.Logger;
-    using Core.Managers.Context;
-
-    using Divine;
+    using Divine.Modifier;
+    using Divine.Particle;
+    using Divine.Modifier.EventArgs;
+    using Divine.Particle.Components;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers.Notificator;
 

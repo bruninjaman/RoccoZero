@@ -3,7 +3,9 @@
     using Abilities.Base;
     using Abilities.Heroes.Alchemist;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Metadata;
 

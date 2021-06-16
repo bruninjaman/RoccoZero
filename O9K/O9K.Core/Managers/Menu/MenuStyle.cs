@@ -1,10 +1,8 @@
 ﻿namespace O9K.Core.Managers.Menu
 {
-    using Divine;
+    using Divine.Numerics;
 
     using Helpers;
-
-    using SharpDX;
 
     public class MenuStyle
     {

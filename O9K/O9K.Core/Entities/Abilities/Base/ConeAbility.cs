@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
 
     using Entities.Units;
 

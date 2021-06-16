@@ -1,8 +1,7 @@
 ﻿namespace O9K.Hud.Helpers.Notificator.Notifications
 {
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     internal sealed class AbilityHeroNotification : Notification
     {
@@ -27,10 +26,10 @@
             var abilityPosition = GetAbilityPosition(position, heroPosition, targetPosition);
             var opacity = this.GetOpacity();
 
-            RendererManager.DrawTexture("o9k.notification_bg", position, opacity);
-            RendererManager.DrawTexture(this.heroName, heroPosition, TextureType.Unit, opacity);
-            RendererManager.DrawTexture(this.abilityName, abilityPosition, TextureType.RoundAbility, opacity);
-            RendererManager.DrawTexture(this.targetName, targetPosition, TextureType.Unit, opacity);
+            RendererManager.DrawImage("o9k.notification_bg", position, opacity);
+            RendererManager.DrawImage(this.heroName, heroPosition, ImageType.Unit, opacity);
+            RendererManager.DrawImage(this.abilityName, abilityPosition, ImageType.RoundAbility, opacity);
+            RendererManager.DrawImage(this.targetName, targetPosition, ImageType.Unit, opacity);
         }
 
         private static RectangleF GetAbilityPosition(RectangleF position, RectangleF heroPosition, RectangleF itemPosition)

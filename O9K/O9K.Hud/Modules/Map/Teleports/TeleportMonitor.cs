@@ -12,14 +12,20 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Extensions;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Particle.EventArgs;
+    using Divine.Particle.Particles;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class TeleportMonitor : IHudModule
     {

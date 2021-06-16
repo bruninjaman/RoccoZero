@@ -4,8 +4,9 @@
 
     using Base;
     using Base.Types;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Entities.Units;
 
@@ -15,8 +16,6 @@
     using Helpers.Damage;
 
     using Metadata;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.queenofpain_sonic_wave)]
     public class SonicWave : ConeAbility, INuke

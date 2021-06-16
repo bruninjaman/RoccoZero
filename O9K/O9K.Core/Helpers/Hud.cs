@@ -4,11 +4,13 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Divine;
+    using Divine.Camera;
+    using Divine.Game;
+    using Divine.GameConsole;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Logger;
-
-    using SharpDX;
 
     public static class Hud
     {
@@ -28,7 +30,7 @@
 
         public static void CenterCameraOnHero(bool enabled = true)
         {
-            GameManager.ExecuteCommand((enabled ? "+" : "-") + "dota_camera_center_on_hero");
+            GameConsoleManager.ExecuteCommand((enabled ? "+" : "-") + "dota_camera_center_on_hero");
         }
 
         public static void DisplayWarning(string text, float time = 10)

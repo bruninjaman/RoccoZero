@@ -1,11 +1,11 @@
 ﻿namespace O9K.Core.Prediction.Collision
 {
-    using Divine.SDK.Extensions;
 
     using Entities;
     using Entities.Units;
 
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Extensions;
 
     public class CollisionObject
     {

@@ -4,12 +4,12 @@
 
     using Core.Entities.Units;
     using Core.Helpers;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
-
-    using SharpDX;
 
     internal class DrawableWispUnit : IDrawableAbility
     {
@@ -67,8 +67,8 @@
                 return;
             }
 
-            RendererManager.DrawTexture("o9k.outline_red", position * 1.12f);
-            RendererManager.DrawTexture(this.HeroTexture, position, TextureType.RoundUnit);
+            RendererManager.DrawImage("o9k.outline_red", position * 1.12f);
+            RendererManager.DrawImage(this.HeroTexture, position, ImageType.RoundUnit);
         }
 
         public void DrawOnMinimap(IMinimap minimap)
@@ -85,8 +85,8 @@
                 return;
             }
 
-            RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
-            RendererManager.DrawTexture(this.minimapHeroTexture, position, TextureType.MiniUnit);
+            RendererManager.DrawImage("o9k.outline_red", position * 1.08f);
+            RendererManager.DrawImage(this.minimapHeroTexture, position, ImageType.MiniUnit);
         }
 
         public void RemoveRange()

@@ -4,7 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using EventArgs;
 
@@ -13,8 +14,6 @@
     using Logger;
 
     using Newtonsoft.Json.Linq;
-
-    using SharpDX;
 
     public class MenuSelector : MenuSelector<string>
     {
@@ -285,7 +284,7 @@
 
             //arrow
             var size = this.MenuStyle.TextureArrowSize * 1.4f;
-            RendererManager.DrawTexture(
+            RendererManager.DrawImage(
                 this.MenuStyle.TextureLeftArrowKey,
                 new RectangleF(
                     (this.Position.X + this.Size.X) - size - (this.MenuStyle.RightIndent * 0.7f),

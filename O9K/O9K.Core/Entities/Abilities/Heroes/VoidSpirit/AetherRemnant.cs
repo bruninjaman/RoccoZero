@@ -7,19 +7,19 @@
     using Base.Components;
     using Base.Types;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Extensions;
+    using Divine.Numerics;
 
     using Entities.Units;
-
-    using Extensions;
 
     using Helpers;
 
     using Metadata;
 
     using Prediction.Data;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.void_spirit_aether_remnant)]
     public class AetherRemnant : LineAbility, IDisable, IAppliesImmobility
@@ -105,7 +105,7 @@
             //todo queue ?
             // simple position to get as close as possible to target
             var distance = Math.Max(this.Owner.GetAttackRange(), this.Owner.Distance(position) - this.CastRange);
-            var startPosition = position.Extend2D(this.Owner.Position, distance);
+            var startPosition = position.Extend(this.Owner.Position, distance);
 
             return this.UseAbility(startPosition, position, queue, bypass);
         }

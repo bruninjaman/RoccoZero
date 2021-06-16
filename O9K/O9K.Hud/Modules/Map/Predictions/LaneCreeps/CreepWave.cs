@@ -8,12 +8,11 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
 
     using LaneData;
-
-    using SharpDX;
 
     internal class CreepWave
     {

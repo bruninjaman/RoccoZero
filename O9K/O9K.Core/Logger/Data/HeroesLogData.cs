@@ -3,7 +3,9 @@
     using System;
     using System.Linq;
 
-    using Divine;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Players;
 
     [Serializable]
     internal sealed class HeroesLogData

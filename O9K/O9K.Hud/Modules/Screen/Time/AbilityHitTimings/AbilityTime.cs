@@ -3,9 +3,8 @@
     using Core.Entities.Abilities.Base;
     using Core.Extensions;
 
-    using Divine.SDK.Extensions;
-
-    using SharpDX;
+    using Divine.Extensions;
+    using Divine.Numerics;
 
     internal class AbilityTime
     {

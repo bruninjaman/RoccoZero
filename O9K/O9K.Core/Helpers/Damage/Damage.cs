@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Text;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     public enum DamageValue
     {

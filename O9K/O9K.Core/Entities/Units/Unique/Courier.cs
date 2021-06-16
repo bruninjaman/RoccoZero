@@ -2,19 +2,19 @@
 {
     using System;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
 
     using Managers.Entity;
 
     using Metadata;
 
-    using SharpDX;
-
     [UnitName("npc_dota_courier")]
     internal class Courier : Unit9
     {
-        private readonly Divine.Courier courier;
+        private readonly Divine.Entity.Entities.Units.Courier courier;
 
         private float hpBarOffset;
 
@@ -27,7 +27,7 @@
         {
             this.IsCourier = true;
             this.IsUnit = false;
-            this.courier = (Divine.Courier)baseUnit;
+            this.courier = (Divine.Entity.Entities.Units.Courier)baseUnit;
         }
 
         public bool IsFlying

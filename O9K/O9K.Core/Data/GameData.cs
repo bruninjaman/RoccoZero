@@ -2,12 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
-
-    using SharpDX;
 
     public static class GameData
     {

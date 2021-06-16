@@ -2,9 +2,8 @@
 {
     using Core.Helpers;
 
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     internal class PingNotification : Notification
     {
@@ -19,7 +18,7 @@
 
         public override void Draw(RectangleF position, IMinimap minimap)
         {
-            RendererManager.DrawTexture("o9k.ping", minimap.WorldToMinimap(this.pingPosition, 25 * Hud.Info.ScreenRatio * this.GetPingSize()));
+            RendererManager.DrawImage("o9k.ping", minimap.WorldToMinimap(this.pingPosition, 25 * Hud.Info.ScreenRatio * this.GetPingSize()));
         }
     }
 }

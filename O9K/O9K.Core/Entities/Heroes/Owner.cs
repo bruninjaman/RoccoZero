@@ -3,9 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Divine;
-    using Divine.SDK.Localization;
+    using Divine.Entity;
+    using Divine.Helpers;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Players;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Logger;
 

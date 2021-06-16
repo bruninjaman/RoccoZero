@@ -12,12 +12,16 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Modifier;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Update;
+    using Divine.Modifier.EventArgs;
+    using Divine.Particle.Components;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class HeroDeny //: IHudModule
     {

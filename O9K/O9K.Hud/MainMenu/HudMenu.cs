@@ -3,7 +3,7 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Renderer;
 
     using Modules;
 
@@ -80,7 +80,7 @@
 
         public void Activate()
         {
-            RendererManager.LoadTexture("o9k.me", @"panorama\images\textures\minimap_hero_self_psd.vtex_c");
+            RendererManager.LoadImage("o9k.me", @"panorama\images\textures\minimap_hero_self_psd.vtex_c");
             Context9.MenuManager.AddRootMenu(this.RootMenu);
         }
 

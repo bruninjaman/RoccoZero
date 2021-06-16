@@ -3,9 +3,8 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     internal sealed class HealthNotification : Notification
     {
@@ -28,19 +27,19 @@
             var manaSize = GetManaSize(textureSize);
             var opacity = this.GetOpacity();
 
-            RendererManager.DrawTexture("o9k.notification_bg", notificationSize, opacity);
-            RendererManager.DrawTexture(this.unit.Name, textureSize, TextureType.Unit, opacity);
+            RendererManager.DrawImage("o9k.notification_bg", notificationSize, opacity);
+            RendererManager.DrawImage(this.unit.Name, textureSize, ImageType.Unit, opacity);
 
-            RendererManager.DrawTexture("o9k.health_enemy_bg", healthSize, opacity);
-            RendererManager.DrawTexture("o9k.mana_bg", manaSize, opacity);
+            RendererManager.DrawImage("o9k.health_enemy_bg", healthSize, opacity);
+            RendererManager.DrawImage("o9k.mana_bg", manaSize, opacity);
 
             if (!this.unit.IsAlive)
             {
                 return;
             }
 
-            RendererManager.DrawTexture("o9k.health_enemy", this.GetCurrentHealthSize(healthSize), opacity);
-            RendererManager.DrawTexture("o9k.mana", this.GetCurrentManaSize(manaSize), opacity);
+            RendererManager.DrawImage("o9k.health_enemy", this.GetCurrentHealthSize(healthSize), opacity);
+            RendererManager.DrawImage("o9k.mana", this.GetCurrentManaSize(manaSize), opacity);
         }
 
         public override bool OnClick()

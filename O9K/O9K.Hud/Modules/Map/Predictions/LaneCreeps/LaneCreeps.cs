@@ -12,8 +12,14 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity.Entities;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.EventArgs;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Helpers;
 
@@ -21,7 +27,7 @@
 
     using MainMenu;
 
-    using SharpDX;
+    using O9K.Core.Managers.Renderer.Utils;
 
     internal class LaneCreeps : IHudModule
     {

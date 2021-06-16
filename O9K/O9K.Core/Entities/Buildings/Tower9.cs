@@ -1,12 +1,11 @@
 ﻿namespace O9K.Core.Entities.Buildings
 {
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Units.Buildings;
 
     using Helpers;
 
     using Managers.Entity;
-
-    using SharpDX;
 
     using Units;
 

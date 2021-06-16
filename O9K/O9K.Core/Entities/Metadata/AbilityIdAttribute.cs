@@ -2,7 +2,7 @@
 {
     using System;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Attribute = System.Attribute;
 

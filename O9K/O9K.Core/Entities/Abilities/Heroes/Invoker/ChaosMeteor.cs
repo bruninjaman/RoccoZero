@@ -6,16 +6,15 @@
     using Base.Types;
 
     using Core.Helpers;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Entities.Units;
 
     using Helpers;
 
     using Metadata;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.invoker_chaos_meteor)]
     public class ChaosMeteor : LineAbility, IInvokableAbility, IHarass

@@ -9,8 +9,9 @@
 
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Update;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Components;
 
     using Helpers.Notificator;
 

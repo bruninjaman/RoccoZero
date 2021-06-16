@@ -7,16 +7,15 @@
 
     using Core.Helpers;
     using Core.Helpers.Damage;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Entities.Units;
 
     using Helpers;
 
     using Metadata;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.invoker_sun_strike)]
     public class SunStrike : CircleAbility, IInvokableAbility, INuke
@@ -52,7 +51,7 @@
         public override float CastRange { get; } = 9999999;
 
         public bool IsInvoked => this.invokeHelper.IsInvoked;
-        public bool IsInvokedOnLastSlot => IsInvoked && GetAbilitySlot  == AbilitySlot.Slot_5;
+        public bool IsInvokedOnLastSlot => IsInvoked && GetAbilitySlot  == AbilitySlot.Slot5;
 
         public override bool IsUsable
         {

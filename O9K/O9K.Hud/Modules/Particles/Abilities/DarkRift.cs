@@ -10,14 +10,17 @@
     using Core.Managers.Entity;
     using Core.Managers.Particle;
     using Core.Managers.Renderer.Utils;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Modifier;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Modifier.EventArgs;
+    using Divine.Modifier.Modifiers;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers.Notificator;
 
     using MainMenu;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.abyssal_underlord_dark_rift)]
     internal class DarkRift : AbilityModule
@@ -80,10 +83,10 @@
                 var rec = new Rectangle9(position, new Vector2(30 * ratio));
                 var outlinePosition = rec * 1.17f;
 
-                RendererManager.DrawTexture(AbilityId.abyssal_underlord_dark_rift, rec, AbilityTextureType.Round);
-                RendererManager.DrawTexture("o9k.modifier_bg", rec);
-                RendererManager.DrawTexture("o9k.outline_green", outlinePosition);
-                RendererManager.DrawTexture("o9k.outline_black" + pct, outlinePosition);
+                RendererManager.DrawImage(AbilityId.abyssal_underlord_dark_rift, rec, AbilityImageType.Round);
+                RendererManager.DrawImage("o9k.modifier_bg", rec);
+                RendererManager.DrawImage("o9k.outline_green", outlinePosition);
+                RendererManager.DrawImage("o9k.outline_black" + pct, outlinePosition);
                 RendererManager.DrawText(time, rec, Color.White, FontFlags.Center | FontFlags.VerticalCenter, 22 * ratio);
             }
             catch (Exception e)

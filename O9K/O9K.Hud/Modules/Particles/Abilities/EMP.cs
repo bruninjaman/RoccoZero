@@ -7,14 +7,14 @@
     using Core.Logger;
     using Core.Managers.Context;
     using Core.Managers.Particle;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Update;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers.Notificator;
 
     using MainMenu;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.invoker_emp)]
     internal class EMP : AbilityModule

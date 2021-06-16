@@ -21,7 +21,7 @@
         {
             try
             {
-                RendererManager.LoadTexture("o9k.glyph", @"panorama\images\hud\reborn\icon_glyph_on_psd.vtex_c");
+                RendererManager.LoadImage("o9k.glyph", @"panorama\images\hud\reborn\icon_glyph_on_psd.vtex_c");
 
                 this.settings = new MainSettings(Context9.MenuManager);
                 this.autoUsage = new AutoUsage(this.settings);

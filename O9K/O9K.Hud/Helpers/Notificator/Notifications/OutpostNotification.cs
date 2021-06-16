@@ -2,9 +2,8 @@
 {
     using Core.Helpers;
 
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     internal sealed class OutpostNotification : Notification
     {
@@ -23,12 +22,12 @@
             var textureSize = GetTextureSize(notificationSize);
             var opacity = this.GetOpacity();
 
-            RendererManager.DrawTexture("o9k.notification_bg", notificationSize, opacity);
-            RendererManager.DrawTexture("o9k.outpost", textureSize, opacity);
+            RendererManager.DrawImage("o9k.notification_bg", notificationSize, opacity);
+            RendererManager.DrawImage("o9k.outpost", textureSize, opacity);
 
             foreach (var vector3 in this.positions)
             {
-                RendererManager.DrawTexture("o9k.ping", minimap.WorldToMinimap(vector3, 25 * Hud.Info.ScreenRatio * this.GetPingSize()));
+                RendererManager.DrawImage("o9k.ping", minimap.WorldToMinimap(vector3, 25 * Hud.Info.ScreenRatio * this.GetPingSize()));
             }
         }
 

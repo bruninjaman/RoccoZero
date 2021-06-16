@@ -4,7 +4,10 @@
     using Base.Components;
     using Base.Types;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Entities.Units;
 

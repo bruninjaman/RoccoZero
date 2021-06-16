@@ -14,16 +14,22 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity;
+    using Divine.Extensions;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Renderer;
+    using Divine.Update;
+    using Divine.Entity.EventArgs;
+    using Divine.Particle.EventArgs;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
     using Helpers.Notificator;
 
     using MainMenu;
-
-    using SharpDX;
 
     using AbilityData = Abilities.Data.AbilityData;
 
@@ -208,19 +214,19 @@
 
         private void LoadTextures()
         {
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.minimap_item_ward_observer",
                 @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(1f, 0.6f, 0f, 1f)
+                    ColorTint = new Color(255, 153, 0)
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.minimap_item_ward_sentry",
                 @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0.1f, 0.4f, 1f, 1f)
+                    ColorTint = new Color(25, 102, 25)
                 });
         }
 

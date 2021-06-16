@@ -2,7 +2,7 @@
 {
     using Core.Managers.Renderer.Utils;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     internal interface IMorphlingAbility
     {

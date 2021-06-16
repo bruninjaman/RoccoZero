@@ -1,11 +1,11 @@
 ﻿namespace O9K.Core.Entities.Abilities.Heroes.KeeperOfTheLight
 {
-    using System;
 
     using Base;
     using Base.Components;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 

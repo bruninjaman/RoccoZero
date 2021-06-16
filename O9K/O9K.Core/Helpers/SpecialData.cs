@@ -3,8 +3,10 @@
     using System;
     using System.Globalization;
     using System.Linq;
-
-    using Divine;
+    using Divine.Entity.Entities;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Exceptions;
 
@@ -130,7 +132,7 @@
 
                 if (data.Count == 0)
                 {
-                    this.value = ability.KeyValue.GetKeyValue(name)
+                    this.value = ability.KeyValue.GetSubKey(name)
                         .GetString().Split()
                         .Select(x => float.Parse(x, CultureInfo.InvariantCulture))
                         .ToArray();
@@ -212,7 +214,7 @@
                 }
                 else
                 {
-                    var keyData = abilityData.KeyValue.GetKeyValue(key).GetString();
+                    var keyData = abilityData.KeyValue.GetSubKey(key).GetString();
                     var stringValues = keyData.Split(' ');
 
                     this.value = new float[stringValues.Length];

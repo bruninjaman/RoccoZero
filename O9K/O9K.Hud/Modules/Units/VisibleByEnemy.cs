@@ -12,8 +12,11 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Particle;
+    using Divine.Update;
+    using Divine.Particle.Components;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Components;
 
     using MainMenu;
 

@@ -10,11 +10,9 @@
     using Core.Logger;
     using Core.Managers.Renderer.Utils;
 
-    using Divine;
-
-    using SharpDX;
-
-    using RectangleF = SharpDX.RectangleF;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     internal class HpMpUnit
     {

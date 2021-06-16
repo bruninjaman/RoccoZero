@@ -1,6 +1,6 @@
 ﻿namespace O9K.Core.Entities.Units.Unique
 {
-    using Divine;
+    using Divine.Entity.Entities.Units;
 
     using Metadata;
 

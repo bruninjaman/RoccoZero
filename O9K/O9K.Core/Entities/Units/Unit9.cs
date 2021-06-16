@@ -12,7 +12,18 @@
 
     using Data;
 
-    using Divine;
+    using Divine.Entity.Entities;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Entity.Entities.Units.Creeps;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Game;
+    using Divine.Modifier.Modifiers;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Extensions;
 
@@ -23,9 +34,7 @@
     using Managers.Entity;
     using Managers.Renderer.Utils;
 
-    using SharpDX;
-
-    using Attribute = Divine.Attribute;
+    using Attribute = Divine.Entity.Entities.Units.Heroes.Components.Attribute;
 
     public class Unit9 : Entity9
     {
@@ -654,7 +663,7 @@
                 {
                     try
                     {
-                        this.projectileSpeed = (this.IsHero ? Hero.GetKeyValueByName(this.Name) : Unit.GetKeyValueByName(this.Name)).GetKeyValue("ProjectileSpeed").GetInt32();
+                        this.projectileSpeed = (this.IsHero ? Hero.GetKeyValueByName(this.Name) : Unit.GetKeyValueByName(this.Name)).GetSubKey("ProjectileSpeed").GetInt32();
                     }
                     catch
                     {
@@ -707,7 +716,7 @@
                 {
                     try
                     {
-                        this.turnRate = (this.IsHero ? Hero.GetKeyValueByName(this.Name) : Unit.GetKeyValueByName(this.Name)).GetKeyValue("MovementTurnRate").GetSingle();
+                        this.turnRate = (this.IsHero ? Hero.GetKeyValueByName(this.Name) : Unit.GetKeyValueByName(this.Name)).GetSubKey("MovementTurnRate").GetSingle();
                     }
                     catch
                     {
@@ -815,7 +824,7 @@
                 {
                     try
                     {
-                        this.baseAttackAnimationPoint = (this.IsHero ? Hero.GetKeyValueByName(this.Name) : Unit.GetKeyValueByName(this.Name)).GetKeyValue("AttackAnimationPoint").GetSingle();
+                        this.baseAttackAnimationPoint = (this.IsHero ? Hero.GetKeyValueByName(this.Name) : Unit.GetKeyValueByName(this.Name)).GetSubKey("AttackAnimationPoint").GetSingle();
                     }
                     catch
                     {

@@ -2,7 +2,7 @@
 {
     using System;
 
-    using Divine;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Attribute = System.Attribute;
 

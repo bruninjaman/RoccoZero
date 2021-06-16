@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Windows.Input;
 
     using Core.Data;
     using Core.Helpers;
@@ -11,7 +10,9 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.GameConsole;
+    using Divine.Input;
+    using Divine.Input.EventArgs;
 
     using MainMenu;
 
@@ -47,7 +48,7 @@
             this.zoom.AddTranslation(Lang.Cn, "视野");
             this.zoom.AddTooltipTranslation(Lang.Cn, "默认值：" + GameData.DefaultZoom);
 
-            this.key = menu.Add(new MenuHoldKey("Key", Key.LeftCtrl)).SetTooltip("Change zoom with a key and mouse wheel");
+            this.key = menu.Add(new MenuHoldKey("Key", System.Windows.Input.Key.LeftCtrl)).SetTooltip("Change zoom with a key and mouse wheel");
             this.key.AddTranslation(Lang.Ru, "Клавиша");
             this.key.AddTooltipTranslation(Lang.Ru, "Изменить зум с помощью клавиши и колесика мыши");
             this.key.AddTranslation(Lang.Cn, "键");
@@ -82,7 +83,7 @@
 
                 foreach (var cmd in this.consoleCommands)
                 {
-                    ConVarManager.SetValue(cmd.Key, cmd.Value);
+                    GameConsoleManager.SetValue(cmd.Key, cmd.Value);
                 }
 
                 this.zoom.ValueChange += this.ZoomOnValueChange;
@@ -94,7 +95,7 @@
                 this.zoom.ValueChange -= this.ZoomOnValueChange;
                 InputManager.MouseWheel -= this.OnMouseWheel;
 
-                ConVarManager.SetValue("dota_camera_distance", GameData.DefaultZoom);
+                GameConsoleManager.SetValue("dota_camera_distance", GameData.DefaultZoom);
             }
         }
 
@@ -118,7 +119,7 @@
 
         private void ZoomOnValueChange(object sender, SliderEventArgs e)
         {
-            ConVarManager.SetValue("dota_camera_distance", e.NewValue);
+            GameConsoleManager.SetValue("dota_camera_distance", e.NewValue);
         }
     }
 }

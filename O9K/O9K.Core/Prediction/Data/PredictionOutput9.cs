@@ -4,7 +4,7 @@
 
     using Entities.Units;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     public class PredictionOutput9
     {

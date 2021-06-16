@@ -11,14 +11,16 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Modifier;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
+    using Divine.Modifier.EventArgs;
+    using Divine.Modifier.Modifiers;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class Information : IHudModule
     {
@@ -93,10 +95,10 @@
         public void Activate()
         {
             this.owner = EntityManager9.Owner;
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.attack_minimalistic",
                 @"panorama\images\hud\reborn\icon_damage_psd.vtex_c");
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.speed_minimalistic",
                 @"panorama\images\hud\reborn\icon_speed_psd.vtex_c");
 

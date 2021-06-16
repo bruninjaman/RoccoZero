@@ -6,10 +6,12 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Particle;
+    using Divine.Update;
+    using Divine.Particle.Components;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers.Notificator;
 

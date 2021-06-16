@@ -158,7 +158,7 @@ namespace O9K.AIO.Heroes.Invoker.Modes
             var screenPosition = RendererManager.WorldToScreen(position, true);
             if (!screenPosition.IsZero) return;
             var consolePosition = $"{position.X} {position.Y}";
-            GameManager.ExecuteCommand($"dota_camera_set_lookatpos {consolePosition}");
+            GameConsoleManager.ExecuteCommand($"dota_camera_set_lookatpos {consolePosition}");
         }
 
         protected override void Execute()

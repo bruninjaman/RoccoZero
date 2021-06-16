@@ -3,13 +3,14 @@
     using System;
     using System.Collections.Generic;
 
-    using Divine;
+    using Divine.Entity;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Logger;
 
     using Newtonsoft.Json.Linq;
-
-    using SharpDX;
 
     public abstract class MenuItem : IEquatable<MenuItem>
     {

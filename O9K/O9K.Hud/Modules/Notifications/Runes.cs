@@ -9,14 +9,16 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Abilities.Items;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Update;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class Runes : IHudModule
     {

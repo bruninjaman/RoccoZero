@@ -13,16 +13,15 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Helpers;
 
     using Heroes;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class Awareness : IHudModule
     {
@@ -113,8 +112,8 @@
                         continue;
                     }
 
-                    RendererManager.DrawTexture(hero.OutlineTextureName, rec * 1.2f);
-                    RendererManager.DrawTexture(hero.TextureName, rec, UnitTextureType.MiniUnit);
+                    RendererManager.DrawImage(hero.OutlineTextureName, rec * 1.2f);
+                    RendererManager.DrawImage(hero.TextureName, rec, UnitImageType.MiniUnit);
 
                     rec += new Vector2(this.textureSize + this.margin, 0);
                 }

@@ -6,9 +6,8 @@
     using Core.Logger;
     using Core.Managers.Renderer.Utils;
 
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     internal class HudAbility
     {
@@ -54,7 +53,7 @@
         {
             try
             {
-                RendererManager.DrawTexture(this.Ability.TextureName, position, TextureType.Ability);
+                RendererManager.DrawImage(this.Ability.TextureName, position, ImageType.Ability);
 
                 if (this.Ability.IsCasting || this.Ability.IsChanneling)
                 {
@@ -70,7 +69,7 @@
                     var level = this.Ability.Level;
                     if (level == 0)
                     {
-                        RendererManager.DrawTexture("o9k.ability_0lvl_bg", position);
+                        RendererManager.DrawImage("o9k.ability_0lvl_bg", position);
                         return;
                     }
 
@@ -78,7 +77,7 @@
                     var levelSize = RendererManager.MeasureText(levelText, position.Width * 0.45f);
                     var levelPosition = position.SinkToBottomLeft(levelSize.X, levelSize.Y * 0.8f);
 
-                    RendererManager.DrawTexture("o9k.ability_lvl_bg", levelPosition);
+                    RendererManager.DrawImage("o9k.ability_lvl_bg", levelPosition);
                     RendererManager.DrawText(levelText, levelPosition, Color.White, FontFlags.VerticalCenter, position.Width * 0.45f);
                 }
 
@@ -86,8 +85,8 @@
                 {
                     var chargesText = this.Ability.Charges.ToString("N0");
                     var chargesPosition = position.SinkToBottomRight(position.Width * 0.5f, position.Height * 0.5f);
-                    RendererManager.DrawTexture("o9k.charge_bg", chargesPosition);
-                    RendererManager.DrawTexture("o9k.outline_green", chargesPosition * 1.07f);
+                    RendererManager.DrawImage("o9k.charge_bg", chargesPosition);
+                    RendererManager.DrawImage("o9k.outline_green", chargesPosition * 1.07f);
                     RendererManager.DrawText(chargesText, chargesPosition, Color.White, FontFlags.Center, position.Width * 0.45f);
                 }
 
@@ -99,7 +98,7 @@
                 var cooldown = this.Ability.RemainingCooldown;
                 if (cooldown > 0)
                 {
-                    RendererManager.DrawTexture("o9k.ability_cd_bg", position);
+                    RendererManager.DrawImage("o9k.ability_cd_bg", position);
                     RendererManager.DrawText(
                         Math.Ceiling(cooldown).ToString("N0"),
                         position,
@@ -109,7 +108,7 @@
                 }
                 else if (this.Ability.ManaCost > this.Ability.Owner.Mana)
                 {
-                    RendererManager.DrawTexture("o9k.ability_mana_bg", position);
+                    RendererManager.DrawImage("o9k.ability_mana_bg", position);
                     RendererManager.DrawText(
                         Math.Ceiling((this.Ability.ManaCost - this.Ability.Owner.Mana) / this.Ability.Owner.ManaRegeneration)
                             .ToString("N0"),
@@ -120,7 +119,7 @@
                 }
                 else if (!this.Ability.IsUsable)
                 {
-                    RendererManager.DrawTexture("o9k.ability_0lvl_bg", position);
+                    RendererManager.DrawImage("o9k.ability_0lvl_bg", position);
                 }
             }
             catch (Exception e)
@@ -133,14 +132,14 @@
         {
             try
             {
-                RendererManager.DrawTexture("o9k.ability_minimal_bg", position);
+                RendererManager.DrawImage("o9k.ability_minimal_bg", position);
                 var levelHeight = position.Height * 0.2f;
 
                 var cooldown = this.Ability.RemainingCooldown;
                 if (cooldown > 0)
                 {
                     position = position.MoveTopBorder(cooldownSize * 0.8f);
-                    RendererManager.DrawTexture("o9k.ability_minimal_cd_bg", position);
+                    RendererManager.DrawImage("o9k.ability_minimal_cd_bg", position);
                     RendererManager.DrawText(
                         Math.Ceiling(cooldown).ToString("N0"),
                         position.MoveTopBorder(cooldownSize * 0.2f),
@@ -151,7 +150,7 @@
                 else if (this.Ability.ManaCost > this.Ability.Owner.Mana)
                 {
                     position = position.MoveTopBorder(cooldownSize * 0.8f);
-                    RendererManager.DrawTexture("o9k.ability_minimal_mana_bg", position);
+                    RendererManager.DrawImage("o9k.ability_minimal_mana_bg", position);
                     RendererManager.DrawText(
                         Math.Ceiling((this.Ability.ManaCost - this.Ability.Owner.Mana) / this.Ability.Owner.ManaRegeneration)
                             .ToString("N0"),
@@ -173,7 +172,7 @@
                 for (var i = 0; i < lvl; i++)
                 {
                     var lvlPos = new Rectangle9(rec.X + space, posY, levelDrawWidth, levelHeight);
-                    RendererManager.DrawTexture("o9k.ability_level_rec", lvlPos);
+                    RendererManager.DrawImage("o9k.ability_level_rec", lvlPos);
                     rec = rec.MoveLeftBorder(levelWidth);
                 }
             }

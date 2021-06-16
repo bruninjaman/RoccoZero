@@ -1,6 +1,7 @@
 ﻿namespace O9K.Hud.Modules.Units.Modifiers
 {
-    using Divine;
+    using Divine.Game;
+    using Divine.Modifier.Modifiers;
 
     internal class DrawableModifier
     {

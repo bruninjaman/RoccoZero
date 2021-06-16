@@ -8,14 +8,17 @@
 
     using Core.Entities.Abilities.Base;
     using Core.Managers.Entity;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;
-
-    using SharpDX;
 
     internal class AbilityFullData
     {

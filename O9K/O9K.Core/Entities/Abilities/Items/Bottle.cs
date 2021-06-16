@@ -3,7 +3,9 @@
     using Base;
     using Base.Types;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Runes.Components;
 
     using Entities.Units;
 
@@ -14,7 +16,7 @@
     [AbilityId(AbilityId.item_bottle)]
     public class Bottle : RangedAbility, IHealthRestore, IManaRestore
     {
-        private readonly Divine.Items.Bottle bottle;
+        private readonly Divine.Entity.Entities.Abilities.Items.Bottle bottle;
 
         private readonly SpecialData healthRestoreData;
 
@@ -23,7 +25,7 @@
         public Bottle(Ability ability)
             : base(ability)
         {
-            this.bottle = (Divine.Items.Bottle)ability;
+            this.bottle = (Divine.Entity.Entities.Abilities.Items.Bottle)ability;
             this.healthRestoreData = new SpecialData(ability, "health_restore");
             this.manaRestoreData = new SpecialData(ability, "mana_restore");
         }

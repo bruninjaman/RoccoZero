@@ -2,7 +2,7 @@
 {
     using System;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     public struct Rectangle9
     {

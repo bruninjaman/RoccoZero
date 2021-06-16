@@ -14,13 +14,16 @@
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Components;
+    using Divine.Input;
+    using Divine.Input.EventArgs;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 
@@ -202,20 +205,20 @@
 
         private void LoadTextures()
         {
-            RendererManager.LoadTexture("o9k.inventory_item_bg", @"panorama\images\hud\reborn\inventory_item_well_psd.vtex_c");
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage("o9k.inventory_item_bg", @"panorama\images\hud\reborn\inventory_item_well_psd.vtex_c");
+            RendererManager.LoadImage(
                 "o9k.inventory_tp_cd_bg",
                 @"panorama\images\masks\softedge_circle_sharp_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0f, 0.8f)
+                    ColorTint = new Color(0, 0, 0, 204)
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.inventory_item_cd_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0f, 0.6f)
+                    ColorTint = new Color(0, 0, 0, 153)
                 });
         }
 
@@ -232,7 +235,7 @@
                         continue;
                     }
 
-                    RendererManager.DrawTexture(unit.TextureName, new RectangleF(heroPosition.X, heroPosition.Y, this.heroSize.X, this.heroSize.Y), TextureType.Unit);
+                    RendererManager.DrawImage(unit.TextureName, new RectangleF(heroPosition.X, heroPosition.Y, this.heroSize.X, this.heroSize.Y), ImageType.Unit);
 
                     var borderPosition = new Rectangle9(
                         heroPosition.X + this.heroSize.X + 1,
@@ -242,7 +245,7 @@
 
                     for (var i = 0; i < 7; i++)
                     {
-                        RendererManager.DrawTexture("o9k.inventory_item_bg", borderPosition + new Vector2((this.itemSize.X + 1) * i, 0));
+                        RendererManager.DrawImage("o9k.inventory_item_bg", borderPosition + new Vector2((this.itemSize.X + 1) * i, 0));
                     }
 
                     foreach (var ability in unit.Abilities.OrderBy(x => x.Id == AbilityId.item_tpscroll))
@@ -254,15 +257,15 @@
                                 this.itemSize.X * 0.6f,
                                 this.itemSize.X * 0.6f);
 
-                            RendererManager.DrawTexture("o9k.outline", tpPosition + 1);
-                            RendererManager.DrawTexture(ability.TextureName, tpPosition, TextureType.RoundAbility);
+                            RendererManager.DrawImage("o9k.outline", tpPosition + 1);
+                            RendererManager.DrawImage(ability.TextureName, tpPosition, ImageType.RoundAbility);
 
                             if (this.showCooldown)
                             {
                                 var cooldown = ability.RemainingCooldown;
                                 if (cooldown > 0)
                                 {
-                                    RendererManager.DrawTexture("o9k.inventory_tp_cd_bg", tpPosition);
+                                    RendererManager.DrawImage("o9k.inventory_tp_cd_bg", tpPosition);
                                     RendererManager.DrawText(
                                         Math.Ceiling(cooldown).ToString("N0"),
                                         tpPosition,
@@ -282,7 +285,7 @@
 
                         var itemPosition = borderPosition - 4;
 
-                        RendererManager.DrawTexture(ability.TextureName, itemPosition, TextureType.Ability);
+                        RendererManager.DrawImage(ability.TextureName, itemPosition, ImageType.Ability);
 
                         if (this.showCharges && ability.IsDisplayingCharges)
                         {
@@ -299,7 +302,7 @@
                             var cooldown = ability.RemainingCooldown;
                             if (cooldown > 0)
                             {
-                                RendererManager.DrawTexture("o9k.inventory_item_cd_bg", itemPosition);
+                                RendererManager.DrawImage("o9k.inventory_item_cd_bg", itemPosition);
                                 RendererManager.DrawText(
                                     Math.Ceiling(cooldown).ToString("N0"),
                                     itemPosition,

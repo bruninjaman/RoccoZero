@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    using Divine;
+    using Divine.GameConsole;
 
     using Modules;
 
@@ -18,7 +18,7 @@
         {
             foreach (var cmd in this.consoleCommands)
             {
-                ConVarManager.SetValue(cmd.Key, cmd.Value);
+                GameConsoleManager.SetValue(cmd.Key, cmd.Value);
             }
         }
 

@@ -9,12 +9,12 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Update;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units.Components;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class Illusion : IHudModule
     {

@@ -10,7 +10,7 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu.Items;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     internal class HudUnit
     {

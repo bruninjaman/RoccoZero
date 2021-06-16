@@ -6,9 +6,11 @@
     using Base;
 
     using Core.Managers.Entity;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers.Notificator;
 

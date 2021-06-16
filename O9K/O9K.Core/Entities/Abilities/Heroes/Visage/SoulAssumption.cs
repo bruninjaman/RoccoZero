@@ -2,9 +2,9 @@
 {
     using Base;
     using Base.Types;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Entities.Units;
 

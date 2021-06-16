@@ -3,20 +3,17 @@
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Reflection;
-    using System.Threading;
 
     using Data;
-
-    using Divine;
-    using Divine.SDK.Managers.Log;
+    using Divine.Game;
+    using Divine.Log;
+    using Divine.Entity.Entities;
 
     using Exceptions;
 
     //using PlaySharp.Sentry;
     //using PlaySharp.Sentry.Data;
 
-    using SharpDX;
 
     public static class Logger
     {

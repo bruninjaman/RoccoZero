@@ -4,8 +4,9 @@
     using System.Collections.Generic;
 
     using Base;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Entities.Units;
 
@@ -16,8 +17,6 @@
     using Metadata;
 
     using Prediction.Data;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.dark_seer_wall_of_replica)]
     public class WallOfReplica : LineAbility

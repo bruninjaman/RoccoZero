@@ -2,7 +2,7 @@
 {
     using Core.Helpers;
 
-    using Divine;
+    using Divine.Renderer;
 
     using Helpers;
 
@@ -16,8 +16,8 @@
                 return;
             }
 
-            RendererManager.DrawTexture("o9k.outline_red", position * 1.12f);
-            RendererManager.DrawTexture(this.AbilityTexture, position, TextureType.RoundAbility);
+            RendererManager.DrawImage("o9k.outline_red", position * 1.12f);
+            RendererManager.DrawImage(this.AbilityTexture, position, ImageType.RoundAbility);
         }
 
         public override void DrawOnMinimap(IMinimap minimap)
@@ -28,8 +28,8 @@
                 return;
             }
 
-            RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
-            RendererManager.DrawTexture(this.AbilityTexture, position, TextureType.RoundAbility);
+            RendererManager.DrawImage("o9k.outline_red", position * 1.08f);
+            RendererManager.DrawImage(this.AbilityTexture, position, ImageType.RoundAbility);
         }
     }
 }

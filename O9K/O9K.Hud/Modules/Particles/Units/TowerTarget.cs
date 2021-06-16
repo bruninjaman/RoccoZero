@@ -9,12 +9,15 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Update;
+    using Divine.Entity.Entities;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.EventArgs;
+    using Divine.Entity.Entities.Units.Buildings;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class TowerTarget : IHudModule
     {

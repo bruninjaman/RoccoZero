@@ -61,7 +61,7 @@
                     return;
                 }
 
-                UpdateManager.BeginInvoke(200, () => GameManager.ExecuteCommand("dota_courier_burst"));
+                UpdateManager.BeginInvoke(200, () => GameConsoleManager.ExecuteCommand("dota_courier_burst"));
             }
             catch (Exception ex)
             {

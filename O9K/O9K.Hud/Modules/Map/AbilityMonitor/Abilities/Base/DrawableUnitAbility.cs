@@ -3,12 +3,16 @@
     using System;
 
     using Core.Helpers;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Renderer;
+    using Divine.Entity.Entities;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
-
-    using SharpDX;
 
     internal class DrawableUnitAbility : IDrawableAbility
     {
@@ -82,27 +86,27 @@
 
             if (time < this.ShowHeroUntil)
             {
-                RendererManager.DrawTexture("o9k.outline_red", position * 1.12f);
-                RendererManager.DrawTexture(this.HeroTexture, position, UnitTextureType.RoundUnit);
+                RendererManager.DrawImage("o9k.outline_red", position * 1.12f);
+                RendererManager.DrawImage(this.HeroTexture, position, UnitImageType.RoundUnit);
 
                 var abilityTexturePosition = position * 0.5f;
                 abilityTexturePosition.X += abilityTexturePosition.Width * 0.8f;
                 abilityTexturePosition.Y += abilityTexturePosition.Height * 0.6f;
 
-                RendererManager.DrawTexture("o9k.outline_green_pct100", abilityTexturePosition * 1.2f);
-                RendererManager.DrawTexture(this.AbilityTexture, abilityTexturePosition, TextureType.RoundAbility);
+                RendererManager.DrawImage("o9k.outline_green_pct100", abilityTexturePosition * 1.2f);
+                RendererManager.DrawImage(this.AbilityTexture, abilityTexturePosition, ImageType.RoundAbility);
             }
             else
             {
-                RendererManager.DrawTexture("o9k.outline_red", position);
+                RendererManager.DrawImage("o9k.outline_red", position);
 
                 if (this.ShowTimer)
                 {
                     var pct = (int)(((time - this.addedTime) / this.Duration) * 100);
-                    RendererManager.DrawTexture("o9k.outline_black" + Math.Min(pct, 100), position * 1.05f);
+                    RendererManager.DrawImage("o9k.outline_black" + Math.Min(pct, 100), position * 1.05f);
                 }
 
-                RendererManager.DrawTexture(this.AbilityTexture, position * 0.8f, TextureType.RoundAbility);
+                RendererManager.DrawImage(this.AbilityTexture, position * 0.8f, ImageType.RoundAbility);
             }
         }
 
@@ -119,8 +123,8 @@
                 return;
             }
 
-            RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
-            RendererManager.DrawTexture(this.MinimapHeroTexture, position, UnitTextureType.MiniUnit);
+            RendererManager.DrawImage("o9k.outline_red", position * 1.08f);
+            RendererManager.DrawImage(this.MinimapHeroTexture, position, UnitImageType.MiniUnit);
         }
 
         public void DrawRange()

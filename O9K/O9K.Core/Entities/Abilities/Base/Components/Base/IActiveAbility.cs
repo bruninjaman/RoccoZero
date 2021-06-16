@@ -1,15 +1,16 @@
 ﻿namespace O9K.Core.Entities.Abilities.Base.Components.Base
 {
     using System.Collections.Generic;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Runes;
+    using Divine.Entity.Entities.Trees;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Entities.Units;
 
     using Prediction.Collision;
     using Prediction.Data;
-
-    using SharpDX;
 
     public interface IActiveAbility
     {

@@ -1,12 +1,11 @@
 ﻿namespace O9K.Core.Entities.Units.Unique
 {
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Units;
 
     using Helpers;
 
     using Metadata;
-
-    using SharpDX;
 
     [UnitName("npc_dota_warlock_golem_1")]
     [UnitName("npc_dota_warlock_golem_2")]

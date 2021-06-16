@@ -11,8 +11,9 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 
@@ -130,8 +131,8 @@
                         scale = 2 - scale;
                     }
 
-                    RendererManager.DrawTexture("o9k.outline_green", position * scale * 1.3f);
-                    RendererManager.DrawTexture(ability.TextureName, position * scale, TextureType.RoundAbility);
+                    RendererManager.DrawImage("o9k.outline_green", position * scale * 1.3f);
+                    RendererManager.DrawImage(ability.TextureName, position * scale, ImageType.RoundAbility);
                 }
             }
             catch (InvalidOperationException)

@@ -10,9 +10,9 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
-    using Divine.SDK.Localization;
+    using Divine.Helpers;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;

@@ -3,9 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Input;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Input.EventArgs;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Entities.Heroes;
     using Entities.Units;
@@ -17,8 +20,6 @@
     using Logger;
 
     using Newtonsoft.Json.Linq;
-
-    using SharpDX;
 
     public class MenuHeroPriorityChanger : MenuItem
     {
@@ -117,7 +118,7 @@
             }
             else
             {
-                RendererManager.LoadTexture(id);
+                RendererManager.LoadImage(id);
             }
 
             this.AddHero(id.ToString(), value, priority);
@@ -408,7 +409,7 @@
 
             foreach (var texture in this.loadTextures)
             {
-                RendererManager.LoadTexture(texture);
+                RendererManager.LoadImage(texture);
             }
 
             EntityManager9.UnitAdded += this.OnUnitAdded;
@@ -421,14 +422,14 @@
             //drag ability
             if (this.drawDrag)
             {
-                RendererManager.DrawTexture(
+                RendererManager.DrawImage(
                     this.dragItem,
                     new RectangleF(
                         this.dragAbilityPosition.X,
                         this.dragAbilityPosition.Y,
                         this.MenuStyle.TextureHeroSize.X,
                         this.MenuStyle.TextureHeroSize.Y),
-                    TextureType.Unit);
+                    ImageType.Unit);
 
                 this.dragTargetAbility = null;
             }
@@ -480,10 +481,10 @@
                         this.MenuStyle.TextureHeroSize.Y + 3),
                     ability.Value ? Color.LightGreen : Color.Red,
                     1.5f);
-                RendererManager.DrawTexture(
+                RendererManager.DrawImage(
                     ability.Key,
                     new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureHeroSize.X, this.MenuStyle.TextureHeroSize.Y),
-                    TextureType.Unit);
+                    ImageType.Unit);
 
                 if (ability.Value)
                 {

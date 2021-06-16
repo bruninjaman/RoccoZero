@@ -5,9 +5,8 @@
     using Core.Entities.Heroes;
     using Core.Entities.Units;
 
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     internal class InformationUnit
     {
@@ -44,7 +43,7 @@
 
             if (showDamage)
             {
-                RendererManager.DrawTexture("o9k.attack_minimalistic", new RectangleF(iconPosition.X, iconPosition.Y, iconSize, iconSize));
+                RendererManager.DrawImage("o9k.attack_minimalistic", new RectangleF(iconPosition.X, iconPosition.Y, iconSize, iconSize));
                 RendererManager.DrawText(this.Hits == 0 ? "?" : this.Hits.ToString(), textPosition, Color.White, size);
 
                 iconPosition += new Vector2(0, size);
@@ -53,7 +52,7 @@
 
             if (showSpeed)
             {
-                RendererManager.DrawTexture("o9k.speed_minimalistic", new RectangleF(iconPosition.X, iconPosition.Y, iconSize, iconSize));
+                RendererManager.DrawImage("o9k.speed_minimalistic", new RectangleF(iconPosition.X, iconPosition.Y, iconSize, iconSize));
 
                 var speed = (int)(mySpeed - this.Unit.Speed);
                 if (speed >= 0)

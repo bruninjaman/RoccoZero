@@ -1,8 +1,7 @@
 ﻿namespace O9K.Core.Managers.Jungle.Camp
 {
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Components;
 
     public interface IJungleCamp
     {

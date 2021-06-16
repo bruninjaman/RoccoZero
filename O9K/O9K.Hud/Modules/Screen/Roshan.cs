@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using System.Windows.Input;
 
     using Core.Data;
     using Core.Entities.Abilities.Base;
@@ -15,15 +14,23 @@
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Game;
+    using Divine.Game.EventArgs;
+    using Divine.GameConsole;
+    using Divine.Input;
+    using Divine.Input.EventArgs;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Helpers;
 
     using MainMenu;
 
-    using SharpDX;
-
     using Drawer = Helpers.Drawer;
+    using Key = System.Windows.Input.Key;
 
     internal class RoshanTimer : IHudModule
     {
@@ -210,7 +217,7 @@
                 var start = TimeSpan.FromSeconds(time - (GameData.RoshanMaxRespawnTime - GameData.RoshanMinRespawnTime)).ToString("mss");
                 var end = TimeSpan.FromSeconds(time).ToString("mss");
 
-                GameManager.ExecuteCommand("say_team \"" + start + " " + end + " rosh\"");
+                GameConsoleManager.ExecuteCommand("say_team \"" + start + " " + end + " rosh\"");
                 this.clickSleeper.Sleep(30);
             }
             catch (Exception ex)
@@ -221,13 +228,13 @@
 
         private void LoadTextures()
         {
-            RendererManager.LoadTexture("o9k.roshan_icon", @"panorama\images\hud\icon_roshan_psd.vtex_c");
+            RendererManager.LoadImage("o9k.roshan_icon", @"panorama\images\hud\icon_roshan_psd.vtex_c");
 
             foreach (var ids in this.roshanDrop)
             {
                 foreach (var id in ids)
                 {
-                    RendererManager.LoadTexture(id, AbilityTextureType.Round);
+                    RendererManager.LoadImage(id, AbilityImageType.Round);
                 }
             }
         }
@@ -348,22 +355,22 @@
                 {
                     if (spawned)
                     {
-                        RendererManager.DrawTexture(attacked ? "o9k.outline_red" : "o9k.outline_green", position * scale * 1.15f);
+                        RendererManager.DrawImage(attacked ? "o9k.outline_red" : "o9k.outline_green", position * scale * 1.15f);
                     }
                     else
                     {
-                        RendererManager.DrawTexture("o9k.outline_yellow", position * 1.15f);
+                        RendererManager.DrawImage("o9k.outline_yellow", position * 1.15f);
                     }
                 }
                 else
                 {
-                    RendererManager.DrawTexture(cd > GameData.RoshanMinRespawnTime ? "o9k.outline_green" : "o9k.outline_yellow", position * scale * 1.15f);
+                    RendererManager.DrawImage(cd > GameData.RoshanMinRespawnTime ? "o9k.outline_green" : "o9k.outline_yellow", position * scale * 1.15f);
 
                     var pct = (int)((cd / GameData.RoshanMaxRespawnTime) * 100);
-                    RendererManager.DrawTexture("o9k.outline_black" + pct, position * scale * 1.17f);
+                    RendererManager.DrawImage("o9k.outline_black" + pct, position * scale * 1.17f);
                 }
 
-                RendererManager.DrawTexture("o9k.roshan_icon", position * scale);
+                RendererManager.DrawImage("o9k.roshan_icon", position * scale);
 
                 var center = position.Center + new Vector2(0, position.Height * 0.65f);
                 var items = this.roshan?.IsValid == true && this.roshan.BaseInventory != null
@@ -375,10 +382,10 @@
 
                 for (var i = 0; i < items.Length; i++)
                 {
-                    RendererManager.DrawTexture(
+                    RendererManager.DrawImage(
                         items[i],
                         new Rectangle9(start + new Vector2((i * abilitiesSize) + (i * gap), 0), abilitiesSize, abilitiesSize),
-                        AbilityTextureType.Round);
+                        AbilityImageType.Round);
                 }
 
                 var hpWidth = 150 * Hud.Info.ScreenRatio;
@@ -386,8 +393,8 @@
                 var hpRect = new Rectangle9(hpCenter.X, hpCenter.Y, hpWidth, 24 * Hud.Info.ScreenRatio);
 
                 var hp = spawned ? Math.Min(this.health + (GameManager.GameTime - lastTime) * 20, maximumHealth) : 0;
-                RendererManager.DrawTexture("o9k.health_enemy_bg", hpRect);
-                RendererManager.DrawTexture("o9k.health_enemy", new(hpRect.X, hpRect.Y, (hp / maximumHealth) * hpRect.Width, hpRect.Height), 0.7f);
+                RendererManager.DrawImage("o9k.health_enemy_bg", hpRect);
+                RendererManager.DrawImage("o9k.health_enemy", new(hpRect.X, hpRect.Y, (hp / maximumHealth) * hpRect.Width, hpRect.Height), 0.7f);
 
                 var text = $"{(int)hp}/{(int)maximumHealth}";
                 var fontSize = 15 * Hud.Info.ScreenRatio;

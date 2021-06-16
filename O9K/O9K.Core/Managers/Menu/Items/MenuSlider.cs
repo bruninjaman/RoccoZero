@@ -2,15 +2,16 @@
 {
     using System;
 
-    using Divine;
+    using Divine.Input;
+    using Divine.Input.EventArgs;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using EventArgs;
 
     using Logger;
 
     using Newtonsoft.Json.Linq;
-
-    using SharpDX;
 
     public class MenuSlider : MenuItem
     {

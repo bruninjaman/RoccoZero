@@ -6,14 +6,13 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Components;
 
     using MainMenu;
 
     using Modules;
-
-    using SharpDX;
 
     internal interface ITopPanel
     {

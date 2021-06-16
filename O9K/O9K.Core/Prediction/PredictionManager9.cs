@@ -8,17 +8,16 @@
 
     using Data;
 
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Numerics;
 
     using Entities.Units;
 
     using Extensions;
 
-    using Managers.Entity;
-
     using Geometry;
 
-    using SharpDX;
+    using Managers.Entity;
 
     public class PredictionManager9 : IPredictionManager9
     {

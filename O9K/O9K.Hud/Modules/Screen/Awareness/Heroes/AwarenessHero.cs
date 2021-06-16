@@ -7,11 +7,10 @@
     using Core.Entities.Heroes;
     using Core.Entities.Units;
     using Core.Extensions;
-
-    using Divine;
-    using Divine.SDK.Extensions;
-
-    using SharpDX;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities.Components;
 
     internal class AwarenessHero
     {

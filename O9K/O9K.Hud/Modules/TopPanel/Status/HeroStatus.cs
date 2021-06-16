@@ -14,15 +14,19 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Game;
+    using Divine.Modifier;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Game.EventArgs;
+    using Divine.Modifier.EventArgs;
+    using Divine.Entity.Entities.Players;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
+    using Divine.Extensions;
 
     internal class HeroStatus : IHudModule
     {
@@ -197,85 +201,85 @@
 
         private void LoadTextures()
         {
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.health_ally",
                 @"panorama\images\hud\reborn\topbar_health_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
                     Brightness = -60
                 });
-            RendererManager.LoadTexture("o9k.health_ally_visible", @"panorama\images\hud\reborn\topbar_health_psd.vtex_c");
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage("o9k.health_ally_visible", @"panorama\images\hud\reborn\topbar_health_psd.vtex_c");
+            RendererManager.LoadImage(
                 "o9k.health_ally_bg",
                 @"panorama\images\hud\reborn\topbar_health_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
                     Brightness = -170
                 });
-            RendererManager.LoadTexture("o9k.health_enemy", @"panorama\images\hud\reborn\topbar_health_dire_psd.vtex_c");
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage("o9k.health_enemy", @"panorama\images\hud\reborn\topbar_health_dire_psd.vtex_c");
+            RendererManager.LoadImage(
                 "o9k.health_enemy_invis",
                 @"panorama\images\hud\reborn\topbar_health_dire_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
                     Brightness = -60
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.health_enemy_bg",
                 @"panorama\images\hud\reborn\topbar_health_dire_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
                     Brightness = -170
                 });
-            RendererManager.LoadTexture("o9k.mana", @"panorama\images\hud\reborn\topbar_mana_psd.vtex_c");
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage("o9k.mana", @"panorama\images\hud\reborn\topbar_mana_psd.vtex_c");
+            RendererManager.LoadImage(
                 "o9k.mana_invis",
                 @"panorama\images\hud\reborn\topbar_mana_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
                     Brightness = -60
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.mana_bg",
                 @"panorama\images\hud\reborn\topbar_mana_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
                     Brightness = -170
                 });
-            RendererManager.LoadTexture("o9k.ult_rdy", @"panorama\images\hud\reborn\ult_ready_psd.vtex_c");
-            RendererManager.LoadTexture("o9k.ult_cd", @"panorama\images\hud\reborn\ult_cooldown_psd.vtex_c");
-            RendererManager.LoadTexture("o9k.ult_mp", @"panorama\images\hud\reborn\ult_no_mana_psd.vtex_c");
-            RendererManager.LoadTexture("o9k.buyback", @"panorama\images\hud\reborn\buyback_header_psd.vtex_c");
-            RendererManager.LoadTexture("o9k.buyback_alive", @"panorama\images\hud\reborn\buyback_topbar_alive_psd.vtex_c");
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage("o9k.ult_rdy", @"panorama\images\hud\reborn\ult_ready_psd.vtex_c");
+            RendererManager.LoadImage("o9k.ult_cd", @"panorama\images\hud\reborn\ult_cooldown_psd.vtex_c");
+            RendererManager.LoadImage("o9k.ult_mp", @"panorama\images\hud\reborn\ult_no_mana_psd.vtex_c");
+            RendererManager.LoadImage("o9k.buyback", @"panorama\images\hud\reborn\buyback_header_psd.vtex_c");
+            RendererManager.LoadImage("o9k.buyback_alive", @"panorama\images\hud\reborn\buyback_topbar_alive_psd.vtex_c");
+            RendererManager.LoadImage(
                 "o9k.top_ult_cd_bg",
                 @"panorama\images\masks\softedge_circle_sharp_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0f, 0.5f)
+                    ColorTint = new Color(0, 0, 0, 127)
                 });
-            RendererManager.LoadTexture("o9k.outline", @"panorama\images\hud\reborn\buff_outline_psd.vtex_c");
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage("o9k.outline", @"panorama\images\hud\reborn\buff_outline_psd.vtex_c");
+            RendererManager.LoadImage(
                 "o9k.outline_green_pct",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 1f, 0f, 1f),
+                    ColorTint = new Color(0, 255, 0),
                     IsSliced = true
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.outline_blue_pct",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0.4f, 0.9f, 1f),
+                    ColorTint = new Color(0, 102, 229),
                     Brightness = 40,
                     IsSliced = true
                 });
 
             foreach (var abilityId in this.drawItems)
             {
-                RendererManager.LoadTexture(abilityId, AbilityTextureType.Round);
+                RendererManager.LoadImage(abilityId, AbilityImageType.Round);
             }
         }
 

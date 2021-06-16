@@ -9,8 +9,9 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Components;
 
     using Helpers;
 
@@ -60,7 +61,7 @@
                 return;
             }
 
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.courier",
                 @"panorama\images\hud\reborn\icon_courier_standard_psd.vtex_c");
             this.ownerTeam = EntityManager9.Owner.Team;
@@ -98,7 +99,7 @@
                             continue;
                         }
 
-                        RendererManager.DrawTexture("o9k.courier", minimapPosition);
+                        RendererManager.DrawImage("o9k.courier", minimapPosition);
                     }
 
                     if (this.showOnMap && !courier.IsVisible)
@@ -109,7 +110,7 @@
                             continue;
                         }
 
-                        RendererManager.DrawTexture("o9k.courier", mapPosition);
+                        RendererManager.DrawImage("o9k.courier", mapPosition);
                     }
                 }
             }

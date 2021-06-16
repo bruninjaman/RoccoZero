@@ -2,9 +2,11 @@
 {
     using System;
 
-    using Divine;
-using Divine.SDK.Extensions;
-    using Divine.SDK.Localization;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Abilities.Items;
+    using Divine.Extensions;
+    using Divine.Game;
 
     using Entities.Units;
 
@@ -160,7 +162,7 @@ using Divine.SDK.Extensions;
                 {
                     try
                     {
-                        this.displayName = LocalizationHelper.LocalizeAbilityName(this.Name);
+                        this.displayName = Divine.Helpers.LocalizationHelper.LocalizeAbilityName(this.Name);
                     }
                     catch
                     {

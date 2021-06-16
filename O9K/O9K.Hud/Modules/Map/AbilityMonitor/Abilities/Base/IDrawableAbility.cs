@@ -1,10 +1,9 @@
 ﻿namespace O9K.Hud.Modules.Map.AbilityMonitor.Abilities.Base
 {
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
-
-    using SharpDX;
 
     internal interface IDrawableAbility
     {

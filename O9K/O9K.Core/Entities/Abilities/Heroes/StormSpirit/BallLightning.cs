@@ -4,14 +4,13 @@
 
     using Base;
     using Base.Types;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 
     using Metadata;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.storm_spirit_ball_lightning)]
     public class BallLightning : LineAbility, IBlink

@@ -1,21 +1,10 @@
-﻿//namespace O9K.Hud.Modules.Notifications
-//{
-//    using System.Linq;
-
-//    using Core.Data;
-//    using Core.Helpers;
-//    using Core.Managers.Menu;
-//    using Core.Managers.Menu.EventArgs;
-//    using Core.Managers.Menu.Items;
-
-//    using Divine;
-
+﻿
 //    using Helpers.Notificator;
 //    using Helpers.Notificator.Notifications;
 
 //    using MainMenu;
 
-//    using SharpDX;
+//    using Divine.Numerics;
 
 //    internal class Outposts : IHudModule
 //    {

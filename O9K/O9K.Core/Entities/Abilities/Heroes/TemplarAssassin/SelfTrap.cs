@@ -2,8 +2,9 @@
 {
     using Base;
     using Base.Types;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 

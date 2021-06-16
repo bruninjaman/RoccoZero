@@ -4,10 +4,8 @@
     using System.Linq;
 
     using Core.Entities.Units;
-
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Modifier.Modifiers;
 
     internal class ModifierUnit
     {

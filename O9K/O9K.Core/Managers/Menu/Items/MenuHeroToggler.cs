@@ -3,8 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Entities.Heroes;
     using Entities.Units;
@@ -16,8 +17,6 @@
     using Logger;
 
     using Newtonsoft.Json.Linq;
-
-    using SharpDX;
 
     public class MenuHeroToggler : MenuItem
     {
@@ -160,7 +159,7 @@
 
             foreach (var texture in this.loadTextures)
             {
-                RendererManager.LoadTexture(texture);
+                RendererManager.LoadImage(texture);
             }
 
             EntityManager9.UnitAdded += this.OnUnitAdded;
@@ -187,10 +186,10 @@
                     ability.Value ? Color.LightGreen : Color.Red,
                     0);
 
-                RendererManager.DrawTexture(
+                RendererManager.DrawImage(
                     ability.Key,
                     new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureHeroSize.X, this.MenuStyle.TextureHeroSize.Y),
-                    TextureType.Unit);
+                    ImageType.Unit);
 
                 startPosition -= new Vector2(this.MenuStyle.TextureHeroSize.X + 4, 0);
             }
@@ -211,7 +210,7 @@
             }
             else
             {
-                RendererManager.LoadTexture(id);
+                RendererManager.LoadImage(id);
             }
 
             if (this.savedHeroes.TryGetValue(name, out var savedValue))

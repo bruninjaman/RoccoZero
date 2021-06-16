@@ -2,7 +2,8 @@
 {
     using System;
 
-    using Divine;
+    using Divine.Entity.Entities;
+    using Divine.Entity.Entities.Players;
 
     [Serializable]
     internal sealed class EntityLogData

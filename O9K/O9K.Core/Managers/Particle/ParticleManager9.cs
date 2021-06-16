@@ -2,8 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-
-    using Divine;
+    using Divine.Particle;
+    using Divine.Update;
+    using Divine.Particle.EventArgs;
 
     using Logger;
 

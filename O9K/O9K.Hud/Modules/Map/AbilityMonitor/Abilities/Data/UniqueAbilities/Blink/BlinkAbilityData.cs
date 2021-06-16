@@ -8,8 +8,11 @@
 
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Update;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units;
 
     using Helpers.Notificator;
 

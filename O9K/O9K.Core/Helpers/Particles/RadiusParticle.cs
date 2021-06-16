@@ -2,11 +2,11 @@
 {
     using System;
 
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Particle.Particles;
 
     using Entities.Units;
-
-    using SharpDX;
 
     public class RadiusParticle : IDisposable
     {

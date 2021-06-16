@@ -10,8 +10,8 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Components;
 
     using Helpers;
 
@@ -109,8 +109,8 @@
                         var size = 25 * Hud.Info.ScreenRatio;
                         var minimapPosition = this.minimap.WorldToMinimap(position, size);
 
-                        RendererManager.DrawTexture("o9k.outline_yellow", minimapPosition * 1.08f);
-                        RendererManager.DrawTexture(unit.Name, minimapPosition, UnitTextureType.MiniUnit);
+                        RendererManager.DrawImage("o9k.outline_yellow", minimapPosition * 1.08f);
+                        RendererManager.DrawImage(unit.Name, minimapPosition, UnitImageType.MiniUnit);
                     }
 
                     if (this.showOnMap)
@@ -123,8 +123,8 @@
                             continue;
                         }
 
-                        RendererManager.DrawTexture("o9k.outline_yellow", mapPosition * 1.15f);
-                        RendererManager.DrawTexture(unit.Name, mapPosition, UnitTextureType.RoundUnit);
+                        RendererManager.DrawImage("o9k.outline_yellow", mapPosition * 1.15f);
+                        RendererManager.DrawImage(unit.Name, mapPosition, UnitImageType.RoundUnit);
                     }
                 }
             }

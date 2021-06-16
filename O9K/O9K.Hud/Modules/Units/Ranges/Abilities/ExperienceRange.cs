@@ -6,9 +6,11 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Particle.Components;
+    using Divine.Particle.Particles;
+    using Divine.Update;
 
     internal class ExperienceRange : IRange
     {

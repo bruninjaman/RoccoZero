@@ -5,12 +5,12 @@
     using Base;
 
     using Core.Helpers;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Units;
 
     using Helpers;
-
-    using SharpDX;
 
     internal class DrawableWardAbility : DrawableAbility
     {
@@ -67,9 +67,9 @@
             }
 
             var pct = (int)((GameManager.RawGameTime - this.AddedTime) / this.Duration * 100);
-            RendererManager.DrawTexture("o9k.outline_red", position * 1.2f);
-            RendererManager.DrawTexture("o9k.outline_black" + pct, position * 1.25f);
-            RendererManager.DrawTexture(this.AbilityTexture, position, TextureType.RoundAbility);
+            RendererManager.DrawImage("o9k.outline_red", position * 1.2f);
+            RendererManager.DrawImage("o9k.outline_black" + pct, position * 1.25f);
+            RendererManager.DrawImage(this.AbilityTexture, position, ImageType.RoundAbility);
 
             position.Y += 30 * Hud.Info.ScreenRatio;
             position *= 2;
@@ -95,7 +95,7 @@
                 return;
             }
 
-            RendererManager.DrawTexture("o9k.minimap_" + this.AbilityTexture, position);
+            RendererManager.DrawImage("o9k.minimap_" + this.AbilityTexture, position);
         }
     }
 }

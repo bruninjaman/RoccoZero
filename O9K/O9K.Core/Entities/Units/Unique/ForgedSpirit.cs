@@ -3,8 +3,8 @@
     using System.Linq;
 
     using Abilities.Heroes.Invoker;
-
-    using Divine;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Managers.Entity;
 

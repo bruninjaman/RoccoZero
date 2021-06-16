@@ -5,8 +5,9 @@
 
     using Base;
     using Base.Types;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Entities.Units;
 
@@ -18,8 +19,6 @@
     using Metadata;
 
     using Prediction.Data;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.pangolier_swashbuckle)]
     public class Swashbuckle : LineAbility, IBlink, INuke

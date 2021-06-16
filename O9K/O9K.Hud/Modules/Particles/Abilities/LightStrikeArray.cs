@@ -5,14 +5,15 @@
     using Core.Entities.Metadata;
     using Core.Helpers;
     using Core.Logger;
-
-    using Divine;
+    using Divine.Modifier;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Modifier.EventArgs;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers.Notificator;
 
     using MainMenu;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.lina_light_strike_array)]
     internal class LightStrikeArray : AbilityModule

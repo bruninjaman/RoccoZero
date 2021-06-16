@@ -1,8 +1,10 @@
 ﻿namespace O9K.Hud.Helpers.Notificator.Notifications
 {
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     internal sealed class StolenAbilityNotification : Notification
     {
@@ -27,10 +29,10 @@
             var abilityPosition = GetAbilityPosition(position, heroPosition, stolenAbilityPosition);
             var opacity = this.GetOpacity();
 
-            RendererManager.DrawTexture("o9k.notification_bg", position, opacity);
-            RendererManager.DrawTexture(HeroId.npc_dota_hero_rubick, heroPosition, opacity);
-            RendererManager.DrawTexture(AbilityId.rubick_spell_steal, abilityPosition, AbilityTextureType.Round, opacity);
-            RendererManager.DrawTexture(this.abilityName, stolenAbilityPosition, TextureType.Ability, opacity);
+            RendererManager.DrawImage("o9k.notification_bg", position, opacity);
+            RendererManager.DrawImage(HeroId.npc_dota_hero_rubick, heroPosition, opacity);
+            RendererManager.DrawImage(AbilityId.rubick_spell_steal, abilityPosition, AbilityImageType.Round, opacity);
+            RendererManager.DrawImage(this.abilityName, stolenAbilityPosition, ImageType.Ability, opacity);
         }
 
         public override bool OnClick()

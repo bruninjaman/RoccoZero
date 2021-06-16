@@ -2,7 +2,7 @@
 {
     using System;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     // ReSharper disable once InconsistentNaming
     public static class RNG

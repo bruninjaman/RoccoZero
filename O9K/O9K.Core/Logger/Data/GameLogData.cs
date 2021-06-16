@@ -4,7 +4,8 @@
 
     using Core.Data;
 
-    using Divine;
+    using Divine.Entity;
+    using Divine.Game;
 
     [Serializable]
     internal sealed class GameLogData

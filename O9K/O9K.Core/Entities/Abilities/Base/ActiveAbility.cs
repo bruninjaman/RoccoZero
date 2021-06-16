@@ -4,7 +4,11 @@
 
     using Components.Base;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Runes;
+    using Divine.Entity.Entities.Trees;
+    using Divine.Numerics;
 
     using Entities.Units;
 
@@ -12,8 +16,6 @@
 
     using Prediction.Collision;
     using Prediction.Data;
-
-    using SharpDX;
 
     public abstract class ActiveAbility : Ability9, IActiveAbility
     {

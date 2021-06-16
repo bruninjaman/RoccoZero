@@ -1,12 +1,14 @@
 ﻿namespace O9K.Hud.Modules.Map.AbilityMonitor.Abilities.Base
 {
     using Core.Helpers;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Renderer;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
-
-    using SharpDX;
 
     internal class DrawableAbility : IDrawableAbility
     {
@@ -48,15 +50,15 @@
                 return;
             }
 
-            RendererManager.DrawTexture("o9k.outline_red", position * 1.12f);
-            RendererManager.DrawTexture(this.HeroTexture, position, UnitTextureType.RoundUnit);
+            RendererManager.DrawImage("o9k.outline_red", position * 1.12f);
+            RendererManager.DrawImage(this.HeroTexture, position, UnitImageType.RoundUnit);
 
             var abilityTexturePosition = position * 0.5f;
             abilityTexturePosition.X += abilityTexturePosition.Width * 0.8f;
             abilityTexturePosition.Y += abilityTexturePosition.Height * 0.6f;
 
-            RendererManager.DrawTexture("o9k.outline_green_pct100", abilityTexturePosition * 1.2f);
-            RendererManager.DrawTexture(this.AbilityTexture, abilityTexturePosition, TextureType.RoundAbility);
+            RendererManager.DrawImage("o9k.outline_green_pct100", abilityTexturePosition * 1.2f);
+            RendererManager.DrawImage(this.AbilityTexture, abilityTexturePosition, ImageType.RoundAbility);
         }
 
         public virtual void DrawOnMinimap(IMinimap minimap)
@@ -67,8 +69,8 @@
                 return;
             }
 
-            RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
-            RendererManager.DrawTexture(this.MinimapHeroTexture, position, UnitTextureType.MiniUnit);
+            RendererManager.DrawImage("o9k.outline_red", position * 1.08f);
+            RendererManager.DrawImage(this.MinimapHeroTexture, position, UnitImageType.MiniUnit);
         }
 
         public void DrawRange()

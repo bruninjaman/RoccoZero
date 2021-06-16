@@ -1,6 +1,6 @@
 ﻿namespace O9K.Core.Extensions
 {
-    using Divine;
+    using Divine.Update;
 
     public static class UpdateHandlerExtensions
     {

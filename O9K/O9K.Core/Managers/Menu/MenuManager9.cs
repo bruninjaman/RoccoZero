@@ -3,8 +3,10 @@
     using System;
     using System.Threading.Tasks;
 
-    using Divine;
+    using Divine.Input;
+    using Divine.Input.EventArgs;
     using Divine.Menu;
+    using Divine.Renderer;
 
     using Items;
 

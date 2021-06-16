@@ -1,8 +1,6 @@
 ﻿namespace O9K.Core.Extensions
 {
-    using System;
-
-    using SharpDX;
+    using Divine.Numerics;
 
     public static class Vector2Extensions
     {

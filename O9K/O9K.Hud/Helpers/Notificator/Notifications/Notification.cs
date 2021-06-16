@@ -3,9 +3,10 @@
     using System;
     using System.Threading.Tasks;
 
-    using Divine;
-
-    using SharpDX;
+    using Divine.Entity;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Update;
 
     internal abstract class Notification
     {

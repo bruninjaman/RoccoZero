@@ -1,6 +1,6 @@
 ﻿namespace O9K.Core.Helpers.Damage
 {
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     public class DamageAmplifier : Damage
     {

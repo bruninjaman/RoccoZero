@@ -1,6 +1,6 @@
 ﻿namespace O9K.Core.Entities.Buildings
 {
-    using Divine;
+    using Divine.Entity.Entities.Units;
 
     using Units;
 

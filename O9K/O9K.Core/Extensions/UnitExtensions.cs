@@ -3,9 +3,9 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Entities.Units;
+    using Divine.Numerics;
 
-    using SharpDX;
+    using Entities.Units;
 
     public static class UnitExtensions
     {

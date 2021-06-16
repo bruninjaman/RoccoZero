@@ -14,7 +14,7 @@
 
         public MenuManager()
         {
-            RendererManager.LoadTexture("o9k.icon_gold", @"panorama\images\hud\icon_gold_psd.vtex_c");
+            RendererManager.LoadImage("o9k.icon_gold", @"panorama\images\hud\icon_gold_psd.vtex_c");
 
             this.menu = new Menu("Farm", "O9K.Farm").SetTexture("o9k.icon_gold");
 

@@ -9,13 +9,12 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class SystemTime : IHudModule
     {
@@ -58,13 +57,13 @@
 
         public void Activate()
         {
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.time_bg",
                 @"panorama\images\masks\gradient_rightleft_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
                     Brightness = -180,
-                    ColorRatio = new Vector4(0f, 0f, 0f, 0.8f)
+                    ColorTint = new Color(0, 0, 0, 204)
                 });
 
             this.enabled.ValueChange += this.EnabledOnValueChange;
@@ -100,7 +99,7 @@
                 var bgPosition = this.position - new Vector2(bgWidth, 0);
                 var textPosition = this.position - new Vector2(timeSize.X + (4 * Hud.Info.ScreenRatio), 0);
 
-                RendererManager.DrawTexture("o9k.time_bg", new RectangleF(bgPosition.X, bgPosition.Y, bgWidth, this.textSize * 1.25f));
+                RendererManager.DrawImage("o9k.time_bg", new RectangleF(bgPosition.X, bgPosition.Y, bgWidth, this.textSize * 1.25f));
                 RendererManager.DrawText(time, textPosition, Color.LightGray, this.textSize);
             }
             catch (Exception e)

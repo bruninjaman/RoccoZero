@@ -286,10 +286,10 @@
         {
             foreach (var ability in this.menuAbilities)
             {
-                RendererManager.LoadTexture(ability.Key);
+                RendererManager.LoadImage(ability.Key);
             }
 
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "rune_doubledamage",
                 @"panorama\images\spellicons\rune_doubledamage_png.vtex_c");
 
@@ -300,7 +300,7 @@
                     continue;
                 }
 
-                RendererManager.LoadTexture(ability.Value);
+                RendererManager.LoadImage(ability.Value);
             }
 
             foreach (var ability in this.menuItems)

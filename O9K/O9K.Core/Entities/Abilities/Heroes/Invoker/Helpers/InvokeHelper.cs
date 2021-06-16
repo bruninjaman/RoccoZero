@@ -7,8 +7,10 @@
     using Base;
 
     using BaseAbilities;
-
-    using Divine;
+    using Divine.Entity;
+    using Divine.Game;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Entities.Units;
 
@@ -79,7 +81,7 @@
         {
             if (this.IsInvoked)
             {
-                if (invokeIfOnLastPosition && GetAbilitySlot != AbilitySlot.Slot_5)
+                if (invokeIfOnLastPosition && GetAbilitySlot != AbilitySlot.Slot5)
                 {
                     return true;
                 }

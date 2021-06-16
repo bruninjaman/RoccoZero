@@ -4,8 +4,22 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-
-    using Divine;
+    using Divine.Entity;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Update;
+    using Divine.Entity.Entities;
+    using Divine.Entity.EventArgs;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Trees;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Abilities.Items;
+    using Divine.Entity.Entities.Units.Buildings;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Entities;
     using Entities.Abilities.Base;
@@ -21,8 +35,6 @@
     using Monitors;
 
     using Prediction;
-
-    using SharpDX;
 
     public static class EntityManager9
     {

@@ -8,8 +8,11 @@
     using Core.Entities.Units;
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Entity;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Players;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Modules;
 
@@ -37,8 +40,8 @@
 
         private void LoadAbilityTexture(AbilityId id)
         {
-            RendererManager.LoadTexture(id);
-            RendererManager.LoadTexture(id, AbilityTextureType.Round);
+            RendererManager.LoadImage(id);
+            RendererManager.LoadImage(id, AbilityImageType.Round);
         }
 
         private void LoadTextures()
@@ -51,31 +54,31 @@
                     continue;
                 }
 
-                RendererManager.LoadTexture(id);
-                RendererManager.LoadTexture(id, UnitTextureType.RoundUnit);
-                RendererManager.LoadTexture(id, UnitTextureType.MiniUnit);
+                RendererManager.LoadImage(id);
+                RendererManager.LoadImage(id, UnitImageType.RoundUnit);
+                RendererManager.LoadImage(id, UnitImageType.MiniUnit);
 
                 this.loaded.Add(id.ToString());
             }
 
-            RendererManager.LoadTexture("o9k.x", @"panorama\images\hud\reborn\ping_icon_retreat_psd.vtex_c");
-            RendererManager.LoadTexture("rune_arcane", TextureType.RoundAbility);
-            RendererManager.LoadTexture("rune_doubledamage", TextureType.RoundAbility);
-            RendererManager.LoadTexture("rune_haste", TextureType.RoundAbility);
-            RendererManager.LoadTexture("rune_invis", TextureType.RoundAbility);
-            RendererManager.LoadTexture("rune_regen", TextureType.RoundAbility);
-            RendererManager.LoadTexture("npc_dota_roshan", "npc_dota_hero_roshan", TextureType.Unit);
-            RendererManager.LoadTexture("npc_dota_roshan", "npc_dota_hero_roshan", TextureType.RoundUnit);
+            RendererManager.LoadImage("o9k.x", @"panorama\images\hud\reborn\ping_icon_retreat_psd.vtex_c");
+            RendererManager.LoadImage("rune_arcane", ImageType.RoundAbility);
+            RendererManager.LoadImage("rune_doubledamage", ImageType.RoundAbility);
+            RendererManager.LoadImage("rune_haste", ImageType.RoundAbility);
+            RendererManager.LoadImage("rune_invis", ImageType.RoundAbility);
+            RendererManager.LoadImage("rune_regen", ImageType.RoundAbility);
+            RendererManager.LoadImage("npc_dota_roshan", "npc_dota_hero_roshan", ImageType.Unit);
+            RendererManager.LoadImage("npc_dota_roshan", "npc_dota_hero_roshan", ImageType.RoundUnit);
 
-            RendererManager.LoadTexture(AbilityId.item_bottle);
-            RendererManager.LoadTexture("item_bottle_arcane", TextureType.Ability);
-            RendererManager.LoadTexture("item_bottle_bounty", TextureType.Ability);
-            RendererManager.LoadTexture("item_bottle_doubledamage", TextureType.Ability);
-            RendererManager.LoadTexture("item_bottle_haste", TextureType.Ability);
-            RendererManager.LoadTexture("item_bottle_illusion", TextureType.Ability);
-            RendererManager.LoadTexture("item_bottle_invisibility", TextureType.Ability);
-            RendererManager.LoadTexture("item_bottle_regeneration", TextureType.Ability);
-            RendererManager.LoadTexture("item_bottle_water", TextureType.Ability);
+            RendererManager.LoadImage(AbilityId.item_bottle);
+            RendererManager.LoadImage("item_bottle_arcane", ImageType.Ability);
+            RendererManager.LoadImage("item_bottle_bounty", ImageType.Ability);
+            RendererManager.LoadImage("item_bottle_doubledamage", ImageType.Ability);
+            RendererManager.LoadImage("item_bottle_haste", ImageType.Ability);
+            RendererManager.LoadImage("item_bottle_illusion", ImageType.Ability);
+            RendererManager.LoadImage("item_bottle_invisibility", ImageType.Ability);
+            RendererManager.LoadImage("item_bottle_regeneration", ImageType.Ability);
+            RendererManager.LoadImage("item_bottle_water", ImageType.Ability);
 
             this.LoadAbilityTexture(AbilityId.item_smoke_of_deceit);
             this.LoadAbilityTexture(AbilityId.item_ward_sentry);
@@ -93,8 +96,8 @@
 
                 if (!ability.IsTalent)
                 {
-                    RendererManager.LoadTexture(ability.TextureName, TextureType.Ability);
-                    RendererManager.LoadTexture(ability.TextureName, TextureType.RoundAbility);
+                    RendererManager.LoadImage(ability.TextureName, ImageType.Ability);
+                    RendererManager.LoadImage(ability.TextureName, ImageType.RoundAbility);
                 }
 
                 this.loaded.Add(ability.TextureName);
@@ -116,13 +119,13 @@
 
                 if (unit is Hero9 hero)
                 {
-                    RendererManager.LoadTexture(hero.TextureName, TextureType.Unit);
-                    RendererManager.LoadTexture(hero.TextureName, TextureType.RoundUnit);
-                    RendererManager.LoadTexture(hero.TextureName, TextureType.MiniUnit);
+                    RendererManager.LoadImage(hero.TextureName, ImageType.Unit);
+                    RendererManager.LoadImage(hero.TextureName, ImageType.RoundUnit);
+                    RendererManager.LoadImage(hero.TextureName, ImageType.MiniUnit);
                 }
                 else if (unit.IsUnit && !unit.IsCreep)
                 {
-                    RendererManager.LoadTexture(unit.DefaultName, TextureType.Unit);
+                    RendererManager.LoadImage(unit.DefaultName, ImageType.Unit);
                 }
 
                 this.loaded.Add(unit.TextureName);

@@ -1,8 +1,7 @@
 ﻿namespace O9K.Hud.Modules.Map.Runes
 {
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Runes;
 
     internal sealed class RuneData
     {

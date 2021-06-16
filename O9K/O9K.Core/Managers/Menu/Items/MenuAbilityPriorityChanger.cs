@@ -3,9 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Input;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Input.EventArgs;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using EventArgs;
 
@@ -13,11 +16,9 @@
 
     using Newtonsoft.Json.Linq;
 
-    using SharpDX;
-
     public class MenuAbilityPriorityChanger : MenuItem
     {
-        private readonly Dictionary<string, (TextureType, bool)> abilities = new Dictionary<string, (TextureType, bool)>();
+        private readonly Dictionary<string, (ImageType, bool)> abilities = new Dictionary<string, (ImageType, bool)>();
 
         private readonly Dictionary<string, int> abilityPriority = new Dictionary<string, int>();
 
@@ -25,7 +26,7 @@
 
         private readonly List<AbilityId> loadTextures = new List<AbilityId>();
 
-        private readonly List<(string, TextureType)> loadTextures2 = new List<(string, TextureType)>();
+        private readonly List<(string, ImageType)> loadTextures2 = new List<(string, ImageType)>();
 
         private readonly Dictionary<string, bool> savedAbilities = new Dictionary<string, bool>();
 
@@ -80,7 +81,7 @@
             foreach (var ability in abilities)
             {
                 var abilityName = ability.Key.ToString();
-                this.abilities[ability.Key.ToString()] = (TextureType.Ability, ability.Value);
+                this.abilities[ability.Key.ToString()] = (ImageType.Ability, ability.Value);
                 this.abilityPriority[abilityName] = this.autoPriority++;
                 this.loadTextures.Add(ability.Key);
             }
@@ -119,7 +120,7 @@
             }
             else
             {
-                RendererManager.LoadTexture(id);
+                RendererManager.LoadImage(id);
             }
 
             this.AddAbility(id.ToString(), value, priority);
@@ -132,33 +133,33 @@
                 return;
             }
 
-            var textureType = TextureType.Default;
+            var imageType = ImageType.Default;
 
             if (name.Contains("npc_dota"))
             {
-                textureType = TextureType.Unit;
+                imageType = ImageType.Unit;
             }
             else if (Enum.IsDefined(typeof(AbilityId), name))
             {
-                textureType = TextureType.Ability;
+                imageType = ImageType.Ability;
             }
 
             if (this.Renderer == null)
             {
-                this.loadTextures2.Add((name, textureType));
+                this.loadTextures2.Add((name, imageType));
             }
             else
             {
-                RendererManager.LoadTexture(name, textureType);
+                RendererManager.LoadImage(name, imageType);
             }
 
             if (this.savedAbilities.TryGetValue(name, out var savedValue))
             {
-                this.abilities[name] = (textureType, savedValue);
+                this.abilities[name] = (imageType, savedValue);
             }
             else
             {
-                this.abilities[name] = (textureType, value ?? this.defaultValue);
+                this.abilities[name] = (imageType, value ?? this.defaultValue);
             }
 
             if (this.savedAbilityPriority.TryGetValue(name, out var savedPriority))
@@ -425,12 +426,12 @@
 
             foreach (var texture in this.loadTextures)
             {
-                RendererManager.LoadTexture(texture);
+                RendererManager.LoadImage(texture);
             }
 
             foreach (var texture in this.loadTextures2)
             {
-                RendererManager.LoadTexture(texture.Item1, texture.Item2);
+                RendererManager.LoadImage(texture.Item1, texture.Item2);
             }
         }
 
@@ -441,7 +442,7 @@
             //drag ability
             if (this.drawDrag)
             {
-                RendererManager.DrawTexture(
+                RendererManager.DrawImage(
                     this.dragAbility,
                     new RectangleF(
                         this.dragAbilityPosition.X,
@@ -500,7 +501,7 @@
                         this.MenuStyle.TextureAbilitySize + 3),
                     isEnabled ? Color.LightGreen : Color.Red,
                     1.5f);
-                RendererManager.DrawTexture(
+                RendererManager.DrawImage(
                     ability.Key,
                     new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureAbilitySize, this.MenuStyle.TextureAbilitySize),
                     ability.Value.Item1);

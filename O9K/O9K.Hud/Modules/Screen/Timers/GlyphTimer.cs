@@ -8,14 +8,14 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Components;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     using Drawer = Helpers.Drawer;
 

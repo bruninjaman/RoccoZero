@@ -1,6 +1,6 @@
 ﻿namespace O9K.Core.Extensions
 {
-    using Divine;
+    using Divine.Entity.Entities.Units.Components;
 
     using Entities.Units;
 

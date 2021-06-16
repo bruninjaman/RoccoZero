@@ -1,6 +1,6 @@
 ﻿namespace O9K.Core.Helpers
 {
-    using Divine;
+    using Divine.Game;
 
     public sealed class Sleeper
     {

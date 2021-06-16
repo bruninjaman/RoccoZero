@@ -2,14 +2,14 @@
 {
     using Base;
     using Base.Types;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Components;
 
     using Entities.Units;
 
     using Metadata;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.item_glimmer_cape)]
     public class GlimmerCape : RangedAbility, IShield

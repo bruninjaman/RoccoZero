@@ -13,17 +13,16 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Units.Components;
 
     using Helpers;
 
     using HudEntities.Units;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class Abilities : IHudModule
     {
@@ -176,68 +175,68 @@
 
         private void LoadTextures()
         {
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.ability_level_rec",
                 @"panorama\images\hud\reborn\levelup_button_3_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
                     Brightness = 35
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.ability_cd_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0f, 0.6f)
+                    ColorTint = new Color(0, 0, 0, 153)
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.ability_0lvl_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0.3f, 0.3f, 0.3f, 0.4f)
+                    ColorTint = new Color(76, 76, 76, 102)
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.ability_lvl_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0f, 0.9f)
+                    ColorTint = new Color(0, 0, 0, 229)
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.ability_minimal_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0f, 0.7f)
+                    ColorTint = new Color(0, 0, 0, 178)
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.ability_minimal_cd_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0f, 1f)
+                    ColorTint = new Color(0, 0, 0)
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.ability_minimal_mana_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0.9f, 1f)
+                    ColorTint = new Color(0, 0, 229)
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.ability_mana_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0.9f, 0.8f)
+                    ColorTint = new Color(0, 0, 229, 204)
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.charge_bg",
                 @"panorama\images\masks\softedge_circle_sharper_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
-                    ColorRatio = new Vector4(0f, 0f, 0f, 1f)
+                    ColorTint = new Color(0, 0, 0)
                 });
         }
 

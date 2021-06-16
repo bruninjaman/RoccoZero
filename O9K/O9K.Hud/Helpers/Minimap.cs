@@ -10,13 +10,14 @@
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.GameConsole;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using MainMenu;
 
     using Modules;
-
-    using SharpDX;
 
     internal interface IMinimap
     {
@@ -58,7 +59,7 @@
         public Minimap(IHudMenu hudMenu)
         {
             var minimapSize = new Vector2(Hud.Info.ScreenSize.X * 0.127f, Hud.Info.ScreenSize.Y * 0.226f);
-            if (ConVarManager.GetInt32("dota_hud_extra_large_minimap") == 1)
+            if (GameConsoleManager.GetInt32("dota_hud_extra_large_minimap") == 1)
             {
                 minimapSize *= 1.145f;
             }

@@ -2,7 +2,7 @@
 {
     using Components;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
 
     using Entities.Units;
 

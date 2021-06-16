@@ -1,8 +1,9 @@
 ﻿namespace O9K.Core.Managers.Particle
 {
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Entity.Entities;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Players;
 
     public sealed class Particle9
     {

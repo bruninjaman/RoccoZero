@@ -1,14 +1,13 @@
 ﻿namespace O9K.Core.Entities.Abilities.NeutralItems
 {
     using Base;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 
     using Metadata;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.item_psychic_headband)]
     public class PsychicHeadband : RangedAbility

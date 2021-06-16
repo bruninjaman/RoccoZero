@@ -7,7 +7,7 @@
 
 //    using Helpers;
 
-//    using SharpDX;
+//    using Divine.Numerics;
 
 //    internal class SpamBlock
 //    {

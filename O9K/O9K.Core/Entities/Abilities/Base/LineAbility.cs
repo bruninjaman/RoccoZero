@@ -1,6 +1,6 @@
 ﻿namespace O9K.Core.Entities.Abilities.Base
 {
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
 
     using Prediction.Data;
 

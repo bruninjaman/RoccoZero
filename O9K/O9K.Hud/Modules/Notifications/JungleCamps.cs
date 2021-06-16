@@ -16,12 +16,13 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class JungleCamps : IHudModule
     {

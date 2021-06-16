@@ -12,7 +12,7 @@
 
 //    using Managers.Entity;
 
-//    using SharpDX;
+//    using Divine.Numerics;
 
 //    internal class OutOfScreenBlock
 //    {

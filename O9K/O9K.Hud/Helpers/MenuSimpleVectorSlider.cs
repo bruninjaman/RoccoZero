@@ -5,7 +5,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     internal class MenuSimpleVectorSlider : IDisposable
     {

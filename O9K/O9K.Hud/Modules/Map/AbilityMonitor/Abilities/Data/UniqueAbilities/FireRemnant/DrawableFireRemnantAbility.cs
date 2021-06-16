@@ -3,8 +3,10 @@
     using Base;
 
     using Core.Helpers;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Renderer;
+    using Divine.Entity.Entities;
+    using Divine.Entity.Entities.Units;
 
     using Helpers;
 
@@ -55,9 +57,9 @@
             }
 
             var pct = (int)(((GameManager.RawGameTime - this.addedTime) / this.Duration) * 100);
-            RendererManager.DrawTexture("o9k.outline_red", position * 1.2f);
-            RendererManager.DrawTexture("o9k.outline_black" + pct, position * 1.25f);
-            RendererManager.DrawTexture(this.AbilityTexture, position, TextureType.RoundAbility);
+            RendererManager.DrawImage("o9k.outline_red", position * 1.2f);
+            RendererManager.DrawImage("o9k.outline_black" + pct, position * 1.25f);
+            RendererManager.DrawImage(this.AbilityTexture, position, ImageType.RoundAbility);
         }
 
         public override void DrawOnMinimap(IMinimap minimap)
@@ -73,8 +75,8 @@
                 return;
             }
 
-            RendererManager.DrawTexture("o9k.outline_red", position * 1.08f);
-            RendererManager.DrawTexture(this.AbilityTexture, position, TextureType.RoundAbility);
+            RendererManager.DrawImage("o9k.outline_red", position * 1.08f);
+            RendererManager.DrawImage(this.AbilityTexture, position, ImageType.RoundAbility);
         }
     }
 }

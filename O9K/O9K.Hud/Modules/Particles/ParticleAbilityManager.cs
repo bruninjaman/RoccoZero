@@ -10,7 +10,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers.Notificator;
 

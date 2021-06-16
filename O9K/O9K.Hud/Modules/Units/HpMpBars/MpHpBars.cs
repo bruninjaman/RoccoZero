@@ -11,8 +11,8 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Components;
 
     using MainMenu;
 

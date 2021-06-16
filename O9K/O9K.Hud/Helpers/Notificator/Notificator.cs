@@ -9,16 +9,17 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
-
-    using Divine;
+    using Divine.Input;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
+    using Divine.Input.EventArgs;
 
     using MainMenu;
 
     using Modules;
 
     using Notifications;
-
-    using SharpDX;
 
     internal class Notificator : IHudModule, INotificator
     {
@@ -112,18 +113,18 @@
 
         private void LoadTextures()
         {
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.notification_bg",
                 @"panorama\images\hud\reborn\bg_deathsummary_psd.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
                     Brightness = 10
                 });
-            RendererManager.LoadTexture("o9k.gold", @"panorama\images\hud\reborn\gold_large_png.vtex_c");
-            RendererManager.LoadTexture("o9k.ping", @"panorama\images\hud\reborn\ping_icon_default_psd.vtex_c");
-            RendererManager.LoadTexture("o9k.outpost", @"panorama\images\hud\icon_outpost_psd.vtex_c");
-            RendererManager.LoadTextureFromAssembly("o9k.rune_regen", "rune_regen.png");
-            RendererManager.LoadTextureFromAssembly("o9k.rune_bounty", "rune_bounty.png");
+            RendererManager.LoadImage("o9k.gold", @"panorama\images\hud\reborn\gold_large_png.vtex_c");
+            RendererManager.LoadImage("o9k.ping", @"panorama\images\hud\reborn\ping_icon_default_psd.vtex_c");
+            RendererManager.LoadImage("o9k.outpost", @"panorama\images\hud\icon_outpost_psd.vtex_c");
+            RendererManager.LoadImageFromAssembly("o9k.rune_regen", "rune_regen.png");
+            RendererManager.LoadImageFromAssembly("o9k.rune_bounty", "rune_bounty.png");
         }
 
         private void OnDraw()

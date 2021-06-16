@@ -2,9 +2,10 @@
 {
     using System.Collections.Generic;
 
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Particle.Components;
+    using Divine.Particle.Particles;
 
     public static class Drawer
     {

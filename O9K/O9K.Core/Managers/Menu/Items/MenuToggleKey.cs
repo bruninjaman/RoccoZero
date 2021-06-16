@@ -1,16 +1,17 @@
 ﻿namespace O9K.Core.Managers.Menu.Items
 {
     using System;
-    using System.Windows.Input;
 
-    using Divine;
+    using Divine.Input;
+    using Divine.Input.EventArgs;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Logger;
 
     using Newtonsoft.Json.Linq;
 
-    using SharpDX;
-
+    using Key = System.Windows.Input.Key;
     using KeyEventArgs = EventArgs.KeyEventArgs;
 
     public class MenuToggleKey : MenuItem
@@ -259,7 +260,7 @@
                 this.MenuStyle.TextSize);
         }
 
-        private void GetKey(Divine.KeyEventArgs e)
+        private void GetKey(Divine.Input.EventArgs.KeyEventArgs e)
         {
             this.Key = e.Key == Key.Escape ? Key.None : e.Key;
             this.mouseKeyValue = MouseKey.None;
@@ -310,7 +311,7 @@
             }
         }
 
-        private void OnKeyUp(Divine.KeyEventArgs e)
+        private void OnKeyUp(Divine.Input.EventArgs.KeyEventArgs e)
         {
             if (e.Key == this.keyValue)
             {

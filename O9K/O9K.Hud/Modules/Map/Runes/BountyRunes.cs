@@ -11,15 +11,17 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
     using Core.Managers.Particle;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
+    using Divine.Entity.Entities.Abilities.Items;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class BountyRunes : IHudModule
     {
@@ -90,7 +92,7 @@
                     if (this.showOnMinimap)
                     {
                         var position = this.minimap.WorldToMinimap(pickedRune, 20 * Hud.Info.ScreenRatio);
-                        RendererManager.DrawTexture("o9k.x", position);
+                        RendererManager.DrawImage("o9k.x", position);
                     }
 
                     if (this.showOnMap)
@@ -101,7 +103,7 @@
                             continue;
                         }
 
-                        RendererManager.DrawTexture("o9k.x", position);
+                        RendererManager.DrawImage("o9k.x", position);
                     }
                 }
             }

@@ -4,16 +4,16 @@
     using System.Linq;
 
     using Data;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Extensions;
 
     using Managers.Entity;
 
     using Metadata;
-
-    using SharpDX;
 
     using Units;
 

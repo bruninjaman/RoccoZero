@@ -1,4 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project>
+
+  <PropertyGroup>
+    <AssemblyName>O9K.Core</AssemblyName>
+    <BaseIntermediateOutputPath>$(SolutionDir)obj\$(AssemblyName)\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+  
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -10,13 +17,23 @@
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
 
-    <OutputPath>..\bin\</OutputPath>
-    <IntermediateOutputPath>..\obj\</IntermediateOutputPath>
+    <UseWPF>true</UseWPF>
+
+    <OutputPath>$(SolutionDir)bin\</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)obj\$(AssemblyName)\</IntermediateOutputPath>
   </PropertyGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <ItemGroup>
     <Reference Include="Divine">
-      <HintPath>..\..\..\..\Desktop\Divine.NET5\bin\Divine.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\Divine.NET5\bin\Divine.dll</HintPath>
+    </Reference>
+    <Reference Include="Divine.Zero">
+      <HintPath>..\..\..\..\..\Desktop\Divine.NET5\bin\Divine.Zero.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\..\Desktop\Divine.NET5\bin\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
 

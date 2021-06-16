@@ -9,15 +9,19 @@
     using Core.Logger;
     using Core.Managers.Context;
     using Core.Managers.Particle;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Entity.EventArgs;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers.Notificator;
 
     using MainMenu;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.ancient_apparition_ice_blast)]
     internal class IceBlast : AbilityModule

@@ -1,12 +1,12 @@
 ﻿namespace O9K.Core.Entities.Heroes
 {
     using System;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Helpers;
-
-    using SharpDX;
 
     using Units;
 

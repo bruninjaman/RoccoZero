@@ -11,13 +11,20 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.EventArgs;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Particle.Particles;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     using Drawer = Helpers.Drawer;
 
@@ -106,7 +113,7 @@
 
         public void Activate()
         {
-            RendererManager.LoadTexture("o9k.scan", @"panorama\images\hud\reborn\icon_scan_on_dire_psd.vtex_c");
+            RendererManager.LoadImage("o9k.scan", @"panorama\images\hud\reborn\icon_scan_on_dire_psd.vtex_c");
             this.ownerTeam = EntityManager9.Owner.Team;
             this.sleeper = new Sleeper(this.ownerTeam == Team.Radiant ? GameManager.ScanCooldownDire : GameManager.ScanCooldownRadiant);
 
@@ -191,7 +198,7 @@
                 if (this.showOnMinimap)
                 {
                     var minimapPosition = this.minimap.WorldToMinimap(this.scanPosition, 25 * Hud.Info.ScreenRatio);
-                    RendererManager.DrawTexture("o9k.scan", minimapPosition);
+                    RendererManager.DrawImage("o9k.scan", minimapPosition);
                 }
 
                 if (this.showOnMap)
@@ -202,7 +209,7 @@
                         return;
                     }
 
-                    RendererManager.DrawTexture("o9k.scan", mapPosition);
+                    RendererManager.DrawImage("o9k.scan", mapPosition);
                 }
             }
             catch (Exception e)

@@ -1,8 +1,14 @@
 ﻿namespace O9K.Core.Entities.Heroes.Unique
 {
     using System;
-
-    using Divine;
+    using Divine.Modifier;
+    using Divine.Order;
+    using Divine.Modifier.EventArgs;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Helpers;
 

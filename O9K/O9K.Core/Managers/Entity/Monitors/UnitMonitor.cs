@@ -3,8 +3,21 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Divine;
+    using Divine.Entity;
+    using Divine.Game;
+    using Divine.Modifier;
+    using Divine.Order;
+    using Divine.Update;
+    using Divine.Entity.Entities;
+    using Divine.Game.EventArgs;
+    using Divine.Modifier.EventArgs;
+    using Divine.Modifier.Modifiers;
+    using Divine.Order.EventArgs;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.EventArgs;
+    using Divine.Entity.Entities.Players;
+    using Divine.Order.Orders.Components;
+    using Divine.Entity.Entities.Units.Components;
 
     using Entities.Abilities.Base.Components;
     using Entities.Abilities.Base.Types;

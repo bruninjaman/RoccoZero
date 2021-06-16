@@ -4,10 +4,10 @@
 
     using Core.Logger;
     using Core.Managers.Renderer.Utils;
-
-    using Divine;
-
-    using SharpDX;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Abilities.Components;
 
     internal class ReplicateTimer : IMorphlingAbility
     {
@@ -47,9 +47,9 @@
         {
             try
             {
-                RendererManager.DrawTexture(this.texture, position);
+                RendererManager.DrawImage(this.texture, position);
                 RendererManager.DrawRectangle(position - 1, Color.Black);
-                RendererManager.DrawTexture("o9k.ability_cd_bg", position);
+                RendererManager.DrawImage("o9k.ability_cd_bg", position);
                 RendererManager.DrawText(
                     Math.Ceiling(this.RemainingCooldown).ToString("N0"),
                     position,

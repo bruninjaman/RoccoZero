@@ -1,6 +1,7 @@
 ﻿namespace O9K.Core.Entities.Abilities.Base
 {
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units.Components;
 
     public abstract class PassiveAbility : Ability9
     {

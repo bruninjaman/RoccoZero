@@ -2,7 +2,10 @@
 {
     using Base;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Helpers;
 
@@ -13,14 +16,14 @@
     {
         private readonly Sleeper expectedAttributeSleeper = new Sleeper();
 
-        private readonly Divine.Items.PowerTreads powerTreads;
+        private readonly Divine.Entity.Entities.Abilities.Items.PowerTreads powerTreads;
 
         private Attribute expectedAttribute;
 
         public PowerTreads(Ability baseAbility)
             : base(baseAbility)
         {
-            this.powerTreads = (Divine.Items.PowerTreads)baseAbility;
+            this.powerTreads = (Divine.Entity.Entities.Abilities.Items.PowerTreads)baseAbility;
         }
 
         public Attribute ActiveAttribute

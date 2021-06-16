@@ -14,14 +14,13 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Entity.Entities.Components;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
 
     internal class NetWorthPanel : IHudModule
     {
@@ -102,21 +101,21 @@
 
         public void Activate()
         {
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.net_worth_bg_ally",
                 @"panorama\images\masks\gradient_leftright_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
                     Brightness = -80,
-                    ColorRatio = new Vector4(0f, 1f, 0f, 0.9f)
+                    ColorTint = new Color(0, 25, 0, 229)
                 });
-            RendererManager.LoadTexture(
+            RendererManager.LoadImage(
                 "o9k.net_worth_bg_enemy",
                 @"panorama\images\masks\gradient_leftright_png.vtex_c",
-                new TextureProperties
+                new ImageProperties
                 {
                     Brightness = -80,
-                    ColorRatio = new Vector4(1f, 0f, 0f, 0.9f)
+                    ColorTint = new Color(255, 0, 0, 229)
                 });
 
             this.ownerTeam = EntityManager9.Owner.Team;
@@ -229,7 +228,7 @@
                             continue;
                         }
 
-                        RendererManager.DrawTexture("o9k.net_worth_bg_ally", new RectangleF(heroPosition.X, heroPosition.Y, this.lineSize.X, this.lineSize.Y));
+                        RendererManager.DrawImage("o9k.net_worth_bg_ally", new RectangleF(heroPosition.X, heroPosition.Y, this.lineSize.X, this.lineSize.Y));
                     }
                     else
                     {
@@ -238,10 +237,10 @@
                             continue;
                         }
 
-                        RendererManager.DrawTexture("o9k.net_worth_bg_enemy", new RectangleF(heroPosition.X, heroPosition.Y, this.lineSize.X, this.lineSize.Y));
+                        RendererManager.DrawImage("o9k.net_worth_bg_enemy", new RectangleF(heroPosition.X, heroPosition.Y, this.lineSize.X, this.lineSize.Y));
                     }
 
-                    RendererManager.DrawTexture(unit.Name, new RectangleF(heroPosition.X, heroPosition.Y, this.heroSize.X, this.heroSize.Y), UnitTextureType.Default);
+                    RendererManager.DrawImage(unit.Name, new RectangleF(heroPosition.X, heroPosition.Y, this.heroSize.X, this.heroSize.Y), UnitImageType.Default);
                     RendererManager.DrawText(
                         pair.Value.ToString("N0"),
                         heroPosition + new Vector2(this.heroSize.X + 5, (this.lineSize.Y - this.textSize) / 5),

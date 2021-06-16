@@ -10,7 +10,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Entity.Entities.Components;
 
     using Helpers.Notificator;
     using Helpers.Notificator.Notifications;

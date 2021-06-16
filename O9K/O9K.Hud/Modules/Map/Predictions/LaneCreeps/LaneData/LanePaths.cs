@@ -4,10 +4,8 @@
 
     using Core.Entities.Units;
     using Core.Managers.Entity;
-
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Components;
 
     internal class LanePaths
     {

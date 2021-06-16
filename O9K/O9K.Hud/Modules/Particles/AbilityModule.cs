@@ -7,13 +7,12 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Heroes;
     using Core.Entities.Metadata;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Entity.Entities.Components;
 
     using Helpers.Notificator;
 

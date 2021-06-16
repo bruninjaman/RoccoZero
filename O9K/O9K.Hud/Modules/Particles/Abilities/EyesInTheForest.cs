@@ -7,16 +7,15 @@
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers.Notificator;
 
     using MainMenu;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.treant_eyes_in_the_forest)]
     internal class EyesInTheForest : AbilityModule

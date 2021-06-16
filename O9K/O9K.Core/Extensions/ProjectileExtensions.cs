@@ -1,6 +1,6 @@
 ﻿namespace O9K.Core.Extensions
 {
-    using Divine;
+    using Divine.Projectile.Projectiles;
 
     public static class ProjectileExtensions
     {

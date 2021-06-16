@@ -11,15 +11,16 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
+    using Divine.Entity.Entities.Components;
 
     using Helpers;
 
     using MainMenu;
-
-    using SharpDX;
+    using O9K.Core.Managers.Renderer.Utils;
 
     internal class JungleStacks : IHudModule
     {

@@ -1,10 +1,8 @@
 ﻿namespace O9K.Core.Managers.Jungle.Data
 {
     using Camp;
-
-    using Divine;
-
-    using SharpDX;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Components;
 
     internal class JungleCampsData
     {

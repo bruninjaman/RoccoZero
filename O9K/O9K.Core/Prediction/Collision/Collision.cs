@@ -3,11 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Divine.SDK.Extensions;
-
-    using Extensions;
-
-    using SharpDX;
+    using Divine.Extensions;
+    using Divine.Numerics;
 
     public static class Collision
     {

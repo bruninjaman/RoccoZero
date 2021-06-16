@@ -1,9 +1,8 @@
 ﻿namespace O9K.Core.Entities
 {
     using System;
-
-    using Divine;
-    using Divine.SDK.Localization;
+    using Divine.Helpers;
+    using Divine.Entity.Entities;
 
     using Extensions;
 
