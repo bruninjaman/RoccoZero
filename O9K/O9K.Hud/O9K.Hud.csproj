@@ -26,6 +26,18 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\modifier_truesight.png" />
+    <EmbeddedResource Include="Resources\rune_arcane_minimap.png" />
+    <EmbeddedResource Include="Resources\rune_bounty.png" />
+    <EmbeddedResource Include="Resources\rune_double_damage_minimap.png" />
+    <EmbeddedResource Include="Resources\rune_haste_minimap.png" />
+    <EmbeddedResource Include="Resources\rune_illusion_minimap.png" />
+    <EmbeddedResource Include="Resources\rune_invisibility_minimap.png" />
+    <EmbeddedResource Include="Resources\rune_regen.png" />
+    <EmbeddedResource Include="Resources\rune_regeneration_minimap.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\O9K.Core\O9K.Core.csproj" />
   </ItemGroup>
 

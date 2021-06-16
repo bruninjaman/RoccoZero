@@ -50,21 +50,21 @@
                 {
                     foreach (var attribute in type.GetCustomAttributes<AbilityIdAttribute>())
                     {
-                        abilityTypes.Add(attribute.AbilityId, type);
+                        abilityTypes.TryAdd(attribute.AbilityId, type);
                     }
                 }
                 else if (typeof(Hero9).IsAssignableFrom(type))
                 {
                     foreach (var attribute in type.GetCustomAttributes<HeroIdAttribute>())
                     {
-                        heroTypes.Add(attribute.HeroId, type);
+                        heroTypes.TryAdd(attribute.HeroId, type);
                     }
                 }
                 else if (typeof(Unit9).IsAssignableFrom(type))
                 {
                     foreach (var attribute in type.GetCustomAttributes<UnitNameAttribute>())
                     {
-                        unitTypes.Add(attribute.Name, type);
+                        unitTypes.TryAdd(attribute.Name, type);
                     }
                 }
             }
