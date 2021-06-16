@@ -8,7 +8,7 @@
     using Debugger.Logger;
     using Debugger.Menus;
 
-    using Divine;
+    using Divine.Service;
 
     using Tools;
 

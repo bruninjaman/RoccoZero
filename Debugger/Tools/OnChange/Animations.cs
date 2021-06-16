@@ -1,16 +1,16 @@
 namespace Debugger.Tools.OnChange
 {
-    using System.ComponentModel.Composition;
-
     using Debugger.Menus;
 
-    using Divine;
+    using Divine.Entity.Entities;
+    using Divine.Entity.Entities.EventArgs;
+    using Divine.Entity.Entities.Units.Heroes;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
+    using Divine.Numerics;
+    using Divine.Update;
 
     using Logger;
-
-    using SharpDX;
 
     internal class Animations : IDebuggerTool
     {

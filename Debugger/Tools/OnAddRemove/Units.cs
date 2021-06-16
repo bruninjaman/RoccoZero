@@ -1,17 +1,20 @@
 ﻿namespace Debugger.Tools.OnAddRemove
 {
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Debugger.Menus;
 
-    using Divine;
+    using Divine.Entity;
+    using Divine.Entity.Entities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.EventArgs;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
+    using Divine.Numerics;
+    using Divine.Update;
 
     using Logger;
-
-    using SharpDX;
 
     internal class Units : IDebuggerTool
     {

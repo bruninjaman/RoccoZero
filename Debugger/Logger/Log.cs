@@ -3,21 +3,22 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Windows.Forms;
+    using System.Windows;
 
     using Controls;
 
     using Debugger.Menus;
 
-    using Divine;
+    using Divine.Extensions;
+    using Divine.Game;
     using Divine.Helpers;
+    using Divine.Input;
+    using Divine.Input.EventArgs;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
-    using Divine.SDK.Extensions;
-
-    using SharpDX;
-
-    using Tools;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Button = Controls.Button;
 

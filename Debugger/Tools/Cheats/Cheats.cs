@@ -1,13 +1,13 @@
 ﻿namespace Debugger.Tools.Cheats
 {
-    using System.ComponentModel.Composition;
     using System.Windows.Input;
 
     using Debugger.Menus;
 
-    using Divine;
+    using Divine.GameConsole;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
+    using Divine.Update;
 
     internal class Cheats : IDebuggerTool
     {
@@ -54,7 +54,7 @@
 
             this.vision = this.menu.CreateHoldKey("Change vision", Key.Multiply);
             this.vision.ValueChanged += this.VisionOnPropertyChanged;
-            this.allVisionEnabled = ConVarManager.GetInt32("dota_all_vision") == 1;
+            this.allVisionEnabled = GameConsoleManager.GetInt32("dota_all_vision") == 1;
 
             this.creeps = this.menu.CreateHoldKey("Change creeps spawn", Key.NumPad0);
             this.creeps.ValueChanged += this.CreepsOnPropertyChanged;
@@ -86,7 +86,7 @@
             {
                 if (this.bot25Lvl)
                 {
-                    GameManager.ExecuteCommand("dota_bot_give_level 25");
+                    GameConsoleManager.ExecuteCommand("dota_bot_give_level 25");
                 }
             });
         }
@@ -99,12 +99,12 @@
                 {
                     if (this.creepsEnabled)
                     {
-                        GameManager.ExecuteCommand("dota_creeps_no_spawning_disable");
+                        GameConsoleManager.ExecuteCommand("dota_creeps_no_spawning_disable");
                         this.creepsEnabled = false;
                     }
                     else
                     {
-                        GameManager.ExecuteCommand("dota_creeps_no_spawning_enable");
+                        GameConsoleManager.ExecuteCommand("dota_creeps_no_spawning_enable");
                         this.creepsEnabled = true;
                     }
                 }
@@ -117,7 +117,7 @@
             {
                 if (this.hero25Lvl)
                 {
-                    GameManager.ExecuteCommand("dota_hero_level 25");
+                    GameConsoleManager.ExecuteCommand("dota_hero_level 25");
                 }
             });
         }
@@ -128,7 +128,7 @@
             {
                 if (this.heroGold)
                 {
-                    GameManager.ExecuteCommand("dota_give_gold 99999");
+                    GameConsoleManager.ExecuteCommand("dota_give_gold 99999");
                 }
             });
         }
@@ -139,7 +139,7 @@
             {
                 if (this.refresh)
                 {
-                    GameManager.ExecuteCommand("dota_hero_refresh");
+                    GameConsoleManager.ExecuteCommand("dota_hero_refresh");
                 }
             });
         }
@@ -152,12 +152,12 @@
                 {
                     if (this.allVisionEnabled)
                     {
-                        GameManager.ExecuteCommand("dota_all_vision_disable");
+                        GameConsoleManager.ExecuteCommand("dota_all_vision_disable");
                         this.allVisionEnabled = false;
                     }
                     else
                     {
-                        GameManager.ExecuteCommand("dota_all_vision_enable");
+                        GameConsoleManager.ExecuteCommand("dota_all_vision_enable");
                         this.allVisionEnabled = true;
                     }
                 }
@@ -172,12 +172,12 @@
                 {
                     if (this.wtfEnabled)
                     {
-                        GameManager.ExecuteCommand("dota_ability_debug_disable");
+                        GameConsoleManager.ExecuteCommand("dota_ability_debug_disable");
                         this.wtfEnabled = false;
                     }
                     else
                     {
-                        GameManager.ExecuteCommand("dota_ability_debug_enable");
+                        GameConsoleManager.ExecuteCommand("dota_ability_debug_enable");
                         this.wtfEnabled = true;
                     }
                 }

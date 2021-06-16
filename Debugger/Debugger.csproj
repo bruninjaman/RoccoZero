@@ -1,111 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5043045D-9873-4BDE-8178-AF5CA534E208}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Debugger</RootNamespace>
-    <AssemblyName>Debugger</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <LangVersion>9.0</LangVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <RuntimeFrameworkVersion>5.0.6</RuntimeFrameworkVersion>
+    <Platforms>x64</Platforms>
+    <Configurations>Release</Configurations>
+    <Configuration>Release</Configuration>
+
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+
+    <UseWPF>true</UseWPF>
+
+    <OutputPath>.\bin\</OutputPath>
+    <IntermediateOutputPath>.\obj\</IntermediateOutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="Divine">
-      <HintPath>..\..\..\..\Desktop\Divine\Output\References\Divine.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\Divine.NET5\bin\Divine.dll</HintPath>
     </Reference>
-    <Reference Include="Divine.Menu">
-      <HintPath>..\..\..\..\Desktop\Divine\Output\References\Divine.Menu.dll</HintPath>
-    </Reference>
-    <Reference Include="Divine.SDK">
-      <HintPath>..\..\..\..\Desktop\Divine\Output\References\Divine.SDK.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\..\..\..\Desktop\Divine\Output\References\SharpDX.Mathematics.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Bootstrap.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="HUDInfo.cs" />
-    <Compile Include="Logger\ILog.cs" />
-    <Compile Include="Logger\Log.cs" />
-    <Compile Include="Logger\LogType.cs" />
-    <Compile Include="Logger\LogItem.cs" />
-    <Compile Include="Logger\Controls\Button.cs" />
-    <Compile Include="Logger\Controls\ToggleButton.cs" />
-    <Compile Include="Tools\Cheats\Cheats.cs" />
-    <Compile Include="Tools\Cheats\CreateUnits.cs" />
-    <Compile Include="Tools\GameEvents\GameEvent.cs" />
-    <Compile Include="Tools\GameEvents\GcMessage.cs" />
-    <Compile Include="Tools\GameEvents\Message.cs" />
-    <Compile Include="Tools\GameEvents\UiState.cs" />
-    <Compile Include="Tools\Information\Exceptions.cs" />
-    <Compile Include="Tools\Information\Items.cs" />
-    <Compile Include="Tools\Information\Modifiers.cs" />
-    <Compile Include="Tools\Information\Mouse.cs" />
-    <Compile Include="Tools\Information\Spells.cs" />
-    <Compile Include="Tools\Information\Units.cs" />
-    <Compile Include="Tools\OnChange\Bools.cs" />
-    <Compile Include="Menus\IMainMenu.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tools\IDebuggerTool.cs" />
-    <Compile Include="Menus\MainMenu.cs" />
-    <Compile Include="Tools\OnAddRemove\Abilities.cs" />
-    <Compile Include="Tools\OnAddRemove\Modifiers.cs" />
-    <Compile Include="Tools\OnAddRemove\Particles.cs" />
-    <Compile Include="Tools\OnAddRemove\Projectiles.cs" />
-    <Compile Include="Tools\OnAddRemove\Units.cs" />
-    <Compile Include="Tools\OnChange\Animations.cs" />
-    <Compile Include="Tools\OnChange\Floats.cs" />
-    <Compile Include="Tools\OnChange\Handles.cs" />
-    <Compile Include="Tools\OnChange\Int32.cs" />
-    <Compile Include="Tools\OnChange\Int64.cs" />
-    <Compile Include="Tools\OnChange\Strings.cs" />
-    <Compile Include="Tools\OnExecuteOrder\Abilities.cs" />
-    <Compile Include="Tools\OnExecuteOrder\AttackMove.cs" />
-    <Compile Include="Tools\OnExecuteOrder\Other.cs" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

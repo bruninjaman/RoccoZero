@@ -1,17 +1,20 @@
 ﻿namespace Debugger.Tools.Information
 {
-    using System.ComponentModel.Composition;
     using System.Linq;
 
     using Debugger.Menus;
 
-    using Divine;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Players;
+    using Divine.Entity.Entities.Units;
+    using Divine.Game;
+    using Divine.Game.EventArgs;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
+    using Divine.Numerics;
+    using Divine.Update;
 
     using Logger;
-
-    using SharpDX;
 
     internal class Modifiers : IDebuggerTool
     {

@@ -1,12 +1,17 @@
 ﻿namespace CreepsAggro
 {
     using System.Linq;
-    using System.Threading.Tasks;
 
-    using Divine;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Creeps;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Extensions;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
-    using Divine.SDK.Extensions;
+    using Divine.Service;
+    using Divine.Update;
 
     //[ExportPlugin("Creeps Aggro", StartupMode.Auto, "IdcNoob")]
     internal class CreepsAggro : Bootstrapper

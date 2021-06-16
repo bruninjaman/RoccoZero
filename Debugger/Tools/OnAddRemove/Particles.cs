@@ -1,19 +1,20 @@
 ﻿namespace Debugger.Tools.OnAddRemove
 {
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Threading.Tasks;
 
     using Debugger.Menus;
 
-    using Divine;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Particle.EventArgs;
+    using Divine.Particle.Particles;
+    using Divine.Update;
 
     using Logger;
-
-    using SharpDX;
 
     internal class Particles : IDebuggerTool
     {
@@ -118,7 +119,7 @@
                     for (var i = 0; i <= particle.HighestControlPoint; i++)
                     {
                         var point = particle.GetControlPoint(i);
-                        if (this.ignoreZeroCp && point.IsZero)
+                        if (this.ignoreZeroCp && point == Vector3.Zero)
                         {
                             continue;
                         }

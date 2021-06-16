@@ -3,9 +3,8 @@
     using System;
     using System.Collections.Generic;
 
-    using Divine;
-
-    using SharpDX;
+    using Divine.Game;
+    using Divine.Numerics;
 
     internal class LogItem
     {

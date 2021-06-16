@@ -3,8 +3,7 @@
     using System;
 
     using Divine.Menu.Items;
-
-    using SharpDX;
+    using Divine.Numerics;
 
     internal static class Extensions
     {

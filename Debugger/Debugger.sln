@@ -1,25 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.30914.41
+VisualStudioVersion = 16.0.31410.223
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Debugger", "Debugger.csproj", "{5043045D-9873-4BDE-8178-AF5CA534E208}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Debugger", "Debugger.csproj", "{BBCA38B2-0978-4311-B8F0-A52099EE08CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5043045D-9873-4BDE-8178-AF5CA534E208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5043045D-9873-4BDE-8178-AF5CA534E208}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5043045D-9873-4BDE-8178-AF5CA534E208}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5043045D-9873-4BDE-8178-AF5CA534E208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBCA38B2-0978-4311-B8F0-A52099EE08CF}.Release|x64.ActiveCfg = Release|x64
+		{BBCA38B2-0978-4311-B8F0-A52099EE08CF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {28A1DC10-6EA0-4C1F-81FF-483007D39E71}
+		SolutionGuid = {3CEDB2D5-B36F-40E9-B118-BEC9DE6DBC71}
 	EndGlobalSection
 EndGlobal

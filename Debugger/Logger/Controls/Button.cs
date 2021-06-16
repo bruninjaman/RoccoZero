@@ -1,9 +1,9 @@
 ﻿namespace Debugger.Logger.Controls
 {
-    using Divine;
-    using Divine.SDK.Extensions;
-
-    using SharpDX;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     internal class Button
     {

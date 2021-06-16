@@ -1,17 +1,17 @@
 ﻿namespace Debugger.Tools.GameEvents
 {
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
 
     using Debugger.Menus;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Game.EventArgs;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
+    using Divine.Numerics;
+    using Divine.Update;
 
     using Logger;
-
-    using SharpDX;
 
     internal class GameEvent : IDebuggerTool
     {

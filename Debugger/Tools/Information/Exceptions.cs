@@ -1,20 +1,18 @@
 ﻿namespace Debugger.Tools.Information
 {
     using System;
-    using System.ComponentModel.Composition;
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
 
     using Debugger.Menus;
 
-    using Divine;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
+    using Divine.Numerics;
+    using Divine.Update;
 
     using Logger;
-
-    using SharpDX;
 
     internal class Exceptions : IDebuggerTool
     {

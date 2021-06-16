@@ -1,6 +1,6 @@
 ﻿namespace Debugger.Logger.Controls
 {
-    using SharpDX;
+    using Divine.Numerics;
 
     internal class ToggleButton : Button
     {

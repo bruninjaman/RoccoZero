@@ -1,9 +1,16 @@
 ﻿using System;
 using System.Linq;
 
-using Divine.SDK.Extensions;
-
-using SharpDX;
+using Divine.Entity;
+using Divine.Entity.Entities.Components;
+using Divine.Entity.Entities.Units;
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Entity.Entities.Units.Heroes.Components;
+using Divine.Extensions;
+using Divine.Game;
+using Divine.GameConsole;
+using Divine.Numerics;
+using Divine.Renderer;
 
 namespace Divine.Helpers
 {
@@ -57,7 +64,7 @@ namespace Divine.Helpers
 
         internal static bool MinimapIsOnRight { get; set; }
 
-        internal static bool IsExtraLarge { get; } = ConVarManager.GetInt32("dota_hud_extra_large_minimap") == 1;
+        internal static bool IsExtraLarge { get; } = GameConsoleManager.GetInt32("dota_hud_extra_large_minimap") == 1;
 
         private static Vector2[] UltraHD4x3 { get; } =
         {

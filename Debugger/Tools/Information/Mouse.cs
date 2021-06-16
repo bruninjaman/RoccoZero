@@ -1,16 +1,19 @@
 ﻿namespace Debugger.Tools.Information
 {
-    using System.ComponentModel.Composition;
+    using System.Windows;
 
     using Debugger.Menus;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Input;
+    using Divine.Input.EventArgs;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Logger;
-
-    using SharpDX;
 
     internal class Mouse : IDebuggerTool
     {
@@ -87,7 +90,7 @@
         {
             if (e.Msg == WM_LBUTTONDOWN && !this.log.IsMouseUnderLog())
             {
-                System.Windows.Forms.Clipboard.SetText(GameManager.MousePosition.ToCopyFormat());
+                Clipboard.SetText(GameManager.MousePosition.ToCopyFormat());
             }
         }
 

@@ -1,15 +1,18 @@
 ﻿namespace Debugger.Tools.Cheats
 {
     using System;
-    using System.ComponentModel.Composition;
     using System.Linq;
     using System.Windows.Input;
 
     using Debugger.Menus;
 
-    using Divine;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.GameConsole;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
+    using Divine.Update;
 
     internal class CreateUnits : IDebuggerTool
     {
@@ -86,7 +89,7 @@
             {
                 if (this.meleeAllyCreep)
                 {
-                    GameManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_melee");
+                    GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_melee");
                 }
             });
         }
@@ -97,7 +100,7 @@
             {
                 if (this.meleeEnemyCreep)
                 {
-                    GameManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_melee enemy");
+                    GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_melee enemy");
                 }
             });
         }
@@ -108,7 +111,7 @@
             {
                 if (this.randomAlly)
                 {
-                    GameManager.ExecuteCommand("dota_create_unit " + this.GetRandomHero());
+                    GameConsoleManager.ExecuteCommand("dota_create_unit " + this.GetRandomHero());
                 }
             });
         }
@@ -119,7 +122,7 @@
             {
                 if (this.randomEnemy)
                 {
-                    GameManager.ExecuteCommand("dota_create_unit " + this.GetRandomHero() + " enemy");
+                    GameConsoleManager.ExecuteCommand("dota_create_unit " + this.GetRandomHero() + " enemy");
                 }
             });
         }
@@ -130,7 +133,7 @@
             {
                 if (this.rangedAllyCreep)
                 {
-                    GameManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_ranged");
+                    GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_ranged");
                 }
             });
         }
@@ -141,7 +144,7 @@
             {
                 if (this.rangedEnemyCreep)
                 {
-                    GameManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_ranged enemy");
+                    GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_ranged enemy");
                 }
             });
         }

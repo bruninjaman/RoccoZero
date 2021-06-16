@@ -1,13 +1,9 @@
 ﻿namespace Debugger.Menus
 {
-
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Menu;
     using Divine.Menu.Items;
-
-    using SharpDX;
-
-    using Tools;
+    using Divine.Numerics;
 
     internal class MainMenu : IMainMenu
     {
@@ -31,7 +27,7 @@
 
         public void Activate()
         {
-            this.factory = MenuManager.CreateRootMenu("Debugger").SetAbilityTexture(AbilityId.chaos_knight_reality_rift);
+            this.factory = MenuManager.CreateRootMenu("Debugger").SetAbilityImage(AbilityId.chaos_knight_reality_rift);
             this.factory.SetFontColor(Color.PaleVioletRed);
 
             this.OnAddRemoveMenu = this.factory.CreateMenu("On add/remove");
