@@ -1,6 +1,17 @@
-﻿using Divine;
-
-using SharpDX;
+﻿using Divine.Entity;
+using Divine.Entity.Entities;
+using Divine.Entity.Entities.Components;
+using Divine.Entity.Entities.Units;
+using Divine.Entity.Entities.Units.Buildings;
+using Divine.Entity.Entities.Units.Creeps.Neutrals;
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Entity.Entities.Units.Wards;
+using Divine.Game;
+using Divine.Numerics;
+using Divine.Particle;
+using Divine.Particle.Components;
+using Divine.Service;
+using Divine.Update;
 
 namespace VisibleByEnemyPlus
 {
@@ -71,12 +82,12 @@ namespace VisibleByEnemyPlus
             }
         }
 
-        private bool IsMine(Entity sender)
+        private static bool IsMine(Entity sender)
         {
             return sender.ClassId == ClassId.CDOTA_NPC_TechiesMines;
         }
 
-        private bool IsUnit(Unit sender)
+        private static bool IsUnit(Unit sender)
         {
             return (sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Lane
                    && sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Siege
@@ -116,7 +127,7 @@ namespace VisibleByEnemyPlus
                     {
                         HandleEffect(unit, unit.IsVisibleToEnemies);
                     }
-                    else if (Config.WardsItem && unit is WardObserver)
+                    else if (Config.WardsItem && unit is ObserverWard)
                     {
                         HandleEffect(unit, unit.IsVisibleToEnemies);
                     }

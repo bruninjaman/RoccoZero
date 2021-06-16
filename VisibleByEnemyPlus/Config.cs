@@ -3,8 +3,7 @@ using System.Linq;
 
 using Divine.Menu;
 using Divine.Menu.Items;
-
-using SharpDX;
+using Divine.Numerics;
 
 namespace VisibleByEnemyPlus
 {

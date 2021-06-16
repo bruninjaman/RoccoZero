@@ -1,43 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0493DFA3-07BE-481D-9279-416928679808}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>VisibleByEnemyPlus</RootNamespace>
-    <AssemblyName>VisibleByEnemyPlus</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <RuntimeFrameworkVersion>5.0.6</RuntimeFrameworkVersion>
+    <Platforms>x64</Platforms>
+    <Configurations>Release</Configurations>
+    <Configuration>Release</Configuration>
+    
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+
+    <OutputPath>.\bin\</OutputPath>
+    <IntermediateOutputPath>.\obj\</IntermediateOutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9.0</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="Divine">
-      <HintPath>..\..\..\..\Desktop\Divine\Output\Divine.dll</HintPath>
-    </Reference>
-    <Reference Include="Divine.Menu">
-      <HintPath>..\..\..\..\Desktop\Divine\Output\Divine.Menu.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\..\..\..\Desktop\Divine\Output\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\Divine.NET5\bin\Divine.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="VisibleByEnemyPlus.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Config.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
