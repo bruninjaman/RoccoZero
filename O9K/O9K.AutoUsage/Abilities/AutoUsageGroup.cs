@@ -12,13 +12,15 @@
     using Core.Helpers;
     using Core.Logger;
     using Core.Managers.Entity;
-    using Core.Managers.Menu.EventArgs;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Game;
+
+    using Divine.Update;
+
+    using O9K.Core.Managers.Menu.EventArgs;
 
     using Settings;
-
-    using AbilityEventArgs = Core.Managers.Menu.EventArgs.AbilityEventArgs;
 
     internal class AutoUsageGroup<TType, TAbility> : IAutoUsageGroup
         where TType : class, IActiveAbility where TAbility : UsableAbility

@@ -9,9 +9,11 @@
     using Core.Entities.Units;
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity;
+    using Divine.Extensions;
+    using Divine.Entity.EventArgs;
+    using Divine.Entity.Entities.Trees;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Settings;
 

@@ -7,7 +7,7 @@
     using Core.Entities.Units;
     using Core.Prediction.Data;
 
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
 
     using Settings;
 

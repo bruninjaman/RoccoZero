@@ -6,9 +6,8 @@
     using Core.Entities.Abilities.Base.Types;
     using Core.Entities.Metadata;
     using Core.Entities.Units;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Settings;
 

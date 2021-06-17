@@ -7,8 +7,13 @@
     using Core.Entities.Metadata;
     using Core.Logger;
 
-    using Divine;
-    using Divine.SDK.Helpers;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.GameConsole;
+    using Divine.Order;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
+    using Divine.Update;
 
     [AbilityId(AbilityId.courier_burst)]
     internal class SpeedBurstAbility

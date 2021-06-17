@@ -7,11 +7,10 @@
     using Core.Entities.Units;
     using Core.Managers.Entity;
 
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Numerics;
 
     using Settings;
-
-    using SharpDX;
 
     internal class BlinkAbility : UsableAbility
     {

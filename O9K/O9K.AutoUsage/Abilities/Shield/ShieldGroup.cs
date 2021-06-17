@@ -2,9 +2,10 @@
 {
     using Core.Entities.Abilities.Base.Components.Base;
     using Core.Helpers;
-    using Core.Managers.Menu.EventArgs;
 
     using Glyph;
+
+    using O9K.Core.Managers.Menu.EventArgs;
 
     using Settings;
 

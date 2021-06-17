@@ -9,8 +9,8 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Settings;
 
@@ -54,7 +54,7 @@
         {
             if (!Experience.TryGetValue(creep.Name, out var exp))
             {
-                Experience[creep.Name] = Unit.GetKeyValueByName(creep.Name).GetKeyValue("BountyXP")?.GetInt32() ?? 0;
+                Experience[creep.Name] = Unit.GetKeyValueByName(creep.Name).GetSubKey("BountyXP")?.GetInt32() ?? 0;
             }
 
             return exp;

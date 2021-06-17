@@ -7,7 +7,7 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Settings;
 

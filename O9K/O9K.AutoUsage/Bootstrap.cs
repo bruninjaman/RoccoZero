@@ -4,7 +4,8 @@
 
     using Core.Logger;
 
-    using Divine;
+    using Divine.Renderer;
+    using Divine.Service;
 
     using O9K.Core.Managers.Context;
 

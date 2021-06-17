@@ -11,8 +11,9 @@
     using Core.Logger;
     using Core.Managers.Entity;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Update;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Settings;
 

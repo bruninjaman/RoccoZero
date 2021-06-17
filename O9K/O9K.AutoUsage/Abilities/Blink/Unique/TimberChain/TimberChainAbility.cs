@@ -9,9 +9,8 @@
     using Core.Entities.Units;
     using Core.Extensions;
     using Core.Managers.Entity;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using O9K.Core.Geometry;
 

@@ -13,12 +13,15 @@
     using Core.Helpers;
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Modifier;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Update;
+    using Divine.Modifier.EventArgs;
+    using Divine.Particle.EventArgs;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Settings;
-
-    using SharpDX;
 
     [AbilityId(AbilityId.item_dust)]
     internal class DustOfAppearanceAbility : SpecialAbility, IDisposable

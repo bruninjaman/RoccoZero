@@ -7,8 +7,8 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Extensions;
 
     using Settings;
 

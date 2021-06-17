@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace O9K.AutoUsage.Abilities.HealthRestore.Unique.Tango
+﻿namespace O9K.AutoUsage.Abilities.HealthRestore.Unique.Tango
 {
     using Core.Entities.Abilities.Base.Types;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Ensage;
-    using Ensage.SDK.Helpers;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Helpers;
 
-    class TangoSettings
+    internal class TangoSettings
     {
         public TangoSettings(Menu settings, IHealthRestore ability)
         {
@@ -46,7 +40,7 @@ namespace O9K.AutoUsage.Abilities.HealthRestore.Unique.Tango
             this.Distance.AddTranslation(Lang.Cn, "距离");
             this.Distance.AddTooltipTranslation(Lang.Cn, "如果敌人更近，使用能力");
         }
-        
+
         public MenuSwitcher HappyLittleTreeOnly { get; }
         public MenuSlider Distance { get; }
 

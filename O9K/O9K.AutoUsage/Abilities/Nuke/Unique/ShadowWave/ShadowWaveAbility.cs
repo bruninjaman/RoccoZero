@@ -9,7 +9,7 @@
     using Core.Entities.Units;
     using Core.Managers.Entity;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Settings;
 

@@ -9,8 +9,9 @@
     using Core.Extensions;
     using Core.Prediction.Data;
 
-    using Divine;
-    using Divine.SDK.Helpers;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Game;
+    using Divine.Update;
 
     using Settings;
 

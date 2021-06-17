@@ -8,7 +8,7 @@
     using Core.Entities.Units;
     using Core.Prediction.Data;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Settings;
 

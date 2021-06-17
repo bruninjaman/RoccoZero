@@ -10,8 +10,8 @@
     using Core.Helpers;
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Update;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Settings;
 

@@ -8,8 +8,9 @@
     using Core.Helpers;
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Players;
 
     internal class GlyphAbility
     {
