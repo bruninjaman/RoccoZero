@@ -2,7 +2,8 @@
 {
     using System;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Projectile.Projectiles;
 
     using Units.Base;
 

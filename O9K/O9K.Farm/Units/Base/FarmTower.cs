@@ -6,7 +6,7 @@
 
     using Damage;
 
-    using Divine;
+    using Divine.Update;
 
     using O9K.Core.Entities.Buildings;
     using O9K.Core.Entities.Units;

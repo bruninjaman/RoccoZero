@@ -5,8 +5,9 @@
     using System.Linq;
 
     using Damage;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Menu;
 
@@ -14,8 +15,6 @@
     using O9K.Core.Helpers;
     using O9K.Core.Helpers.Damage;
     using O9K.Core.Managers.Menu.Items;
-
-    using SharpDX;
 
     internal class FarmUnit : IEquatable<FarmUnit>
     {

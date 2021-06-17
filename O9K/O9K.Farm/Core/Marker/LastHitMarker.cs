@@ -4,7 +4,13 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Modifier;
+    using Divine.Modifier.EventArgs;
+    using Divine.Modifier.Modifiers;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Menu;
 
@@ -15,8 +21,6 @@
     using O9K.Core.Managers.Entity;
     using O9K.Core.Managers.Menu.EventArgs;
     using O9K.Core.Managers.Renderer.Utils;
-
-    using SharpDX;
 
     using Units.Base;
 

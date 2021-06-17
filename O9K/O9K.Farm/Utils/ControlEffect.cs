@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    using Divine;
+    using Divine.Particle.Particles;
 
     using Units.Base;
 

@@ -5,7 +5,8 @@
     using System.Linq;
     using System.Reflection;
 
-    using Divine;
+    using Divine.Entity.Entities;
+    using Divine.Entity.Entities.Units.Components;
 
     using Menu;
 

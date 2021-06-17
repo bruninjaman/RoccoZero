@@ -5,7 +5,9 @@
 
     using Damage;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Projectile;
+    using Divine.Projectile.EventArgs;
 
     using O9K.Core.Entities.Units;
     using O9K.Core.Extensions;
@@ -40,7 +42,7 @@
         {
             try
             {
-                var projectile = e.TrackingProjectile;
+                var projectile = e.Projectile;
                 if (!projectile.IsAutoAttackProjectile())
                 {
                     return;

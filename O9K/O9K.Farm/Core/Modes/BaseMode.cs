@@ -4,8 +4,11 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Entity.Entities;
+    using Divine.Entity.Entities.Players;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Update;
 
     using O9K.Core.Entities.Units;
     using O9K.Core.Helpers;

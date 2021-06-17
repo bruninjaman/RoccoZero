@@ -6,7 +6,11 @@
 
     using Damage;
 
-    using Divine;
+    using Divine.Entity.Entities;
+
+    using Divine.Order;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
 
     using Marker;
 

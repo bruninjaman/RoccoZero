@@ -2,7 +2,8 @@
 {
     using System;
 
-    using Divine;
+
+    using Divine.Renderer;
 
     using O9K.Core.Managers.Context;
     using O9K.Core.Managers.Menu;
