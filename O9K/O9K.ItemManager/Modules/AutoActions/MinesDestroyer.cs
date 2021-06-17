@@ -13,8 +13,12 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Order;
+    using Divine.Update;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
 

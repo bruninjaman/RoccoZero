@@ -11,7 +11,8 @@
     using Core.Logger;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Names;
 

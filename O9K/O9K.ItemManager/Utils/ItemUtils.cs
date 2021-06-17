@@ -5,7 +5,12 @@
 
     using Core.Entities.Abilities.Base;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Abilities.Items.Components;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Game;
 
     using Enums;
 
@@ -55,7 +60,7 @@
         {
             var hero = ability.Owner.BaseUnit;
 
-            for (var i = ItemSlot.MainSlot_1; i <= ItemSlot.StashSlot_6; i++)
+            for (var i = ItemSlot.MainSlot1; i <= ItemSlot.StashSlot6; i++)
             {
                 var inventoryItem = hero.Inventory.GetItem(i);
                 if (inventoryItem?.Handle != ability.Handle)
@@ -82,7 +87,7 @@
                 return price;
             }
 
-            ItemPrice[itemId] = Ability.GetKeyValueById(itemId).GetKeyValue("ItemCost")?.GetInt32() ?? 0;
+            ItemPrice[itemId] = Ability.GetKeyValueById(itemId).GetSubKey("ItemCost")?.GetInt32() ?? 0;
             return price;
         }
 
@@ -179,17 +184,17 @@
 
         private static bool HasGlobalTag(string name)
         {
-            return Ability.GetKeyValueByName(name).GetKeyValue("GlobalShop")?.GetBooleon() ?? false;
+            return Ability.GetKeyValueByName(name).GetSubKey("GlobalShop")?.GetBooleon() ?? false;
         }
 
         private static bool HasSecretShopFlag(string name)
         {
-            return Ability.GetKeyValueByName(name).GetKeyValue("SecretShop")?.GetBooleon() ?? false;
+            return Ability.GetKeyValueByName(name).GetSubKey("SecretShop")?.GetBooleon() ?? false;
         }
 
         private static bool HasSideShopFlag(string name)
         {
-            return Ability.GetKeyValueByName(name).GetKeyValue("SideShop")?.GetBooleon() ?? false;
+            return Ability.GetKeyValueByName(name).GetSubKey("SideShop")?.GetBooleon() ?? false;
         }
     }
 }

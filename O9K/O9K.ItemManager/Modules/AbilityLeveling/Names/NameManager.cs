@@ -6,7 +6,7 @@
 
     using Core.Entities.Heroes;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     internal class NameManager
     {

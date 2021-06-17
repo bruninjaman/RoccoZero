@@ -8,9 +8,9 @@
     using Core.Logger;
     using Core.Managers.Menu.Items;
 
-    using Divine;
-
-    using SharpDX;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     internal class BuildDrawer : IDisposable
     {

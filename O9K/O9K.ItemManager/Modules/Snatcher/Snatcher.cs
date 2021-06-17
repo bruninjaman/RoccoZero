@@ -16,12 +16,20 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Entity;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Order;
+    using Divine.Renderer;
+    using Divine.Update;
+    using Divine.Game.EventArgs;
+    using Divine.Order.EventArgs;
+    using Divine.Entity.Entities.PhysicalItems;
+    using Divine.Entity.Entities.Runes;
+    using Divine.Order.Orders.Components;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
-
-    using SharpDX;
 
     using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 

@@ -3,8 +3,8 @@
     using System.Linq;
 
     using Core.Entities.Units;
-
-    using Divine;
+    using Divine.Entity.Entities.PhysicalItems;
+    using Divine.Entity.Entities.Abilities.Components;
 
     internal class SpiritBear : Controllable
     {

@@ -13,12 +13,20 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
-    using Divine.SDK.Localization;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Abilities.Items;
+    using Divine.Entity.Entities.Abilities.Items.Components;
+    using Divine.Entity.Entities.Players;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Helpers;
+    using Divine.Numerics;
+    using Divine.Order;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
+    using Divine.Update;
 
     using Metadata;
-
-    using SharpDX;
 
     internal class ItemSwap : IModule
     {
@@ -308,7 +316,7 @@
 
                 var inventory = this.owner.Hero.BaseInventory;
 
-                for (var i = ItemSlot.BackPack_1; i <= ItemSlot.StashSlot_6; i++)
+                for (var i = ItemSlot.BackPack1; i <= ItemSlot.StashSlot6; i++)
                 {
                     var slotItem = inventory.GetItem(i);
                     if (slotItem?.Handle == this.swapBackItem.Handle)
@@ -388,7 +396,7 @@
                     return;
                 }
 
-                for (var i = ItemSlot.BackPack_1; i <= ItemSlot.NeutralItemSlot; i++)
+                for (var i = ItemSlot.BackPack1; i <= ItemSlot.NeutralItemSlot; i++)
                 {
                     var slotItem = stoneOwner.Inventory.GetItem(i);
                     if (slotItem?.Handle == stone.Handle)

@@ -2,7 +2,7 @@
 {
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Entity.Entities.PhysicalItems;
 
     internal class ArcWardenClone : Controllable
     {

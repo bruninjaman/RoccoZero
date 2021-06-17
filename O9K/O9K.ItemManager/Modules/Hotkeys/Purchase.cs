@@ -9,8 +9,10 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Divine;
-    using Divine.SDK.Localization;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Players;
+    using Divine.Helpers;
 
     using Metadata;
 

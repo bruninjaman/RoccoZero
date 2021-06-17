@@ -7,7 +7,7 @@
 
     using Core.Logger;
 
-    using Divine;
+    using Divine.Service;
 
     using Metadata;
 

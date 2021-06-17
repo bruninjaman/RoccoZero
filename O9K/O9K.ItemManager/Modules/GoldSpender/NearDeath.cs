@@ -15,8 +15,11 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Update;
+    using Divine.Entity.Entities.Players;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Components;
 
     using Metadata;
 

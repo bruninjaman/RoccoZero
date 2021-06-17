@@ -12,8 +12,9 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Update;
+    using Divine.Entity.Entities;
+    using Divine.Entity.Entities.EventArgs;
 
     using Metadata;
 

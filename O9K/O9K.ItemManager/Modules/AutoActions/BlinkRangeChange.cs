@@ -11,9 +11,12 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
-    using Divine.SDK.Extensions;
-    using Divine.SDK.Localization;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Extensions;
+    using Divine.Helpers;
+    using Divine.Order;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
 
     using Metadata;
 

@@ -1,6 +1,7 @@
 ﻿namespace O9K.ItemManager.Modules.AbilityLeveling.AbilityBuild
 {
-    using Divine;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
 
     internal class LearnableAbility
     {

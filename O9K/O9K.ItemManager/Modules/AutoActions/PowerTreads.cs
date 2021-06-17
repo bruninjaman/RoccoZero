@@ -15,8 +15,16 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
-    using Divine.SDK.Localization;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Runes;
+    using Divine.Entity.Entities.Units;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Order;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
+    using Divine.Update;
 
     using Metadata;
 
@@ -24,9 +32,7 @@
 
     using OrderHelper;
 
-    using SharpDX;
-
-    using Attribute = Divine.Attribute;
+    using Attribute = Divine.Entity.Entities.Units.Heroes.Components.Attribute;
 
     internal class PowerTreads : IModule
     {
@@ -81,7 +87,7 @@
             this.orderSync = orderSync;
             this.eventManager = Context9.AssemblyEventManager;
 
-            var menu = mainMenu.AutoActionsMenu.Add(new Menu(LocalizationHelper.LocalizeName(AbilityId.item_power_treads), "PowerTreads"));
+            var menu = mainMenu.AutoActionsMenu.Add(new Menu(Divine.Helpers.LocalizationHelper.LocalizeName(AbilityId.item_power_treads), "PowerTreads"));
 
             this.enabled = menu.Add(new MenuSwitcher("Enabled"));
             this.enabled.AddTranslation(Lang.Ru, "Включено");

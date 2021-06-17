@@ -5,8 +5,11 @@
 
     using Core.Entities.Heroes;
 
-    using Divine;
-    using Divine.Items;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Abilities.Items;
+    using Divine.Entity.Entities.Runes.Components;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Game;
 
     internal static class HeroUtils
     {

@@ -3,7 +3,8 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Runes.Components;
 
     [AbilityId(AbilityId.item_bottle)]
     internal class Bottle : RecoveryAbility

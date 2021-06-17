@@ -5,7 +5,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     internal class Swashbuckle : ControllableAbility
     {

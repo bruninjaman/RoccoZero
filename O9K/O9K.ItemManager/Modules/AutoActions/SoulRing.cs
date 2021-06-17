@@ -13,16 +13,22 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
-    using Divine;
-    using Divine.SDK.Localization;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Runes;
+    using Divine.Entity.Entities.Units;
+    using Divine.Helpers;
+    using Divine.Numerics;
+    using Divine.Order;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
+    using Divine.Update;
 
     using Metadata;
 
     using O9K.Core.Managers.Context;
 
     using OrderHelper;
-
-    using SharpDX;
 
     internal class SoulRing : IModule
     {

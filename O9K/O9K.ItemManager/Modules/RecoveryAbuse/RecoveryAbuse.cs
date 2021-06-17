@@ -21,13 +21,22 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Abilities.Items.Components;
+    using Divine.Entity.Entities.PhysicalItems;
+    using Divine.Entity.Entities.Players;
+    using Divine.Game;
+    using Divine.Order;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
+    using Divine.Update;
 
     using Metadata;
 
     using Utils;
 
-    using Attribute = Divine.Attribute;
+    using Attribute = Divine.Entity.Entities.Units.Heroes.Components.Attribute;
     using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 
     internal class RecoveryAbuse : IModule
@@ -215,7 +224,7 @@
             {
                 ItemSlot? slot = null;
 
-                for (var i = ItemSlot.BackPack_1; i <= ItemSlot.BackPack_3; i++)
+                for (var i = ItemSlot.BackPack1; i <= ItemSlot.BackPack3; i++)
                 {
                     if (this.ignoredSlots.Contains(i))
                     {
@@ -709,12 +718,12 @@
             }
 
             this.bottleSlot = bottle.Ability.GetItemSlot();
-            if (this.bottleSlot <= ItemSlot.MainSlot_6)
+            if (this.bottleSlot <= ItemSlot.MainSlot6)
             {
                 return false;
             }
 
-            if (!Player.Move(this.owner, bottle.Ability, ItemSlot.MainSlot_1))
+            if (!Player.Move(this.owner, bottle.Ability, ItemSlot.MainSlot1))
             {
                 return true;
             }
