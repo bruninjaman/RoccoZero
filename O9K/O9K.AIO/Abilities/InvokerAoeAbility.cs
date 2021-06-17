@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
 using O9K.AIO.Modes.Combo;
 using O9K.Core.Entities.Abilities.Base;
 using O9K.Core.Entities.Units;
-using O9K.Core.Logger;
 
 namespace O9K.AIO.Abilities
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace O9K.AIO.Abilities
+﻿namespace O9K.AIO.Abilities
 {
     using Core.Entities.Abilities.Base;
     using Core.Helpers;
