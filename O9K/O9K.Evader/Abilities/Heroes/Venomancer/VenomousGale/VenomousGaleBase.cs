@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.venomancer_venomous_gale)]
     internal class VenomousGaleBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

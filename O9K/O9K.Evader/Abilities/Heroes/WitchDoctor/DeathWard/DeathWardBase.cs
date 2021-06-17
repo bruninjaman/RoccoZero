@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.witch_doctor_death_ward)]
     internal class DeathWardBase : EvaderBaseAbility, IEvadable

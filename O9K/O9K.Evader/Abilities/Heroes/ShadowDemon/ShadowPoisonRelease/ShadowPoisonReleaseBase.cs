@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.shadow_demon_shadow_poison_release)]
     internal class ShadowPoisonReleaseBase : EvaderBaseAbility //, IEvadable

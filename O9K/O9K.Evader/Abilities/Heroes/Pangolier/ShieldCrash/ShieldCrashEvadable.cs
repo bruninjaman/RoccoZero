@@ -8,8 +8,9 @@
     using Core.Entities.Abilities.Base;
     using Core.Extensions;
     using Core.Logger;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Update;
+    using Divine.Particle.Particles;
 
     using Metadata;
 

@@ -10,8 +10,11 @@
     using Core.Data;
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Entity;
+    using Divine.Entity.EventArgs;
+    using Divine.Entity.Entities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
 
     internal class UnitMonitor : IDisposable
     {

@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.keeper_of_the_light_chakra_magic)]
     internal class ChakraMagicBase : EvaderBaseAbility, IEvadable

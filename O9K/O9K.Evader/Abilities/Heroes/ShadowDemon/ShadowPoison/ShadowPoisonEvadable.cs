@@ -4,8 +4,8 @@
     using Base.Evadable.Components;
 
     using Core.Entities.Abilities.Base;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Entity.Entities.Units;
 
     using Metadata;
 

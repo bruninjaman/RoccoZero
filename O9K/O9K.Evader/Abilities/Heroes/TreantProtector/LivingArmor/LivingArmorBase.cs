@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.treant_living_armor)]
     internal class LivingArmorBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

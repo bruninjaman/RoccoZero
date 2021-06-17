@@ -2,13 +2,11 @@
 {
     using Core.Entities.Units;
     using Core.Extensions;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Units;
 
     using O9K.Core.Geometry;
     using O9K.Evader.Abilities.Base.Evadable;
-
-    using SharpDX;
 
     internal class LinearProjectileUnitObstacle : LinearProjectileObstacle
     {

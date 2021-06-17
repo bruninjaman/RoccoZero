@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.silencer_global_silence)]
     internal class GlobalSilenceBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

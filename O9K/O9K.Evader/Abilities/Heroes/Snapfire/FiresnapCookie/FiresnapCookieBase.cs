@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.snapfire_firesnap_cookie)]
     internal class FiresnapCookieBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

@@ -4,9 +4,9 @@
 
     using Core.Entities.Units;
 
-    using Pathfinder.Obstacles.Abilities.AreaOfEffect;
+    using Divine.Numerics;
 
-    using SharpDX;
+    using Pathfinder.Obstacles.Abilities.AreaOfEffect;
 
     internal class QuillSprayObstacle : AreaOfEffectSpeedObstacle
     {

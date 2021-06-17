@@ -10,8 +10,9 @@
     using Core.Entities.Units;
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Update;
+    using Divine.Entity.Entities.Units.Components;
 
     using Metadata;
 

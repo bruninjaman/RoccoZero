@@ -6,7 +6,7 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Evader.EvadeModes;
 

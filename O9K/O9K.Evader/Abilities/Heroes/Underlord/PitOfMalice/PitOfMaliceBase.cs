@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.abyssal_underlord_pit_of_malice)]
     internal class PitOfMaliceBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

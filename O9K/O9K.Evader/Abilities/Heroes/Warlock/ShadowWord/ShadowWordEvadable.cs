@@ -5,8 +5,8 @@
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
-
-    using Divine;
+    using Divine.Modifier.Modifiers;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
 

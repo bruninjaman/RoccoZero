@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.visage_soul_assumption)]
     internal class SoulAssumptionBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

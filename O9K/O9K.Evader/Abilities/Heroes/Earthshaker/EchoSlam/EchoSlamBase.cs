@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.earthshaker_echo_slam)]
     internal class EchoSlamBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

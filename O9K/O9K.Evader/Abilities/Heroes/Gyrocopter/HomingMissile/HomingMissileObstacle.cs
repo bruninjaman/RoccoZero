@@ -8,12 +8,11 @@
     using Core.Entities.Abilities.Heroes.Gyrocopter;
     using Core.Entities.Units;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Units;
 
     using Pathfinder.Obstacles.Abilities;
-
-    using SharpDX;
 
     internal class HomingMissileObstacle : AbilityObstacle
     {

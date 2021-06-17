@@ -8,14 +8,13 @@
     using Core.Extensions;
     using Core.Managers.Entity;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
 
     using O9K.Core.Geometry;
 
     using Pathfinder.Obstacles.Abilities.LinearProjectile;
-
-    using SharpDX;
 
     internal class TimberChainObstacle : LinearProjectileObstacle
     {

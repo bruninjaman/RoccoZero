@@ -7,9 +7,10 @@
 
     using Core.Entities.Abilities.Base;
     using Core.Logger;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Update;
+    using Divine.Particle.Particles;
 
     using Metadata;
 

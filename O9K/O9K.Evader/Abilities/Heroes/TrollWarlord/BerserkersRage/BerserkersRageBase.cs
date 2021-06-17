@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.troll_warlord_berserkers_rage)]
     internal class BerserkersRageBase : EvaderBaseAbility, IEvadable, IUsable<DodgeAbility>

@@ -12,7 +12,9 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Divine;
+    using Divine.Entity.Entities.Components;
+    using Divine.Projectile;
+    using Divine.Projectile.EventArgs;
 
     internal class ProjectileMonitor : IDisposable
     {
@@ -37,7 +39,7 @@
         {
             try
             {
-                var projectile = args.TrackingProjectile;
+                var projectile = args.Projectile;
                 if (projectile.IsAutoAttackProjectile())
                 {
                     return;

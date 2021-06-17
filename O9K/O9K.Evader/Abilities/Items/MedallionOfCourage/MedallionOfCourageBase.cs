@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_medallion_of_courage)]
     internal class MedallionOfCourageBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

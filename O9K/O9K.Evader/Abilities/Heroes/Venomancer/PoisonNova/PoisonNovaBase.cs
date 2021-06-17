@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.venomancer_poison_nova)]
     internal class PoisonNovaBase : EvaderBaseAbility, IEvadable

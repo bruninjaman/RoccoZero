@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.polar_furbolg_ursa_warrior_thunder_clap)]
     internal class ThunderClapBase : EvaderBaseAbility, IEvadable

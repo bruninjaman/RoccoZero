@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.void_spirit_aether_remnant)]
     internal class AetherRemnantBase : EvaderBaseAbility, IUsable<DisableAbility>

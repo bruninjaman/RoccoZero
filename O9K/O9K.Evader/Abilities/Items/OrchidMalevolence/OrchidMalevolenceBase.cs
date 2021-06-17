@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_orchid)]
     internal class OrchidMalevolenceBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

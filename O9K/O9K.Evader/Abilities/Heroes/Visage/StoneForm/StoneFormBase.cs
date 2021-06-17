@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.visage_summon_familiars_stone_form)]
     internal class StoneFormBase : EvaderBaseAbility /*, IEvadable*/, IUsable<DisableAbility>

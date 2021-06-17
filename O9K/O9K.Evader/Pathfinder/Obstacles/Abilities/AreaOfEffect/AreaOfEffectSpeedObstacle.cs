@@ -4,11 +4,10 @@
 
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
 
     using O9K.Evader.Abilities.Base.Evadable;
-
-    using SharpDX;
 
     internal class AreaOfEffectSpeedObstacle : AreaOfEffectObstacle
     {

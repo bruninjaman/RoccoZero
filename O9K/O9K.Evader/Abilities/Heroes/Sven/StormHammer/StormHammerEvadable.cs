@@ -6,7 +6,9 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Modifier.Modifiers;
+    using Divine.Projectile.Projectiles;
 
     using Metadata;
 

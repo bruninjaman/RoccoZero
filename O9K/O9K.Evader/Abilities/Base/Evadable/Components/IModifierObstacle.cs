@@ -1,6 +1,7 @@
 ﻿namespace O9K.Evader.Abilities.Base.Evadable.Components
 {
-    using Divine;
+    using Divine.Modifier.Modifiers;
+    using Divine.Entity.Entities.Units;
 
     internal interface IModifierObstacle
     {

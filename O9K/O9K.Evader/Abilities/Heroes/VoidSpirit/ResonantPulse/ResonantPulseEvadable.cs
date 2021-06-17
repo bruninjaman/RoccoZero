@@ -11,8 +11,11 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
     using Core.Logger;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Update;
+    using Divine.Modifier.Modifiers;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
 

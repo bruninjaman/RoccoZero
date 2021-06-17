@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.spirit_breaker_nether_strike)]
     internal class NetherStrikeBase : EvaderBaseAbility, IEvadable

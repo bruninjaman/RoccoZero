@@ -8,7 +8,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.zuus_lightning_bolt)]
     internal class LightningBoltBase : EvaderBaseAbility, IUsable<DisableAbility>, IEvadable, IUsable<CounterEnemyAbility>

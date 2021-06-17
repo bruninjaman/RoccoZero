@@ -10,8 +10,9 @@
     using Core.Entities.Abilities.Base;
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Update;
+    using Divine.Particle.Particles;
 
     using Metadata;
 

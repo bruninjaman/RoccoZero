@@ -2,7 +2,7 @@
 {
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Modifier.Modifiers;
 
     using O9K.Evader.Abilities.Base;
 

@@ -8,8 +8,9 @@
 
     using Core.Entities.Abilities.Base;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
 

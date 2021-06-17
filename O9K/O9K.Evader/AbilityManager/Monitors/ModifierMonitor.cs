@@ -12,7 +12,10 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Divine;
+    using Divine.Modifier;
+    using Divine.Modifier.EventArgs;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
 

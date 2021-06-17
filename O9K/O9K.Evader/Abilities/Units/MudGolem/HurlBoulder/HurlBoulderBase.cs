@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.mud_golem_hurl_boulder)]
     internal class HurlBoulderBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

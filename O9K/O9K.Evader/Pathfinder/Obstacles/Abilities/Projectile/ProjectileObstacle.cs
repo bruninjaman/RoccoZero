@@ -4,7 +4,8 @@
 
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Projectile.Projectiles;
 
     using O9K.Evader.Abilities.Base.Evadable;
 

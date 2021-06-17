@@ -5,6 +5,8 @@
     using Core.Helpers;
     using Core.Managers.Menu.Items;
 
+    using Divine.Numerics;
+
     using Evadable;
 
     using Evader.EvadeModes;
@@ -12,8 +14,6 @@
     using Metadata;
 
     using Pathfinder.Obstacles;
-
-    using SharpDX;
 
     internal abstract class UsableAbility
     {

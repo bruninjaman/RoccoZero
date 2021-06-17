@@ -7,7 +7,8 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Modifier.Modifiers;
+    using Divine.Particle.Particles;
 
     using Metadata;
 

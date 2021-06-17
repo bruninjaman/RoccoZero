@@ -6,15 +6,15 @@
     using Core.Logger;
     using Core.Managers.Renderer.Utils;
 
-    using Divine;
+
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Metadata;
 
     using Pathfinder;
 
     using Settings;
-
-    using SharpDX;
 
     internal class StateDrawer : IEvaderService
     {

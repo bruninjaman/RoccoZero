@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_sheepstick)]
     internal class ScytheOfVyseBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

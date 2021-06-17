@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.spirit_breaker_charge_of_darkness)]
     internal class ChargeOfDarknessBase : EvaderBaseAbility, IEvadable

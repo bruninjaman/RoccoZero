@@ -15,15 +15,28 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
+    using Divine.Extensions;
+    using Divine.Game;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+
+    using Divine.Modifier;
+    using Divine.Numerics;
+    using Divine.Order;
+    using Divine.Projectile;
+    using Divine.Renderer;
+    using Divine.Update;
+    using Divine.Modifier.EventArgs;
+    using Divine.Order.EventArgs;
+    using Divine.Projectile.EventArgs;
+    using Divine.Projectile.Projectiles;
+    using Divine.Entity.Entities.Units;
+    using Divine.Order.Orders.Components;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Abilities.Items.Components;
 
     using Metadata;
 
     using Pathfinder.Obstacles;
-
-    using SharpDX;
 
     using Roshan = Core.Entities.Units.Unique.Roshan;
 
@@ -244,9 +257,9 @@
             if (obstacle?.IsModifierObstacle == true && obstacle.EvadableAbility.Ability.Id == AbilityId.doom_bringer_doom)
             {
                 var slot = this.Owner.BaseInventory.FreeBackpackSlots.FirstOrDefault();
-                if (slot == ItemSlot.MainSlot_1)
+                if (slot == ItemSlot.MainSlot1)
                 {
-                    slot = ItemSlot.BackPack_1;
+                    slot = ItemSlot.BackPack1;
                 }
 
                 this.Ability.BaseItem.Move(slot);
@@ -347,7 +360,7 @@
 
             try
             {
-                var projectile = args.TrackingProjectile;
+                var projectile = args.Projectile;
                 if (projectile.Target?.Handle != this.Owner.Handle)
                 {
                     return;
@@ -456,7 +469,7 @@
                 }
 
                 var name = args.Modifier.Name;
-                if (name == "modifier_bashed" && args.Modifier.Caster is Divine.Roshan)
+                if (name == "modifier_bashed" && args.Modifier.Caster is Divine.Entity.Entities.Units.Roshan)
                 {
                     isLastStun = true;
                     isLastRoshanAttack = true;
@@ -482,7 +495,7 @@
         {
             try
             {
-                this.projectiles.Remove(args.TrackingProjectile);
+                this.projectiles.Remove(args.Projectile);
             }
             catch (Exception e)
             {

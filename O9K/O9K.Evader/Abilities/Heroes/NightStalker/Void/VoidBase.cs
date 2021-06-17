@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.night_stalker_void)]
     internal class VoidBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

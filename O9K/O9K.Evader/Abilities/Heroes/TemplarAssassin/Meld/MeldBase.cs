@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.templar_assassin_meld)]
     internal class MeldBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

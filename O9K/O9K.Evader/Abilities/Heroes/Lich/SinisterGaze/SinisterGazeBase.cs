@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.lich_sinister_gaze)]
     internal class SinisterGazeBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

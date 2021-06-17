@@ -8,7 +8,7 @@
     using Core.Entities.Abilities.Base.Components;
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Entity.Entities.Units.Components;
 
     using Metadata;
 

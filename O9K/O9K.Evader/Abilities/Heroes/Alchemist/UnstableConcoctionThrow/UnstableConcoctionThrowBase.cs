@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.alchemist_unstable_concoction_throw)]
     internal class UnstableConcoctionThrowBase : EvaderBaseAbility, IEvadable, IAllyEvadable

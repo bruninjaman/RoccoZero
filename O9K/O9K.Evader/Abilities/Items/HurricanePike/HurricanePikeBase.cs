@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_hurricane_pike)]
     internal class HurricanePikeBase : EvaderBaseAbility, IUsable<BlinkAbility>, IUsable<CounterAbility>

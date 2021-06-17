@@ -5,7 +5,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.furion_wrath_of_nature)]
     internal class WrathOfNatureBase : EvaderBaseAbility

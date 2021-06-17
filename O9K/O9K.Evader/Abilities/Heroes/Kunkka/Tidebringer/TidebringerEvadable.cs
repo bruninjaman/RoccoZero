@@ -9,7 +9,8 @@
     using Core.Entities.Abilities.Heroes.Kunkka;
     using Core.Logger;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Update;
 
     using Metadata;
 

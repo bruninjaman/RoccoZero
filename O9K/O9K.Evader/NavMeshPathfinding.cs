@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using Divine;
-
-using SharpDX;
+using Divine.Map.Components;
+using Divine.Numerics;
 
 namespace O9K.Evader
 {
@@ -43,10 +39,10 @@ namespace O9K.Evader
             //Console.WriteLine("NavMeshPathfinding.RemoveObstacle(uint obstacleId)");
         }
 
-        public MapMeshCellFlags GetCellFlags(Vector2 p)
+        public MeshCellFlags GetCellFlags(Vector2 p)
         {
             //Console.WriteLine("NavMeshPathfinding.GetCellFlags(Vector2 p)");
-            return MapMeshCellFlags.None;
+            return MeshCellFlags.None;
         }
 
         public void GetCellPosition(Vector3 vector3, out int heroX, out int heroY)

@@ -1,12 +1,11 @@
 ﻿namespace O9K.Evader.Pathfinder.Obstacles.Abilities.AreaOfEffect
 {
     using Core.Entities.Units;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Modifier.Modifiers;
 
     using O9K.Evader.Abilities.Base.Evadable;
-
-    using SharpDX;
 
     internal class AreaOfEffectModifierObstacle : AreaOfEffectObstacle
     {

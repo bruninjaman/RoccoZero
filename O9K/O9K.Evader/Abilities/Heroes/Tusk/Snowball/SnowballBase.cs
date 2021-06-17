@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.tusk_snowball)]
     internal class SnowballBase : EvaderBaseAbility, /* IEvadable,*/ IUsable<CounterAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.silencer_curse_of_the_silent)]
     internal class ArcaneCurseBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

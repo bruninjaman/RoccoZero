@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.oracle_false_promise)]
     internal class FalsePromiseBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

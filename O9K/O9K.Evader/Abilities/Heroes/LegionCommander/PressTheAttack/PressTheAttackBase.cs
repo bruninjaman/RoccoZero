@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.legion_commander_press_the_attack)]
     internal class PressTheAttackBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

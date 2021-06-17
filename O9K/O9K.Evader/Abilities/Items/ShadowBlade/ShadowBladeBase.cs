@@ -8,7 +8,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_invis_sword)]
     internal class ShadowBladeBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>, IUsable<DodgeAbility>

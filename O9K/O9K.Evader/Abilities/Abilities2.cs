@@ -1,6 +1,6 @@
 ﻿namespace O9K.Evader.Abilities
 {
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     internal static partial class Abilities
     {

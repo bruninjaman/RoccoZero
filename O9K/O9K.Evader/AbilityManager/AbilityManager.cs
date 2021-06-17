@@ -22,7 +22,7 @@
     using Core.Managers.Context;
     using Core.Managers.Entity;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
 

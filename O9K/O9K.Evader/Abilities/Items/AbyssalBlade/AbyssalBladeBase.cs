@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_abyssal_blade)]
     internal class AbyssalBladeBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

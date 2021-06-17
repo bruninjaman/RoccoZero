@@ -6,8 +6,8 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Evader.EvadeModes;
 

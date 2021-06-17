@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.monkey_king_primal_spring)]
     internal class PrimalSpringBase : EvaderBaseAbility //, IEvadable

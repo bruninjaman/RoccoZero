@@ -6,12 +6,11 @@
     using Base.Evadable;
 
     using Core.Entities.Units;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Modifier.Modifiers;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    using SharpDX;
 
     internal class ChronosphereObstacle : AreaOfEffectModifierObstacle
     {

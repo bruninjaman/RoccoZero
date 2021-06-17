@@ -3,7 +3,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Projectile.Projectiles;
 
     using Metadata;
 

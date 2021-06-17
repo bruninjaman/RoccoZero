@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_gungir)]
     internal class GleipnirBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

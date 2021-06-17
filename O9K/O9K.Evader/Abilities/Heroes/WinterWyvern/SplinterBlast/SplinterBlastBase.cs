@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.winter_wyvern_splinter_blast)]
     internal class SplinterBlastBase : EvaderBaseAbility //, IEvadable

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.grimstroke_dark_artistry)]
     internal class StrokeOfFateBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

@@ -2,7 +2,7 @@
 {
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Game;
 
     using O9K.Evader.Abilities.Base.Evadable;
 

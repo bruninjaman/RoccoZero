@@ -1,12 +1,10 @@
 ﻿namespace O9K.Evader.Abilities.Heroes.WitchDoctor.DeathWard
 {
     using Base.Evadable;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Modifier.Modifiers;
 
     using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    using SharpDX;
 
     internal class DeathWardObstacle : AreaOfEffectObstacle
     {

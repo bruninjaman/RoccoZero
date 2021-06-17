@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.brewmaster_earth_hurl_boulder)]
     internal class HurlBoulderBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

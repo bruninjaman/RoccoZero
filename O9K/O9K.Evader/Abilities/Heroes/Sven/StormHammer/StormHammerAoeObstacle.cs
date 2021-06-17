@@ -5,8 +5,10 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Projectile.Projectiles;
 
     using Helpers;
 
@@ -14,8 +16,6 @@
 
     using Pathfinder.Obstacles.Abilities;
     using Pathfinder.Obstacles.Types;
-
-    using SharpDX;
 
     internal class StormHammerAoeObstacle : AbilityObstacle, IUpdatable
     {

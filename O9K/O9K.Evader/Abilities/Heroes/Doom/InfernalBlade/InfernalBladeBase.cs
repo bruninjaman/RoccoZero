@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.doom_bringer_infernal_blade)]
     internal class InfernalBladeBase : EvaderBaseAbility, IUsable<DisableAbility>

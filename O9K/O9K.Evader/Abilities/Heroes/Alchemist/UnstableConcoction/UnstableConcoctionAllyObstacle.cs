@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Heroes.Alchemist;
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Modifier.Modifiers;
 
     using Pathfinder.Obstacles.Modifiers;
 

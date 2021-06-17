@@ -12,7 +12,7 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Divine;
+    using Divine.Entity.Entities.Components;
 
     internal class AttackMonitor : IDisposable
     {

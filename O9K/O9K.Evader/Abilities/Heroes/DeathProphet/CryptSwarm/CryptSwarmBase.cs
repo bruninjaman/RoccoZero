@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.death_prophet_carrion_swarm)]
     internal class CryptSwarmBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

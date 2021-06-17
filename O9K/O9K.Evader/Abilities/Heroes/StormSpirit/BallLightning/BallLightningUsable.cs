@@ -8,8 +8,8 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
     using Core.Extensions;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Grimstroke.PhantomsEmbrace;
 
@@ -18,8 +18,6 @@
     using Metadata;
 
     using Pathfinder.Obstacles;
-
-    using SharpDX;
 
     using SpiritBreaker.ChargeOfDarkness;
 

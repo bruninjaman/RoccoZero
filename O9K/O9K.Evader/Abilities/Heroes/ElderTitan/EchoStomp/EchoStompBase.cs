@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.elder_titan_echo_stomp)]
     internal class EchoStompBase : EvaderBaseAbility, IEvadable

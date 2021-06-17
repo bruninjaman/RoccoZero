@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.broodmother_spawn_spiderlings)]
     internal class SpawnSpiderlingsBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

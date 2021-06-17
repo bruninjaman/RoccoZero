@@ -8,8 +8,9 @@
     using Core.Entities.Abilities.Heroes.Snapfire;
     using Core.Entities.Units;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Modifier.Modifiers;
+    using Divine.Entity.Entities.Units;
 
     using Metadata;
 

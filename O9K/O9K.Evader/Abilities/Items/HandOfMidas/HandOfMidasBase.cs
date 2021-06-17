@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_hand_of_midas)]
     internal class HandOfMidasBase : EvaderBaseAbility, IUsable<CounterAbility>

@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.ursa_fury_swipes)]
     internal class FurySwipesBase : EvaderBaseAbility, IEvadable

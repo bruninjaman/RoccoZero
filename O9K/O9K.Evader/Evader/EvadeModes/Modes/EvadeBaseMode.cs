@@ -6,7 +6,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Divine;
+    using Divine.Game;
 
     using Metadata;
 

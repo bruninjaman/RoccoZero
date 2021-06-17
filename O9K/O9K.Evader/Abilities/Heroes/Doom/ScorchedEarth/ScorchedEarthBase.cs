@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.doom_bringer_scorched_earth)]
     internal class ScorchedEarthBase : EvaderBaseAbility, IUsable<DodgeAbility>

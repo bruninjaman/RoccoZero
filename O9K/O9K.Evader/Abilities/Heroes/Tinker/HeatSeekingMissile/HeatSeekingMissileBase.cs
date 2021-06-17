@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.tinker_heat_seeking_missile)]
     internal class HeatSeekingMissileBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

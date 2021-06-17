@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.templar_assassin_psionic_trap)]
     internal class PsionicTrapBase : EvaderBaseAbility, IEvadable

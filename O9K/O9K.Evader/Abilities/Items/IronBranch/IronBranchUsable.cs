@@ -7,14 +7,17 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
     using Core.Extensions;
-
-    using Divine;
+    using Divine.Entity;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Modifier.Modifiers;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
 
     using Pathfinder.Obstacles;
-
-    using SharpDX;
 
     internal class IronBranchUsable : CounterAbility
     {

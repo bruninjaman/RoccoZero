@@ -7,7 +7,7 @@
 
     using Core.Entities.Abilities.Base;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
 

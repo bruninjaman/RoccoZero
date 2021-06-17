@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.abaddon_death_coil)]
     internal class MistCoilBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

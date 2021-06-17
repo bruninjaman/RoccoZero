@@ -8,8 +8,8 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
     using Core.Logger;
-
-    using Divine;
+    using Divine.Update;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
 

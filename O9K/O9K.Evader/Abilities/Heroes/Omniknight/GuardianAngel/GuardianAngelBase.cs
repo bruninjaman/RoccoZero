@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.omniknight_guardian_angel)]
     internal class GuardianAngelBase : EvaderBaseAbility, IEvadable //, IUsable<CounterAbility>

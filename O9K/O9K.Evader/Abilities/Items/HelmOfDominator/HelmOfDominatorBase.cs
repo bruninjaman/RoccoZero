@@ -1,13 +1,4 @@
-﻿//namespace O9K.Evader.Abilities.Items.HelmOfDominator
-//{
-//    using Base;
-//    using Base.Usable.CounterAbility;
-
-//    using Core.Entities.Abilities.Base;
-//    using Core.Entities.Metadata;
-
-//    using Divine;
-
+﻿
 //    using HandOfMidas;
 
 //    [AbilityId(AbilityId.item_helm_of_the_dominator)]

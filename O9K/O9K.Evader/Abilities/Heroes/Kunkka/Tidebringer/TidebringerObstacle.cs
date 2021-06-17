@@ -4,14 +4,13 @@
 
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
 
     using O9K.Core.Geometry;
 
     using Pathfinder.Obstacles.Abilities;
     using Pathfinder.Obstacles.Types;
-
-    using SharpDX;
 
     internal class TidebringerObstacle : AbilityObstacle, IUpdatable
     {

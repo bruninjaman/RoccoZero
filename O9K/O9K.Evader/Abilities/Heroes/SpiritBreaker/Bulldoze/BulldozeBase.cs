@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.spirit_breaker_bulldoze)]
     internal class BulldozeBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.lina_light_strike_array)]
     internal class LightStrikeArrayBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

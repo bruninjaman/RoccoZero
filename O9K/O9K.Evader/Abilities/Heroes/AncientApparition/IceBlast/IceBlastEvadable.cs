@@ -10,8 +10,10 @@
     using Core.Entities.Units;
     using Core.Extensions;
     using Core.Helpers;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Modifier.Modifiers;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Units;
 
     using Metadata;
 

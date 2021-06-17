@@ -12,7 +12,12 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
 
-    using Divine;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Game;
+    using Divine.Map.Components;
+    using Divine.Numerics;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Evader.EvadeModes;
 
@@ -22,8 +27,6 @@
     using Pathfinder.Obstacles.Types;
 
     using Settings;
-
-    using SharpDX;
 
     internal class Debugger : IEvaderService, IDebugger
     {
@@ -273,15 +276,15 @@
                         var isFlying = this.owner.Hero.MoveCapability == MoveCapability.Fly
                                        || (this.owner.Hero.UnitState & UnitState.Flying) != 0;
                         var flag = this.pathfinder.NavMesh.GetCellFlags(p);
-                        if (!isFlying && (flag & MapMeshCellFlags.Walkable) != 0)
+                        if (!isFlying && (flag & MeshCellFlags.Walkable) != 0)
                         {
-                            color = (flag & MapMeshCellFlags.Tree) != 0 ? SharpDX.Color.Purple : SharpDX.Color.Green;
-                            if ((flag & MapMeshCellFlags.GridFlagObstacle) != 0)
+                            color = (flag & MeshCellFlags.Tree) != 0 ? Color.Purple : Color.Green;
+                            if ((flag & MeshCellFlags.GridFlagObstacle) != 0)
                             {
                                 color = Color.Pink;
                             }
                         }
-                        else if (isFlying && (flag & MapMeshCellFlags.MovementBlocker) == 0)
+                        else if (isFlying && (flag & MeshCellFlags.MovementBlocker) == 0)
                         {
                             color = Color.Green;
                         }

@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Items;
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Update;
 
     using Metadata;
 

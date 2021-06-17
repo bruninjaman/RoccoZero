@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.vengefulspirit_magic_missile)]
     internal class MagicMissileBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

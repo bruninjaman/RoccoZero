@@ -5,9 +5,9 @@
 
     using Core.Entities.Units;
 
-    using Pathfinder.Obstacles;
+    using Divine.Numerics;
 
-    using SharpDX;
+    using Pathfinder.Obstacles;
 
     internal interface IPathfinder
     {

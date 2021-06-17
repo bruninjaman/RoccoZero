@@ -10,8 +10,11 @@
     using Core.Entities.Heroes;
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Particle;
+    using Divine.Entity.Entities;
+    using Divine.Particle.EventArgs;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     internal class ParticleMonitor : IDisposable
     {

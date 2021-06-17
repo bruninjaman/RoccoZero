@@ -3,12 +3,10 @@
     using Base.Evadable;
 
     using Core.Entities.Units;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Modifier.Modifiers;
 
     using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    using SharpDX;
 
     internal class StaticStormFormationObstacle : AreaOfEffectModifierObstacle
     {

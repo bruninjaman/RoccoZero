@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.jakiro_ice_path)]
     internal class IcePathBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

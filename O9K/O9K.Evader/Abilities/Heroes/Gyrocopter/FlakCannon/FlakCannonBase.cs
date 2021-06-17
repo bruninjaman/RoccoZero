@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.gyrocopter_flak_cannon)]
     internal class FlakCannonBase : EvaderBaseAbility, IEvadable

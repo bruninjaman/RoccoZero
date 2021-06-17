@@ -5,7 +5,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.arc_warden_spark_wraith)]
     internal class SparkWraithBase : EvaderBaseAbility

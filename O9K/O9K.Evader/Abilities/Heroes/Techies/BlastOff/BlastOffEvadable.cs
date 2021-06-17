@@ -9,15 +9,17 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
     using Core.Logger;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Update;
+    using Divine.Modifier.Modifiers;
+    using Divine.Particle.Particles;
+    using Divine.Entity.Entities.Units;
 
     using Metadata;
 
     using Pathfinder.Obstacles.Abilities.LinearAreaOfEffect;
     using Pathfinder.Obstacles.Modifiers;
-
-    using SharpDX;
 
     internal sealed class BlastOffEvadable : LinearAreaOfEffectEvadable, IModifierCounter, IModifierObstacle, IParticle
     {

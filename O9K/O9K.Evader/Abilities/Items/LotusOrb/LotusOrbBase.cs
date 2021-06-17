@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_lotus_orb)]
     internal class LotusOrbBase : EvaderBaseAbility, IUsable<CounterAbility>

@@ -4,9 +4,9 @@
 
     using Core.Entities.Units;
 
-    using Pathfinder.Obstacles.Abilities.LinearAreaOfEffect;
+    using Divine.Numerics;
 
-    using SharpDX;
+    using Pathfinder.Obstacles.Abilities.LinearAreaOfEffect;
 
     internal class ChronosphereLinearAllyObstacle : LinearAreaOfEffectObstacle
     {

@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.nyx_assassin_vendetta)]
     internal class VendettaBase : EvaderBaseAbility, IUsable<CounterAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_shivas_guard)]
     internal class ShivasGuardBase : EvaderBaseAbility, /*IEvadable,*/ IUsable<CounterAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.dark_willow_shadow_realm)]
     internal class ShadowRealmBase : EvaderBaseAbility, /*IEvadable,*/ IUsable<CounterAbility>

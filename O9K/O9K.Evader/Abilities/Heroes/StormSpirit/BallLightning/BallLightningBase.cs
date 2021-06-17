@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.storm_spirit_ball_lightning)]
     internal class BallLightningBase : EvaderBaseAbility, IUsable<CounterAbility>

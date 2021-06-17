@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.nyx_assassin_mana_burn)]
     internal class ManaBurnBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

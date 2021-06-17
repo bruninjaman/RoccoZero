@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.legion_commander_overwhelming_odds)]
     internal class OverwhelmingOddsBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

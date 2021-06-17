@@ -7,11 +7,11 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
+    using Divine.Numerics;
+
     using Metadata;
 
     using Pathfinder.Obstacles;
-
-    using SharpDX;
 
     internal class BlinkAbility : UsableAbility
     {

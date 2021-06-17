@@ -9,7 +9,8 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Divine;
+    using Divine.Projectile;
+    using Divine.Projectile.EventArgs;
 
     using Metadata;
 
@@ -42,7 +43,7 @@
                     return;
                 }
 
-                var projectile = args.TrackingProjectile;
+                var projectile = args.Projectile;
                 if (projectile == null || projectile.Source == null)
                 {
                     return;

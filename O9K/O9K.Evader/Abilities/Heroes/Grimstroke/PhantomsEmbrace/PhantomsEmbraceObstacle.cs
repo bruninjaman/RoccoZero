@@ -6,8 +6,8 @@
 
     using Core.Entities.Units;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Modifier.Modifiers;
+    using Divine.Entity.Entities.Units;
 
     using Pathfinder.Obstacles.Abilities;
 

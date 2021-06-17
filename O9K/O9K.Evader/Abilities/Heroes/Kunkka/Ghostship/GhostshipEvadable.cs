@@ -8,8 +8,9 @@
     using Core.Entities.Abilities.Heroes.Kunkka;
     using Core.Entities.Units;
     using Core.Helpers;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Modifier.Modifiers;
+    using Divine.Entity.Entities.Units;
 
     using Metadata;
 

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.keeper_of_the_light_illuminate)]
     internal class IlluminateBase : EvaderBaseAbility, /* IEvadable, */ IUsable<CounterEnemyAbility>

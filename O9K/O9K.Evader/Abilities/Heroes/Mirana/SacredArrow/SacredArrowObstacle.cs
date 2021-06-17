@@ -6,15 +6,15 @@
 
     using Core.Extensions;
     using Core.Logger;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Update;
+    using Divine.Entity.Entities.Units;
 
     using O9K.Core.Geometry;
 
     using Pathfinder.Obstacles.Abilities.LinearProjectile;
-
-    using SharpDX;
 
     internal class SacredArrowObstacle : LinearProjectileUnitObstacle
     {

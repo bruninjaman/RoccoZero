@@ -6,13 +6,12 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
 
     using O9K.Core.Geometry;
     using O9K.Evader.Abilities.Base.Evadable;
-
-    using SharpDX;
 
     using Types;
 

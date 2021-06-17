@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.pugna_nether_ward)]
     internal class NetherWardBase : EvaderBaseAbility, IEvadable //, IUsable<CounterAbility>

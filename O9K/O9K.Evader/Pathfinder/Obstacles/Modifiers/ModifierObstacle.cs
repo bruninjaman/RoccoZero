@@ -4,13 +4,13 @@
     using System.Linq;
 
     using Core.Entities.Units;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Modifier.Modifiers;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using O9K.Evader.Abilities.Base;
     using O9K.Evader.Abilities.Base.Evadable;
-
-    using SharpDX;
 
     using Types;
 

@@ -2,11 +2,11 @@
 {
     using Base.Evadable;
 
+    using Divine.Numerics;
+
     using O9K.Core.Geometry;
 
     using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    using SharpDX;
 
     internal class IceBlastObstacle : AreaOfEffectObstacle
     {

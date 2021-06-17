@@ -7,7 +7,7 @@
     using Core.Managers.Menu.Items;
     using Core.Prediction.Data;
 
-    using Divine;
+    using Divine.Entity.Entities.Units.Components;
 
     using Metadata;
 

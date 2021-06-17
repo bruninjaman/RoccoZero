@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.undying_decay)]
     internal class DecayBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.razor_eye_of_the_storm)]
     internal class EyeOfTheStormBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

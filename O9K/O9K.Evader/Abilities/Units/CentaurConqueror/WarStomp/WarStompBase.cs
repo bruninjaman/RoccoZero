@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.centaur_khan_war_stomp)]
     internal class WarStompBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.spectre_spectral_dagger)]
     internal class SpectralDaggerBase : EvaderBaseAbility /*, IEvadable */, IUsable<CounterEnemyAbility>

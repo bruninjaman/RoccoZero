@@ -3,12 +3,10 @@
     using System.Collections.Generic;
 
     using Core.Entities.Units;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using O9K.Evader.Abilities.Base.Evadable;
-
-    using SharpDX;
 
     internal interface IObstacle
     {

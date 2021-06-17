@@ -9,15 +9,14 @@
     using Core.Logger;
     using Core.Managers.Entity;
 
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Numerics;
+    using Divine.Update;
 
     using Metadata;
 
     using Obstacles;
     using Obstacles.Types;
-
-    using SharpDX;
 
     internal class Pathfinder : IPathfinder, IEvaderService
     {

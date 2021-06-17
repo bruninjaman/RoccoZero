@@ -8,8 +8,10 @@
     using Core.Entities.Units;
     using Core.Logger;
     using Core.Managers.Entity;
-
-    using Divine;
+    using Divine.Order;
+    using Divine.Modifier.Modifiers;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
 
     using Pathfinder.Obstacles.Modifiers;
 

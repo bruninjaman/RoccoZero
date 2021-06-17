@@ -4,8 +4,9 @@
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
-
-    using Divine;
+    using Divine.Game;
+    using Divine.Projectile.Projectiles;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
 

@@ -10,7 +10,7 @@
     using Core.Extensions;
     using Core.Managers.Entity;
 
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
 
     using Metadata;
 

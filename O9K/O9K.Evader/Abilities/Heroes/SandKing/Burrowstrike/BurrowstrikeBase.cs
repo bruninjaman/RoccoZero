@@ -8,7 +8,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.sandking_burrowstrike)]
     internal class BurrowstrikeBase : EvaderBaseAbility, IEvadable, IUsable<BlinkAbility>, IUsable<DisableAbility>

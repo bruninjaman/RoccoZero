@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.winter_wyvern_cold_embrace)]
     internal class ColdEmbraceBase : EvaderBaseAbility, IUsable<CounterAbility>

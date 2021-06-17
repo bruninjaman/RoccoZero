@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.medusa_stone_gaze)]
     internal class StoneGazeBase : EvaderBaseAbility, IEvadable

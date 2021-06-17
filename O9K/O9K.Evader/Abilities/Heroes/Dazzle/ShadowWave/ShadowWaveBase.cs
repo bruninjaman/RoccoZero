@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.dazzle_shadow_wave)]
     internal class ShadowWaveBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

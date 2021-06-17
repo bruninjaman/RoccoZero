@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_glimmer_cape)]
     internal class GlimmerCapeBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

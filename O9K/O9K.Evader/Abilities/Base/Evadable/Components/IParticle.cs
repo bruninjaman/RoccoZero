@@ -1,6 +1,6 @@
 ﻿namespace O9K.Evader.Abilities.Base.Evadable.Components
 {
-    using Divine;
+    using Divine.Particle.Particles;
 
     internal interface IParticle
     {

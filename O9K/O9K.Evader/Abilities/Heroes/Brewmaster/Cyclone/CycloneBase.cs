@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.brewmaster_storm_cyclone)]
     internal class CycloneBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.puck_dream_coil)]
     internal class DreamCoilBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

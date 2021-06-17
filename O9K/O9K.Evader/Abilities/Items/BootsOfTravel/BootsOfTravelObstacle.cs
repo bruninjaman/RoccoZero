@@ -4,7 +4,8 @@
 
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Modifier.Modifiers;
 
     using Pathfinder.Obstacles.Modifiers;
 

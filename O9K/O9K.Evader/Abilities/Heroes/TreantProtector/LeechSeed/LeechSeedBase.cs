@@ -5,7 +5,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.treant_leech_seed)]
     internal class LeechSeedBase : EvaderBaseAbility

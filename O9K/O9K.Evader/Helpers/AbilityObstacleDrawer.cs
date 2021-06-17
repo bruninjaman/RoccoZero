@@ -2,10 +2,10 @@
 {
     using Core.Extensions;
 
-    using Divine;
-    using Divine.SDK.Extensions;
-
-    using SharpDX;
+    using Divine.Extensions;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Particle.Particles;
 
     internal class AbilityObstacleDrawer
     {

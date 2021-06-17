@@ -6,11 +6,11 @@
     using Core.Entities.Units;
     using Core.Extensions;
 
+    using Divine.Numerics;
+
     using Metadata;
 
     using Pathfinder.Obstacles;
-
-    using SharpDX;
 
     internal class MagneticFieldUsable : CounterAbility
     {

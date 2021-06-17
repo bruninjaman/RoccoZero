@@ -5,7 +5,8 @@
 
     using Core.Entities.Abilities.Base;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Particle.Particles;
 
     using Metadata;
 

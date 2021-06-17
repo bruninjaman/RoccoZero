@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.item_wind_waker)]
     internal class WindWakerBase : EvaderBaseAbility, IUsable<CounterAbility>, IUsable<DisableAbility>

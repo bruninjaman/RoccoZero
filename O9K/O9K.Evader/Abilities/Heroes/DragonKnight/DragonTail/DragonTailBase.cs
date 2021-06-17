@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.dragon_knight_dragon_tail)]
     internal class DragonTailBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

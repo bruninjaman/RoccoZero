@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.ember_spirit_sleight_of_fist)]
     internal class SleightOfFistBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>

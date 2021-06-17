@@ -4,13 +4,11 @@
     using System.Linq;
 
     using Core.Entities.Units;
-
-    using Divine;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using O9K.Evader.Abilities.Base.Evadable;
     using O9K.Evader.Abilities.Base.Evadable.Components;
-
-    using SharpDX;
 
     internal class ProactiveAbilityObstacle : IObstacle
     {

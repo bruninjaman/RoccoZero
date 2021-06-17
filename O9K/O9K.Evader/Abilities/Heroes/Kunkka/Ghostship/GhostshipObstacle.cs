@@ -1,16 +1,14 @@
 ﻿namespace O9K.Evader.Abilities.Heroes.Kunkka.Ghostship
 {
     using Core.Extensions;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Numerics;
+    using Divine.Entity.Entities.Units;
 
     using O9K.Core.Geometry;
 
     using Pathfinder.Obstacles.Abilities.AreaOfEffect;
     using Pathfinder.Obstacles.Types;
-
-    using SharpDX;
 
     internal class GhostshipObstacle : AreaOfEffectObstacle, IUpdatable
     {

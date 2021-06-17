@@ -10,15 +10,14 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Divine;
+    using Divine.Game;
+    using Divine.Numerics;
 
     using Metadata;
 
     using Pathfinder;
     using Pathfinder.Obstacles;
     using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    using SharpDX;
 
     internal class DodgeMode : EvadeBaseMode
     {

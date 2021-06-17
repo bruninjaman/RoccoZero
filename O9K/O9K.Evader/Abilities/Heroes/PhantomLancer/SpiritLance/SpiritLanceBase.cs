@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.phantom_lancer_spirit_lance)]
     internal class SpiritLanceBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>

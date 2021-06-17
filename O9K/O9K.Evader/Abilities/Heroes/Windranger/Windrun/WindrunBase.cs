@@ -8,7 +8,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.windrunner_windrun)]
     internal class WindrunBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>, IUsable<DodgeAbility>

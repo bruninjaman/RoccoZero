@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.batrider_flaming_lasso)]
     internal class FlamingLassoBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

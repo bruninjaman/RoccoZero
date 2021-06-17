@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.phantom_lancer_doppelwalk)]
     internal class DoppelgangerBase : EvaderBaseAbility, IUsable<CounterAbility>

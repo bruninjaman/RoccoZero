@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.phantom_assassin_phantom_strike)]
     internal class PhantomStrikeBase : EvaderBaseAbility, IEvadable, IUsable<BlinkAbility>

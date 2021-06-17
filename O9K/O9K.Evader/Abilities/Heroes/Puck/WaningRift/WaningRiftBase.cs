@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.puck_waning_rift)]
     internal class WaningRiftBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>

@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.ancient_apparition_ice_blast)]
     internal class IceBlastBase : EvaderBaseAbility, IEvadable

@@ -12,9 +12,10 @@
     using Core.Managers.Context;
     using Core.Managers.Entity;
     using Core.Prediction.Collision;
-
-    using Divine;
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Update;
+    using Divine.Entity.Entities.Units.Components;
 
     using EvadeModes;
 
@@ -23,7 +24,7 @@
     using Pathfinder.Obstacles;
     using Pathfinder.Obstacles.Abilities.LinearProjectile;
 
-    using Vector2Extensions = Divine.SDK.Extensions.Vector2Extensions;
+    using Vector2Extensions = Divine.Extensions.Vector2Extensions;
 
     internal class Evader : IEvaderService
     {

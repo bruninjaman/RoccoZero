@@ -4,7 +4,7 @@
 
     using Core.Entities.Units;
 
-    using Divine;
+    using Divine.Game;
 
     using Pathfinder.Obstacles.Abilities.Targetable;
 

@@ -4,8 +4,8 @@
 
     using Core.Entities.Units;
     using Core.Managers.Menu.Items;
-
-    using Divine;
+    using Divine.Modifier.Modifiers;
+    using Divine.Entity.Entities.Abilities.Components;
 
     internal interface IModifierCounter
     {

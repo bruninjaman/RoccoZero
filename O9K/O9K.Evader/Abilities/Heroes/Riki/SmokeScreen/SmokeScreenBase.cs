@@ -7,7 +7,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     [AbilityId(AbilityId.riki_smoke_screen)]
     internal class SmokeScreenBase : EvaderBaseAbility, IEvadable, IUsable<DisableAbility>
