@@ -8,7 +8,7 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Divine;
+    using Divine.Game;
 
     using Modes.Combo;
 

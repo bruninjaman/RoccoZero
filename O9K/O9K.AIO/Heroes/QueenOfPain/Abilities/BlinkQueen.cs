@@ -6,7 +6,7 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
 
     using TargetManager;
 

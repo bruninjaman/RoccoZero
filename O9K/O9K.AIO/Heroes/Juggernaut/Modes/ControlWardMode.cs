@@ -14,7 +14,7 @@
     using Core.Managers.Entity;
     using Core.Prediction.Data;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     internal class ControlWardMode : PermanentMode
     {

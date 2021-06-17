@@ -8,7 +8,7 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     using TargetManager;
 

@@ -10,10 +10,9 @@
     using Core.Extensions;
     using Core.Helpers;
 
-    using Divine;
-    using Divine.SDK.Extensions;
-
-    using SharpDX;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Extensions;
+    using Divine.Numerics;
 
     using TargetManager;
 

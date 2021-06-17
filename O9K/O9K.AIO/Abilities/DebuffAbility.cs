@@ -5,7 +5,7 @@
     using Core.Helpers;
     using Core.Prediction.Data;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
 
     using TargetManager;
 

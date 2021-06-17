@@ -17,7 +17,8 @@
     using Core.Entities.Units;
     using Core.Helpers;
 
-    using Divine;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using TargetManager;
 

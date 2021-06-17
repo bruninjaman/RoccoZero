@@ -13,11 +13,11 @@
     using Core.Helpers;
     using Core.Managers.Entity;
 
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
 
     using Modes.Combo;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     using TargetManager;
 

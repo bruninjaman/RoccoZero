@@ -3,7 +3,7 @@
     using Core.Entities.Abilities.Base.Types;
     using Core.Entities.Units;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     internal class OldBlinkAbility : OldUsableAbility
     {

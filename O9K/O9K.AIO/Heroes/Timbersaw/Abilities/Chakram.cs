@@ -6,7 +6,7 @@
     using Core.Entities.Abilities.Heroes.Timbersaw;
     using Core.Helpers;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     using TargetManager;
 

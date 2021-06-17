@@ -4,7 +4,7 @@
 
     using Core.Entities.Abilities.Base;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     internal class XMark : TargetableAbility
     {

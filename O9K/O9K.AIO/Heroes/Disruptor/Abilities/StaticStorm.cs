@@ -5,7 +5,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Helpers;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     using TargetManager;
 

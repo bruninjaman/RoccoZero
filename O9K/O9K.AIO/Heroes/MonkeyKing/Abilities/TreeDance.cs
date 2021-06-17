@@ -8,9 +8,9 @@
     using Core.Helpers;
     using Core.Managers.Entity;
 
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     using TargetManager;
 

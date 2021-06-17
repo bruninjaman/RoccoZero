@@ -13,7 +13,7 @@
     using Core.Managers.Entity;
     using Core.Prediction.Data;
 
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
 
     using TargetManager;
 

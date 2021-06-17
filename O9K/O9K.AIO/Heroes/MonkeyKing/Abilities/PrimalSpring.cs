@@ -10,7 +10,7 @@
 
     using O9K.Core.Geometry;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     using TargetManager;
 

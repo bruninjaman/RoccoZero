@@ -11,7 +11,7 @@
     using Core.Managers.Entity;
     using Core.Prediction.Data;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     using TargetManager;
 

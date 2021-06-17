@@ -9,7 +9,7 @@
 
     using Modes.Combo;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     using TargetManager;
 

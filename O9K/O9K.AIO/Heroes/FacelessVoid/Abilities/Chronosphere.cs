@@ -12,11 +12,11 @@
     using Core.Helpers;
     using Core.Prediction.Data;
 
-    using Divine.SDK.Extensions;
+    using Divine.Extensions;
 
     using Modes.Combo;
 
-    using SharpDX;
+    using Divine.Numerics;
 
     using TargetManager;
 

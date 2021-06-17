@@ -4,7 +4,7 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
-    using Divine;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     internal class ControllableUnitMenu
     {
