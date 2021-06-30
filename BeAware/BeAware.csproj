@@ -19,6 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Divine.SoundPlayer.dll" />
     <EmbeddedResource Include="Resources\Sounds\check_rune_en.wav" />
     <EmbeddedResource Include="Resources\Sounds\check_rune_ru.wav" />
     <EmbeddedResource Include="Resources\Sounds\default.wav" />
@@ -68,6 +69,9 @@
   <ItemGroup>
     <Reference Include="Divine">
       <HintPath>..\..\..\..\Desktop\Divine.NET5\bin\Divine.dll</HintPath>
+    </Reference>
+    <Reference Include="Divine.SoundPlayer">
+      <HintPath>Resources\Divine.SoundPlayer.dll</HintPath>
     </Reference>
     <Reference Include="Divine.Zero">
       <HintPath>..\..\..\..\Desktop\Divine.NET5\bin\Divine.Zero.dll</HintPath>

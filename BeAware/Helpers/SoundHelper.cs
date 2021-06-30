@@ -77,24 +77,24 @@ namespace BeAware.Helpers
 
                 if (name.Contains("check_rune"))
                 {
-                    file = $"{Path.Combine(ResourceDirectory, name)}_{MenuConfig.LanguageItem.Value.ToLower()}.wav";
+                    file = $"{name}_{MenuConfig.LanguageItem.Value.ToLower()}.wav";
                 }
                 else
                 {
-                    file = $"{Path.Combine(ResourceDirectory, name)}.wav";
+                    file = $"{name}.wav";
                 }
 
                 var volume = MenuConfig.VolumeItem.Value;
 
                 if (MenuConfig.DefaultSoundItem)
                 {
-                    SoundPlayer.Play(Path.Combine(ResourceDirectory, "default.wav"), volume);
+                    SoundPlayer.Play("default.wav", volume);
                     return;
                 }
 
                 if (!SoundPlayer.Play(file, volume))
                 {
-                    SoundPlayer.Play(Path.Combine(ResourceDirectory, "default.wav"), volume);
+                    SoundPlayer.Play("default.wav", volume);
                 }
             }
             catch (Exception e)
