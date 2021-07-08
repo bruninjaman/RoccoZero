@@ -4,8 +4,6 @@
     using Core.Entities.Abilities.Base.Components.Base;
     using Core.Helpers;
 
-    using Divine.Entity.Entities.Abilities.Components;
-
     using Settings;
 
     internal class ManaRestoreGroup<TType, TAbility> : AutoUsageGroup<TType, TAbility>
@@ -18,10 +16,10 @@
 
         public override void AddAbility(Ability9 ability)
         {
-            if (ability.Id == AbilityId.item_bottle)
-            {
-                return;
-            }
+            //if (ability.Id == AbilityId.item_bottle)
+            //{
+            //    return;
+            //}
 
             base.AddAbility(ability);
         }
