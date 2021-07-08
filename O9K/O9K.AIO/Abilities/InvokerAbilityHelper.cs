@@ -1,20 +1,23 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 using Divine.Entity.Entities.Abilities.Components;
 
 using O9K.AIO.Heroes.Base;
 using O9K.AIO.Modes.Combo;
+using O9K.Core.Entities.Abilities.Base;
 using O9K.Core.Entities.Abilities.Heroes.Invoker.Helpers;
 
 namespace O9K.AIO.Abilities
 {
     internal class InvokerAbilityHelper : AbilityHelper
     {
-        public InvokerAbilityHelper(TargetManager.TargetManager targetManager, IComboModeMenu comboModeMenu, ControllableUnit controllableUnit) : base(targetManager, comboModeMenu, controllableUnit)
+        public InvokerAbilityHelper(TargetManager.TargetManager targetManager, IComboModeMenu comboModeMenu, ControllableUnit controllableUnit)
+            : base(targetManager, comboModeMenu, controllableUnit)
         {
-            
+
         }
-        
+
         public bool UseInvokedAbilityIfCondition(UsableAbility ability, params UsableAbility[] checkAbilities)
         {
             if (!this.CanBeCasted(ability))
@@ -52,6 +55,17 @@ namespace O9K.AIO.Abilities
         {
             if (ability.Ability is not IInvokableAbility ss) return false;
             return ss.Invoke(null, false, false, true);
+        }
+
+        public List<Ability9> GetInvokedAbilities(bool canBeCasted = true)
+        {
+            var abilities = this.unit.Abilities.Where(x =>
+            {
+                var isInvoked = (x as IInvokableAbility)?.IsInvoked;
+                return isInvoked != null && (bool)isInvoked && (!canBeCasted || x.CanBeCasted());
+            }).ToList();
+
+            return abilities;
         }
 
         public bool IsInvokedOnLastSlot(UsableAbility ability)

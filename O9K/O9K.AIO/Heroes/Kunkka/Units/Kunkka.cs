@@ -19,20 +19,19 @@
     using Core.Helpers;
     using Core.Logger;
     using Core.Managers.Entity;
-    using Divine.Extensions;
-    using Divine.Game;
 
-    using Divine.Modifier;
-    using Divine.Numerics;
-    using Divine.Order;
-    using Divine.Particle;
-    using Divine.Update;
-    using Divine.Modifier.EventArgs;
-    using Divine.Order.EventArgs;
-    using Divine.Particle.EventArgs;
-    using Divine.Order.Orders.Components;
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Game;
+    using Divine.Modifier;
+    using Divine.Modifier.EventArgs;
+    using Divine.Numerics;
+    using Divine.Order;
+    using Divine.Order.EventArgs;
+    using Divine.Order.Orders.Components;
+    using Divine.Particle;
+    using Divine.Particle.EventArgs;
+    using Divine.Update;
 
     using O9K.Core.Managers.Context;
 
@@ -84,7 +83,7 @@
                 { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
             };
 
-            this.ancientCamps = Context9.JungleManager.JungleCamps.Where(x => x.IsAncient).Select(x => x.CreepsPosition).ToArray();
+            this.ancientCamps = Context9.JungleManager.JungleCamps.Where(x => x.Id != 2 && x.Id != 18).Select(x => x.CreepsPosition).ToArray();
 
             ParticleManager.ParticleAdded += OnParticleAdded;
             ModifierManager.ModifierAdded += OnModifierAdded;
@@ -292,7 +291,7 @@
                 return;
             }
 
-            if (GameManager.GameTime % 60 < 59.5 - ability.GetHitTime(camp))
+            if (GameManager.GameTime % 60 < 59.3 - ability.GetHitTime(camp))
             {
                 return;
             }

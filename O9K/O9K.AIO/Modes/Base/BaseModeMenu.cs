@@ -26,7 +26,7 @@
             { "Healing ward control", "控制" + LocalizationHelper.LocalizeName(AbilityId.juggernaut_healing_ward) },
             { "Auto chains", "自动" + LocalizationHelper.LocalizeName(AbilityId.ember_spirit_searing_chains) },
             { "Auto return", "自动" + LocalizationHelper.LocalizeName(AbilityId.kunkka_return) },
-            { "Stack ancients", "堆野远古" },
+            { "Stack camps", "堆野远古" },
             {
                 "Blink+Skewer combo",
                 LocalizationHelper.LocalizeName(AbilityId.item_blink) + LocalizationHelper.LocalizeName(AbilityId.magnataur_skewer) + "连招"
@@ -53,7 +53,7 @@
             { "Healing ward control", "Контролировать " + LocalizationHelper.LocalizeName(AbilityId.juggernaut_healing_ward) },
             { "Auto chains", "Авто " + LocalizationHelper.LocalizeName(AbilityId.ember_spirit_searing_chains) },
             { "Auto return", "Авто " + LocalizationHelper.LocalizeName(AbilityId.kunkka_return) },
-            { "Stack ancients", "Стакать эншентов" },
+            { "Stack camps", "Стакать кемпов" },
             { "Blink+Skewer combo", "Блинк+скювер комбо" },
             { "Heal ally", "Хилить союзника" },
             { "Sun ray ally", "Хилить союзника" },

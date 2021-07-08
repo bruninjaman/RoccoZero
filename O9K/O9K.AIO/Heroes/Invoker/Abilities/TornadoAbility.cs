@@ -1,15 +1,14 @@
-using System.Collections.Generic;
-using System.Linq;
-
-using O9K.AIO.Abilities;
-using O9K.AIO.Modes.Combo;
-using O9K.Core.Entities.Abilities.Base;
-using O9K.Core.Entities.Abilities.Heroes.Invoker;
-using O9K.Core.Entities.Units;
-using O9K.Core.Logger;
-
 namespace O9K.AIO.Heroes.Invoker.Abilities
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using O9K.AIO.Abilities;
+    using O9K.AIO.Modes.Combo;
+    using O9K.Core.Entities.Abilities.Base;
+    using O9K.Core.Entities.Abilities.Heroes.Invoker;
+    using O9K.Core.Entities.Units;
+
     internal class TornadoAbility : InvokerAoeAbility
     {
         private readonly Tornado tornado;
@@ -17,12 +16,11 @@ namespace O9K.AIO.Heroes.Invoker.Abilities
         public TornadoAbility(ActiveAbility ability)
             : base(ability)
         {
-            this.tornado = (Tornado) ability;
+            this.tornado = (Tornado)ability;
         }
-        
+
         public override bool ShouldConditionCast(TargetManager.TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
         {
-            Logger.Warn($"ShouldConditionCast");
             var target = targetManager.Target;
             if (target == null)
                 return false;
@@ -32,8 +30,7 @@ namespace O9K.AIO.Heroes.Invoker.Abilities
 
             var hasAnyModifier = target.HasModifier("modifier_invoker_deafening_blast_knockback",
                 "modifier_invoker_ice_wall_slow_debuff", "modifier_invoker_chaos_meteor_burn");
-            
-            Logger.Warn($"TornadoAbility: {hasAnyModifier}");
+
             if (hasAnyModifier)
                 return false;
 
@@ -41,11 +38,11 @@ namespace O9K.AIO.Heroes.Invoker.Abilities
             {
                 return false;
             }
-            
+
             return true;
         }
-        
-        
+
+
         protected override bool ChainStun(Unit9 target, bool invulnerability)
         {
             var immobile = target.GetInvulnerabilityDuration();

@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
-
-using O9K.AIO.Modes.Combo;
-using O9K.Core.Entities.Abilities.Base;
-using O9K.Core.Entities.Units;
-
-namespace O9K.AIO.Abilities
+﻿namespace O9K.AIO.Abilities
 {
+    using System.Collections.Generic;
+
+    using O9K.AIO.Modes.Combo;
+    using O9K.Core.Entities.Abilities.Base;
+    using O9K.Core.Entities.Units;
+
     internal class InvokerAoeAbility : AoeAbility
     {
         public InvokerAoeAbility(ActiveAbility ability) : base(ability)
         {
-            
+
         }
-        
+
         private static bool CheckForModifierTime(Unit9 target, string modifierName)
         {
             var modifier = target.GetModifier(modifierName);
@@ -21,7 +21,7 @@ namespace O9K.AIO.Abilities
             return modifier.RemainingTime < 1.4;
         }
 
-        
+
         public override bool ShouldConditionCast(TargetManager.TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
         {
             var target = targetManager.Target;
@@ -54,8 +54,8 @@ namespace O9K.AIO.Abilities
             // {
             //     return true;
             // }
-            
-            if (target.CanMove() && target.Speed > 200 && 
+
+            if (target.CanMove() && target.Speed > 200 &&
                 CheckForModifierTime(target, "modifier_invoker_cold_snap")
                 && CheckForModifierTime(target, "modifier_invoker_deafening_blast_knockback"))
             {

@@ -1,15 +1,15 @@
-﻿using System.Linq;
-
-using Divine.Entity.Entities.Abilities.Components;
-
-using O9K.AIO.Heroes.Base;
-using O9K.AIO.Modes.Permanent;
-using O9K.Core.Entities.Abilities.Heroes.Invoker;
-using O9K.Core.Helpers;
-using O9K.Core.Managers.Menu.Items;
-
-namespace O9K.AIO.Heroes.Invoker.Modes
+﻿namespace O9K.AIO.Heroes.Invoker.Modes
 {
+    using System.Linq;
+
+    using Divine.Entity.Entities.Abilities.Components;
+
+    using O9K.AIO.Heroes.Base;
+    using O9K.AIO.Modes.Permanent;
+    using O9K.Core.Entities.Abilities.Heroes.Invoker;
+    using O9K.Core.Helpers;
+    using O9K.Core.Managers.Menu.Items;
+
     internal class AutoGhostWalkMode : PermanentMode
     {
         private readonly AutoGhostWalkModeMenu modeMenu;
@@ -45,12 +45,12 @@ namespace O9K.AIO.Heroes.Invoker.Modes
                         // wex.BaseAbility.Cast();
                         // wex.BaseAbility.Cast();
                     }
-                    
+
                     ghostWalk.BaseAbility.Cast();
                     sleeper.Sleep(0.500f);
                 }
             }
-            
+
             sleeper.Sleep(0.15f);
         }
     }

@@ -27,7 +27,7 @@
 
         private readonly Sleeper orbwalkSleeper;
 
-        private readonly Unit9 unit;
+        protected readonly Unit9 unit;
 
         public AbilityHelper(TargetManager targetManager, IComboModeMenu comboModeMenu, ControllableUnit controllableUnit)
         {
@@ -159,9 +159,9 @@
             return ability.UseAbility(this.TargetManager, this.comboSleeper, distance);
         }
 
-        public bool UseAbility(ShieldAbility ability, float distance)
+        public bool UseAbility(ShieldAbility ability, float distance, bool canHit = true)
         {
-            if (!this.CanBeCasted(ability))
+            if (!this.CanBeCasted(ability, canHit))
             {
                 return false;
             }
@@ -231,6 +231,7 @@
 
             return ability.UseAbility(this.TargetManager, this.comboSleeper, true);
         }
+
         public bool UseAbilityIfConditionWithoutCooldownCheck(UsableAbility ability, params UsableAbility[] checkAbilities)
         {
             if (!this.CanBeCasted(ability))
@@ -249,7 +250,7 @@
             return ability.UseAbility(this.TargetManager, this.comboSleeper, true);
         }
 
-        
+
 
         public bool UseAbilityIfNone(UsableAbility ability, params UsableAbility[] checkAbilities)
         {

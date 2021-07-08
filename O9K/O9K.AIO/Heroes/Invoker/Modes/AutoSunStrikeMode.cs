@@ -1,24 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using Divine.Entity.Entities.Abilities.Components;
-using Divine.Game;
-using Divine.GameConsole;
-using Divine.Numerics;
-using Divine.Particle;
-using Divine.Prediction;
-using Divine.Prediction.Collision;
-using Divine.Renderer;
-
-using O9K.AIO.Heroes.Base;
-using O9K.AIO.Modes.Permanent;
-using O9K.Core.Entities.Abilities.Base.Components.Base;
-using O9K.Core.Entities.Abilities.Heroes.Invoker;
-using O9K.Core.Entities.Units;
-using O9K.Core.Helpers;
-
-namespace O9K.AIO.Heroes.Invoker.Modes
+﻿namespace O9K.AIO.Heroes.Invoker.Modes
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Game;
+    using Divine.GameConsole;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Prediction;
+    using Divine.Prediction.Collision;
+    using Divine.Renderer;
+
+    using O9K.AIO.Heroes.Base;
+    using O9K.AIO.Modes.Permanent;
+    using O9K.Core.Entities.Abilities.Base.Components.Base;
+    using O9K.Core.Entities.Abilities.Heroes.Invoker;
+    using O9K.Core.Entities.Units;
+    using O9K.Core.Helpers;
+
     internal class AutoSunStrikeMode : PermanentMode
     {
         private readonly AutoSunStrikeModeMenu modeMenu;
@@ -98,7 +98,7 @@ namespace O9K.AIO.Heroes.Invoker.Modes
                     Speed = float.MaxValue,
                     Range = float.MaxValue,
                     Radius = sunStrike.Radius,
-                    PredictionSkillshotType = PredictionSkillshotType.SkillshotCircle
+                    PredictionSkillshotType = PredictionSkillshotType.SkillshotCircle,
                 };
 
                 input = input.WithTarget(target);
@@ -175,6 +175,37 @@ namespace O9K.AIO.Heroes.Invoker.Modes
                                                                                  && (sunStrike.CanBeInvoked || sunStrike.IsInvoked))
             {
                 var targetPosition = Vector3.Zero;
+
+                /*TargetManager.AllEnemyHeroes.ForEach(target =>
+                {
+                    var input = new PredictionInput
+                    {
+                        Owner = Owner.Hero,
+                        AreaOfEffect = false,
+                        CollisionTypes = CollisionTypes.Trees | CollisionTypes.AllyCreeps | CollisionTypes.EnemyCreeps,
+                        Delay = sunStrike.CastPoint + sunStrike.ActivationDelay,
+                        Speed = float.MaxValue,
+                        Range = float.MaxValue,
+                        Radius = sunStrike.Radius,
+                        PredictionSkillshotType = PredictionSkillshotType.SkillshotCircle,
+                    };
+
+                    input = input.WithTarget(target);
+
+                    var hookOutput = PredictionManager.GetPrediction(input);
+
+                    if (hookOutput.HitChance == HitChance.Collision)
+                    {
+                        ParticleManager.LineParticle("key", target.Position, hookOutput.CastPosition, 50, Color.Green);
+                    }
+                    else
+                    {
+                        ParticleManager.LineParticle("key", target.Position, hookOutput.CastPosition, 50, Color.Red);
+                    }
+
+
+                });*/
+
                 var enemies = TargetManager.AllEnemyHeroes.Where(x => ShouldCast(x, sunStrike, ref targetPosition))
                     .OrderBy(x => x.HealthPercentage)
                     .ToList();
