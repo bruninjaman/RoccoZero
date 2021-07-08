@@ -33,9 +33,4 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Heroes\Tinker\Abilities\" />
-    <Folder Include="Heroes\Tinker\Units\" />
-  </ItemGroup>
-
 </Project>
