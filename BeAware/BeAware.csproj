@@ -70,9 +70,6 @@
     <Reference Include="Divine">
       <HintPath>..\..\..\..\Desktop\Divine.NET5\bin\Divine.dll</HintPath>
     </Reference>
-    <Reference Include="Divine.SoundPlayer">
-      <HintPath>Resources\Divine.SoundPlayer.dll</HintPath>
-    </Reference>
     <Reference Include="Divine.Zero">
       <HintPath>..\..\..\..\Desktop\Divine.NET5\bin\Divine.Zero.dll</HintPath>
     </Reference>

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
 
-using DivineSoundPlayer = Divine.SoundPlayer.SoundPlayer;
+//using DivineSoundPlayer = Divine.SoundPlayer.SoundPlayer;
 
 namespace BeAware.Helpers
 {
@@ -31,11 +31,11 @@ namespace BeAware.Helpers
         {
             WaitHandler = Task.Run(() =>
             {
-                var assembly = Assembly.GetExecutingAssembly();
+                /*var assembly = Assembly.GetExecutingAssembly();
                 Sounds["check_rune_en.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.check_rune_en.wav"));
                 Sounds["check_rune_ru.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.check_rune_ru.wav"));
                 Sounds["default.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.default.wav"));
-                Sounds["item_smoke_of_deceit.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.item_smoke_of_deceit.wav"));
+                Sounds["item_smoke_of_deceit.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.item_smoke_of_deceit.wav"));*/
             });
         }
 
@@ -55,7 +55,7 @@ namespace BeAware.Helpers
                 {
                     await WaitHandler;
 
-                    DivineSoundPlayer.Play(stream, volume);
+                    //DivineSoundPlayer.Play(stream, volume);
                 }
                 catch
                 {
