@@ -4,7 +4,7 @@
     <AssemblyName>O9K.ItemManager</AssemblyName>
     <BaseIntermediateOutputPath>$(SolutionDir)obj\$(AssemblyName)\</BaseIntermediateOutputPath>
   </PropertyGroup>
-  
+
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
@@ -16,6 +16,8 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+
+    <UseWPF>true</UseWPF>
 
     <OutputPath>$(SolutionDir)bin\</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)obj\$(AssemblyName)\</IntermediateOutputPath>
