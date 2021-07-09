@@ -4,7 +4,7 @@
     <AssemblyName>O9K.Evader</AssemblyName>
     <BaseIntermediateOutputPath>$(SolutionDir)obj\$(AssemblyName)\</BaseIntermediateOutputPath>
   </PropertyGroup>
-  
+
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
@@ -12,10 +12,12 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <RuntimeFrameworkVersion>5.0.6</RuntimeFrameworkVersion>
     <Platforms>x64</Platforms>
-    
+
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+
+    <UseWPF>true</UseWPF>
 
     <OutputPath>$(SolutionDir)bin\</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)obj\$(AssemblyName)\</IntermediateOutputPath>
