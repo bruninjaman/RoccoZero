@@ -1,0 +1,35 @@
+﻿using System;
+using System.Windows.Input;
+
+using Divine.Menu;
+using Divine.Menu.Items;
+
+namespace CreepsBlocker
+{
+    internal class Config : IDisposable
+    {
+      
+        public Config()
+        {
+            var factory = MenuManager.CreateRootMenu("Creeps Blocker");
+            MenuKey = factory.CreateHoldKey("Hotkey", Key.None);
+            BlockRangedCreep = factory.CreateToggleKey("Block ranged creep", Key.None);
+            BlockSensitivity = factory.CreateSlider("Block sensitivity", 550, 500, 700);
+            BlockSensitivity.SetTooltip("Bigger value will result in smaller block, but with higher success rate");
+            CenterCamera = factory.CreateSwitcher("Center camera", true);
+        }
+
+        public MenuToggleKey BlockRangedCreep { get; }
+
+        public MenuSlider BlockSensitivity { get; }
+
+        public MenuSwitcher CenterCamera { get; }
+
+        public MenuHoldKey MenuKey { get; }
+
+        public void Dispose()
+        {
+            //factory?.Dispose();
+        }
+    }
+}

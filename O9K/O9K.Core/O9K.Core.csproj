@@ -11,7 +11,7 @@
     <OutputType>Library</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <Platforms>x64</Platforms>
-    
+
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
@@ -35,5 +35,9 @@
       <HintPath>..\..\..\..\..\Desktop\Divine.NET5\bin\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="Compiler" AfterTargets="PostBuildEvent">
+    <Exec Command="if exist &quot;C:\Program Files\Divine\Divine.exe&quot; call &quot;C:\Program Files\Divine\Divine.exe&quot; -PostBuildEvent -TargetPath=&quot;$(TargetPath)&quot;" />
+  </Target>
 
 </Project>
