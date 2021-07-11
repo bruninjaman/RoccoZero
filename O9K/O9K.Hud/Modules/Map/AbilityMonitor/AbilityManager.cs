@@ -226,7 +226,7 @@
                 @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
                 new ImageProperties
                 {
-                    ColorTint = new Color(25, 102, 25)
+                    ColorTint = new Color(25, 102, 255)
                 });
         }
 

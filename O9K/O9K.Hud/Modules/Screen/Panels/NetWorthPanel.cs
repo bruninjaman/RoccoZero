@@ -107,7 +107,7 @@
                 new ImageProperties
                 {
                     Brightness = -80,
-                    ColorTint = new Color(0, 25, 0, 229)
+                    ColorTint = new Color(0, 255, 0, 229)
                 });
             RendererManager.LoadImage(
                 "o9k.net_worth_bg_enemy",

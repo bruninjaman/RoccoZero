@@ -233,7 +233,7 @@
                 @"panorama\images\masks\softedge_circle_sharp_png.vtex_c",
                 new ImageProperties
                 {
-                    ColorTint = new Color(0, 229, 0, 114),
+                    ColorTint = new Color(0, 0, 0, 114),
                 });
             RendererManager.LoadImage(
                 "o9k.outline_green",
