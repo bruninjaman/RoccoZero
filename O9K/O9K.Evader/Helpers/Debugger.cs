@@ -113,9 +113,9 @@
                 if (e.OldValue)
                 {
                     //to prevent mini freeze on 1st particle creation on usage
-                    var fix = new AbilityObstacleDrawer();
-                    fix.DrawArcRectangle(Vector3.Zero, Vector3.Zero + 100, 100, 200);
-                    fix.DrawCircle(Vector3.Zero, 100);
+                    //var fix = new AbilityObstacleDrawer();
+                    //fix.DrawArcRectangle(Vector3.Zero, Vector3.Zero + 100, 100, 200);
+                    //fix.DrawCircle(Vector3.Zero, 100);
                 }
 
                 RendererManager.Draw += this.DrawAbilityObstacles;
