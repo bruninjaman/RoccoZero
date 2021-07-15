@@ -26,13 +26,13 @@
 
   <ItemGroup>
     <Reference Include="Divine">
-      <HintPath>..\..\..\..\..\Desktop\Divine.NET5\bin\Divine.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\Divine\bin\Divine.dll</HintPath>
     </Reference>
     <Reference Include="Divine.Zero">
-      <HintPath>..\..\..\..\..\Desktop\Divine.NET5\bin\Divine.Zero.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\Divine\bin\Divine.Zero.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\Desktop\Divine.NET5\bin\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\Divine\bin\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
 

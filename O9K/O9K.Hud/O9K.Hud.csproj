@@ -42,7 +42,7 @@
 
   <ItemGroup>
     <Reference Include="Divine">
-      <HintPath>..\..\..\..\..\Desktop\Divine.NET5\bin\Divine.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\Divine\bin\Divine.dll</HintPath>
     </Reference>
   </ItemGroup>
 
