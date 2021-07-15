@@ -106,7 +106,7 @@
             get
             {
                 return this.controllableUnits.Where(
-                    x => x.IsValid && x.CanBeControlled && x.ShouldControl && x.Owner.Distance(this.owner) < 2000);
+                    x => x.IsValid && x.CanBeControlled && x.ShouldControl && x.Owner.Distance(this.targetManager.Target) < 2500);
             }
         }
 

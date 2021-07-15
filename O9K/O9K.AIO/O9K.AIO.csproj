@@ -30,8 +30,12 @@
 
   <ItemGroup>
     <Reference Include="Divine">
-      <HintPath>..\..\..\..\..\Desktop\Divine.NET5\bin\Divine.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\Divine\bin\Divine.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="Compiler" AfterTargets="PostBuildEvent">
+    <Exec Command="if exist &quot;C:\Program Files\Divine\Divine.exe&quot; call &quot;C:\Program Files\Divine\Divine.exe&quot; -PostBuildEvent -TargetPath=&quot;$(TargetPath)&quot;" />
+  </Target>
 
 </Project>
