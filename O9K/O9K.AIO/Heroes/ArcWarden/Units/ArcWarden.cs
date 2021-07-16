@@ -37,7 +37,7 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
         private DebuffAbility flux;
 
         private MagneticFieldAbility magneticFieldAbility;
-        
+
         private BuffAbility tempestDouble;
 
         private BuffAbility manta;
@@ -49,14 +49,22 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
         private DisableAbilityArcWarden orchid;
 
         private BlinkAbility blink;
-        
+
+        private HurricanePike pike;
+        private ForceStaff force;
+
+
         private ShieldAbility mjollnir;
-        
+
         private DisableAbilityArcWarden atos;
         private DisableAbilityArcWarden gungir;
 
         private EtherealBlade ethereal;
         private NukeAbility dagon;
+
+        private BuffAbility shadow;
+        private BuffAbility silver;
+
 
         public ArcWarden(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
@@ -69,8 +77,8 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
                 {AbilityId.arc_warden_tempest_double, x => this.tempestDouble = new BuffAbility(x)},
 
 
-                { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbilityArcWarden(x) },
-                { AbilityId.item_gungir, x => this.gungir = new DisableAbilityArcWarden(x) },
+                {AbilityId.item_rod_of_atos, x => this.atos = new DisableAbilityArcWarden(x)},
+                {AbilityId.item_gungir, x => this.gungir = new DisableAbilityArcWarden(x)},
                 {AbilityId.item_diffusal_blade, x => this.diffusal = new DebuffAbility(x)},
                 {AbilityId.item_abyssal_blade, x => this.abyssal = new DisableAbilityArcWarden(x)},
                 {AbilityId.item_manta, x => this.manta = new BuffAbility(x)},
@@ -78,72 +86,77 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
                 {AbilityId.item_orchid, x => this.orchid = new DisableAbilityArcWarden(x)},
                 {AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x)},
                 {AbilityId.item_sheepstick, x => this.hex = new DisableAbilityArcWarden(x)},
-                { AbilityId.item_mjollnir, x => this.mjollnir = new ShieldAbility(x) },
+                {AbilityId.item_mjollnir, x => this.mjollnir = new ShieldAbility(x)},
 
 
                 {AbilityId.item_blink, x => this.blink = new BlinkDaggerArcWarden(x)},
                 {AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerArcWarden(x)},
                 {AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerArcWarden(x)},
                 {AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerArcWarden(x)},
-                
-                { AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x) },
-                { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) },
+                {AbilityId.item_hurricane_pike, x => this.pike = new HurricanePike(x)},
+                {AbilityId.item_force_staff, x => this.force = new ForceStaff(x)},
 
+                {AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x)},
+                {AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x)},
 
+                {AbilityId.item_silver_edge, x => this.silver = new BuffAbility(x)},
+                {AbilityId.item_invis_sword, x => this.shadow = new BuffAbility(x)},
             };
-        }
-
-        protected override int BodyBlockRange { get; } = 80;
-
-        public override bool CanAttack(Unit9 target, float additionalRange = 0)
-        {
-            var canAttack = base.CanAttack(target, additionalRange);
-
-            if (canAttack && additionalRange > 0)
-            {
-                this.ComboSleeper.Sleep(0.3f);
-            }
-
-            return canAttack;
-        }
-
-        public override bool CanMove()
-        {
-            if (!base.CanMove())
-            {
-                return false;
-            }
-
-            return true;
         }
 
         public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
         {
             var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
+            var isMainHero = (this.Owner == EntityManager9.Owner);
 
             if (OrderManager.Orders.Count() != 0)
             {
                 return false;
             }
 
-            
+
             if (abilityHelper.UseAbility(this.blink))
             {
                 return true;
             }
-            
+
+            if (!isMainHero && abilityHelper.UseAbility(this.force, 500, 300) &&
+                !this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName))
+            {
+                return true;
+            }
+
+            if (!isMainHero && abilityHelper.UseAbility(this.force, 500, 300) &&
+                !this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName))
+            {
+                return true;
+            }
+
+            if (isMainHero && abilityHelper.CanBeCasted(this.pike) && !this.MoveSleeper.IsSleeping &&
+                (!this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName) || this.Owner.Health < 1000))
+            {
+                if (this.pike.UseAbilityOnTarget(targetManager, this.ComboSleeper))
+                {
+                    return true;
+                }
+            }
+
             if (abilityHelper.UseAbility(this.atos))
             {
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.gungir))
+            if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWardenMagneticRootDisable") &&
+                abilityHelper.UseAbility(this.gungir))
             {
+                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticRootDisable", 2000);
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.abyssal))
+            if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWardenMagneticRootDisable") &&
+                abilityHelper.UseAbility(this.abyssal))
             {
+                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticRootDisable", 2000);
                 return true;
             }
 
@@ -152,8 +165,10 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.nullifier))
+            if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWardenMagneticNullifier") &&
+                abilityHelper.UseAbility(this.nullifier))
             {
+                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticNullifier", 2000);
                 return true;
             }
 
@@ -167,11 +182,25 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
                 return true;
             }
 
+            if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWardenMagneticSilverEdge") &&
+                abilityHelper.UseAbility(this.silver))
+            {
+                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticSilverEdge", 5000);
+                ComboSleeper.Sleep(0.5f);
+                return true;
+            }
+
+            if (!isMainHero && abilityHelper.UseAbility(this.shadow))
+            {
+                ComboSleeper.Sleep(0.5f);
+                return true;
+            }
+
             if (abilityHelper.UseAbility(this.flux))
             {
                 return true;
             }
-            
+
             if (abilityHelper.UseAbility(this.tempestDouble))
             {
                 return true;
@@ -189,7 +218,7 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
                 return true;
             }
             // fast nukes section before sparks
-            
+
             if (abilityHelper.UseAbility(this.ethereal))
             {
                 return true;
@@ -199,8 +228,8 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
             {
                 return true;
             }
-            
-            
+
+
             // end of fast nukes
 
             if (abilityHelper.UseAbility(this.spark))
@@ -212,7 +241,7 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
             {
                 return true;
             }
-            
+
             if (abilityHelper.UseAbility(this.mjollnir, 600))
             {
                 return true;
