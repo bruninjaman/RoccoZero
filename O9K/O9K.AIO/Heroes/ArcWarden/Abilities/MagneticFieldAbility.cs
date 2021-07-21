@@ -80,9 +80,10 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
 
 
             var abilityOwner = this.Owner;
+            var mainHero = EntityManager9.Owner;
 
 
-            var isMainHero = abilityOwner.Equals(EntityManager9.Owner);
+            var isMainHero = abilityOwner.Equals(mainHero);
 
             if (abilityOwner.HasModifier(this.Shield.ShieldModifierName))
             {
@@ -96,7 +97,18 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
 
             var closestEnemy = enemies.OrderBy(x => x.Distance(abilityOwner)).FirstOrDefault();
             
+            if (closestEnemy != null && closestEnemy.Distance(mainHero) < 300 && abilityOwner.Distance(mainHero) < 800)
+            {
+                var position = mainHero.Hero.Position.Extend2D(closestEnemy.Position, -this.field.Radius);
 
+                if (this.Owner.Distance(position) < this.Ability.CastRange && this.Ability.UseAbility(position))
+                {
+                    Sleeper.Sleep(1);
+                    return true;
+                }
+            }
+            
+            
             if (closestEnemy != null && closestEnemy.Distance(abilityOwner) < 300)
             {
                 var position = abilityOwner.Position.Extend2D(closestEnemy.Position, -this.field.Radius);
