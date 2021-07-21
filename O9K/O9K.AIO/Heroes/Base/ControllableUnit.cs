@@ -488,6 +488,11 @@
             {
                 var targetPosition = target.Position;
 
+                if (this.Owner.IsRanged && this.Menu.OrbwalkingMode == "Move to target" && this.Menu.DangerRange > this.Owner.Distance(target))
+                {
+                    return false;
+                }
+                
                 if (this.Menu.OrbwalkingMode == "Move to target" || this.CanAttack(target, 400))
                 {
                     movePosition = targetPosition;
@@ -555,7 +560,6 @@
             {
                 return false;
             }
-
             if (!this.Owner.BaseUnit.Move(movePosition))
             {
                 return false;
