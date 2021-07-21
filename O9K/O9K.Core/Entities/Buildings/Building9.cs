@@ -10,7 +10,7 @@
             : base(baseUnit)
         {
             this.IsBuilding = true;
-            this.IsUnit = false;
+            this.IsUnit = true;
             this.IsVisible = true;
         }
     }
