@@ -17,7 +17,6 @@ namespace O9K.AIO.UnitManager
         BaseHero BaseHero { get; }
         Core.Managers.Menu.Items.Menu Menu { get; }
         void Disable();
-        void Dispose();
         void Enable();
         void EndCombo(ComboModeMenu comboModeMenu);
         void ExecuteCombo(ComboModeMenu comboModeMenu);

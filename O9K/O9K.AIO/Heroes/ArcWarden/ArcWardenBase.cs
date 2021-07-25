@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Documents;
-using System.Windows.Input;
-using Divine.Menu;
-using O9K.AIO.Heroes.ArcWarden.CustomUnitManager;
-using O9K.AIO.Modes.Combo;
-using O9K.AIO.Modes.KeyPress;
-
-namespace O9K.AIO.Heroes.ArcWarden
+﻿namespace O9K.AIO.Heroes.ArcWarden
 {
+    using System.Collections.Generic;
     using Base;
     using Core.Entities.Metadata;
+    using CustomUnitManager;
     using Divine.Entity.Entities.Units.Heroes.Components;
+    using Modes.Combo;
 
     [HeroId(HeroId.npc_dota_hero_arc_warden)]
     internal class ArcWardenBase : BaseHero
@@ -19,18 +13,6 @@ namespace O9K.AIO.Heroes.ArcWarden
         public ArcWardenBase()
         {
         }
-
-        // protected override void DisableCustomModes()
-        // {
-        //     this.Combo.Disable();
-        // }
-        //
-        // protected override void EnableCustomModes()
-        // {
-        //     this.Combo.Dispose();
-        //     this.Combo.Enable();
-        //
-        // }
 
         public override void CreateUnitManager()
         {

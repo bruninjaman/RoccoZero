@@ -1,16 +1,12 @@
-﻿using Divine.Order;
-using O9K.AIO.Abilities;
-using O9K.AIO.Abilities.Items;
-using O9K.AIO.Abilities.Menus;
-using O9K.AIO.Heroes.ShadowFiend.Abilities;
-using O9K.AIO.Heroes.ShadowFiend.Ability;
-using O9K.Core.Managers.Menu;
-
-namespace O9K.AIO.Heroes.ShadowFiend.Units
+﻿namespace O9K.AIO.Heroes.ShadowFiend.Units
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Abilities;
+    using Ability;
+    using AIO.Abilities;
+    using AIO.Abilities.Items;
     using Base;
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
@@ -18,9 +14,10 @@ namespace O9K.AIO.Heroes.ShadowFiend.Units
     using Core.Extensions;
     using Core.Helpers;
     using Core.Prediction.Data;
-    using Divine.Game;
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Game;
+    using Divine.Order;
     using Modes.Combo;
     using TargetManager;
 
@@ -207,7 +204,6 @@ namespace O9K.AIO.Heroes.ShadowFiend.Units
                 {
                     continue;
                 }
-                
 
 
                 // if (this.RazeCanWaitAttack(raze, target))
@@ -236,7 +232,7 @@ namespace O9K.AIO.Heroes.ShadowFiend.Units
             var target = targetManager.Target;
             var position = target.Position;
             var distance = this.Owner.Distance(position);
-            
+
             if (abilityHelper.CanBeCasted(this.blink))
             {
                 var blinkRange = this.blink.Ability.CastRange;
@@ -248,9 +244,8 @@ namespace O9K.AIO.Heroes.ShadowFiend.Units
                     {
                         continueAltCombo = true;
 
-                        
-                        return true;
 
+                        return true;
                     }
                 }
             }
@@ -261,6 +256,7 @@ namespace O9K.AIO.Heroes.ShadowFiend.Units
                 {
                     return true;
                 }
+
                 if (abilityHelper.UseAbility(this.hex))
                 {
                     this.ComboSleeper.ExtendSleep(0.1f);

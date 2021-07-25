@@ -1,33 +1,33 @@
-﻿using System;
-using O9K.AIO.Abilities;
-using O9K.AIO.Modes.Combo;
-using O9K.Core.Entities.Abilities.Base;
-using O9K.Core.Entities.Units;
-
-namespace O9K.AIO.Heroes.ArcWarden.Abilities
+﻿namespace O9K.AIO.Heroes.ArcWarden.Abilities
 {
     using System.Linq;
+    using AIO.Abilities;
+    using Core.Entities.Abilities.Base;
+    using Core.Entities.Abilities.Heroes.ArcWarden;
     using Core.Extensions;
     using Core.Helpers;
     using Core.Managers.Entity;
     using Core.Prediction.Data;
+    using Modes.Combo;
+    using TargetManager;
 
     internal class MagneticFieldAbility : ShieldAbility
     {
         public MagneticFieldAbility(ActiveAbility ability)
             : base(ability)
         {
-            this.field = (O9K.Core.Entities.Abilities.Heroes.ArcWarden.MagneticField) ability;
+            this.field = (MagneticField) ability;
         }
 
-        private readonly O9K.Core.Entities.Abilities.Heroes.ArcWarden.MagneticField field;
+        private readonly MagneticField field;
 
-        
-        public override bool CanHit(TargetManager.TargetManager targetManager, IComboModeMenu comboMenu)
+
+        public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)
         {
             return this.Ability.CanHit(this.Owner);
         }
-        public override bool ShouldCast(TargetManager.TargetManager targetManager)
+
+        public override bool ShouldCast(TargetManager targetManager)
         {
             var abilityOwner = this.Owner;
             var mainHero = EntityManager9.Owner.Hero;
@@ -39,7 +39,7 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
             {
                 return false;
             }
-            
+
             if (abilityOwner.IsInvulnerable)
             {
                 return false;
@@ -77,8 +77,8 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
 
             return true;
         }
-        
-        public override bool UseAbility(TargetManager.TargetManager targetManager, Sleeper comboSleeper, bool aoe)
+
+        public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
         {
             var heroes = EntityManager9.Units.Where(x => x.IsHero && x.IsAlive && !x.IsIllusion && x.IsVisible)
                 .ToList();
@@ -133,7 +133,7 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
 
                 return false;
             }
-            
+
             return this.Ability.UseAbility(abilityOwner, allies, HitChance.Medium);
         }
     }

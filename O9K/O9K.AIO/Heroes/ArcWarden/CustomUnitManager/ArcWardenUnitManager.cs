@@ -1,23 +1,11 @@
-﻿using O9K.Core.Entities.Units;
-
-namespace O9K.AIO.Heroes.ArcWarden.CustomUnitManager
+﻿namespace O9K.AIO.Heroes.ArcWarden.CustomUnitManager
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-
     using Base;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Heroes.Unique;
-    using Core.Logger;
-
-    using Dynamic.Units;
     using Divine.Game;
     using Divine.Numerics;
-
     using Modes.Combo;
-
     using UnitManager;
 
     internal class ArcWardenUnitManager : UnitManager
@@ -32,9 +20,11 @@ namespace O9K.AIO.Heroes.ArcWarden.CustomUnitManager
             get
             {
                 return this.controllableUnits.Where(
-                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled && x.ShouldControl && x.Owner.Distance(this.targetManager.Target ?? this.owner) < 2500);
+                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled && x.ShouldControl &&
+                         x.Owner.Distance(this.targetManager.Target ?? this.owner) < 2500);
             }
         }
+
         public virtual void ExecuteCloneCombo(ComboModeMenu comboModeMenu)
         {
             foreach (var controllable in this.ControllableUnitsTempest)
@@ -55,6 +45,7 @@ namespace O9K.AIO.Heroes.ArcWarden.CustomUnitManager
                 }
             }
         }
+
         public virtual void CloneOrbwalk(ComboModeMenu comboModeMenu)
         {
             if (this.issuedAction.IsSleeping)
@@ -100,6 +91,5 @@ namespace O9K.AIO.Heroes.ArcWarden.CustomUnitManager
                 this.ControlAllUnits(noOrbwalkUnits);
             }
         }
-        
     }
 }

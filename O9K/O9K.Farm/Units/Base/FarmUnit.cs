@@ -1,18 +1,13 @@
-﻿using O9K.Core.Extensions;
-
-namespace O9K.Farm.Units.Base
+﻿namespace O9K.Farm.Units.Base
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
     using Damage;
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Game;
     using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities.Components;
-
     using Menu;
-
     using O9K.Core.Entities.Units;
     using O9K.Core.Helpers;
     using O9K.Core.Helpers.Damage;

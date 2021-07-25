@@ -1,22 +1,11 @@
-﻿using Divine.Entity.Entities.Abilities.Components;
-using Divine.Modifier.Modifiers;
-using O9K.Core.Entities.Abilities.Heroes.ArcWarden;
-using O9K.Core.Extensions;
-using O9K.Core.Managers.Entity;
-
-namespace O9K.AIO.Heroes.ArcWarden.Abilities
+﻿namespace O9K.AIO.Heroes.ArcWarden.Abilities
 {
-    using System;
-    using System.Collections.Generic;
     using AIO.Abilities;
-    using AIO.Modes.Combo;
     using Core.Entities.Abilities.Base;
-    using Divine.Extensions;
-    using Divine.Game;
-    using Divine.Numerics;
-    using O9K.AIO.Abilities.Menus;
-    using O9K.AIO.Heroes.Pudge.Abilities;
-    using O9K.Core.Helpers;
+    using Core.Extensions;
+    using Core.Helpers;
+    using Core.Managers.Entity;
+    using Divine.Entity.Entities.Abilities.Components;
     using TargetManager;
 
     internal class BlinkDaggerArcWarden : BlinkAbility
@@ -53,7 +42,7 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
 
                 var samePosition = this.Owner.Position;
 
-                
+
                 if (!this.Ability.UseAbility(samePosition))
                 {
                     return false;
@@ -66,13 +55,13 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
             }
 
             var hasModifierShield = this.Owner.HasModifier("modifier_arc_warden_magnetic_field_evasion");
-            
+
             if (hasModifierShield)
 
             {
                 return false;
             }
-            
+
             if (distance > 1800)
             {
                 return false;
@@ -82,7 +71,6 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
                 ? this.Owner.Position.Extend2D(target.Position, this.Ability.CastRange)
                 : target.GetPredictedPosition(this.Ability.CastPoint + 0.3f);
 
-            
 
             if (!this.Ability.UseAbility(position))
             {
