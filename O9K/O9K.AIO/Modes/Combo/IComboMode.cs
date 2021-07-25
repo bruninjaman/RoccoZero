@@ -13,22 +13,8 @@ namespace O9K.AIO.Modes.Combo
 {
     internal interface IComboMode
     {
-        Dictionary<MenuHoldKey, ComboModeMenu> ComboModeMenus { get; }
-        List<uint> DisableToggleAbilities { get; }
-        HashSet<AbilityId> IgnoreToggleDisable { get; }
-        ComboModeMenu ComboModeMenu { get; }
-        IUnitManager UnitManager { get; }
-        BaseHero BaseHero { get; }
-        MenuManager Menu { get; }
-        Owner Owner { get; }
-        TargetManager.TargetManager TargetManager { get; }
         void Disable();
         void Dispose();
         void Enable();
-        void ComboEnd();
-        void OnUpdate();
-        void KeyOnValueChanged(object sender, KeyEventArgs e);
-        void OnOrderAdding(OrderAddingEventArgs e);
-        void ToggleAbility(IToggleable toggle);
     }
 }

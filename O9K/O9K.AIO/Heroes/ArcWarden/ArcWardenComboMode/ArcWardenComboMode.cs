@@ -81,7 +81,7 @@ namespace O9K.AIO.Heroes.ArcWarden.ArcWardenComboMode
             }
         }
 
-        public override void OnUpdate()
+        protected override void OnUpdate()
         {
             if (GameManager.IsPaused)
             {
@@ -121,7 +121,7 @@ namespace O9K.AIO.Heroes.ArcWarden.ArcWardenComboMode
             }
         }
 
-        public override void KeyOnValueChanged(object sender, KeyEventArgs e)
+        protected override void KeyOnValueChanged(object sender, KeyEventArgs e)
         {
             if (e.NewValue)
             {

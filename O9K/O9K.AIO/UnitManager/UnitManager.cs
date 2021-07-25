@@ -316,7 +316,7 @@
             }
         }
 
-        public virtual bool BodyBlock(ICollection<ControllableUnit> allUnits, ComboModeMenu comboModeMenu)
+        protected virtual bool BodyBlock(ICollection<ControllableUnit> allUnits, ComboModeMenu comboModeMenu)
         {
             if (!this.targetManager.HasValidTarget)
             {
@@ -405,7 +405,7 @@
             return false;
         }
 
-        public virtual void ControlAllUnits(IEnumerable<ControllableUnit> noOrbwalkUnits)
+        protected virtual void ControlAllUnits(IEnumerable<ControllableUnit> noOrbwalkUnits)
         {
             if (this.targetManager.HasValidTarget)
             {
@@ -431,7 +431,7 @@
             this.issuedAction.Sleep(0.08f);
         }
 
-        public ControllableUnitMenu GetUnitMenu(Unit9 unit)
+        protected ControllableUnitMenu GetUnitMenu(Unit9 unit)
         {
             if (!this.unitMenus.TryGetValue(unit.DefaultName + unit.IsIllusion, out var menu))
             {
@@ -442,13 +442,13 @@
             return menu;
         }
 
-        public float IssuedActionTime(uint handle)
+        protected float IssuedActionTime(uint handle)
         {
             this.issuedActionTimings.TryGetValue(handle, out var time);
             return time;
         }
 
-        public virtual void OnAbilityAdded(Ability9 entity)
+        protected virtual void OnAbilityAdded(Ability9 entity)
         {
             try
             {
@@ -467,7 +467,7 @@
             }
         }
 
-        public virtual void OnAbilityRemoved(Ability9 entity)
+        protected virtual void OnAbilityRemoved(Ability9 entity)
         {
             try
             {
@@ -486,7 +486,7 @@
             }
         }
 
-        public void OnInventoryChanged(object sender, EventArgs e)
+        protected void OnInventoryChanged(object sender, EventArgs e)
         {
             foreach (var controllableUnit in this.controllableUnits)
             {
@@ -503,7 +503,7 @@
             }
         }
 
-        public void ControlAlliesOnValueChanged(object sender, SwitcherEventArgs e)
+        protected void ControlAlliesOnValueChanged(object sender, SwitcherEventArgs e)
         {
             this.controlAllies = e.NewValue;
 
@@ -520,7 +520,7 @@
             }
         }
 
-        public void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs e)
+        protected void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs e)
         {
             try
             {
@@ -544,7 +544,7 @@
             }
         }
 
-        public void OnAttackStart(Unit9 unit)
+        protected void OnAttackStart(Unit9 unit)
         {
             try
             {
@@ -562,7 +562,7 @@
             }
         }
 
-        public void OnUnitAdded(Unit9 entity)
+        protected void OnUnitAdded(Unit9 entity)
         {
             try
             {
@@ -640,7 +640,7 @@
             }
         }
 
-        public void OnUnitRemoved(Unit9 entity)
+        protected void OnUnitRemoved(Unit9 entity)
         {
             try
             {

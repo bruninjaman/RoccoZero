@@ -25,17 +25,5 @@ namespace O9K.AIO.UnitManager
         void Move();
         void Orbwalk(ControllableUnit controllable, bool attack, bool move);
         void Orbwalk(ComboModeMenu comboModeMenu);
-        bool BodyBlock(ICollection<ControllableUnit> allUnits, ComboModeMenu comboModeMenu);
-        void ControlAllUnits(IEnumerable<ControllableUnit> noOrbwalkUnits);
-        ControllableUnitMenu GetUnitMenu(Unit9 unit);
-        float IssuedActionTime(uint handle);
-        void OnAbilityAdded(Ability9 entity);
-        void OnAbilityRemoved(Ability9 entity);
-        void OnInventoryChanged(object sender, EventArgs e);
-        void ControlAlliesOnValueChanged(object sender, SwitcherEventArgs e);
-        void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs e);
-        void OnAttackStart(Unit9 unit);
-        void OnUnitAdded(Unit9 entity);
-        void OnUnitRemoved(Unit9 entity);
     }
 }

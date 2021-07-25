@@ -27,19 +27,19 @@
 
     internal class ComboMode : BaseMode, IComboMode
     {
-        public Dictionary<MenuHoldKey, ComboModeMenu> ComboModeMenus { get; } =
+        protected Dictionary<MenuHoldKey, ComboModeMenu> ComboModeMenus { get; } =
             new Dictionary<MenuHoldKey, ComboModeMenu>();
 
-        public List<uint> DisableToggleAbilities { get; } = new List<uint>();
+        protected List<uint> DisableToggleAbilities { get; } = new List<uint>();
 
-        public HashSet<AbilityId> IgnoreToggleDisable { get; } = new HashSet<AbilityId>
+        protected HashSet<AbilityId> IgnoreToggleDisable { get; } = new HashSet<AbilityId>
         {
             AbilityId.troll_warlord_berserkers_rage
         };
 
-        public UpdateHandler UpdateHandler { get; }
+        protected  UpdateHandler UpdateHandler { get; }
 
-        public bool IgnoreComboEnd { get; set; }
+        protected bool IgnoreComboEnd { get; set; }
 
         public ComboMode(BaseHero baseHero, IEnumerable<ComboModeMenu> comboMenus)
             : base(baseHero)
@@ -53,9 +53,9 @@
             }
         }
 
-        public ComboModeMenu ComboModeMenu { get; set; }
+        protected ComboModeMenu ComboModeMenu { get; set; }
 
-        public IUnitManager UnitManager { get; }
+        protected IUnitManager UnitManager { get; }
 
         public virtual void Disable()
         {
@@ -89,7 +89,7 @@
             }
         }
 
-        public virtual void ComboEnd()
+        protected virtual void ComboEnd()
         {
             try
             {
@@ -112,7 +112,7 @@
             }
         }
 
-        public virtual void OnUpdate()
+        protected virtual void OnUpdate()
         {
             if (GameManager.IsPaused)
             {
@@ -134,7 +134,7 @@
             }
         }
 
-        public virtual void KeyOnValueChanged(object sender, KeyEventArgs e)
+        protected virtual void KeyOnValueChanged(object sender, KeyEventArgs e)
         {
             if (e.NewValue)
             {
@@ -161,7 +161,7 @@
             }
         }
 
-        public virtual void OnOrderAdding(OrderAddingEventArgs e)
+        protected virtual void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
@@ -192,7 +192,7 @@
             }
         }
 
-        public virtual async void ToggleAbility(IToggleable toggle)
+        protected virtual async void ToggleAbility(IToggleable toggle)
         {
             try
             {
