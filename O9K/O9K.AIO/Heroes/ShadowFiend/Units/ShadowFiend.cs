@@ -3,22 +3,30 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
     using Abilities;
+
     using Ability;
+
     using AIO.Abilities;
     using AIO.Abilities.Items;
+
     using Base;
+
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
     using Core.Entities.Units;
     using Core.Extensions;
     using Core.Helpers;
     using Core.Prediction.Data;
+
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
     using Divine.Game;
     using Divine.Order;
+
     using Modes.Combo;
+
     using TargetManager;
 
     [UnitName(nameof(HeroId.npc_dota_hero_nevermore))]
@@ -84,23 +92,23 @@
                         return raze;
                     }
                 },
-                {AbilityId.nevermore_requiem, x => this.requiem = new NukeAbility(x)},
+                { AbilityId.nevermore_requiem, x => this.requiem = new NukeAbility(x) },
 
-                {AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x)},
-                {AbilityId.item_orchid, x => this.orchid = new DisableAbility(x)},
-                {AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x)},
-                {AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x)},
-                {AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x)},
-                {AbilityId.item_sheepstick, x => this.hex = new DisableAbility(x)},
-                {AbilityId.item_manta, x => this.manta = new BuffAbility(x)},
-                {AbilityId.item_blink, x => this.blink = new BlinkAbility(x)},
-                {AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x)},
-                {AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerShadowFiend(x)},
-                {AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x)},
-                {AbilityId.item_cyclone, x => this.euls = new EulsScepterOfDivinity(x)},
-                {AbilityId.item_wind_waker, x => this.euls = new EulsScepterOfDivinity(x)},
-                {AbilityId.item_hurricane_pike, x => this.pike = new HurricanePike(x)},
-                {AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x)},
+                { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
+                { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
+                { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
+                { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
+                { AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x) },
+                { AbilityId.item_sheepstick, x => this.hex = new DisableAbility(x) },
+                { AbilityId.item_manta, x => this.manta = new BuffAbility(x) },
+                { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerShadowFiend(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
+                { AbilityId.item_cyclone, x => this.euls = new EulsScepterOfDivinity(x) },
+                { AbilityId.item_wind_waker, x => this.euls = new EulsScepterOfDivinity(x) },
+                { AbilityId.item_hurricane_pike, x => this.pike = new HurricanePike(x) },
+                { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) },
             };
         }
 
@@ -116,7 +124,7 @@
             this.razeOrbwalk = false;
 
             if (this.blink?.Ability.Id == AbilityId.item_arcane_blink && comboModeMenu
-                .GetAbilitySettingsMenu<BlinkDaggerShadowFiendMenu>(this.blink).DontUseEulInCombo)
+                    .GetAbilitySettingsMenu<BlinkDaggerShadowFiendMenu>(this.blink).DontUseEulInCombo)
             {
                 if (this.AltUltCombo(targetManager, this.abilityHelper))
                 {
@@ -178,8 +186,8 @@
             }
 
             var orderedRazes = target.GetAngle(this.Owner.Position) > 1 || !target.IsMoving
-                ? this.razes.OrderBy(x => x.Ability.Id)
-                : this.razes.OrderByDescending(x => x.Ability.Id);
+                                   ? this.razes.OrderBy(x => x.Ability.Id)
+                                   : this.razes.OrderByDescending(x => x.Ability.Id);
 
             foreach (var raze in orderedRazes)
             {

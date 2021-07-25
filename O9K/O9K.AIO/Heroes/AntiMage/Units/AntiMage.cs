@@ -2,17 +2,24 @@
 {
     using System;
     using System.Collections.Generic;
+
     using Abilities;
+
     using AIO.Abilities;
     using AIO.Abilities.Items;
+
     using Base;
+
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
     using Core.Entities.Units;
     using Core.Helpers;
+
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
+
     using Modes.Combo;
+
     using TargetManager;
 
     [UnitName(nameof(HeroId.npc_dota_hero_antimage))]
@@ -41,17 +48,17 @@
         {
             this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
             {
-                {AbilityId.antimage_blink, x => this.blink = new AntiMageBlink(x)},
-                {AbilityId.antimage_counterspell, x => this.counterspell = new Counterspell(x)},
+                { AbilityId.antimage_blink, x => this.blink = new AntiMageBlink(x) },
+                { AbilityId.antimage_counterspell, x => this.counterspell = new Counterspell(x) },
 
-                {AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x)},
-                {AbilityId.item_abyssal_blade, x => this.abyssal = new DisableAbility(x)},
-                {AbilityId.item_manta, x => this.manta = new BuffAbility(x)},
-                {AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x)},
-                {AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x)},
+                { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
+                { AbilityId.item_abyssal_blade, x => this.abyssal = new DisableAbility(x) },
+                { AbilityId.item_manta, x => this.manta = new BuffAbility(x) },
+                { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
+                { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) },
 
-                {AbilityId.item_orchid, x => this.orchid = new DisableAbility(x)},
-                {AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x)},
+                { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
+                { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
             };
 
             this.MoveComboAbilities.Add(AbilityId.antimage_blink, _ => this.blink);
