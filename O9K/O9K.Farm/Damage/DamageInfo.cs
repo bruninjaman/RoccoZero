@@ -17,6 +17,10 @@
             }
 
             this.MinDamage = unit.GetDamage(target);
+            this.AvgDamage = unit.GetAverageDamage(target);
+            this.MaxDamage = unit.GetMaxDamage(target);
+
+
             this.IsInAttackRange = unit.Unit.Distance(target.Unit) < unit.Unit.GetAttackRange(target.Unit);
         }
 
@@ -27,6 +31,11 @@
         public bool IsValid { get; } = true;
 
         public float MinDamage { get; }
+        
+        public float AvgDamage { get; }
+        
+        public float MaxDamage { get; }
+
 
         public float PredictedHealth { get; }
 

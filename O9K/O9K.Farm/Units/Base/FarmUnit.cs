@@ -1,4 +1,6 @@
-﻿namespace O9K.Farm.Units.Base
+﻿using O9K.Core.Extensions;
+
+namespace O9K.Farm.Units.Base
 {
     using System;
     using System.Collections.Generic;
@@ -136,7 +138,6 @@
             this.LastMovePosition = Vector3.Zero;
             this.Target = target;
             this.AddDamage(target, (GameManager.RawGameTime + distance) - ping, false, false);
-
             return true;
         }
 
@@ -207,12 +208,10 @@
 
         public bool Farm(FarmUnit enemy)
         {
-            // if (this.CanAttack(enemy))
-            //    {
-            return this.Attack(enemy);
-            //    }
-
-            //  return this.Move(enemy);
+            
+            return this.Attack(enemy);;
+            
+            
         }
 
         public float GetAttackDelay(FarmUnit target)
