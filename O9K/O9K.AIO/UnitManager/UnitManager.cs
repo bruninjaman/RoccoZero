@@ -29,7 +29,7 @@
 
     using TargetManager;
 
-    internal class UnitManager : IDisposable
+    internal class UnitManager : IUnitManager
     {
         protected readonly MultiSleeper abilitySleeper;
 
@@ -159,7 +159,7 @@
             ProjectileManager.TrackingProjectileAdded += this.OnAddTrackingProjectile;
         }
 
-        public void EndCombo(ComboModeMenu comboModeMenu)
+        public virtual void EndCombo(ComboModeMenu comboModeMenu)
         {
             foreach (var controllable in this.controllableUnits.Where(x => x.IsValid))
             {
@@ -188,7 +188,7 @@
             }
         }
 
-        public void ExecuteMoveCombo(MoveComboModeMenu comboModeMenu)
+        public virtual void ExecuteMoveCombo(MoveComboModeMenu comboModeMenu)
         {
             foreach (var controllable in this.ControllableUnits)
             {
@@ -205,7 +205,7 @@
             }
         }
 
-        public void Move()
+        public virtual void Move()
         {
             if (this.issuedAction.IsSleeping)
             {
@@ -248,7 +248,7 @@
             }
         }
 
-        public void Orbwalk(ControllableUnit controllable, bool attack, bool move)
+        public virtual void Orbwalk(ControllableUnit controllable, bool attack, bool move)
         {
             if (this.issuedAction.IsSleeping)
             {
@@ -316,7 +316,7 @@
             }
         }
 
-        protected bool BodyBlock(ICollection<ControllableUnit> allUnits, ComboModeMenu comboModeMenu)
+        protected virtual bool BodyBlock(ICollection<ControllableUnit> allUnits, ComboModeMenu comboModeMenu)
         {
             if (!this.targetManager.HasValidTarget)
             {
@@ -405,7 +405,7 @@
             return false;
         }
 
-        protected void ControlAllUnits(IEnumerable<ControllableUnit> noOrbwalkUnits)
+        protected virtual void ControlAllUnits(IEnumerable<ControllableUnit> noOrbwalkUnits)
         {
             if (this.targetManager.HasValidTarget)
             {
@@ -486,7 +486,7 @@
             }
         }
 
-        private void OnInventoryChanged(object sender, EventArgs e)
+        protected void OnInventoryChanged(object sender, EventArgs e)
         {
             foreach (var controllableUnit in this.controllableUnits)
             {
@@ -503,7 +503,7 @@
             }
         }
 
-        private void ControlAlliesOnValueChanged(object sender, SwitcherEventArgs e)
+        protected void ControlAlliesOnValueChanged(object sender, SwitcherEventArgs e)
         {
             this.controlAllies = e.NewValue;
 
@@ -520,7 +520,7 @@
             }
         }
 
-        private void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs e)
+        protected void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs e)
         {
             try
             {
@@ -544,7 +544,7 @@
             }
         }
 
-        private void OnAttackStart(Unit9 unit)
+        protected void OnAttackStart(Unit9 unit)
         {
             try
             {
@@ -562,7 +562,7 @@
             }
         }
 
-        private void OnUnitAdded(Unit9 entity)
+        protected void OnUnitAdded(Unit9 entity)
         {
             try
             {
@@ -640,7 +640,7 @@
             }
         }
 
-        private void OnUnitRemoved(Unit9 entity)
+        protected void OnUnitRemoved(Unit9 entity)
         {
             try
             {

@@ -30,7 +30,7 @@
 
         protected bool LockTarget { get; set; } = true;
 
-        protected UnitManager UnitManager { get; }
+        protected IUnitManager UnitManager { get; }
 
         protected UpdateHandler UpdateHandler { get; }
 

@@ -1,24 +1,28 @@
-﻿using Divine.Order;
-using O9K.AIO.Heroes.Tinker.Abilities;
-
-namespace O9K.AIO.Heroes.ArcWarden.Units
+﻿namespace O9K.AIO.Heroes.ArcWarden.Units
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
     using Abilities;
+
     using AIO.Abilities;
     using AIO.Abilities.Items;
+
     using Base;
+
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
     using Core.Entities.Units;
     using Core.Helpers;
     using Core.Managers.Entity;
-    using Divine.Game;
+
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Order;
+
     using Modes.Combo;
+
     using TargetManager;
 
     [UnitName(nameof(HeroId.npc_dota_hero_arc_warden))]
@@ -71,36 +75,36 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
         {
             this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
             {
-                {AbilityId.arc_warden_spark_wraith, x => this.spark = new NukeAbility(x)},
-                {AbilityId.arc_warden_flux, x => this.flux = new DebuffAbility(x)},
-                {AbilityId.arc_warden_magnetic_field, x => this.magneticFieldAbility = new MagneticFieldAbility(x)},
-                {AbilityId.arc_warden_tempest_double, x => this.tempestDouble = new BuffAbility(x)},
+                { AbilityId.arc_warden_spark_wraith, x => this.spark = new NukeAbility(x) },
+                { AbilityId.arc_warden_flux, x => this.flux = new DebuffAbility(x) },
+                { AbilityId.arc_warden_magnetic_field, x => this.magneticFieldAbility = new MagneticFieldAbility(x) },
+                { AbilityId.arc_warden_tempest_double, x => this.tempestDouble = new BuffAbility(x) },
 
 
-                {AbilityId.item_rod_of_atos, x => this.atos = new DisableAbilityArcWarden(x)},
-                {AbilityId.item_gungir, x => this.gungir = new DisableAbilityArcWarden(x)},
-                {AbilityId.item_diffusal_blade, x => this.diffusal = new DebuffAbility(x)},
-                {AbilityId.item_abyssal_blade, x => this.abyssal = new DisableAbilityArcWarden(x)},
-                {AbilityId.item_manta, x => this.manta = new BuffAbility(x)},
-                {AbilityId.item_bloodthorn, x => this.bloodthorn = new DisableAbilityArcWarden(x)},
-                {AbilityId.item_orchid, x => this.orchid = new DisableAbilityArcWarden(x)},
-                {AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x)},
-                {AbilityId.item_sheepstick, x => this.hex = new DisableAbilityArcWarden(x)},
-                {AbilityId.item_mjollnir, x => this.mjollnir = new ShieldAbility(x)},
+                { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbilityArcWarden(x) },
+                { AbilityId.item_gungir, x => this.gungir = new DisableAbilityArcWarden(x) },
+                { AbilityId.item_diffusal_blade, x => this.diffusal = new DebuffAbility(x) },
+                { AbilityId.item_abyssal_blade, x => this.abyssal = new DisableAbilityArcWarden(x) },
+                { AbilityId.item_manta, x => this.manta = new BuffAbility(x) },
+                { AbilityId.item_bloodthorn, x => this.bloodthorn = new DisableAbilityArcWarden(x) },
+                { AbilityId.item_orchid, x => this.orchid = new DisableAbilityArcWarden(x) },
+                { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
+                { AbilityId.item_sheepstick, x => this.hex = new DisableAbilityArcWarden(x) },
+                { AbilityId.item_mjollnir, x => this.mjollnir = new ShieldAbility(x) },
 
 
-                {AbilityId.item_blink, x => this.blink = new BlinkDaggerArcWarden(x)},
-                {AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerArcWarden(x)},
-                {AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerArcWarden(x)},
-                {AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerArcWarden(x)},
-                {AbilityId.item_hurricane_pike, x => this.pike = new HurricanePike(x)},
-                {AbilityId.item_force_staff, x => this.force = new ForceStaff(x)},
+                { AbilityId.item_blink, x => this.blink = new BlinkDaggerArcWarden(x) },
+                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerArcWarden(x) },
+                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerArcWarden(x) },
+                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerArcWarden(x) },
+                { AbilityId.item_hurricane_pike, x => this.pike = new HurricanePike(x) },
+                { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
 
-                {AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x)},
-                {AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x)},
+                { AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x) },
+                { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) },
 
-                {AbilityId.item_silver_edge, x => this.silver = new BuffAbility(x)},
-                {AbilityId.item_invis_sword, x => this.shadow = new BuffAbility(x)},
+                { AbilityId.item_silver_edge, x => this.silver = new BuffAbility(x) },
+                { AbilityId.item_invis_sword, x => this.shadow = new BuffAbility(x) },
             };
         }
 
@@ -114,26 +118,25 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
                 return false;
             }
 
-
             if (abilityHelper.UseAbility(this.blink))
             {
                 return true;
             }
 
-            if (!isMainHero && abilityHelper.UseAbility(this.force, 500, 300) &&
-                !this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName))
+            if (!isMainHero && !this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName) &&
+                abilityHelper.UseAbility(this.force, 500, 300))
             {
                 return true;
             }
 
-            if (!isMainHero && abilityHelper.UseAbility(this.force, 500, 300) &&
-                !this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName))
+            if (!isMainHero && !this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName) &&
+                abilityHelper.UseAbility(this.force, 500, 300))
             {
                 return true;
             }
 
-            if (isMainHero && abilityHelper.CanBeCasted(this.pike) && !this.MoveSleeper.IsSleeping &&
-                (!this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName) || this.Owner.Health < 1000))
+            if ((!this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName) || this.Owner.Health < 1000) &&
+                isMainHero && abilityHelper.CanBeCasted(this.pike) && !this.MoveSleeper.IsSleeping)
             {
                 if (this.pike.UseAbilityOnTarget(targetManager, this.ComboSleeper))
                 {
@@ -237,7 +240,7 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.manta, this.Owner.GetAttackRange()))
+            if (abilityHelper.UseAbility(this.manta, this.Owner.GetAttackRange() + 20))
             {
                 return true;
             }
