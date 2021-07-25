@@ -131,10 +131,13 @@
                     return true;
                 }
             }
-
-            if (this.UltCombo(targetManager, this.abilityHelper))
+            else
             {
-                return true;
+                if (this.UltCombo(targetManager, this.abilityHelper) && !comboModeMenu
+                        .GetAbilitySettingsMenu<BlinkDaggerShadowFiendMenu>(this.blink).DontUseEulInCombo)
+                {
+                    return true;
+                }
             }
 
             if (this.abilityHelper.UseAbility(this.hex))
