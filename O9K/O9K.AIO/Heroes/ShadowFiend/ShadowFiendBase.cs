@@ -1,4 +1,6 @@
-﻿namespace O9K.AIO.Heroes.ShadowFiend
+﻿using O9K.Core.Managers.Menu.Items;
+
+namespace O9K.AIO.Heroes.ShadowFiend
 {
     using Base;
 

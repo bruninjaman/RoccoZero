@@ -29,7 +29,7 @@
             this.Handler = UpdateManager.CreateIngameUpdate(0, menu.Enabled, this.OnUpdate);
         }
 
-        protected UnitManager UnitManager { get; }
+        protected IUnitManager UnitManager { get; }
 
         public virtual void Disable()
         {

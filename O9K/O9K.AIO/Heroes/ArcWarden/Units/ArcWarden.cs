@@ -1,4 +1,8 @@
-﻿using Divine.Order;
+﻿using Divine.Entity.Entities.Units;
+using Divine.Extensions;
+using Divine.Menu;
+using Divine.Menu.Items;
+using Divine.Order;
 using O9K.AIO.Heroes.Tinker.Abilities;
 
 namespace O9K.AIO.Heroes.ArcWarden.Units
@@ -114,26 +118,25 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
                 return false;
             }
 
-
             if (abilityHelper.UseAbility(this.blink))
             {
                 return true;
             }
 
-            if (!isMainHero && abilityHelper.UseAbility(this.force, 500, 300) &&
-                !this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName))
+            if (!isMainHero && !this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName) &&
+                abilityHelper.UseAbility(this.force, 500, 300))
             {
                 return true;
             }
 
-            if (!isMainHero && abilityHelper.UseAbility(this.force, 500, 300) &&
-                !this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName))
+            if (!isMainHero && !this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName) &&
+                abilityHelper.UseAbility(this.force, 500, 300))
             {
                 return true;
             }
 
-            if (isMainHero && abilityHelper.CanBeCasted(this.pike) && !this.MoveSleeper.IsSleeping &&
-                (!this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName) || this.Owner.Health < 1000))
+            if ((!this.Owner.HasModifier(magneticFieldAbility.Shield.ShieldModifierName) || this.Owner.Health < 1000) &&
+                isMainHero && abilityHelper.CanBeCasted(this.pike) && !this.MoveSleeper.IsSleeping)
             {
                 if (this.pike.UseAbilityOnTarget(targetManager, this.ComboSleeper))
                 {
@@ -237,7 +240,7 @@ namespace O9K.AIO.Heroes.ArcWarden.Units
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.manta, this.Owner.GetAttackRange()))
+            if (abilityHelper.UseAbility(this.manta, this.Owner.GetAttackRange() + 20))
             {
                 return true;
             }

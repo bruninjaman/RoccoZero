@@ -1,6 +1,8 @@
 ﻿using System;
 using O9K.AIO.Abilities;
+using O9K.AIO.Modes.Combo;
 using O9K.Core.Entities.Abilities.Base;
+using O9K.Core.Entities.Units;
 
 namespace O9K.AIO.Heroes.ArcWarden.Abilities
 {
@@ -20,16 +22,30 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
 
         private readonly O9K.Core.Entities.Abilities.Heroes.ArcWarden.MagneticField field;
 
+        
+        public override bool CanHit(TargetManager.TargetManager targetManager, IComboModeMenu comboMenu)
+        {
+            return this.Ability.CanHit(this.Owner);
+        }
         public override bool ShouldCast(TargetManager.TargetManager targetManager)
         {
-            var target = targetManager.Owner.Hero;
+            var abilityOwner = this.Owner;
+            var mainHero = EntityManager9.Owner.Hero;
 
-            if (target.IsInvulnerable)
+            var enemyTarget = targetManager.Target;
+
+
+            if (abilityOwner.Distance(enemyTarget) > abilityOwner.GetAttackRange() + 20)
+            {
+                return false;
+            }
+            
+            if (abilityOwner.IsInvulnerable)
             {
                 return false;
             }
 
-            if (target.Equals(this.Shield.Owner))
+            if (abilityOwner.Equals(this.Shield.Owner))
             {
                 if (!this.Shield.ShieldsOwner)
                 {
@@ -44,12 +60,12 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
                 }
             }
 
-            if (target.IsMagicImmune && !this.Shield.PiercesMagicImmunity(target))
+            if (abilityOwner.IsMagicImmune && !this.Shield.PiercesMagicImmunity(abilityOwner))
             {
                 return false;
             }
 
-            if (target.HasModifier(this.Shield.ShieldModifierName))
+            if (abilityOwner.HasModifier(this.Shield.ShieldModifierName) && mainHero.HealthPercentage > 30)
             {
                 return false;
             }
@@ -59,17 +75,11 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
                 return false;
             }
 
-            if (!base.ShouldCast(targetManager))
-            {
-                return false;
-            }
-
             return true;
         }
-
+        
         public override bool UseAbility(TargetManager.TargetManager targetManager, Sleeper comboSleeper, bool aoe)
         {
-
             var heroes = EntityManager9.Units.Where(x => x.IsHero && x.IsAlive && !x.IsIllusion && x.IsVisible)
                 .ToList();
 
@@ -85,21 +95,23 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
 
             var isMainHero = abilityOwner.Equals(mainHero);
 
-            if (abilityOwner.HasModifier(this.Shield.ShieldModifierName))
+            if (enemies.Count(x =>
+                x.Distance(abilityOwner) < abilityOwner.GetAttackRange() ||
+                x.Distance(mainHero) < mainHero.Hero.GetAttackRange()) < 1)
             {
                 return false;
             }
 
-            if (enemies.Count(x => x.Distance(abilityOwner) < abilityOwner.GetAttackRange()) < 1)
-            {
-                return false;
-            }
 
             var closestEnemy = enemies.OrderBy(x => x.Distance(abilityOwner)).FirstOrDefault();
-            
-            if (closestEnemy != null && closestEnemy.Distance(mainHero) < 300 && abilityOwner.Distance(mainHero) < 800)
+
+            var closestEnemyToMain = enemies.OrderBy(x => x.Distance(mainHero)).FirstOrDefault();
+
+
+            if (closestEnemyToMain != null && closestEnemyToMain.Distance(mainHero) < 300 &&
+                abilityOwner.Distance(mainHero) < 800)
             {
-                var position = mainHero.Hero.Position.Extend2D(closestEnemy.Position, -this.field.Radius);
+                var position = mainHero.Hero.Position.Extend2D(closestEnemyToMain.Position, -this.field.Radius);
 
                 if (this.Owner.Distance(position) < this.Ability.CastRange && this.Ability.UseAbility(position))
                 {
@@ -107,8 +119,8 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
                     return true;
                 }
             }
-            
-            
+
+
             if (closestEnemy != null && closestEnemy.Distance(abilityOwner) < 300)
             {
                 var position = abilityOwner.Position.Extend2D(closestEnemy.Position, -this.field.Radius);
@@ -121,7 +133,7 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
 
                 return false;
             }
-
+            
             return this.Ability.UseAbility(abilityOwner, allies, HitChance.Medium);
         }
     }

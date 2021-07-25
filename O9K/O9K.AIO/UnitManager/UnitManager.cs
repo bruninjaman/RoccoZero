@@ -29,7 +29,7 @@
 
     using TargetManager;
 
-    internal class UnitManager : IDisposable
+    internal class UnitManager : IUnitManager
     {
         protected readonly MultiSleeper abilitySleeper;
 
@@ -159,7 +159,7 @@
             ProjectileManager.TrackingProjectileAdded += this.OnAddTrackingProjectile;
         }
 
-        public void EndCombo(ComboModeMenu comboModeMenu)
+        public virtual void EndCombo(ComboModeMenu comboModeMenu)
         {
             foreach (var controllable in this.controllableUnits.Where(x => x.IsValid))
             {
@@ -188,7 +188,7 @@
             }
         }
 
-        public void ExecuteMoveCombo(MoveComboModeMenu comboModeMenu)
+        public virtual void ExecuteMoveCombo(MoveComboModeMenu comboModeMenu)
         {
             foreach (var controllable in this.ControllableUnits)
             {
@@ -205,7 +205,7 @@
             }
         }
 
-        public void Move()
+        public virtual void Move()
         {
             if (this.issuedAction.IsSleeping)
             {
@@ -248,7 +248,7 @@
             }
         }
 
-        public void Orbwalk(ControllableUnit controllable, bool attack, bool move)
+        public virtual void Orbwalk(ControllableUnit controllable, bool attack, bool move)
         {
             if (this.issuedAction.IsSleeping)
             {
@@ -316,7 +316,7 @@
             }
         }
 
-        protected bool BodyBlock(ICollection<ControllableUnit> allUnits, ComboModeMenu comboModeMenu)
+        public virtual bool BodyBlock(ICollection<ControllableUnit> allUnits, ComboModeMenu comboModeMenu)
         {
             if (!this.targetManager.HasValidTarget)
             {
@@ -405,7 +405,7 @@
             return false;
         }
 
-        protected void ControlAllUnits(IEnumerable<ControllableUnit> noOrbwalkUnits)
+        public virtual void ControlAllUnits(IEnumerable<ControllableUnit> noOrbwalkUnits)
         {
             if (this.targetManager.HasValidTarget)
             {
@@ -431,7 +431,7 @@
             this.issuedAction.Sleep(0.08f);
         }
 
-        protected ControllableUnitMenu GetUnitMenu(Unit9 unit)
+        public ControllableUnitMenu GetUnitMenu(Unit9 unit)
         {
             if (!this.unitMenus.TryGetValue(unit.DefaultName + unit.IsIllusion, out var menu))
             {
@@ -442,13 +442,13 @@
             return menu;
         }
 
-        protected float IssuedActionTime(uint handle)
+        public float IssuedActionTime(uint handle)
         {
             this.issuedActionTimings.TryGetValue(handle, out var time);
             return time;
         }
 
-        protected virtual void OnAbilityAdded(Ability9 entity)
+        public virtual void OnAbilityAdded(Ability9 entity)
         {
             try
             {
@@ -467,7 +467,7 @@
             }
         }
 
-        protected virtual void OnAbilityRemoved(Ability9 entity)
+        public virtual void OnAbilityRemoved(Ability9 entity)
         {
             try
             {
@@ -486,7 +486,7 @@
             }
         }
 
-        private void OnInventoryChanged(object sender, EventArgs e)
+        public void OnInventoryChanged(object sender, EventArgs e)
         {
             foreach (var controllableUnit in this.controllableUnits)
             {
@@ -503,7 +503,7 @@
             }
         }
 
-        private void ControlAlliesOnValueChanged(object sender, SwitcherEventArgs e)
+        public void ControlAlliesOnValueChanged(object sender, SwitcherEventArgs e)
         {
             this.controlAllies = e.NewValue;
 
@@ -520,7 +520,7 @@
             }
         }
 
-        private void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs e)
+        public void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs e)
         {
             try
             {
@@ -544,7 +544,7 @@
             }
         }
 
-        private void OnAttackStart(Unit9 unit)
+        public void OnAttackStart(Unit9 unit)
         {
             try
             {
@@ -562,7 +562,7 @@
             }
         }
 
-        private void OnUnitAdded(Unit9 entity)
+        public void OnUnitAdded(Unit9 entity)
         {
             try
             {
@@ -640,7 +640,7 @@
             }
         }
 
-        private void OnUnitRemoved(Unit9 entity)
+        public void OnUnitRemoved(Unit9 entity)
         {
             try
             {

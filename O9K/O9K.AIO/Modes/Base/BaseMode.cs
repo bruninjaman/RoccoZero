@@ -20,13 +20,13 @@
             this.TargetManager = baseHero.TargetManager;
         }
 
-        protected BaseHero BaseHero { get; }
+        public BaseHero BaseHero { get; }
 
-        protected MenuManager Menu { get; }
+        public MenuManager Menu { get; }
 
-        protected Owner Owner { get; }
+        public Owner Owner { get; }
 
-        protected TargetManager TargetManager { get; }
+        public TargetManager TargetManager { get; }
 
         public virtual void Dispose()
         {

@@ -103,7 +103,7 @@
             }
         }
 
-        protected override void OnAbilityAdded(Ability9 entity)
+        public override void OnAbilityAdded(Ability9 entity)
         {
             try
             {
@@ -202,7 +202,7 @@
             }
         }
 
-        protected override void OnAbilityRemoved(Ability9 entity)
+        public override void OnAbilityRemoved(Ability9 entity)
         {
             try
             {

@@ -1,4 +1,8 @@
-﻿namespace O9K.AIO.Abilities
+﻿using System;
+using Divine.Entity.Entities.Abilities.Components;
+using O9K.Core.Extensions;
+
+namespace O9K.AIO.Abilities
 {
     using System.Collections.Generic;
 
