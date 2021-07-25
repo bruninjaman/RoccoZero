@@ -187,24 +187,28 @@ namespace O9K.AIO.Heroes.ShadowFiend.Units
             foreach (var raze in orderedRazes)
             {
                 var distance = this.Owner.Distance(target);
-                var pos = this.Owner.Position.Extend2D(target.GetPredictedPosition(1), 100);
+                var pos = this.Owner.Position.Extend2D(target.GetPredictedPosition(1), 50);
                 if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.MoveToEnemy.Raze") &&
                     raze.CanBeCasted(targetManager, true, comboModeMenu) &&
                     raze.Ability.CastRange + raze.Ability.Radius > distance &&
-                    raze.Ability.CastRange - raze.Ability.Radius < distance)
+                    raze.Ability.CastRange - raze.Ability.Radius < distance && this.Owner.GetAngle(pos) > 1)
                 {
                     Console.WriteLine("move to MOuse");
                     this.Owner.BaseUnit.MoveToDirection(pos);
+
                     this.MoveSleeper.Sleep(0.2f);
 
 
                     Divine.Helpers.MultiSleeper<string>.Sleep("ShadowFiend.MoveToEnemy.Raze", 1000);
+                    return true;
                 }
 
                 if (!this.abilityHelper.CanBeCasted(raze))
                 {
                     continue;
                 }
+                
+
 
                 // if (this.RazeCanWaitAttack(raze, target))
                 // {
