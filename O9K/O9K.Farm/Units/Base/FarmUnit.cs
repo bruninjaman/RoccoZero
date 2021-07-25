@@ -1,4 +1,6 @@
-﻿namespace O9K.Farm.Units.Base
+﻿using O9K.Core.Extensions;
+
+namespace O9K.Farm.Units.Base
 {
     using System;
     using System.Collections.Generic;
