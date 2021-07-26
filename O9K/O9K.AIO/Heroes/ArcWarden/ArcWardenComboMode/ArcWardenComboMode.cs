@@ -3,16 +3,21 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
     using Base;
+
     using Core.Logger;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
+
     using CustomUnitManager;
+
     using Divine.Game;
     using Divine.Numerics;
     using Divine.Order;
     using Divine.Renderer;
     using Divine.Update;
+
     using Modes.Combo;
 
     internal class ArcWardenComboMode : ComboMode
@@ -54,7 +59,7 @@
             }
         }
 
-        
+
         public override void Enable()
         {
             // Draw 
@@ -64,7 +69,6 @@
             drawYStatusSlider = drawMenu.Add(new MenuSlider("Y pos", 0, 0, 3000));
 
             RendererManager.Draw += this.DrawComboStatus;
-            
 
             OrderManager.OrderAdding += this.OnOrderAdding;
 
@@ -133,7 +137,7 @@
                     this.IgnoreComboEnd = true;
                 }
 
-                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey) sender];
+                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
                 this.TargetManager.TargetLocked = true;
                 this.UpdateHandler.IsEnabled = true;
             }
@@ -166,7 +170,7 @@
                     this.IgnoreComboEnd = true;
                 }
 
-                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey) sender];
+                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
                 this.TargetManager.TargetLocked = true;
                 this.UpdateHandler.IsEnabled = true;
             }

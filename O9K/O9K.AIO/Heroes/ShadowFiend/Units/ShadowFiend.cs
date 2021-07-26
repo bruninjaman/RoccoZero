@@ -381,16 +381,13 @@
                 {
                     return true;
                 }
-
-
+                
                 var eulsModifier = target.BaseModifiers.FirstOrDefault(x =>
                     x.Name == "modifier_eul_cyclone" || x.Name == "modifier_wind_waker");
                 if (eulsModifier != null)
                 {
                     var particle = ParticleManager.Particles.FirstOrDefault(x => x.Name == "particles/items_fx/cyclone.vpcf" && x.Owner == target.BaseEntity);
-
-                    Console.WriteLine(particle);
-
+                    
                     if (particle != null)
                     {
                         position = particle.GetControlPoint(0);
