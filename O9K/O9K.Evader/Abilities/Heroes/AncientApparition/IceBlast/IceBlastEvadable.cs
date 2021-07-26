@@ -82,8 +82,7 @@
                         {
                             return;
                         }
-
-
+                        
                         var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
                         var startPosition = particle.GetControlPoint(0);
@@ -94,8 +93,7 @@
                         var radius = Math.Min(
                             this.maxRadius.GetValue(1),
                             Math.Max((flyingTime * this.growRadius.GetValue(1)) + this.minRadius.GetValue(1), this.minRadius.GetValue(1)));
-
-
+                        
                         var obstacle = new IceBlastObstacle(this, endPosition, radius)
                         {
                             EndCastTime = time,
