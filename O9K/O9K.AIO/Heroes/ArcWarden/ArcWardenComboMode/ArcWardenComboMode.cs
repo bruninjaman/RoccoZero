@@ -3,18 +3,27 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
     using Base;
+
     using Core.Logger;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
+
     using CustomUnitManager;
+
     using Divine.Game;
+    using Divine.Numerics;
     using Divine.Order;
+    using Divine.Renderer;
     using Divine.Update;
+
     using Modes.Combo;
 
     internal class ArcWardenComboMode : ComboMode
     {
+        private MenuSlider drawXStatusSlider;
+        private MenuSlider drawYStatusSlider;
         public ArcWardenComboMode(BaseHero baseHero, IEnumerable<ComboModeMenu> comboMenus)
             : base(baseHero, comboMenus)
         {
@@ -50,8 +59,17 @@
             }
         }
 
+
         public override void Enable()
         {
+            // Draw 
+            var drawMenu = Menu.RootMenu.Add(new Menu("Draw combo status"));
+
+            drawXStatusSlider = drawMenu.Add(new MenuSlider("X pos", 0, 0, 3000));
+            drawYStatusSlider = drawMenu.Add(new MenuSlider("Y pos", 0, 0, 3000));
+
+            RendererManager.Draw += this.DrawComboStatus;
+
             OrderManager.OrderAdding += this.OnOrderAdding;
 
             ComboModeMenus.Where(x => x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange +=
@@ -60,6 +78,13 @@
             foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
             {
                 comboMenu.Key.ValueChange += this.KeyOnValueChanged;
+            }
+        }
+        private void DrawComboStatus()
+        {
+            if (this.ComboModeMenu?.SimplifiedName == "clonecombo" && this.TargetManager.HasValidTarget && this.UpdateHandler.IsEnabled)
+            {
+                RendererManager.DrawText("Clone combo enabled", new Vector2(drawXStatusSlider, drawYStatusSlider), Color.Red, 20);
             }
         }
 
@@ -112,7 +137,7 @@
                     this.IgnoreComboEnd = true;
                 }
 
-                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey) sender];
+                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
                 this.TargetManager.TargetLocked = true;
                 this.UpdateHandler.IsEnabled = true;
             }
@@ -145,7 +170,7 @@
                     this.IgnoreComboEnd = true;
                 }
 
-                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey) sender];
+                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
                 this.TargetManager.TargetLocked = true;
                 this.UpdateHandler.IsEnabled = true;
             }

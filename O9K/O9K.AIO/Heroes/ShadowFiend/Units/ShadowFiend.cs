@@ -24,6 +24,7 @@
     using Divine.Entity.Entities.Units.Heroes.Components;
     using Divine.Game;
     using Divine.Order;
+    using Divine.Particle;
 
     using Modes.Combo;
 
@@ -131,10 +132,12 @@
                     return true;
                 }
             }
-
-            if (this.UltCombo(targetManager, this.abilityHelper))
+            else
             {
-                return true;
+                if (this.UltCombo(targetManager, this.abilityHelper))
+                {
+                    return true;
+                }
             }
 
             if (this.abilityHelper.UseAbility(this.hex))
@@ -192,14 +195,13 @@
             foreach (var raze in orderedRazes)
             {
                 var distance = this.Owner.Distance(target);
-                var pos = this.Owner.Position.Extend2D(target.GetPredictedPosition(1), 50);
+                var predictedPosition = target.GetPredictedPosition(1);
                 if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.MoveToEnemy.Raze") &&
                     raze.CanBeCasted(targetManager, true, comboModeMenu) &&
                     raze.Ability.CastRange + raze.Ability.Radius > distance &&
-                    raze.Ability.CastRange - raze.Ability.Radius < distance && this.Owner.GetAngle(pos) > 1)
+                    raze.Ability.CastRange - raze.Ability.Radius < distance && this.Owner.GetAngle(predictedPosition) > 1)
                 {
-                    Console.WriteLine("move to MOuse");
-                    this.Owner.BaseUnit.MoveToDirection(pos);
+                    this.Owner.BaseUnit.MoveToDirection(predictedPosition);
 
                     this.MoveSleeper.Sleep(0.2f);
 
@@ -379,13 +381,13 @@
                 {
                     return true;
                 }
-
-
+                
                 var eulsModifier = target.BaseModifiers.FirstOrDefault(x =>
                     x.Name == "modifier_eul_cyclone" || x.Name == "modifier_wind_waker");
                 if (eulsModifier != null)
                 {
-                    var particle = eulsModifier.Particles?.FirstOrDefault();
+                    var particle = ParticleManager.Particles.FirstOrDefault(x => x.Name == "particles/items_fx/cyclone.vpcf" && x.Owner == target.BaseEntity);
+                    
                     if (particle != null)
                     {
                         position = particle.GetControlPoint(0);
@@ -412,7 +414,7 @@
                         return true;
                     }
 
-                    if (!this.OrbwalkSleeper.IsSleeping)
+                    if (!this.OrbwalkSleeper.IsSleeping && distance > 50)
                     {
                         this.OrbwalkSleeper.Sleep(0.1f);
                         this.Owner.BaseUnit.Move(position);
