@@ -44,8 +44,7 @@
                 {
                     return;
                 }
-
-                var target = EntityManager9.GetUnit(projectile.Target.Handle);
+                var target = EntityManager9.GetUnit(projectile.Target?.Handle);
                 if (target == null || target.Team != this.myTeam)
                 {
                     return;

@@ -10,16 +10,18 @@
     using Core.Entities.Heroes;
     using Core.Logger;
     using Core.Managers.Entity;
-    using Divine.Particle;
+
     using Divine.Entity.Entities;
-    using Divine.Particle.EventArgs;
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Particle;
+    using Divine.Particle.EventArgs;
 
     internal class ParticleMonitor : IDisposable
     {
         private readonly Dictionary<string, AbilityId> addedParticles = new Dictionary<string, AbilityId>
         {
+            { "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack_projectile.vpcf", AbilityId.hoodwink_bushwhack },
             { "particles/units/heroes/hero_pudge/pudge_meathook.vpcf", AbilityId.pudge_meat_hook },
             { "particles/econ/items/pudge/pudge_trapper_beam_chain/pudge_nx_meathook.vpcf", AbilityId.pudge_meat_hook },
             { "particles/econ/items/pudge/pudge_hook_whale/pudge_meathook_whale.vpcf", AbilityId.pudge_meat_hook },
