@@ -20,7 +20,8 @@
     internal class ParticleMonitor : IDisposable
     {
         private readonly Dictionary<string, AbilityId> addedParticles = new Dictionary<string, AbilityId>
-        {
+        { 
+            {"particles/units/heroes/hero_ancient_apparition/ancient_apparition_ice_blast_final.vpcf", AbilityId.ancient_apparition_ice_blast},
             { "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack_projectile.vpcf", AbilityId.hoodwink_bushwhack },
             { "particles/units/heroes/hero_pudge/pudge_meathook.vpcf", AbilityId.pudge_meat_hook },
             { "particles/econ/items/pudge/pudge_trapper_beam_chain/pudge_nx_meathook.vpcf", AbilityId.pudge_meat_hook },
