@@ -9,6 +9,7 @@
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
+
     using Divine.Modifier.Modifiers;
     using Divine.Entity.Entities.Abilities.Components;
 
@@ -61,6 +62,7 @@
             this.modifierCounters.Add(Abilities.SpikedCarapace);
             this.modifierCounters.Add(Abilities.Refraction);
             this.modifierCounters.Add(Abilities.SleightOfFist);
+            this.modifierCounters.Add(Abilities.BallLightning);
             this.modifierCounters.Add(Abilities.PhaseShift);
             this.modifierCounters.Add(Abilities.Snowball);
             this.modifierCounters.Add(Abilities.Enrage);
@@ -74,6 +76,7 @@
 
             this.aghanimModifierCounters.Add(Abilities.SpikedCarapace);
             this.aghanimModifierCounters.Add(Abilities.Refraction);
+            this.aghanimModifierCounters.Add(Abilities.BallLightning);
             this.aghanimModifierCounters.Add(Abilities.SleightOfFist);
             this.aghanimModifierCounters.Add(Abilities.PhaseShift);
             this.aghanimModifierCounters.Add(Abilities.Snowball);
