@@ -61,6 +61,7 @@
             AbilityId.item_force_staff,
             AbilityId.item_hurricane_pike,
             AbilityId.item_force_boots,
+            AbilityId.storm_spirit_ball_lightning,
         };
 
         public static IEnumerable<AbilityId> Break { get; } = new[] { AbilityId.viper_nethertoxin, };
