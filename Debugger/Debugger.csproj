@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
-    <RuntimeFrameworkVersion>5.0.6</RuntimeFrameworkVersion>
     <Platforms>x64</Platforms>
     <Configurations>Release</Configurations>
     <Configuration>Release</Configuration>
@@ -20,7 +19,7 @@
 
   <ItemGroup>
     <Reference Include="Divine">
-      <HintPath>..\..\..\..\Desktop\Divine.NET5\bin\Divine.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\Divine\bin\Divine.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -12,7 +12,7 @@
     using Divine.Entity.Entities.Units;
     using Divine.Game;
     using Divine.Game.EventArgs;
-    using Divine.Helpers.Localization;
+    using Divine.Helpers;
     using Divine.Menu.EventArgs;
     using Divine.Menu.Items;
     using Divine.Numerics;
