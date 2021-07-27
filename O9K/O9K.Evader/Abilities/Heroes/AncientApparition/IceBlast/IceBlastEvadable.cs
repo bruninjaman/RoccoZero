@@ -8,12 +8,14 @@
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
-    using Core.Extensions;
     using Core.Helpers;
+    using Core.Logger;
+
+    using Divine.Entity.Entities.Units;
     using Divine.Game;
     using Divine.Modifier.Modifiers;
     using Divine.Particle.Particles;
-    using Divine.Entity.Entities.Units;
+    using Divine.Update;
 
     using Metadata;
 
@@ -66,30 +68,48 @@
 
         public void AddParticle(Particle particle, string name)
         {
-            if (this.unitAddTime <= 0)
-            {
-                return;
-            }
 
-            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
-            var startPosition = particle.GetControlPoint(0);
-            var endPosition = particle.GetControlPoint(1);
-            var direction = startPosition + endPosition;
-            var flyingTime = time - this.unitAddTime;
-            var position = startPosition.Extend2D(direction, flyingTime * this.ActiveAbility.Speed);
-            var radius = Math.Min(
-                this.maxRadius.GetValue(1),
-                Math.Max((flyingTime * this.growRadius.GetValue(1)) + this.minRadius.GetValue(1), this.minRadius.GetValue(1)));
+            UpdateManager.BeginInvoke(
+                () =>
+                {
+                    try
+                    {
+                        if (!particle.IsValid)
+                        {
+                            return;
+                        }
+                        if (this.unitAddTime <= 0)
+                        {
+                            return;
+                        }
+                        
+                        var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
-            var obstacle = new IceBlastObstacle(this, position, radius)
-            {
-                EndCastTime = time,
-                EndObstacleTime = time + particle.GetControlPoint(5).X
-            };
+                        var startPosition = particle.GetControlPoint(0);
+                        var rotation = particle.GetControlPoint(1);
+                        var endPosition = startPosition + (particle.GetControlPoint(5).X * rotation);
 
-            this.Pathfinder.AddObstacle(obstacle);
-            this.unitAddTime = 0;
+                        var flyingTime = time - this.unitAddTime;
+                        var radius = Math.Min(
+                            this.maxRadius.GetValue(1),
+                            Math.Max((flyingTime * this.growRadius.GetValue(1)) + this.minRadius.GetValue(1), this.minRadius.GetValue(1)));
+                        
+                        var obstacle = new IceBlastObstacle(this, endPosition, radius)
+                        {
+                            EndCastTime = time,
+                            EndObstacleTime = time + particle.GetControlPoint(5).X - 0.05f
+                        };
+
+                        this.Pathfinder.AddObstacle(obstacle);
+                        this.unitAddTime = 0;
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+                });
         }
+
 
         public void AddUnit(Unit unit)
         {

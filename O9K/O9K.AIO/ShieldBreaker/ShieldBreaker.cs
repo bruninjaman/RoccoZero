@@ -52,7 +52,7 @@
             this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
         }
 
-        public UnitManager UnitManager { get; set; }
+        public IUnitManager UnitManager { get; set; }
 
         public void AddComboMenu(IEnumerable<ComboModeMenu> menus)
         {

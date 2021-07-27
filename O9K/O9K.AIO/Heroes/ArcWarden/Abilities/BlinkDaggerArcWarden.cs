@@ -1,25 +1,11 @@
-﻿using Divine.Entity.Entities.Abilities.Components;
-using O9K.Core.Extensions;
-using O9K.Core.Managers.Entity;
-
-namespace O9K.AIO.Heroes.ArcWarden.Abilities
+﻿namespace O9K.AIO.Heroes.ArcWarden.Abilities
 {
-    using System;
-    using System.Collections.Generic;
-
     using AIO.Abilities;
-    using AIO.Modes.Combo;
-
     using Core.Entities.Abilities.Base;
-
-    using Divine.Extensions;
-    using Divine.Game;
-    using Divine.Numerics;
-
-    using O9K.AIO.Abilities.Menus;
-    using O9K.AIO.Heroes.Pudge.Abilities;
-    using O9K.Core.Helpers;
-
+    using Core.Extensions;
+    using Core.Helpers;
+    using Core.Managers.Entity;
+    using Divine.Entity.Entities.Abilities.Components;
     using TargetManager;
 
     internal class BlinkDaggerArcWarden : BlinkAbility
@@ -36,51 +22,55 @@ namespace O9K.AIO.Heroes.ArcWarden.Abilities
             var delay = this.Ability.GetCastDelay(target);
 
 
+            var isBuffBlink = this.Ability.Id is AbilityId.item_swift_blink or AbilityId.item_arcane_blink;
 
-            var isSpecialBlink = this.Ability.Id is AbilityId.item_swift_blink or AbilityId.item_arcane_blink;
-            
+            var isDamageBlink = this.Ability.Id is AbilityId.item_overwhelming_blink;
+
             var isMainHero = (this.Owner == EntityManager9.Owner);
 
             if (isMainHero)
             {
-                if (!isSpecialBlink)
+                if (!isBuffBlink && !isDamageBlink)
+                {
+                    return false;
+                }
+
+                if (isDamageBlink && distance > 750)
                 {
                     return false;
                 }
 
                 var samePosition = this.Owner.Position;
-                
+
+
                 if (!this.Ability.UseAbility(samePosition))
                 {
                     return false;
                 }
-                
+
                 comboSleeper.Sleep(delay);
                 this.Sleeper.Sleep(delay + 0.5f);
                 this.OrbwalkSleeper.Sleep(delay);
                 return true;
             }
 
-            
+            var hasModifierShield = this.Owner.HasModifier("modifier_arc_warden_magnetic_field_evasion");
 
-            if (distance <= 400)
+            if (hasModifierShield)
+
             {
                 return false;
             }
 
-            if (distance <= 650 && this.Owner.Speed > targetManager.Target.Speed + 50)
+            if (distance > 1800)
             {
                 return false;
             }
 
-            var position = target.GetAngle(this.Owner) < 1
-                ? target.Position.Extend2D(EntityManager9.EnemyFountain, 100)
+            var position = distance > this.Ability.CastRange
+                ? this.Owner.Position.Extend2D(target.Position, this.Ability.CastRange)
                 : target.GetPredictedPosition(this.Ability.CastPoint + 0.3f);
 
-            if (this.Owner.Distance(position) > this.Ability.CastRange)
-            {
-                return false;
-            }
 
             if (!this.Ability.UseAbility(position))
             {

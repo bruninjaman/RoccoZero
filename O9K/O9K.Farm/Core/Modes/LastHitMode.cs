@@ -1,16 +1,13 @@
-﻿using System;
-using Divine.Extensions;
-using Divine.Game;
-using O9K.Core.Extensions;
-using O9K.Core.Managers.Entity;
-
-namespace O9K.Farm.Core.Modes
+﻿namespace O9K.Farm.Core.Modes
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Damage;
+    using Divine.Game;
     using Menu;
     using O9K.Core.Helpers;
+    using O9K.Core.Managers.Entity;
     using Units.Base;
 
     internal class LastHitMode : BaseMode
@@ -59,7 +56,7 @@ namespace O9K.Farm.Core.Modes
 
                 foreach (var damageInfo in damages.OrderBy(x => x.Delay))
                 {
-                    damage += damageInfo.MinDamage + Math.Floor((damageInfo.MaxDamage - damageInfo.MinDamage) / 4);
+                    damage += damageInfo.MinDamage;
                     attack.Add(damageInfo);
 
                     if (damage < damageInfo.PredictedHealth)
@@ -190,7 +187,8 @@ namespace O9K.Farm.Core.Modes
         protected bool LastHit(IReadOnlyList<FarmUnit> enemies, IReadOnlyList<FarmUnit> allies,
             IReadOnlyList<FarmUnit> myUnits)
         {
-            foreach (var enemy in enemies.Where(x => EntityManager9.Owner.Hero.Distance(x.Unit) < 4000 && x.CanBeKilled).OrderBy(x => x.GetPredictedDeathTime(allies)))
+            foreach (var enemy in enemies.Where(x => x.CanBeKilled)
+                .OrderBy(x => x.GetPredictedDeathTime(allies)))
             {
                 var damages = new List<DamageInfo>();
 
@@ -249,14 +247,13 @@ namespace O9K.Farm.Core.Modes
                     {
                         if (!Divine.Helpers.MultiSleeper<string>.Sleeping("O9K.Farm.CancelHit" + unit.Unit.Name))
                         {
+                            unit.Unit.BaseUnit.Attack(lastUnitToHit.Unit);
+                            unit.Unit.BaseUnit.Stop();
 
-                           unit.Unit.BaseUnit.Stop();
-                           unit.Unit.BaseUnit.Attack(lastUnitToHit.Unit);
-                           unit.Unit.BaseUnit.Stop();
-                            
-                            Divine.Helpers.MultiSleeper<string>.Sleep("O9K.Farm.CancelHit" + unit.Unit, 200);
+                            Divine.Helpers.MultiSleeper<string>.Sleep("O9K.Farm.CancelHit" + unit.Unit, 400);
                         }
-                        unit.MoveSleeper.Sleep(unit.GetAttackDelay(enemy) );
+
+                        unit.MoveSleeper.Sleep(unit.GetAttackDelay(enemy));
                     }
                 }
                 else
@@ -302,7 +299,8 @@ namespace O9K.Farm.Core.Modes
                 return;
             }
 
-            if ((lastUnitToHit == null || !lastUnitToHit.IsValid) && this.Deny(enemies, allies, availableUnits.Where(x => x.IsDenyEnabled).ToList()))
+            if ((lastUnitToHit == null || !lastUnitToHit.IsValid) && this.Deny(enemies, allies,
+                availableUnits.Where(x => x.IsDenyEnabled).ToList()))
             {
                 return;
             }

@@ -24,43 +24,45 @@
 
     using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 
-    internal class ComboMode : BaseMode
+
+    internal class ComboMode : BaseMode, IComboMode
     {
-        private readonly Dictionary<MenuHoldKey, ComboModeMenu> comboModeMenus = new Dictionary<MenuHoldKey, ComboModeMenu>();
+        protected Dictionary<MenuHoldKey, ComboModeMenu> ComboModeMenus { get; } =
+            new Dictionary<MenuHoldKey, ComboModeMenu>();
 
-        private readonly List<uint> disableToggleAbilities = new List<uint>();
+        protected List<uint> DisableToggleAbilities { get; } = new List<uint>();
 
-        private readonly HashSet<AbilityId> ignoreToggleDisable = new HashSet<AbilityId>
+        protected HashSet<AbilityId> IgnoreToggleDisable { get; } = new HashSet<AbilityId>
         {
             AbilityId.troll_warlord_berserkers_rage
         };
 
-        private readonly UpdateHandler updateHandler;
+        protected  UpdateHandler UpdateHandler { get; }
 
-        private bool ignoreComboEnd;
+        protected bool IgnoreComboEnd { get; set; }
 
         public ComboMode(BaseHero baseHero, IEnumerable<ComboModeMenu> comboMenus)
             : base(baseHero)
         {
             this.UnitManager = baseHero.UnitManager;
-            this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
+            this.UpdateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
 
             foreach (var comboMenu in comboMenus)
             {
-                this.comboModeMenus.Add(comboMenu.Key, comboMenu);
+                this.ComboModeMenus.Add(comboMenu.Key, comboMenu);
             }
         }
 
-        protected ComboModeMenu ComboModeMenu { get; private set; }
+        protected ComboModeMenu ComboModeMenu { get; set; }
 
-        protected UnitManager UnitManager { get; }
+        protected IUnitManager UnitManager { get; }
 
-        public void Disable()
+        public virtual void Disable()
         {
-            this.updateHandler.IsEnabled = false;
+            this.UpdateHandler.IsEnabled = false;
             OrderManager.OrderAdding -= this.OnOrderAdding;
 
-            foreach (var comboMenu in this.comboModeMenus)
+            foreach (var comboMenu in this.ComboModeMenus)
             {
                 comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
             }
@@ -68,30 +70,30 @@
 
         public override void Dispose()
         {
-            UpdateManager.DestroyIngameUpdate(this.updateHandler);
+            UpdateManager.DestroyIngameUpdate(this.UpdateHandler);
             OrderManager.OrderAdding -= this.OnOrderAdding;
 
-            foreach (var comboMenu in this.comboModeMenus)
+            foreach (var comboMenu in this.ComboModeMenus)
             {
                 comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
             }
         }
 
-        public void Enable()
+        public virtual void Enable()
         {
             OrderManager.OrderAdding += this.OnOrderAdding;
 
-            foreach (var comboMenu in this.comboModeMenus)
+            foreach (var comboMenu in this.ComboModeMenus)
             {
                 comboMenu.Key.ValueChange += this.KeyOnValueChanged;
             }
         }
 
-        protected void ComboEnd()
+        protected virtual void ComboEnd()
         {
             try
             {
-                foreach (var abilityHandle in this.disableToggleAbilities.Distinct().ToList())
+                foreach (var abilityHandle in this.DisableToggleAbilities.Distinct().ToList())
                 {
                     if (!(EntityManager9.GetAbility(abilityHandle) is IToggleable ability))
                     {
@@ -102,7 +104,7 @@
                 }
 
                 this.UnitManager.EndCombo(this.ComboModeMenu);
-                this.disableToggleAbilities.Clear();
+                this.DisableToggleAbilities.Clear();
             }
             catch (Exception e)
             {
@@ -110,7 +112,7 @@
             }
         }
 
-        protected void OnUpdate()
+        protected virtual void OnUpdate()
         {
             if (GameManager.IsPaused)
             {
@@ -132,38 +134,38 @@
             }
         }
 
-        private void KeyOnValueChanged(object sender, KeyEventArgs e)
+        protected virtual void KeyOnValueChanged(object sender, KeyEventArgs e)
         {
             if (e.NewValue)
             {
-                if (this.updateHandler.IsEnabled)
+                if (this.UpdateHandler.IsEnabled)
                 {
-                    this.ignoreComboEnd = true;
+                    this.IgnoreComboEnd = true;
                 }
 
-                this.ComboModeMenu = this.comboModeMenus[(MenuHoldKey)sender];
+                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
                 this.TargetManager.TargetLocked = true;
-                this.updateHandler.IsEnabled = true;
+                this.UpdateHandler.IsEnabled = true;
             }
             else
             {
-                if (this.ignoreComboEnd)
+                if (this.IgnoreComboEnd)
                 {
-                    this.ignoreComboEnd = false;
+                    this.IgnoreComboEnd = false;
                     return;
                 }
 
-                this.updateHandler.IsEnabled = false;
+                this.UpdateHandler.IsEnabled = false;
                 this.TargetManager.TargetLocked = false;
                 this.ComboEnd();
             }
         }
 
-        private void OnOrderAdding(OrderAddingEventArgs e)
+        protected virtual void OnOrderAdding(OrderAddingEventArgs e)
         {
             try
             {
-                if (!this.updateHandler.IsEnabled || !e.Process || !e.IsCustom)
+                if (!this.UpdateHandler.IsEnabled || !e.Process || !e.IsCustom)
                 {
                     return;
                 }
@@ -174,12 +176,12 @@
                     case OrderType.CastToggleAutocast:
                     case OrderType.CastToggle:
                         {
-                            if (this.ignoreToggleDisable.Contains(order.Ability.Id))
+                            if (this.IgnoreToggleDisable.Contains(order.Ability.Id))
                             {
                                 return;
                             }
 
-                            this.disableToggleAbilities.Add(order.Ability.Handle);
+                            this.DisableToggleAbilities.Add(order.Ability.Handle);
                             break;
                         }
                 }
@@ -190,7 +192,7 @@
             }
         }
 
-        private async void ToggleAbility(IToggleable toggle)
+        protected virtual async void ToggleAbility(IToggleable toggle)
         {
             try
             {
@@ -199,7 +201,7 @@
                     await Task.Delay(200);
                 }
 
-                while (toggle.IsValid && toggle.Enabled && !this.updateHandler.IsEnabled)
+                while (toggle.IsValid && toggle.Enabled && !this.UpdateHandler.IsEnabled)
                 {
                     if (toggle.CanBeCasted() && !toggle.Owner.IsCasting)
                     {

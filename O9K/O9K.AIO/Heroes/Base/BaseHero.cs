@@ -29,9 +29,9 @@
 
     internal class BaseHero : IDisposable
     {
-        private readonly ComboMode combo;
+        protected IComboMode Combo { get; set; } 
 
-        private readonly MoveComboMode moveCombo;
+        protected MoveComboMode moveCombo { get; set; } 
 
         public BaseHero()
         {
@@ -57,11 +57,19 @@
             this.CreateUnitManager();
 
             this.ShieldBreaker.UnitManager = this.UnitManager;
-
-            this.combo = new ComboMode(this, this.ComboMenus);
+            
+            
+            // ReSharper disable once VirtualMemberCallInConstructor
+            this.CreateComboMode(this, this.ComboMenus);
+            
             this.moveCombo = new MoveComboMode(this, this.MoveComboModeMenu);
 
             UpdateManager.BeginInvoke(1000, () => this.Menu.Enabled.ValueChange += this.EnabledOnValueChange);
+        }
+
+        public virtual void CreateComboMode(BaseHero baseHero, List<ComboModeMenu> comboMenus)
+        {
+            this.Combo = new ComboMode(this, this.ComboMenus);
         }
 
         public MultiSleeper AbilitySleeper { get; } = new MultiSleeper();
@@ -84,7 +92,7 @@
 
         public TargetManager TargetManager { get; }
 
-        public UnitManager UnitManager { get; protected set; }
+        public IUnitManager UnitManager { get; protected set; }
 
         public virtual void CreateUnitManager()
         {
@@ -96,7 +104,7 @@
             this.Menu.Enabled.ValueChange -= this.EnabledOnValueChange;
 
             this.ComboMenus.Clear();
-            this.combo.Dispose();
+            this.Combo.Dispose();
             this.moveCombo.Dispose();
             this.KillSteal.Dispose();
             this.FailSafe.Dispose();
@@ -119,7 +127,7 @@
         {
         }
 
-        private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
+        protected void EnabledOnValueChange(object sender, SwitcherEventArgs e)
         {
             try
             {
@@ -130,7 +138,7 @@
                     this.FailSafe.Enable();
                     this.ShieldBreaker.Enable();
                     this.UnitManager.Enable();
-                    this.combo.Enable();
+                    this.Combo.Enable();
                     this.moveCombo.Enable();
                     this.EnableCustomModes();
                 }
@@ -142,7 +150,7 @@
                     this.FailSafe.Disable();
                     this.ShieldBreaker.Disable();
                     this.UnitManager.Disable();
-                    this.combo.Disable();
+                    this.Combo.Disable();
                     this.moveCombo.Disable();
                 }
             }
