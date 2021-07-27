@@ -15,6 +15,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
     using Core.Helpers;
+
     using Divine.Extensions;
     using Divine.Game;
     using Divine.Numerics;
@@ -55,9 +56,8 @@
         private TricksOfTheTrade tricks;
 
         private DisableAbility gungir;
-        
-        private DisableAbility dart;
 
+        private DisableAbility dart;
 
         public Riki(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
@@ -130,7 +130,7 @@
             {
                 return true;
             }
-            
+
             if (abilityHelper.UseAbility(this.dart))
             {
                 return true;
