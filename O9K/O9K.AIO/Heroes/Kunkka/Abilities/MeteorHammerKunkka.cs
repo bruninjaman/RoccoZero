@@ -18,7 +18,6 @@
         {
         }
 
-
         private bool shouldReturn;
 
         public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)
@@ -39,7 +38,6 @@
 
         public bool ShouldReturn(ActiveAbility xReturn, Vector3 xMarkPosition)
         {
-
             if (shouldReturn)
             {
                 shouldReturn = false;
