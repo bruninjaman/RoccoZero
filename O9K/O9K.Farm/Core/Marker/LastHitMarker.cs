@@ -179,7 +179,7 @@
 
                                 foreach (var ability in damage.AbilityDamage.Select(x => x.Key))
                                 {
-                                    RendererManager.DrawImage(ability.Name, new RectangleF(startPosition.X, startPosition.Y, barSize.Y, barSize.Y));
+                                    RendererManager.DrawImage(ability.Name, new RectangleF(startPosition.X, startPosition.Y, barSize.Y, barSize.Y), ImageType.Ability);
                                     startPosition += new Vector2(barSize.Y, 0);
                                 }
                             }
