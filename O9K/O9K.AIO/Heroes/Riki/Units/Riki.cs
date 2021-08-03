@@ -15,6 +15,7 @@
     using Core.Entities.Units;
     using Core.Extensions;
     using Core.Helpers;
+
     using Divine.Extensions;
     using Divine.Game;
     using Divine.Numerics;
@@ -56,6 +57,8 @@
 
         private DisableAbility gungir;
 
+        private DisableAbility dart;
+
         public Riki(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -63,6 +66,7 @@
             {
                 { AbilityId.riki_smoke_screen, x => this.smoke = new SmokeScreen(x) },
                 { AbilityId.riki_blink_strike, x => this.blinkStrike = new NukeAbility(x) },
+                { AbilityId.riki_poison_dart, x => this.dart = new DisableAbility(x) },
                 { AbilityId.riki_tricks_of_the_trade, x => this.tricks = new TricksOfTheTrade(x) },
 
                 { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
@@ -123,6 +127,11 @@
             }
 
             if (abilityHelper.UseAbility(this.orchid))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.dart))
             {
                 return true;
             }

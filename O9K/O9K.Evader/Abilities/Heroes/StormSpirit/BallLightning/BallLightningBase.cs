@@ -21,6 +21,7 @@
         {
             return new BlinkAbility(this.Ability, this.Pathfinder, this.Menu);
         }
+
         public CounterAbility GetUsableAbility()
         {
             return new BallLightningUsable(this.Ability, this.Pathfinder, this.Menu);
