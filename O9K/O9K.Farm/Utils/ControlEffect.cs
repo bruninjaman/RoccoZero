@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using Divine.Particle;
+    using Divine.Particle.Components;
     using Divine.Particle.Particles;
 
     using Units.Base;
@@ -13,37 +15,37 @@
 
         public ControlEffect(FarmUnit unit)
         {
-            //this.effects.Add(
-            //    new ParticleEffect(
-            //        "particles/econ/events/ti7/ti7_hero_effect_light_aura.vpcf",
-            //        unit.Unit.BaseUnit,
-            //        ParticleAttachment.AbsOriginFollow));
+            this.effects.Add(
+                ParticleManager.CreateParticle(
+                    "particles/econ/events/ti7/ti7_hero_effect_light_aura.vpcf",
+                    ParticleAttachment.AbsOriginFollow,
+                    unit.Unit.BaseUnit));
 
-            //this.effects.Add(
-            //    new ParticleEffect(
-            //        "particles/econ/events/ti7/ti7_hero_effect_aegis_back.vpcf",
-            //        unit.Unit.BaseUnit,
-            //        ParticleAttachment.AbsOriginFollow));
+            this.effects.Add(
+                ParticleManager.CreateParticle(
+                    "particles/econ/events/ti7/ti7_hero_effect_aegis_back.vpcf",
+                    ParticleAttachment.AbsOriginFollow,
+                    unit.Unit.BaseUnit));
 
-            //this.effects.Add(
-            //    new ParticleEffect(
-            //        "particles/econ/events/ti7/ti7_hero_effect_aegis_top.vpcf",
-            //        unit.Unit.BaseUnit,
-            //        ParticleAttachment.AbsOriginFollow));
+            this.effects.Add(
+                ParticleManager.CreateParticle(
+                    "particles/econ/events/ti7/ti7_hero_effect_aegis_top.vpcf",
+                    ParticleAttachment.AbsOriginFollow,
+                    unit.Unit.BaseUnit));
 
-            //this.effects.Add(
-            //    new ParticleEffect(
-            //        "particles/econ/events/ti8/ti8_hero_effect_base_detail.vpcf",
-            //        unit.Unit.BaseUnit,
-            //        ParticleAttachment.AbsOriginFollow));
+            this.effects.Add(
+                ParticleManager.CreateParticle(
+                    "particles/econ/events/ti8/ti8_hero_effect_base_detail.vpcf",
+                    ParticleAttachment.AbsOriginFollow,
+                    unit.Unit.BaseUnit));
         }
 
         public void Dispose()
         {
-            //foreach (var particleEffect in this.effects)
-            //{
-            //    particleEffect.Dispose();
-            //}
+            foreach (var particleEffect in this.effects)
+            {
+                particleEffect.Dispose();
+            }
         }
     }
 }
