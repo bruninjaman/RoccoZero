@@ -24,7 +24,6 @@
     using Divine.Entity.Entities.Units.Heroes.Components;
     using Divine.Numerics;
     using Divine.Order;
-    using Divine.Particle;
 
     using Draw;
 
@@ -376,8 +375,6 @@
             {
                 return true;
             }
-
-            ParticleManager.CircleParticle("3421", attackPoint, 100, Color.Red);
 
             if (AttackNextPoint(attackPoint))
             {
