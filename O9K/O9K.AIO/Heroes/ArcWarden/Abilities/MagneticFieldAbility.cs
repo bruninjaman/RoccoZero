@@ -1,14 +1,17 @@
 ﻿namespace O9K.AIO.Heroes.ArcWarden.Abilities
 {
     using System.Linq;
+
     using AIO.Abilities;
+    using AIO.Modes.Combo;
+
     using Core.Entities.Abilities.Base;
     using Core.Entities.Abilities.Heroes.ArcWarden;
     using Core.Extensions;
     using Core.Helpers;
     using Core.Managers.Entity;
     using Core.Prediction.Data;
-    using Modes.Combo;
+
     using TargetManager;
 
     internal class MagneticFieldAbility : ShieldAbility

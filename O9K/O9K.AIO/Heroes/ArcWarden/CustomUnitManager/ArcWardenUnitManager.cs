@@ -2,10 +2,14 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+
+    using AIO.Modes.Combo;
+
     using Base;
+
     using Divine.Game;
     using Divine.Numerics;
-    using Modes.Combo;
+
     using UnitManager;
 
     internal class ArcWardenUnitManager : UnitManager
@@ -15,7 +19,7 @@
         {
         }
 
-        public IEnumerable<ControllableUnit> ControllableUnitsTempest
+        public IEnumerable<ControllableUnit> CloneControllableUnits
         {
             get
             {
@@ -24,10 +28,19 @@
                          x.Owner.Distance(this.targetManager.Target ?? this.owner) < 2500);
             }
         }
+        
+        public IEnumerable<ControllableUnit> PushControllableUnits
+        {
+            get
+            {
+                return this.controllableUnits.Where(
+                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled && x.ShouldControl);
+            }
+        }
 
         public virtual void ExecuteCloneCombo(ComboModeMenu comboModeMenu)
         {
-            foreach (var controllable in this.ControllableUnitsTempest)
+            foreach (var controllable in this.CloneControllableUnits)
             {
                 if (controllable.ComboSleeper.IsSleeping)
                 {
@@ -53,7 +66,7 @@
                 return;
             }
 
-            var allUnits = this.ControllableUnitsTempest.OrderBy(x => this.IssuedActionTime(x.Handle)).ToList();
+            var allUnits = this.CloneControllableUnits.OrderBy(x => this.IssuedActionTime(x.Handle)).ToList();
 
             if (this.BodyBlock(allUnits, comboModeMenu))
             {
