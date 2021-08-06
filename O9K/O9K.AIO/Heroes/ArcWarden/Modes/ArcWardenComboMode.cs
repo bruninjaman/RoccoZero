@@ -1,8 +1,10 @@
-﻿namespace O9K.AIO.Heroes.ArcWarden.ArcWardenComboMode
+﻿namespace O9K.AIO.Heroes.ArcWarden.Modes
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
+    using AIO.Modes.Combo;
 
     using Base;
 
@@ -13,17 +15,13 @@
     using CustomUnitManager;
 
     using Divine.Game;
-    using Divine.Numerics;
     using Divine.Order;
-    using Divine.Renderer;
     using Divine.Update;
 
-    using Modes.Combo;
+    using Draw;
 
     internal class ArcWardenComboMode : ComboMode
     {
-        private MenuSlider drawXStatusSlider;
-        private MenuSlider drawYStatusSlider;
         public ArcWardenComboMode(BaseHero baseHero, IEnumerable<ComboModeMenu> comboMenus)
             : base(baseHero, comboMenus)
         {
@@ -38,7 +36,6 @@
                     x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange -=
                 this.ToggleKeyOnValueChanged;
 
-
             foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
             {
                 comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
@@ -50,26 +47,17 @@
             UpdateManager.DestroyIngameUpdate(this.UpdateHandler);
             OrderManager.OrderAdding -= this.OnOrderAdding;
 
-
             ComboModeMenus.Where(x => x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange -=
                 this.ToggleKeyOnValueChanged;
+
             foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
             {
                 comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
             }
         }
 
-
         public override void Enable()
         {
-            // Draw 
-            var drawMenu = Menu.RootMenu.Add(new Menu("Draw combo status"));
-
-            drawXStatusSlider = drawMenu.Add(new MenuSlider("X pos", 0, 0, 3000));
-            drawYStatusSlider = drawMenu.Add(new MenuSlider("Y pos", 0, 0, 3000));
-
-            RendererManager.Draw += this.DrawComboStatus;
-
             OrderManager.OrderAdding += this.OnOrderAdding;
 
             ComboModeMenus.Where(x => x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange +=
@@ -78,13 +66,6 @@
             foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
             {
                 comboMenu.Key.ValueChange += this.KeyOnValueChanged;
-            }
-        }
-        private void DrawComboStatus()
-        {
-            if (this.ComboModeMenu?.SimplifiedName == "clonecombo" && this.TargetManager.HasValidTarget && this.UpdateHandler.IsEnabled)
-            {
-                RendererManager.DrawText("Clone combo enabled", new Vector2(drawXStatusSlider, drawYStatusSlider), Color.Red, 20);
             }
         }
 
@@ -96,6 +77,7 @@
             }
 
             var arcUnitManager = this.UnitManager as ArcWardenUnitManager;
+
             if (arcUnitManager != null)
             {
                 try
@@ -140,17 +122,21 @@
                 this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
                 this.TargetManager.TargetLocked = true;
                 this.UpdateHandler.IsEnabled = true;
+                AutoPushingPanelTest.unitName = TargetManager?.Target.BaseUnit.InternalName;
             }
             else
             {
                 if (this.IgnoreComboEnd)
                 {
                     this.IgnoreComboEnd = false;
+
                     return;
                 }
 
                 this.UpdateHandler.IsEnabled = false;
                 this.TargetManager.TargetLocked = false;
+                AutoPushingPanelTest.unitName = null;
+
                 this.ComboEnd();
             }
         }
@@ -162,7 +148,6 @@
                 return;
             }
 
-
             if (this.TargetManager.TargetLocked != true)
             {
                 if (this.UpdateHandler.IsEnabled)
@@ -173,17 +158,21 @@
                 this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
                 this.TargetManager.TargetLocked = true;
                 this.UpdateHandler.IsEnabled = true;
+                AutoPushingPanelTest.unitName = TargetManager?.Target.BaseUnit.InternalName;
             }
             else
             {
                 if (this.IgnoreComboEnd)
                 {
                     this.IgnoreComboEnd = false;
+
                     return;
                 }
 
                 this.UpdateHandler.IsEnabled = false;
                 this.TargetManager.TargetLocked = false;
+                AutoPushingPanelTest.unitName = null;
+
                 this.ComboEnd();
             }
         }

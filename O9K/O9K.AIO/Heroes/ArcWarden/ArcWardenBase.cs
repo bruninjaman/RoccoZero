@@ -1,17 +1,40 @@
 ﻿namespace O9K.AIO.Heroes.ArcWarden
 {
     using System.Collections.Generic;
+
+    using AIO.Modes.Combo;
+    using AIO.Modes.KeyPress;
+
     using Base;
+
     using Core.Entities.Metadata;
+    using Core.Managers.Menu.Items;
+
     using CustomUnitManager;
+
     using Divine.Entity.Entities.Units.Heroes.Components;
-    using Modes.Combo;
+    using Divine.Input;
+    using Divine.Renderer;
+
+    using Draw;
+
+    using Modes;
 
     [HeroId(HeroId.npc_dota_hero_arc_warden)]
     internal class ArcWardenBase : BaseHero
     {
+        private readonly PushMode pushMode;
+
         public ArcWardenBase()
         {
+            this.pushMode = new PushMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Push mode"));
+            RendererManager.Draw += AutoPushingPanelTest.ButtonDrawOn;
+            InputManager.MouseKeyDown += AutoPushingPanelTest.OnMouseKeyDown;
+            var menuPanelSetting = Menu.RootMenu.Add(new Menu("Panel settings"));
+
+            menuPanelSetting.Add(AutoPushingPanelTest.positionSliderX);
+            menuPanelSetting.Add(AutoPushingPanelTest.positionSliderY);
+            menuPanelSetting.Add(AutoPushingPanelTest.sizeMenuSlider);
         }
 
         public override void CreateUnitManager()
@@ -21,7 +44,7 @@
 
         public override void CreateComboMode(BaseHero baseHero, List<ComboModeMenu> comboMenus)
         {
-            this.Combo = new ArcWardenComboMode.ArcWardenComboMode(this, comboMenus);
+            this.Combo = new ArcWardenComboMode(this, comboMenus);
         }
 
         protected override void CreateComboMenus()
@@ -29,6 +52,22 @@
             this.ComboMenus.Add(new ComboModeMenu(this.Menu.RootMenu, "Combo"));
             this.ComboMenus.Add(new ComboModeMenu(this.Menu.RootMenu, "Alternative combo"));
             this.ComboMenus.Add(new ComboModeMenu(this.Menu.RootMenu, "Clone combo"));
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            this.pushMode.Dispose();
+        }
+
+        protected override void DisableCustomModes()
+        {
+            this.pushMode.Disable();
+        }
+
+        protected override void EnableCustomModes()
+        {
+            this.pushMode.Enable();
         }
     }
 }

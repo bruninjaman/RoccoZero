@@ -8,27 +8,36 @@
 
     using AIO.Abilities;
     using AIO.Abilities.Items;
+    using AIO.Modes.Combo;
 
     using Base;
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Metadata;
     using Core.Entities.Units;
+    using Core.Extensions;
     using Core.Helpers;
     using Core.Managers.Entity;
 
     using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Numerics;
     using Divine.Order;
+    using Divine.Particle;
 
-    using Modes.Combo;
+    using Draw;
 
     using TargetManager;
+
+    using Utils;
 
     [UnitName(nameof(HeroId.npc_dota_hero_arc_warden))]
     internal class ArcWarden : ControllableUnit
     {
         private readonly Sleeper moveSleeper = new Sleeper();
+
+        private readonly LaneHelper laneHelper = new LaneHelper();
 
         private DisableAbilityArcWarden abyssal;
 
@@ -55,20 +64,24 @@
         private BlinkAbility blink;
 
         private HurricanePike pike;
-        private ForceStaff force;
 
+        private ForceStaff force;
 
         private ShieldAbility mjollnir;
 
         private DisableAbilityArcWarden atos;
+
         private DisableAbilityArcWarden gungir;
 
         private EtherealBlade ethereal;
+
         private NukeAbility dagon;
 
         private BuffAbility shadow;
+
         private BuffAbility silver;
 
+        private TravelBoots tpScroll;
 
         public ArcWarden(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
@@ -80,7 +93,6 @@
                 { AbilityId.arc_warden_magnetic_field, x => this.magneticFieldAbility = new MagneticFieldAbility(x) },
                 { AbilityId.arc_warden_tempest_double, x => this.tempestDouble = new BuffAbility(x) },
 
-
                 { AbilityId.item_rod_of_atos, x => this.atos = new DisableAbilityArcWarden(x) },
                 { AbilityId.item_gungir, x => this.gungir = new DisableAbilityArcWarden(x) },
                 { AbilityId.item_diffusal_blade, x => this.diffusal = new DebuffAbility(x) },
@@ -91,7 +103,6 @@
                 { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
                 { AbilityId.item_sheepstick, x => this.hex = new DisableAbilityArcWarden(x) },
                 { AbilityId.item_mjollnir, x => this.mjollnir = new ShieldAbility(x) },
-
 
                 { AbilityId.item_blink, x => this.blink = new BlinkDaggerArcWarden(x) },
                 { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerArcWarden(x) },
@@ -105,6 +116,8 @@
 
                 { AbilityId.item_silver_edge, x => this.silver = new BuffAbility(x) },
                 { AbilityId.item_invis_sword, x => this.shadow = new BuffAbility(x) },
+
+                { AbilityId.item_tpscroll, x => this.tpScroll = new TravelBoots(x) },
             };
         }
 
@@ -153,6 +166,7 @@
                 abilityHelper.UseAbility(this.gungir))
             {
                 Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticRootDisable", 2000);
+
                 return true;
             }
 
@@ -160,6 +174,7 @@
                 abilityHelper.UseAbility(this.abyssal))
             {
                 Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticRootDisable", 2000);
+
                 return true;
             }
 
@@ -172,6 +187,7 @@
                 abilityHelper.UseAbility(this.nullifier))
             {
                 Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticNullifier", 2000);
+
                 return true;
             }
 
@@ -190,12 +206,14 @@
             {
                 Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticSilverEdge", 5000);
                 ComboSleeper.Sleep(0.5f);
+
                 return true;
             }
 
             if (!isMainHero && abilityHelper.UseAbility(this.shadow))
             {
                 ComboSleeper.Sleep(0.5f);
+
                 return true;
             }
 
@@ -213,6 +231,7 @@
                 abilityHelper.UseAbility(this.magneticFieldAbility))
             {
                 Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticField", 550);
+
                 return true;
             }
 
@@ -232,7 +251,6 @@
                 return true;
             }
 
-
             // end of fast nukes
 
             if (abilityHelper.UseAbility(this.spark))
@@ -250,7 +268,6 @@
                 return true;
             }
 
-
             return false;
         }
 
@@ -262,6 +279,7 @@
                 {
                     this.AttackSleeper.Sleep(0.5f);
                     this.MoveSleeper.Sleep(0.5f);
+
                     return true;
                 }
             }
@@ -285,9 +303,206 @@
             {
                 this.OrbwalkSleeper.Reset();
                 this.MoveSleeper.Reset();
+
                 return true;
             }
 
+            return false;
+        }
+
+        public bool PushCombo()
+        {
+            if (OrderManager.Orders.Count() != 0)
+            {
+                return false;
+            }
+
+            if (this.Owner.IsChanneling)
+            {
+                return false;
+            }
+
+            var allyCreeps = EntityManager9.AllyUnits.Where(x => x.BaseUnit.NetworkName == ClassId.CDOTA_BaseNPC_Creep_Lane.ToString() && x.IsValid && x.IsAlive).ToList();
+            var enemyCreeps =  EntityManager9.EnemyUnits.Where(x => x.BaseUnit.NetworkName == ClassId.CDOTA_BaseNPC_Creep_Lane.ToString() && x.IsValid && x.IsAlive).ToList();
+
+            var creepWithEnemy = allyCreeps.Where(
+                x => x.HealthPercentage > 65 &&
+                     enemyCreeps.Any(y => y.Distance(x) <= 1000)).OrderByDescending(x => x.Distance(this.Owner)).FirstOrDefault();
+
+            if (TravelTpToCreeps(enemyCreeps, allyCreeps))
+            {
+                return true;
+            }
+
+            if (UseMjolnir(allyCreeps))
+            {
+                return true;
+            }
+
+            var nearestTower =
+                EntityManager9.EnemyUnits
+                    .Where(x => x.BaseUnit.NetworkName == ClassId.CDOTA_BaseNPC_Tower.ToString() && x.IsValid && x.IsAlive)
+                    .OrderBy(y => this.Owner.Distance(y))
+                    .FirstOrDefault();
+
+            if (nearestTower == null)
+            {
+                nearestTower = EntityManager9.EnemyUnits.Where(x => x.IsBuilding && x.IsValid && x.IsAlive && x.CanDie).OrderBy(y => this.Owner.Distance(y))
+                    .FirstOrDefault();
+            }
+
+            var currentLane = laneHelper.GetCurrentLane(this.Owner);
+            var attackPoint = laneHelper.GetClosestAttackPoint(this.Owner, currentLane);
+
+            if (UseSpark(enemyCreeps))
+            {
+                return true;
+            }
+
+            if (this.Owner.Distance(nearestTower) <= 900)
+            {
+                if (UseMagneticFieldNearTower(nearestTower))
+                {
+                    return true;
+                }
+
+                if (AttackTower(nearestTower))
+                {
+                    return true;
+                }
+            }
+
+            if (UseMagneticFieldNearCreeps(enemyCreeps))
+            {
+                return true;
+            }
+
+            ParticleManager.CircleParticle("3421", attackPoint, 100, Color.Red);
+
+            if (AttackNextPoint(attackPoint))
+            {
+                return true;
+            }
+
+            return true;
+        }
+
+        private bool UseMagneticFieldNearCreeps(List<Unit9> enemyCreeps)
+        {
+            if (enemyCreeps.Count(x => x.Distance(this.Owner) < this.Owner.GetAttackRange()) >= 4 && this.magneticFieldAbility.Ability.CanBeCasted())
+            {
+                this.magneticFieldAbility.Ability.UseAbility(this.Owner.Position);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool AttackNextPoint(Vector3 attackPoint)
+        {
+            if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWarden.PushCombo.Attack" + this.Owner.Handle))
+            {
+                this.Owner.BaseUnit.Attack(attackPoint);
+                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWarden.PushCombo.Attack" + this.Owner.Handle, 1500);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool AttackTower(Unit9 nearestTower)
+        {
+            if (!this.Owner.IsAttacking && !Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWarden.PushCombo.Attack" + this.Owner.Handle) && !nearestTower.IsInvulnerable)
+            {
+                this.Owner.Attack(nearestTower);
+                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWarden.PushCombo.Attack" + this.Owner.Handle, 400);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool UseMagneticFieldNearTower(Unit9? unit)
+        {
+            if (this.magneticFieldAbility.Ability.CanBeCasted())
+            {
+                this.magneticFieldAbility.Ability.UseAbility(this.Owner.Position.Extend2D(unit.Position, 100));
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool UseSpark(List<Unit9> enemyCreeps)
+        {
+            if (enemyCreeps.Count(x => x.Distance(this.Owner) <= 800) > 2 && this.Owner.IsHero)
+            {
+                if (this.spark.Ability.CanBeCasted())
+                {
+                    var enemyCreep = enemyCreeps.FirstOrDefault(unit => unit.Distance(this.Owner) <= 1000 && unit.IsRanged) ??  enemyCreeps.FirstOrDefault(unit => unit.Distance(this.Owner) <= 1000);
+                    this.spark.Ability.UseAbility(enemyCreep);
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool UseMjolnir(List<Unit9> allyCreeps)
+        {
+            if (mjollnir != null && mjollnir.Ability.CanBeCasted() && this.Owner.GetModifier("modifier_kill").RemainingTime < 3)
+            {
+                var allyCreep = allyCreeps.FirstOrDefault(x => !x.IsRanged && x.HealthPercentage > 65 && x.Distance(this.Owner) < this.mjollnir.Ability.CastRange)
+                                ?? allyCreeps.FirstOrDefault(x => x.Distance(this.Owner) < this.mjollnir.Ability.CastRange);
+
+                if (allyCreep != null)
+                {
+                    this.mjollnir.Ability.UseAbility(allyCreep);
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool TravelTpToCreeps(List<Unit9> enemyCreeps, List<Unit9> allyCreeps)
+        {
+            Unit9? creepWithEnemy;
+
+            if (this.Owner.IsHero && this.Owner.GetModifier("modifier_kill").RemainingTime >= 10 && tpScroll.Ability.CanBeCasted())
+            {
+                if (tpScroll != null && (laneHelper.GetCurrentLane(this.Owner) != AutoPushingPanelTest.lane || !enemyCreeps.Any(x => x.Distance(this.Owner) <= 1000)) &&
+                    !this.Owner.IsChanneling)
+                {
+                    if (AutoPushingPanelTest.lane == Lane.AUTO)
+                    {
+                        creepWithEnemy = allyCreeps.Where(
+                            x => x.HealthPercentage > 65 &&
+                                 enemyCreeps.Any(y => y.Distance(x) <= 1000)).OrderByDescending(x => x.Distance(this.Owner)).FirstOrDefault();
+                    }
+                    else
+                    {
+                        creepWithEnemy = allyCreeps.Where(
+                            x => x.HealthPercentage > 65 &&
+                                 enemyCreeps.Any(y => y.Distance(x) <= 1000 && laneHelper.GetCurrentLane(y) == AutoPushingPanelTest.lane)).FirstOrDefault();
+                    }
+
+                    if (creepWithEnemy == null)
+                    {
+                        return  false;
+                    }
+
+                    tpScroll.Ability.UseAbility(creepWithEnemy);
+
+                    return true;
+                }
+            }
 
             return false;
         }
