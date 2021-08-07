@@ -17,7 +17,7 @@
 
     using Utils;
 
-    public class AutoPushingPanelTest
+    public class ArcWardenDrawPanel
     {
         public static Lane lane;
 
