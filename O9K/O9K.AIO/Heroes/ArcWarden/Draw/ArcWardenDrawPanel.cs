@@ -5,15 +5,11 @@
 
     using Core.Managers.Menu.Items;
 
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Heroes.Components;
     using Divine.Extensions;
     using Divine.Input;
     using Divine.Input.EventArgs;
     using Divine.Numerics;
     using Divine.Renderer;
-
-    using TargetManager;
 
     using Utils;
 
@@ -84,8 +80,6 @@
 
             var fontSize = 35 * scaling;
 
-        
-
             for (int i = 0; i < optionsCount; i++)
             {
                 var posX = rect.X + (indent / 2 * scaling) + i * ((sizeMenuX + (indent / 2)) * scaling);
@@ -106,7 +100,6 @@
                     width: width,
                     height: height);
 
-
                 if ((Lane)i == lane)
                 {
                     RendererManager.DrawRectangle(rectBorderImage, Color.Green);
@@ -120,8 +113,8 @@
                     RendererManager.DrawText(((Lane)i).ToString(), rectText1, Color.White, fontSize);
                 }
             }
-            
-            var newRect = new RectangleF(rect.X + (rect.Width * 0.5f) - (rect.Width / 3) * 0.5f , rect.Y + (sizeMenuX + (indent * 0.5f)) * scaling, rect.Width / 3f, sizeMenuY * scaling);
+
+            var newRect = new RectangleF(rect.X + (rect.Width * 0.5f) - (rect.Width / 3) * 0.5f, rect.Y + (sizeMenuX + (indent * 0.5f)) * scaling, rect.Width / 3f, sizeMenuY * scaling);
 
             if (unitName != null)
             {
@@ -129,13 +122,13 @@
 
                 RendererManager.DrawImage(unitName, newRect, UnitImageType.Default, true);
             }
+
             if (pushComboStatus)
             {
                 RendererManager.DrawRectangle(newRect, Color.Black);
 
                 RendererManager.DrawText("Push combo ACTIVE", new Vector2(rect.X  , rect.Y + (sizeMenuX + (indent * 0.5f)) * scaling), Color.Red, fontSize);
             }
-            
         }
 
         public static string unitName { get; set; }

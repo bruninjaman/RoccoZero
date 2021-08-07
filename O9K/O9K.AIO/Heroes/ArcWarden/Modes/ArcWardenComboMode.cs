@@ -123,8 +123,7 @@
                 this.TargetManager.TargetLocked = true;
                 this.UpdateHandler.IsEnabled = true;
                 ArcWardenDrawPanel.unitName = TargetManager.Target?.BaseUnit.InternalName;
-                PushMode.Instance.TurnOffCombo();
-
+                PushMode.Instance.TurnOffAutoPush();
             }
             else
             {
@@ -160,7 +159,8 @@
                 this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
                 this.TargetManager.TargetLocked = true;
                 this.UpdateHandler.IsEnabled = true;
-                ArcWardenDrawPanel.unitName = TargetManager?.Target.BaseUnit.InternalName;
+                ArcWardenDrawPanel.unitName = TargetManager.Target?.BaseUnit.InternalName;
+                PushMode.Instance.TurnOffAutoPush();
             }
             else
             {

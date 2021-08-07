@@ -11,9 +11,6 @@
 
     using CustomUnitManager;
 
-    using Divine.Extensions;
-    using Divine.Update;
-
     using Draw;
 
     using Units;
@@ -47,7 +44,7 @@
 
         public static PushMode Instance { get; set; }
 
-        public void TurnOffCombo()
+        public void TurnOffAutoPush()
         {
             this.UpdateHandler.IsEnabled = false;
 
