@@ -77,7 +77,7 @@
             get
             {
                 return  arcUnitManager1.PushControllableUnits.Where(
-                        x => x.Owner.IsIllusion)
+                        x => x.Owner.IsIllusion && x.Owner != Hero.Owner)
                     .Select(x => new PushUnit(x) as IPushUnit);
             }
         }
@@ -94,14 +94,21 @@
             //     this.Hero.PushCombo();
             // }
 
-            if (!ControllableUnitsTempest.Any(x => x != null && x.IsValid))
+            var controllableUnitsTempest = ControllableUnitsTempest;
+
+            if (Hero != null)
+            {
+                controllableUnitsTempest = controllableUnitsTempest.Append(Hero);
+            }
+
+            if (!controllableUnitsTempest.Any(x => x != null && x.IsValid))
             {
                 this.UpdateHandler.IsEnabled = false;
 
                 ArcWardenDrawPanel.pushComboStatus = false;
             }
 
-            foreach (var unit in ControllableUnitsTempest.Where(x => x != null && x.IsValid))
+            foreach (var unit in controllableUnitsTempest.Where(x => x != null && x.IsValid))
             {
                 unit.PushCombo();
             }
