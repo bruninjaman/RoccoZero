@@ -22,7 +22,7 @@
         bool IsValid { get; }
     }
 
-    internal class PushUnit : ControllableUnit, IPushUnit
+    internal partial class PushUnit : ControllableUnit, IPushUnit
     {
         private readonly Sleeper moveSleeper = new Sleeper();
 
@@ -62,7 +62,7 @@
 
             if (this.Owner.Distance(nearestTower) <= 900)
             {
-                if (AttackTower(nearestTower))
+                if (PushCommands.AttackTower(this.Owner, nearestTower))
                 {
                     return true;
                 }
@@ -70,38 +70,12 @@
 
             Console.WriteLine("???");
 
-            if (AttackNextPoint(attackPoint))
+            if (PushCommands.AttackNextPoint(this.Owner, attackPoint))
             {
                 return true;
             }
 
             return true;
-        }
-
-        private bool AttackNextPoint(Vector3 attackPoint)
-        {
-            if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWarden.PushCombo.Attack" + this.Owner.Handle))
-            {
-                this.Owner.BaseUnit.Attack(attackPoint);
-                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWarden.PushCombo.Attack" + this.Owner.Handle, 1500);
-
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool AttackTower(Unit9 nearestTower)
-        {
-            if (!this.Owner.IsAttacking && !Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWarden.PushCombo.Attack" + this.Owner.Handle) && !nearestTower.IsInvulnerable)
-            {
-                this.Owner.Attack(nearestTower);
-                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWarden.PushCombo.Attack" + this.Owner.Handle, 400);
-
-                return true;
-            }
-
-            return false;
         }
     }
 }

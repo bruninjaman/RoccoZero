@@ -77,7 +77,7 @@
             get
             {
                 return  arcUnitManager1.PushControllableUnits.Where(
-                        x => x.Owner.IsIllusion && x.Owner != Hero.Owner)
+                        x => x.Owner.IsIllusion && x.Owner != Hero?.Owner)
                     .Select(x => new PushUnit(x) as IPushUnit);
             }
         }
