@@ -444,7 +444,7 @@
 
         private bool TravelTpToCreeps(List<Unit9> enemyCreeps, List<Unit9> allyCreeps)
         {
-            Unit9? creepWithEnemy;
+            Unit9 creepWithEnemy;
 
             if (this.Owner.IsHero && this.Owner.GetModifier("modifier_kill").RemainingTime >= 10 && tpScroll.Ability.CanBeCasted())
             {
@@ -454,14 +454,22 @@
                     if (ArcWardenDrawPanel.lane == Lane.AUTO)
                     {
                         creepWithEnemy = allyCreeps.Where(
-                            x => x.HealthPercentage > 65 &&
-                                 enemyCreeps.Any(y => y.Distance(x) <= 1000)).OrderByDescending(x => x.Distance(this.Owner)).FirstOrDefault();
+                            x => x.HealthPercentage > 65 
+                                 && !EntityManager9.EnemyHeroes.Any(enemyHero => enemyHero.Distance(x) < 4000)
+                                 && (allyCreeps.Any(unit => unit.Distance(x) < 100 && unit.Handle != x.Handle)
+                                                             || !enemyCreeps.Any(enemyCreep => enemyCreep.Distance(x) < 1000)))
+                            .OrderBy(x=> x.Distance(EntityManager9.EnemyFountain))
+                            .FirstOrDefault();
                     }
                     else
                     {
                         creepWithEnemy = allyCreeps.Where(
-                            x => x.HealthPercentage > 65 &&
-                                 enemyCreeps.Any(y => y.Distance(x) <= 1000 && laneHelper.GetCurrentLane(y) == ArcWardenDrawPanel.lane)).FirstOrDefault();
+                            x => x.HealthPercentage > 65
+                                 && laneHelper.GetCurrentLane(x) == ArcWardenDrawPanel.lane
+                                 && (allyCreeps.Any(unit => unit.Distance(x) < 100 && unit.Handle != x.Handle)
+                                     || !enemyCreeps.Any(enemyCreep => enemyCreep.Distance(x) < 1000)))
+                            .OrderBy(x => x.Distance(EntityManager9.EnemyFountain))
+                            .FirstOrDefault();
                     }
 
                     if (creepWithEnemy == null)
