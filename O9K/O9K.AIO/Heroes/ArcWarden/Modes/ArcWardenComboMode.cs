@@ -122,7 +122,8 @@
                 this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
                 this.TargetManager.TargetLocked = true;
                 this.UpdateHandler.IsEnabled = true;
-                AutoPushingPanelTest.unitName = TargetManager?.Target.BaseUnit.InternalName;
+                ArcWardenDrawPanel.unitName = TargetManager.Target?.BaseUnit.InternalName;
+                PushMode.Instance.TurnOffAutoPush();
             }
             else
             {
@@ -135,7 +136,7 @@
 
                 this.UpdateHandler.IsEnabled = false;
                 this.TargetManager.TargetLocked = false;
-                AutoPushingPanelTest.unitName = null;
+                ArcWardenDrawPanel.unitName = null;
 
                 this.ComboEnd();
             }
@@ -158,7 +159,8 @@
                 this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
                 this.TargetManager.TargetLocked = true;
                 this.UpdateHandler.IsEnabled = true;
-                AutoPushingPanelTest.unitName = TargetManager?.Target.BaseUnit.InternalName;
+                ArcWardenDrawPanel.unitName = TargetManager.Target?.BaseUnit.InternalName;
+                PushMode.Instance.TurnOffAutoPush();
             }
             else
             {
@@ -171,7 +173,7 @@
 
                 this.UpdateHandler.IsEnabled = false;
                 this.TargetManager.TargetLocked = false;
-                AutoPushingPanelTest.unitName = null;
+                ArcWardenDrawPanel.unitName = null;
 
                 this.ComboEnd();
             }

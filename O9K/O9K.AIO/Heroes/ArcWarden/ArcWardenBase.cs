@@ -28,13 +28,13 @@
         public ArcWardenBase()
         {
             this.pushMode = new PushMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Push mode"));
-            RendererManager.Draw += AutoPushingPanelTest.ButtonDrawOn;
-            InputManager.MouseKeyDown += AutoPushingPanelTest.OnMouseKeyDown;
+            RendererManager.Draw += ArcWardenDrawPanel.ButtonDrawOn;
+            InputManager.MouseKeyDown += ArcWardenDrawPanel.OnMouseKeyDown;
             var menuPanelSetting = Menu.RootMenu.Add(new Menu("Panel settings"));
 
-            menuPanelSetting.Add(AutoPushingPanelTest.positionSliderX);
-            menuPanelSetting.Add(AutoPushingPanelTest.positionSliderY);
-            menuPanelSetting.Add(AutoPushingPanelTest.sizeMenuSlider);
+            menuPanelSetting.Add(ArcWardenDrawPanel.positionSliderX);
+            menuPanelSetting.Add(ArcWardenDrawPanel.positionSliderY);
+            menuPanelSetting.Add(ArcWardenDrawPanel.sizeMenuSlider);
         }
 
         public override void CreateUnitManager()

@@ -28,7 +28,7 @@
                          x.Owner.Distance(this.targetManager.Target ?? this.owner) < 2500);
             }
         }
-        
+
         public IEnumerable<ControllableUnit> PushControllableUnits
         {
             get
@@ -71,15 +71,18 @@
             if (this.BodyBlock(allUnits, comboModeMenu))
             {
                 this.issuedAction.Sleep(0.05f);
+
                 return;
             }
 
             var noOrbwalkUnits = new List<ControllableUnit>();
+
             foreach (var controllable in allUnits)
             {
                 if (!controllable.OrbwalkEnabled)
                 {
                     noOrbwalkUnits.Add(controllable);
+
                     continue;
                 }
 
@@ -96,6 +99,7 @@
                 this.issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
                 this.unitIssuedAction.Sleep(controllable.Handle, 0.2f);
                 this.issuedAction.Sleep(0.05f);
+
                 return;
             }
 

@@ -28,7 +28,7 @@
 
     internal class ControllableUnit
     {
-        private readonly MultiSleeper abilitySleeper;
+        internal readonly MultiSleeper abilitySleeper;
 
         private DisableAbility moveAbyssal;
 
@@ -180,7 +180,7 @@
 
         protected Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>> ComboAbilities { get; set; }
 
-        protected ControllableUnitMenu Menu { get; }
+        protected internal ControllableUnitMenu Menu { get; }
 
         protected Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>> MoveComboAbilities { get; }
 

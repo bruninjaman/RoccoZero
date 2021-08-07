@@ -32,7 +32,7 @@
     using Utils;
 
     [UnitName(nameof(HeroId.npc_dota_hero_arc_warden))]
-    internal class ArcWarden : ControllableUnit
+    internal class ArcWarden : ControllableUnit, IPushUnit
     {
         private readonly Sleeper moveSleeper = new Sleeper();
 
@@ -365,7 +365,7 @@
                     return true;
                 }
 
-                if (AttackTower(nearestTower))
+                if (PushCommands.AttackTower(this.Owner, nearestTower))
                 {
                     return true;
                 }
@@ -376,7 +376,7 @@
                 return true;
             }
 
-            if (AttackNextPoint(attackPoint))
+            if (PushCommands.AttackNextPoint(this.Owner, attackPoint))
             {
                 return true;
             }
@@ -389,32 +389,6 @@
             if (enemyCreeps.Count(x => x.Distance(this.Owner) < this.Owner.GetAttackRange()) >= 4 && this.magneticFieldAbility.Ability.CanBeCasted())
             {
                 this.magneticFieldAbility.Ability.UseAbility(this.Owner.Position);
-
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool AttackNextPoint(Vector3 attackPoint)
-        {
-            if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWarden.PushCombo.Attack" + this.Owner.Handle))
-            {
-                this.Owner.BaseUnit.Attack(attackPoint);
-                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWarden.PushCombo.Attack" + this.Owner.Handle, 1500);
-
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool AttackTower(Unit9 nearestTower)
-        {
-            if (!this.Owner.IsAttacking && !Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWarden.PushCombo.Attack" + this.Owner.Handle) && !nearestTower.IsInvulnerable)
-            {
-                this.Owner.Attack(nearestTower);
-                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWarden.PushCombo.Attack" + this.Owner.Handle, 400);
 
                 return true;
             }
@@ -474,10 +448,10 @@
 
             if (this.Owner.IsHero && this.Owner.GetModifier("modifier_kill").RemainingTime >= 10 && tpScroll.Ability.CanBeCasted())
             {
-                if (tpScroll != null && (laneHelper.GetCurrentLane(this.Owner) != AutoPushingPanelTest.lane || !enemyCreeps.Any(x => x.Distance(this.Owner) <= 1000)) &&
+                if (tpScroll != null && (laneHelper.GetCurrentLane(this.Owner) != ArcWardenDrawPanel.lane || !enemyCreeps.Any(x => x.Distance(this.Owner) <= 1000)) &&
                     !this.Owner.IsChanneling)
                 {
-                    if (AutoPushingPanelTest.lane == Lane.AUTO)
+                    if (ArcWardenDrawPanel.lane == Lane.AUTO)
                     {
                         creepWithEnemy = allyCreeps.Where(
                             x => x.HealthPercentage > 65 &&
@@ -487,7 +461,7 @@
                     {
                         creepWithEnemy = allyCreeps.Where(
                             x => x.HealthPercentage > 65 &&
-                                 enemyCreeps.Any(y => y.Distance(x) <= 1000 && laneHelper.GetCurrentLane(y) == AutoPushingPanelTest.lane)).FirstOrDefault();
+                                 enemyCreeps.Any(y => y.Distance(x) <= 1000 && laneHelper.GetCurrentLane(y) == ArcWardenDrawPanel.lane)).FirstOrDefault();
                     }
 
                     if (creepWithEnemy == null)
