@@ -68,7 +68,6 @@
                 }
             }
 
-            Console.WriteLine("???");
 
             if (PushCommands.AttackNextPoint(this.Owner, attackPoint))
             {
