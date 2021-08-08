@@ -22,7 +22,7 @@
         bool IsValid { get; }
     }
 
-    internal partial class PushUnit : ControllableUnit, IPushUnit
+    internal class PushUnit : ControllableUnit, IPushUnit
     {
         private readonly Sleeper moveSleeper = new Sleeper();
 
