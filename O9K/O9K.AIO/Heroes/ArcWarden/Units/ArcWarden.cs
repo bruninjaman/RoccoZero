@@ -24,6 +24,7 @@
     using Divine.Entity.Entities.Units.Heroes.Components;
     using Divine.Numerics;
     using Divine.Order;
+    using Divine.Particle;
 
     using Draw;
 
@@ -444,40 +445,51 @@
 
         private bool TravelTpToCreeps(List<Unit9> enemyCreeps, List<Unit9> allyCreeps)
         {
-            Unit9 creepWithEnemy;
+            Unit9 allyCreep;
 
             if (this.Owner.IsHero && this.Owner.GetModifier("modifier_kill").RemainingTime >= 10 && tpScroll.Ability.CanBeCasted())
             {
-                if (tpScroll != null && (laneHelper.GetCurrentLane(this.Owner) != ArcWardenDrawPanel.lane || !enemyCreeps.Any(x => x.Distance(this.Owner) <= 1000)) &&
+                if (tpScroll != null && (laneHelper.GetCurrentLane(this.Owner) != ArcWardenDrawPanel.lane || !enemyCreeps.Any(x => x.Distance(this.Owner) <= 4000)) &&
                     !this.Owner.IsChanneling)
                 {
                     if (ArcWardenDrawPanel.lane == Lane.AUTO)
                     {
-                        creepWithEnemy = allyCreeps.Where(
-                            x => x.HealthPercentage > 65 
-                                 && !EntityManager9.EnemyHeroes.Any(enemyHero => enemyHero.Distance(x) < 4000)
-                                 && (allyCreeps.Any(unit => unit.Distance(x) < 100 && unit.Handle != x.Handle)
-                                                             || !enemyCreeps.Any(enemyCreep => enemyCreep.Distance(x) < 1000)))
-                            .OrderBy(x=> x.Distance(EntityManager9.EnemyFountain))
+                        
+                        // TODO add to menu min range to use TP
+                        allyCreep = allyCreeps.Where(
+                                x => x.HealthPercentage > 65
+                                     && !EntityManager9.EnemyHeroes.Any(enemyHero => enemyHero.Distance(x) < 3000)
+                                     && (allyCreeps.Any(unit => unit.Distance(x) < 100 && unit.Handle != x.Handle)
+                                         || !enemyCreeps.Any(enemyCreep => enemyCreep.Distance(x) < 1000)))
+                            .OrderByDescending(x => x.Distance(EntityManager9.AllyFountain))
                             .FirstOrDefault();
                     }
                     else
                     {
-                        creepWithEnemy = allyCreeps.Where(
-                            x => x.HealthPercentage > 65
-                                 && laneHelper.GetCurrentLane(x) == ArcWardenDrawPanel.lane
-                                 && (allyCreeps.Any(unit => unit.Distance(x) < 100 && unit.Handle != x.Handle)
-                                     || !enemyCreeps.Any(enemyCreep => enemyCreep.Distance(x) < 1000)))
-                            .OrderBy(x => x.Distance(EntityManager9.EnemyFountain))
+                        allyCreep = allyCreeps.Where(
+                                x => x.HealthPercentage > 65
+                                     && laneHelper.GetCurrentLane(x) == ArcWardenDrawPanel.lane
+                                     && (allyCreeps.Any(unit => unit.Distance(x) < 1000 && unit.Handle != x.Handle)
+                                         || !enemyCreeps.Any(enemyCreep => enemyCreep.Distance(x) < 1000)))
+                            .OrderByDescending(x => x.Distance(EntityManager9.AllyFountain))
                             .FirstOrDefault();
                     }
 
-                    if (creepWithEnemy == null)
+                    if (allyCreep == null)
                     {
                         return  false;
                     }
+                    
+                    var tower = EntityManager9.AllyUnits.Where(x => laneHelper.GetCurrentLane(x) ==  ArcWardenDrawPanel.lane && x.IsTower)
+                        .OrderByDescending(x => x.Distance(EntityManager9.AllyFountain))
+                        .FirstOrDefault();
 
-                    tpScroll.Ability.UseAbility(creepWithEnemy);
+                    if (tower?.Distance(EntityManager9.AllyFountain) > allyCreep.Distance(EntityManager9.AllyFountain))
+                    {
+                        tpScroll.Ability.UseAbility(tower.Position.Extend2D(EntityManager9.AllyFountain, -500));
+                    }
+
+                    tpScroll.Ability.UseAbility(allyCreep);
 
                     return true;
                 }

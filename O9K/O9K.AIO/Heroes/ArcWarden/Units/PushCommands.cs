@@ -11,7 +11,7 @@
             if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWarden.PushCombo.Attack" + owner.Handle))
             {
                 owner.BaseUnit.Attack(attackPoint);
-                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWarden.PushCombo.Attack" + owner.Handle, 1500);
+                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWarden.PushCombo.Attack" + owner.Handle, 1000);
 
                 return true;
             }
