@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Abilities;
 
@@ -17,6 +18,7 @@
 
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Order;
 
     using Modes.Combo;
 
@@ -78,6 +80,12 @@
 
         public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
         {
+            
+            if (OrderManager.Orders.Count() != 0)
+            {
+                return false;
+            }
+            
             var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
 
             if (abilityHelper.UseAbility(bkb, 400))

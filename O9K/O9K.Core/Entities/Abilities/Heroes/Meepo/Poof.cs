@@ -1,6 +1,7 @@
 ﻿namespace O9K.Core.Entities.Abilities.Heroes.Meepo
 {
     using Base;
+    using Base.Types;
 
     using Divine.Entity.Entities.Abilities;
     using Divine.Entity.Entities.Abilities.Components;
@@ -10,7 +11,7 @@
     using Metadata;
 
     [AbilityId(AbilityId.meepo_poof)]
-    public class Poof : RangedAbility
+    public class Poof : RangedAbility, INuke
     {
         public Poof(Ability baseAbility)
             : base(baseAbility)
