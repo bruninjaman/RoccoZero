@@ -9,8 +9,5 @@
     [HeroId(HeroId.npc_dota_hero_meepo)]
     internal class MeepoBase : BaseHero
     {
-        public MeepoBase()
-        {
-        }
     }
 }
