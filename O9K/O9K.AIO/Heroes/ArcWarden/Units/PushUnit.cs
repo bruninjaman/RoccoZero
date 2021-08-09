@@ -1,6 +1,5 @@
 ﻿namespace O9K.AIO.Heroes.ArcWarden.Units
 {
-    using System;
     using System.Linq;
 
     using Base;
@@ -10,23 +9,22 @@
     using Core.Managers.Entity;
 
     using Divine.Entity.Entities.Components;
-    using Divine.Numerics;
     using Divine.Order;
 
     using Utils;
 
     internal interface IPushUnit
     {
-        bool PushCombo();
-
         bool IsValid { get; }
+
+        bool PushCombo();
     }
 
     internal class PushUnit : ControllableUnit, IPushUnit
     {
-        private readonly Sleeper moveSleeper = new Sleeper();
+        private readonly LaneHelper laneHelper = new();
 
-        private readonly LaneHelper laneHelper = new LaneHelper();
+        private readonly Sleeper moveSleeper = new();
 
         public PushUnit(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
@@ -48,28 +46,27 @@
             var nearestTower =
                 EntityManager9.EnemyUnits
                     .Where(x => x.BaseUnit.NetworkName == ClassId.CDOTA_BaseNPC_Tower.ToString() && x.IsValid && x.IsAlive)
-                    .OrderBy(y => this.Owner.Distance(y))
+                    .OrderBy(y => Owner.Distance(y))
                     .FirstOrDefault();
 
             if (nearestTower == null)
             {
-                nearestTower = EntityManager9.EnemyUnits.Where(x => x.IsBuilding && x.IsValid && x.IsAlive && x.CanDie).OrderBy(y => this.Owner.Distance(y))
+                nearestTower = EntityManager9.EnemyUnits.Where(x => x.IsBuilding && x.IsValid && x.IsAlive && x.CanDie).OrderBy(y => Owner.Distance(y))
                     .FirstOrDefault();
             }
 
-            var currentLane = laneHelper.GetCurrentLane(this.Owner);
-            var attackPoint = laneHelper.GetClosestAttackPoint(this.Owner, currentLane);
+            var currentLane = laneHelper.GetCurrentLane(Owner);
+            var attackPoint = laneHelper.GetClosestAttackPoint(Owner, currentLane);
 
-            if (this.Owner.Distance(nearestTower) <= 900)
+            if (Owner.Distance(nearestTower) <= 900)
             {
-                if (PushCommands.AttackTower(this.Owner, nearestTower))
+                if (PushCommands.AttackTower(Owner, nearestTower))
                 {
                     return true;
                 }
             }
 
-
-            if (PushCommands.AttackNextPoint(this.Owner, attackPoint))
+            if (PushCommands.AttackNextPoint(Owner, attackPoint))
             {
                 return true;
             }

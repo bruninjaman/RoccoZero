@@ -23,9 +23,9 @@
         {
             get
             {
-                return this.controllableUnits.Where(
-                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled && x.ShouldControl &&
-                         x.Owner.Distance(this.targetManager.Target ?? this.owner) < 2500);
+                return controllableUnits.Where(
+                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled &&
+                         x.Owner.Distance(targetManager.Target ?? owner) < 2500);
             }
         }
 
@@ -33,14 +33,14 @@
         {
             get
             {
-                return this.controllableUnits.Where(
+                return controllableUnits.Where(
                     x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled && x.ShouldControl);
             }
         }
 
         public virtual void ExecuteCloneCombo(ComboModeMenu comboModeMenu)
         {
-            foreach (var controllable in this.CloneControllableUnits)
+            foreach (var controllable in CloneControllableUnits)
             {
                 if (controllable.ComboSleeper.IsSleeping)
                 {
@@ -52,7 +52,7 @@
                     return;
                 }
 
-                if (controllable.Combo(this.targetManager, comboModeMenu))
+                if (controllable.Combo(targetManager, comboModeMenu))
                 {
                     controllable.LastMovePosition = Vector3.Zero;
                 }
@@ -61,16 +61,16 @@
 
         public virtual void CloneOrbwalk(ComboModeMenu comboModeMenu)
         {
-            if (this.issuedAction.IsSleeping)
+            if (issuedAction.IsSleeping)
             {
                 return;
             }
 
-            var allUnits = this.CloneControllableUnits.OrderBy(x => this.IssuedActionTime(x.Handle)).ToList();
+            var allUnits = CloneControllableUnits.OrderBy(x => IssuedActionTime(x.Handle)).ToList();
 
-            if (this.BodyBlock(allUnits, comboModeMenu))
+            if (BodyBlock(allUnits, comboModeMenu))
             {
-                this.issuedAction.Sleep(0.05f);
+                issuedAction.Sleep(0.05f);
 
                 return;
             }
@@ -86,26 +86,26 @@
                     continue;
                 }
 
-                if (this.unitIssuedAction.IsSleeping(controllable.Handle))
+                if (unitIssuedAction.IsSleeping(controllable.Handle))
                 {
                     continue;
                 }
 
-                if (!controllable.Orbwalk(this.targetManager.Target, comboModeMenu))
+                if (!controllable.Orbwalk(targetManager.Target, comboModeMenu))
                 {
                     continue;
                 }
 
-                this.issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
-                this.unitIssuedAction.Sleep(controllable.Handle, 0.2f);
-                this.issuedAction.Sleep(0.05f);
+                issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
+                unitIssuedAction.Sleep(controllable.Handle, 0.2f);
+                issuedAction.Sleep(0.05f);
 
                 return;
             }
 
-            if (noOrbwalkUnits.Count > 0 && !this.unitIssuedAction.IsSleeping(uint.MaxValue))
+            if (noOrbwalkUnits.Count > 0 && !unitIssuedAction.IsSleeping(uint.MaxValue))
             {
-                this.ControlAllUnits(noOrbwalkUnits);
+                ControlAllUnits(noOrbwalkUnits);
             }
         }
     }

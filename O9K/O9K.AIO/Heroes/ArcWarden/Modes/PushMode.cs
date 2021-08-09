@@ -17,9 +17,9 @@
 
     internal class PushMode : KeyPressMode
     {
-        private ArcWarden hero;
+        private readonly ArcWardenUnitManager arcUnitManager1;
 
-        private ArcWardenUnitManager arcUnitManager1;
+        private ArcWarden hero;
 
         public PushMode(BaseHero baseHero, KeyPressModeMenu menu)
             : base(baseHero, menu)
@@ -32,21 +32,31 @@
         {
             get
             {
-                if (this.hero == null)
+                if (hero == null)
                 {
-                    this.hero = arcUnitManager1.PushControllableUnits.Where(
-                                    x => x.Owner.IsHero).FirstOrDefault() as ArcWarden;
+                    hero = arcUnitManager1.PushControllableUnits.Where(
+                               x => x.Owner.IsHero).FirstOrDefault() as ArcWarden;
                 }
 
-                return this.hero;
+                return hero;
             }
         }
 
         public static PushMode Instance { get; set; }
 
+        public IEnumerable<IPushUnit> ControllableUnitsTempest
+        {
+            get
+            {
+                return  arcUnitManager1.PushControllableUnits.Where(
+                        x => x.Owner.IsIllusion && x.Owner != Hero?.Owner)
+                    .Select(x => new PushUnit(x) as IPushUnit);
+            }
+        }
+
         public void TurnOffAutoPush()
         {
-            this.UpdateHandler.IsEnabled = false;
+            UpdateHandler.IsEnabled = false;
 
             ArcWardenDrawPanel.pushComboStatus = false;
         }
@@ -58,27 +68,19 @@
                 return;
             }
 
-            if (!this.UpdateHandler.IsEnabled)
+            if (!UpdateHandler.IsEnabled)
             {
-                this.UpdateHandler.IsEnabled = true;
+                ArcWarden.TpCount = 1;
+
+                UpdateHandler.IsEnabled = true;
 
                 ArcWardenDrawPanel.pushComboStatus = true;
             }
             else
             {
-                this.UpdateHandler.IsEnabled = false;
+                UpdateHandler.IsEnabled = false;
 
                 ArcWardenDrawPanel.pushComboStatus = false;
-            }
-        }
-
-        public IEnumerable<IPushUnit> ControllableUnitsTempest
-        {
-            get
-            {
-                return  arcUnitManager1.PushControllableUnits.Where(
-                        x => x.Owner.IsIllusion && x.Owner != Hero?.Owner)
-                    .Select(x => new PushUnit(x) as IPushUnit);
             }
         }
 
@@ -103,7 +105,7 @@
 
             if (!controllableUnitsTempest.Any(x => x != null && x.IsValid))
             {
-                this.UpdateHandler.IsEnabled = false;
+                UpdateHandler.IsEnabled = false;
 
                 ArcWardenDrawPanel.pushComboStatus = false;
             }

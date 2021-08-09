@@ -14,6 +14,6 @@
         BOT,
 
         [EnumMember(Value = "auto")]
-        AUTO,
+        AUTO
     }
 }

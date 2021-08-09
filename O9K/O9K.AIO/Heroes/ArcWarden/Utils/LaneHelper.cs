@@ -29,6 +29,8 @@
             { new Vector3(-4400, -3900, 384), Lane.MID }
         };
 
+        public Dictionary<Unit, List<Vector3>> LaneCache;
+
         public LaneHelper()
         {
             var isRadiant = EntityManager9.Owner.Team == Team.Radiant;
@@ -43,8 +45,6 @@
         public List<Vector3> MidPath { get; set; }
 
         public List<Vector3> TopPath { get; set; }
-
-        public Dictionary<Unit, List<Vector3>> LaneCache;
 
         public List<Vector3> GetPathCache(Unit9 hero)
         {
@@ -136,7 +136,7 @@
                     break;
             }
 
-            int result = 0;
+            var result = 0;
 
             for (var index = 0; index < list.Count; index++)
             {
