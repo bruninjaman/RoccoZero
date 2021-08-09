@@ -433,8 +433,9 @@
 
                 var ally =
                     allyCreepsOrdered
-                        .Where(x => allyCreeps.Any(unit => unit.Distance(x) < 500 && unit.Handle != x.Handle)
-                                    || !enemyCreeps.Any(enemyCreep => enemyCreep.Distance(x) < 1000))
+                        .Where(x => (allyCreeps.Any(unit => unit.Distance(x) < 500 && unit.Handle != x.Handle)
+                                     || !enemyCreeps.Any(enemyCreep => enemyCreep.Distance(x) < 1000))
+                                    && !EntityManager9.EnemyHeroes.Any(enemyHero => x.Distance(enemyHero) < 3000))
                         .FirstOrDefault();
 
                 var allyTwr =
