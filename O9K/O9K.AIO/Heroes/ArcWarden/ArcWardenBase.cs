@@ -27,7 +27,7 @@
 
         public ArcWardenBase()
         {
-            this.pushMode = new PushMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Push mode"));
+            pushMode = new PushMode(this, new KeyPressModeMenu(Menu.RootMenu, "Push mode"));
             RendererManager.Draw += ArcWardenDrawPanel.ButtonDrawOn;
             InputManager.MouseKeyDown += ArcWardenDrawPanel.OnMouseKeyDown;
             var menuPanelSetting = Menu.RootMenu.Add(new Menu("Panel settings"));
@@ -39,35 +39,35 @@
 
         public override void CreateUnitManager()
         {
-            this.UnitManager = new ArcWardenUnitManager(this);
+            UnitManager = new ArcWardenUnitManager(this);
         }
 
         public override void CreateComboMode(BaseHero baseHero, List<ComboModeMenu> comboMenus)
         {
-            this.Combo = new ArcWardenComboMode(this, comboMenus);
+            Combo = new ArcWardenComboMode(this, comboMenus);
         }
 
         protected override void CreateComboMenus()
         {
-            this.ComboMenus.Add(new ComboModeMenu(this.Menu.RootMenu, "Combo"));
-            this.ComboMenus.Add(new ComboModeMenu(this.Menu.RootMenu, "Alternative combo"));
-            this.ComboMenus.Add(new ComboModeMenu(this.Menu.RootMenu, "Clone combo"));
+            ComboMenus.Add(new ComboModeMenu(Menu.RootMenu, "Combo"));
+            ComboMenus.Add(new ComboModeMenu(Menu.RootMenu, "Alternative combo"));
+            ComboMenus.Add(new ComboModeMenu(Menu.RootMenu, "Clone combo"));
         }
 
         public override void Dispose()
         {
             base.Dispose();
-            this.pushMode.Dispose();
+            pushMode.Dispose();
         }
 
         protected override void DisableCustomModes()
         {
-            this.pushMode.Disable();
+            pushMode.Disable();
         }
 
         protected override void EnableCustomModes()
         {
-            this.pushMode.Enable();
+            pushMode.Enable();
         }
     }
 }

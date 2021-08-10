@@ -41,6 +41,10 @@
 
         private DebuffAbility hunger;
 
+        private BuffAbility illusionCape;
+
+        private BuffAbility manta;
+
         private DisableAbility meteor;
 
         private ShieldAbility mjollnir;
@@ -50,123 +54,136 @@
         public Axe(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
-            this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
+            ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
             {
-                { AbilityId.axe_berserkers_call, x => this.call = new DisableAbility(x) },
-                { AbilityId.axe_battle_hunger, x => this.hunger = new DebuffAbility(x) },
-                { AbilityId.axe_culling_blade, x => this.blade = new CullingBlade(x) },
+                { AbilityId.axe_berserkers_call, x => call = new DisableAbility(x) },
+                { AbilityId.axe_battle_hunger, x => hunger = new DebuffAbility(x) },
+                { AbilityId.axe_culling_blade, x => blade = new CullingBlade(x) },
 
-                { AbilityId.item_blink, x => this.blink = new BlinkDaggerAOE(x) },
-                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerAOE(x) },
-                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerAOE(x) },
-                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerAOE(x) },
-                { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
-                { AbilityId.item_blade_mail, x => this.bladeMail = new ShieldAbility(x) },
-                { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) },
-                { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },
-                { AbilityId.item_mjollnir, x => this.mjollnir = new ShieldAbility(x) },
-                { AbilityId.item_meteor_hammer, x => this.meteor = new MeteorHammerAxe(x) },
-                { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) },
+                { AbilityId.item_blink, x => blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_swift_blink, x => blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_arcane_blink, x => blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_overwhelming_blink, x => blink = new BlinkDaggerAOE(x) },
+                { AbilityId.item_force_staff, x => force = new ForceStaff(x) },
+                { AbilityId.item_blade_mail, x => bladeMail = new ShieldAbility(x) },
+                { AbilityId.item_black_king_bar, x => bkb = new ShieldAbility(x) },
+                { AbilityId.item_shivas_guard, x => shiva = new DebuffAbility(x) },
+                { AbilityId.item_mjollnir, x => mjollnir = new ShieldAbility(x) },
+                { AbilityId.item_meteor_hammer, x => meteor = new MeteorHammerAxe(x) },
+                { AbilityId.item_dagon_5, x => dagon = new NukeAbility(x) },
+                { AbilityId.item_manta, x => manta = new BuffAbility(x) },
+                { AbilityId.item_illusionsts_cape, x => illusionCape = new BuffAbility(x) }
             };
 
-            this.MoveComboAbilities.Add(AbilityId.axe_berserkers_call, _ => this.call);
+            MoveComboAbilities.Add(AbilityId.axe_berserkers_call, _ => call);
         }
 
         public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
         {
             var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
 
-            if (abilityHelper.UseAbility(this.bkb, 400))
+            if (abilityHelper.UseAbility(bkb, 400))
             {
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.blade))
+            if (abilityHelper.UseAbility(blade))
             {
                 return true;
             }
 
-            if (abilityHelper.CanBeCasted(this.blade, false) && !abilityHelper.CanBeCasted(this.blade))
+            if (abilityHelper.CanBeCasted(blade, false) && !abilityHelper.CanBeCasted(blade))
             {
-                if (abilityHelper.UseAbility(this.blink, 200, 0))
+                if (abilityHelper.UseAbility(blink, 200, 0))
                 {
                     return true;
                 }
             }
 
-            if (abilityHelper.UseDoubleBlinkCombo(this.force, this.blink))
+            if (abilityHelper.UseDoubleBlinkCombo(force, blink))
             {
                 return true;
             }
 
-            if (abilityHelper.CanBeCastedIfCondition(this.blink, this.call))
+            if (abilityHelper.CanBeCastedIfCondition(blink, call))
             {
-                if (abilityHelper.UseAbility(this.bkb))
+                if (abilityHelper.UseAbility(bkb))
                 {
                     return true;
                 }
             }
 
-            if (abilityHelper.UseAbility(this.call))
+            if (abilityHelper.UseAbility(call))
             {
-                this.call.Sleeper.ExtendSleep(1);
+                call.Sleeper.ExtendSleep(1);
+
                 return true;
             }
 
-            if (abilityHelper.CanBeCasted(this.meteor))
+            if (abilityHelper.CanBeCasted(meteor))
             {
-                if (targetManager.Target.HasModifier("modifier_axe_berserkers_call") && abilityHelper.UseAbility(this.meteor))
+                if (targetManager.Target.HasModifier("modifier_axe_berserkers_call") && abilityHelper.UseAbility(meteor))
                 {
                     return true;
                 }
             }
 
-            if (abilityHelper.UseAbilityIfCondition(this.blink, this.call))
+            if (abilityHelper.UseAbilityIfCondition(blink, call))
             {
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.force, 500, 0))
+            if (abilityHelper.UseAbility(force, 500, 0))
             {
                 return true;
             }
 
-            if (!abilityHelper.CanBeCasted(this.call, false))
+            if (!abilityHelper.CanBeCasted(call, false))
             {
-                if (abilityHelper.UseAbility(this.bladeMail, 400))
+                if (abilityHelper.UseAbility(bladeMail, 400))
                 {
                     return true;
                 }
             }
 
-            if (abilityHelper.UseAbility(this.mjollnir, 400))
+            if (abilityHelper.UseAbility(mjollnir, 400))
             {
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.shiva))
+            if (abilityHelper.UseAbility(shiva))
             {
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.dagon))
+            if (abilityHelper.UseAbility(dagon))
             {
                 return true;
             }
 
-            if (abilityHelper.CanBeCasted(this.hunger))
+            if (abilityHelper.UseAbility(manta, Owner.GetAttackRange()))
             {
-                if (abilityHelper.CanBeCasted(this.call))
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(illusionCape, Owner.GetAttackRange()))
+            {
+                return true;
+            }
+
+            if (abilityHelper.CanBeCasted(hunger))
+            {
+                if (abilityHelper.CanBeCasted(call))
                 {
                     return false;
                 }
 
-                if (abilityHelper.CanBeCasted(this.meteor) && this.call?.Sleeper.IsSleeping == true)
+                if (abilityHelper.CanBeCasted(meteor) && call?.Sleeper.IsSleeping == true)
                 {
                     return false;
                 }
 
-                if (abilityHelper.UseAbility(this.hunger))
+                if (abilityHelper.UseAbility(hunger))
                 {
                     return true;
                 }
@@ -182,7 +199,7 @@
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.call))
+            if (abilityHelper.UseAbility(call))
             {
                 return true;
             }
