@@ -17,17 +17,18 @@
     using Core.Entities.Units;
     using Core.Extensions;
     using Core.Helpers;
-    using Divine.Extensions;
-    using Divine.Projectile;
+
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Extensions;
+    using Divine.Projectile;
 
     using TargetManager;
 
     [UnitName(nameof(HeroId.npc_dota_hero_storm_spirit))]
     internal class StormSpirit : ControllableUnit //, IDisposable
     {
-        private readonly Sleeper overloadSleeper = new Sleeper();
+        private readonly Sleeper overloadSleeper = new();
 
         private BallLightning ball;
 
@@ -40,6 +41,8 @@
         private Nullifier nullifier;
 
         private DisableAbility orchid;
+
+        private BuffAbility overload;
 
         private NukeAbility remnant;
 
@@ -55,13 +58,14 @@
                 { AbilityId.storm_spirit_static_remnant, x => this.remnant = new NukeAbility(x) },
                 { AbilityId.storm_spirit_electric_vortex, x => this.vortex = new DisableAbility(x) },
                 { AbilityId.storm_spirit_ball_lightning, x => this.ball = new BallLightning(x) },
+                { AbilityId.storm_spirit_overload, x => this.overload = new BuffAbility(x) },
 
                 { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
                 { AbilityId.item_sheepstick, x => this.hex = new DisableAbility(x) },
                 { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
                 { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },
                 { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
-                { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) },
+                { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) }
             };
 
             this.MoveComboAbilities.Add(AbilityId.storm_spirit_ball_lightning, _ => this.ball);
@@ -80,6 +84,7 @@
             }
 
             var ult = this.ball?.Ability;
+
             if (ult?.CanBeCasted() != true)
             {
                 return;
@@ -132,7 +137,8 @@
                 return true;
             }
 
-            var overloaded = this.Owner.CanAttack(target, 25) && this.Owner.HasModifier("modifier_storm_spirit_overload");
+            bool overloaded = this.Owner.CanAttack(target, 25) && this.Owner.HasModifier("modifier_storm_spirit_overload");
+
             var projectile = ProjectileManager.TrackingProjectiles.FirstOrDefault(x => x.Source?.Handle == this.Handle && x.Target?.Handle == target.Handle && x.IsAutoAttackProjectile());
 
             if (overloaded)
@@ -142,7 +148,8 @@
                     return false;
                 }
 
-                var distance = target.IsMoving && target.GetAngle(projectile.Position) > 1.5f ? 250 : 350;
+                int distance = target.IsMoving && target.GetAngle(projectile.Position) > 1.5f ? 250 : 350;
+
                 if (projectile.Position.Distance2D(projectile.TargetPosition) > distance)
                 {
                     return false;
@@ -153,11 +160,12 @@
                 if (projectile != null)
                 {
                     var overload = this.Owner.Abilities.FirstOrDefault(x => x.Id == AbilityId.storm_spirit_overload);
+
                     if (overload != null)
                     {
-                        var attackDamage = this.Owner.GetAttackDamage(target);
-                        var overloadDamage = overload.GetDamage(target);
-                        var health = target.Health;
+                        int attackDamage = this.Owner.GetAttackDamage(target);
+                        int overloadDamage = overload.GetDamage(target);
+                        float health = target.Health;
 
                         if (attackDamage < health && attackDamage + overloadDamage > health)
                         {
@@ -168,8 +176,8 @@
 
                             if (abilityHelper.CanBeCasted(this.ball, false, false))
                             {
-                                var distance = projectile.Position.Distance2D(projectile.TargetPosition);
-                                var time = distance / projectile.Speed;
+                                float distance = projectile.Position.Distance2D(projectile.TargetPosition);
+                                float time = distance / projectile.Speed;
 
                                 if (time > this.ball.Ability.CastPoint && abilityHelper.ForceUseAbility(this.ball, true))
                                 {
@@ -186,6 +194,7 @@
                 this.ComboSleeper.ExtendSleep(0.1f);
                 this.remnant?.Sleeper.Sleep(1f);
                 this.ball?.Sleeper.Sleep(1f);
+
                 return true;
             }
 
@@ -193,12 +202,19 @@
             {
                 this.ComboSleeper.ExtendSleep(0.1f);
                 this.ball?.Sleeper.Sleep(1f);
+
                 return true;
             }
 
             if (abilityHelper.UseAbilityIfCondition(this.ball, this.remnant, this.vortex))
             {
                 this.ComboSleeper.ExtendSleep(0.3f);
+
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.overload, this.Owner.GetAttackRange()))
+            {
                 return true;
             }
 

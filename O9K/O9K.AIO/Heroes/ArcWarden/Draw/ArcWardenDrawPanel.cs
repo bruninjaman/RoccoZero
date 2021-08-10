@@ -17,7 +17,21 @@
     {
         public static Lane lane;
 
-        private static int _optionsCount = Enum.GetNames(typeof(Lane)).Length;
+        private static readonly int _optionsCount = Enum.GetNames(typeof(Lane)).Length;
+
+        private static readonly Dictionary<Lane, Vector4> vector4PosClick = new();
+
+        public static Vector2 SizePanel  ;
+
+        public static MenuSlider positionSliderX = new("position x", 0, 0, 2000);
+
+        public static MenuSlider positionSliderY = new("position y", 600, 0, 2000);
+
+        public static MenuSlider sizeMenuSlider = new("SIZE", 100, 100, 2000);
+
+        public static string unitName { get; set; }
+
+        public static bool pushComboStatus { get; set; }
 
         public static void OnMouseKeyDown(MouseEventArgs e)
         {
@@ -35,70 +49,60 @@
             }
         }
 
-        private static Dictionary<Lane, Vector4> vector4PosClick = new();
-
-        public static Vector2 SizePanel = new();
-
-        public static MenuSlider positionSliderX = new MenuSlider("position x", 0, 0, 2000);
-
-        public static MenuSlider positionSliderY = new MenuSlider("position y", 600, 0, 2000);
-
-        public static MenuSlider sizeMenuSlider = new MenuSlider("SIZE", 100, 100, 2000);
-
         public static void ButtonDrawOn()
         {
-            var scaling = RendererManager.Scaling;
-            var optionsCount = _optionsCount;
+            float scaling = RendererManager.Scaling;
+            int optionsCount = _optionsCount;
             var positionX = positionSliderX;
             var positionY = positionSliderY;
             var sizeMenuX = sizeMenuSlider;
-            var sizeMenuY = sizeMenuX / 1.2f;
-            var indent = sizeMenuX / 5;
+            float sizeMenuY = sizeMenuX / 1.2f;
+            int indent = sizeMenuX / 5;
 
             var rectBase = new RectangleF(
-                x: positionX,
-                y: positionY,
-                width: ((int)(sizeMenuX + indent / 1.55f) * scaling) * optionsCount,
-                height: sizeMenuX / 4f * scaling);
+                positionX,
+                positionY,
+                (int)(sizeMenuX + indent / 1.55f) * scaling * optionsCount,
+                sizeMenuX / 4f * scaling);
 
             var rectText = new RectangleF(
-                x: rectBase.X,
-                y: rectBase.Y - (10 * scaling),
-                width: rectBase.Width,
-                height: rectBase.Height + (10 * scaling));
+                rectBase.X,
+                rectBase.Y - 10 * scaling,
+                rectBase.Width,
+                rectBase.Height + 10 * scaling);
 
             var rect = new RectangleF(
-                x: rectBase.X,
-                y: rectBase.Y + rectBase.Height + (3 * scaling),
-                width: rectBase.Width,
-                height: (sizeMenuY + indent) * scaling * 2f);
+                rectBase.X,
+                rectBase.Y + rectBase.Height + 3 * scaling,
+                rectBase.Width,
+                (sizeMenuY + indent) * scaling * 3f);
 
             RendererManager.DrawFilledRectangle(rect, Color.Black, new Color(0, 0, 0, 250), 2);
-            SizePanel = (new Vector2(((sizeMenuX + indent / 1.55f) * scaling) * optionsCount, sizeMenuX / 4 * scaling));
+            SizePanel = new Vector2((sizeMenuX + indent / 1.55f) * scaling * optionsCount, sizeMenuX / 4 * scaling);
 
             vector4PosClick.Clear();
 
-            var fontSize = 35 * scaling;
+            float fontSize = 35 * scaling;
 
             for (int i = 0; i < optionsCount; i++)
             {
-                var posX = rect.X + (indent / 2 * scaling) + i * ((sizeMenuX + (indent / 2)) * scaling);
-                var posY = rect.Y + (indent / 2 * scaling);
-                var width = sizeMenuX * scaling;
-                var height = sizeMenuY * scaling;
+                float posX = rect.X + indent / 2 * scaling + i * ((sizeMenuX + indent / 2) * scaling);
+                float posY = rect.Y + indent / 2 * scaling;
+                float width = sizeMenuX * scaling;
+                float height = sizeMenuY * scaling;
                 vector4PosClick.Add((Lane)i, new Vector4(posX, posY, width, height));
 
                 var rectBorderImage = new RectangleF(
-                    x: posX,
-                    y: posY,
-                    width: width,
-                    height: height);
+                    posX,
+                    posY,
+                    width,
+                    height);
 
                 var rectText1 = new RectangleF(
-                    x: posX + (10 * scaling),
-                    y: posY + (10 * scaling),
-                    width: width,
-                    height: height);
+                    posX + 10 * scaling,
+                    posY + 10 * scaling,
+                    width,
+                    height);
 
                 if ((Lane)i == lane)
                 {
@@ -114,25 +118,23 @@
                 }
             }
 
-            var newRect = new RectangleF(rect.X + (rect.Width * 0.5f) - (rect.Width / 3) * 0.5f, rect.Y + (sizeMenuX + (indent * 0.5f)) * scaling, rect.Width / 3f, sizeMenuY * scaling);
+            var rectForCloneStatus = new RectangleF(rect.X + rect.Width * 0.5f - rect.Width / 3 * 0.5f, rect.Y + (sizeMenuX + indent * 0.5f) * scaling, rect.Width / 3f, sizeMenuY * scaling);
 
             if (unitName != null)
             {
-                RendererManager.DrawRectangle(newRect, Color.Black);
+                RendererManager.DrawRectangle(rectForCloneStatus, Color.Black);
 
-                RendererManager.DrawImage(unitName, newRect, UnitImageType.Default, true);
+                RendererManager.DrawImage(unitName, rectForCloneStatus, UnitImageType.Default, true);
             }
 
             if (pushComboStatus)
             {
-                RendererManager.DrawRectangle(newRect, Color.Black);
+                RendererManager.DrawRectangle(rectForCloneStatus, Color.Black);
 
-                RendererManager.DrawText("Push combo ACTIVE", new Vector2(rect.X  , rect.Y + (sizeMenuX + (indent * 0.5f)) * scaling), Color.Red, fontSize);
+                RendererManager.DrawText("Push combo ACTIVE", new Vector2(rect.X  , rect.Y + (sizeMenuX + indent * 0.5f) * scaling), Color.Red, fontSize);
             }
+
+            var rectForItemsCd = new RectangleF(rect.X + rect.Width * 0.5f - rect.Width / 3 * 0.5f, rect.Y + (sizeMenuX + indent * 0.5f) * scaling * 2, rect.Width / 3f, sizeMenuY * scaling);
         }
-
-        public static string unitName { get; set; }
-
-        public static bool pushComboStatus { get; set; }
     }
 }

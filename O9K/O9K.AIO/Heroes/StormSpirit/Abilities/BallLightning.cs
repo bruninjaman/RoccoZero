@@ -46,6 +46,7 @@
         public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)
         {
             var menu = comboMenu.GetAbilitySettingsMenu<BallLightningMenu>(this);
+
             if (menu != null)
             {
                 this.menuMaxCastRange = menu.MaxCastRange;
@@ -93,19 +94,19 @@
             var target = targetManager.Target;
             var targetPosition = target.Position;
             var ownerPosition = this.Owner.Position;
-            var distance = this.Owner.Distance(target);
+            float distance = this.Owner.Distance(target);
 
             if (distance > this.menuMaxCastRange)
             {
                 return false;
             }
 
-            var attackRange = this.Owner.GetAttackRange(target);
-            var isInAttackRange = distance < attackRange;
-            var immobilityDuration = target.GetImmobilityDuration();
-            var aggressive = this.mode == Mode.Aggressive;
+            float attackRange = this.Owner.GetAttackRange(target);
+            bool isInAttackRange = distance < attackRange;
+            float immobilityDuration = target.GetImmobilityDuration();
+            bool aggressive = this.mode == Mode.Aggressive;
 
-            var maxRange = this.ball.MaxCastRange;
+            float maxRange = this.ball.MaxCastRange;
             var input = this.Ability.GetPredictionInput(targetManager.Target);
             input.CastRange = maxRange;
             input.Range = maxRange;
@@ -125,6 +126,7 @@
                         > remnant.Ability.ManaCost + vortex.Ability.ManaCost)
                     {
                         this.ballPosition = predictedPosition;
+
                         return true;
                     }
 
@@ -133,6 +135,7 @@
                         if (this.ball.GetRemainingMana(predictedPosition) > remnant.Ability.ManaCost)
                         {
                             this.ballPosition = predictedPosition;
+
                             return true;
                         }
                     }
@@ -141,13 +144,14 @@
                 if (!target.IsVisible)
                 {
                     this.ballPosition = predictedPosition;
+
                     return true;
                 }
             }
 
             if (isInAttackRange)
             {
-                if (!this.maxDamage || !this.Owner.CanAttack(target))
+                if (!this.maxDamage || !this.Owner.CanAttack(target) || this.Owner.HasModifier("modifier_storm_spirit_electric_rave"))
                 {
                     return false;
                 }
@@ -155,12 +159,14 @@
                 if (immobilityDuration > 0.5f)
                 {
                     this.ballPosition = this.Owner.InFront(25);
+
                     return true;
                 }
 
                 if (aggressive || target.IsRanged || target.GetAngle(this.Owner) > 1f)
                 {
                     var position1 = predictedPosition.Extend2D(ownerPosition, attackRange - 50);
+
                     var position2 = ownerPosition.Extend2D(
                         predictedPosition,
                         aggressive || this.Owner.IsMoving && !this.Owner.IsRotating ? 75 : 25);
@@ -168,6 +174,7 @@
                     this.ballPosition = predictedPosition.Distance2D(position1) < predictedPosition.Distance2D(position2)
                                             ? position1
                                             : position2;
+
                     return true;
                 }
                 else
@@ -183,11 +190,13 @@
                     }
 
                     this.ballPosition = position;
+
                     return true;
                 }
             }
 
             this.ballPosition = predictedPosition.Extend2D(ownerPosition, attackRange - 100);
+
             return true;
         }
 
@@ -203,7 +212,7 @@
                 return false;
             }
 
-            var delay = this.Ability.GetCastDelay(toPosition);
+            float delay = this.Ability.GetCastDelay(toPosition);
             comboSleeper.Sleep(delay);
             this.Sleeper.Sleep(delay + 0.5f);
             this.OrbwalkSleeper.Sleep(delay);
