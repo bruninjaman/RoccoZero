@@ -2,6 +2,7 @@
 {
     using Base;
     using Base.Components;
+    using Base.Types;
 
     using Divine.Entity.Entities.Abilities;
     using Divine.Entity.Entities.Abilities.Components;
@@ -14,13 +15,19 @@
     using Metadata;
 
     [AbilityId(AbilityId.storm_spirit_overload)]
-    public class Overload : PassiveAbility, IHasPassiveDamageIncrease
+    public class Overload : ActiveAbility, IHasPassiveDamageIncrease, IBuff
     {
         public Overload(Ability baseAbility)
             : base(baseAbility)
         {
-            this.DamageData = new SpecialData(baseAbility, "overload_damage");
+            DamageData = new SpecialData(baseAbility, "overload_damage");
         }
+
+        public string BuffModifierName { get; } = "modifier_storm_spirit_electric_rave";
+
+        public bool BuffsAlly { get; } = false;
+
+        public bool BuffsOwner { get; } = true;
 
         public bool IsPassiveDamagePermanent { get; } = false;
 
@@ -32,9 +39,9 @@
         {
             var damage = new Damage();
 
-            if (!unit.IsBuilding && unit.IsUnit && !unit.IsAlly(this.Owner))
+            if (!unit.IsBuilding && unit.IsUnit && !unit.IsAlly(Owner))
             {
-                damage[this.DamageType] = this.DamageData.GetValue(this.Level);
+                damage[DamageType] = DamageData.GetValue(Level);
             }
 
             return damage;
