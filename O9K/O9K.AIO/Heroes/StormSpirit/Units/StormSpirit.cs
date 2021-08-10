@@ -53,45 +53,45 @@
         public StormSpirit(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
-            ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
+            this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
             {
-                { AbilityId.storm_spirit_static_remnant, x => remnant = new NukeAbility(x) },
-                { AbilityId.storm_spirit_electric_vortex, x => vortex = new DisableAbility(x) },
-                { AbilityId.storm_spirit_ball_lightning, x => ball = new BallLightning(x) },
-                { AbilityId.storm_spirit_overload, x => overload = new BuffAbility(x) },
+                { AbilityId.storm_spirit_static_remnant, x => this.remnant = new NukeAbility(x) },
+                { AbilityId.storm_spirit_electric_vortex, x => this.vortex = new DisableAbility(x) },
+                { AbilityId.storm_spirit_ball_lightning, x => this.ball = new BallLightning(x) },
+                { AbilityId.storm_spirit_overload, x => this.overload = new BuffAbility(x) },
 
-                { AbilityId.item_orchid, x => orchid = new DisableAbility(x) },
-                { AbilityId.item_sheepstick, x => hex = new DisableAbility(x) },
-                { AbilityId.item_bloodthorn, x => bloodthorn = new Bloodthorn(x) },
-                { AbilityId.item_shivas_guard, x => shiva = new DebuffAbility(x) },
-                { AbilityId.item_nullifier, x => nullifier = new Nullifier(x) },
-                { AbilityId.item_dagon_5, x => dagon = new NukeAbility(x) }
+                { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
+                { AbilityId.item_sheepstick, x => this.hex = new DisableAbility(x) },
+                { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
+                { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },
+                { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
+                { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) }
             };
 
-            MoveComboAbilities.Add(AbilityId.storm_spirit_ball_lightning, _ => ball);
+            this.MoveComboAbilities.Add(AbilityId.storm_spirit_ball_lightning, _ => this.ball);
         }
 
         public void ChargeOverload()
         {
-            if (!IsValid || overloadSleeper)
+            if (!this.IsValid || this.overloadSleeper)
             {
                 return;
             }
 
-            if (Owner.HasModifier("modifier_storm_spirit_overload"))
+            if (this.Owner.HasModifier("modifier_storm_spirit_overload"))
             {
                 return;
             }
 
-            var ult = ball?.Ability;
+            var ult = this.ball?.Ability;
 
             if (ult?.CanBeCasted() != true)
             {
                 return;
             }
 
-            ult.UseAbility(Owner.IsMoving ? Owner.InFront(100) : Owner.InFront(25));
-            overloadSleeper.Sleep(1);
+            ult.UseAbility(this.Owner.IsMoving ? this.Owner.InFront(100) : this.Owner.InFront(25));
+            this.overloadSleeper.Sleep(1);
         }
 
         public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
@@ -99,48 +99,47 @@
             var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
             var target = targetManager.Target;
 
-            if (abilityHelper.UseAbility(hex))
+            if (abilityHelper.UseAbility(this.hex))
             {
                 return true;
             }
 
-            if (abilityHelper.CanBeCasted(vortex) && (target.CanBecomeMagicImmune || target.CanBecomeInvisible))
+            if (abilityHelper.CanBeCasted(this.vortex) && (target.CanBecomeMagicImmune || target.CanBecomeInvisible))
             {
-                if (abilityHelper.UseAbility(vortex))
+                if (abilityHelper.UseAbility(this.vortex))
                 {
                     return true;
                 }
             }
 
-            if (abilityHelper.UseAbility(bloodthorn))
+            if (abilityHelper.UseAbility(this.bloodthorn))
             {
                 return true;
             }
 
-            if (abilityHelper.UseAbility(orchid))
+            if (abilityHelper.UseAbility(this.orchid))
             {
                 return true;
             }
 
-            if (abilityHelper.UseAbility(nullifier))
+            if (abilityHelper.UseAbility(this.nullifier))
             {
                 return true;
             }
 
-            if (abilityHelper.UseAbility(dagon))
+            if (abilityHelper.UseAbility(this.dagon))
             {
                 return true;
             }
 
-            if (abilityHelper.UseAbility(shiva))
+            if (abilityHelper.UseAbility(this.shiva))
             {
                 return true;
             }
 
-            var overloaded = Owner.CanAttack(target, 25) &&
-                             Owner.HasModifier("modifier_storm_spirit_overload");
+            bool overloaded = this.Owner.CanAttack(target, 25) && this.Owner.HasModifier("modifier_storm_spirit_overload");
 
-            var projectile = ProjectileManager.TrackingProjectiles.FirstOrDefault(x => x.Source?.Handle == Handle && x.Target?.Handle == target.Handle && x.IsAutoAttackProjectile());
+            var projectile = ProjectileManager.TrackingProjectiles.FirstOrDefault(x => x.Source?.Handle == this.Handle && x.Target?.Handle == target.Handle && x.IsAutoAttackProjectile());
 
             if (overloaded)
             {
@@ -149,7 +148,7 @@
                     return false;
                 }
 
-                var distance = target.IsMoving && target.GetAngle(projectile.Position) > 1.5f ? 250 : 350;
+                int distance = target.IsMoving && target.GetAngle(projectile.Position) > 1.5f ? 250 : 350;
 
                 if (projectile.Position.Distance2D(projectile.TargetPosition) > distance)
                 {
@@ -160,27 +159,27 @@
             {
                 if (projectile != null)
                 {
-                    var overload = Owner.Abilities.FirstOrDefault(x => x.Id == AbilityId.storm_spirit_overload);
+                    var overload = this.Owner.Abilities.FirstOrDefault(x => x.Id == AbilityId.storm_spirit_overload);
 
                     if (overload != null)
                     {
-                        var attackDamage = Owner.GetAttackDamage(target);
-                        var overloadDamage = overload.GetDamage(target);
-                        var health = target.Health;
+                        int attackDamage = this.Owner.GetAttackDamage(target);
+                        int overloadDamage = overload.GetDamage(target);
+                        float health = target.Health;
 
                         if (attackDamage < health && attackDamage + overloadDamage > health)
                         {
-                            if (abilityHelper.CanBeCasted(remnant, false, false) && abilityHelper.ForceUseAbility(remnant, true))
+                            if (abilityHelper.CanBeCasted(this.remnant, false, false) && abilityHelper.ForceUseAbility(this.remnant, true))
                             {
                                 return true;
                             }
 
-                            if (abilityHelper.CanBeCasted(ball, false, false))
+                            if (abilityHelper.CanBeCasted(this.ball, false, false))
                             {
-                                var distance = projectile.Position.Distance2D(projectile.TargetPosition);
-                                var time = distance / projectile.Speed;
+                                float distance = projectile.Position.Distance2D(projectile.TargetPosition);
+                                float time = distance / projectile.Speed;
 
-                                if (time > ball.Ability.CastPoint && abilityHelper.ForceUseAbility(ball, true))
+                                if (time > this.ball.Ability.CastPoint && abilityHelper.ForceUseAbility(this.ball, true))
                                 {
                                     return true;
                                 }
@@ -190,31 +189,31 @@
                 }
             }
 
-            if (abilityHelper.UseAbility(vortex))
+            if (abilityHelper.UseAbility(this.vortex))
             {
-                ComboSleeper.ExtendSleep(0.1f);
-                remnant?.Sleeper.Sleep(1f);
-                ball?.Sleeper.Sleep(1f);
+                this.ComboSleeper.ExtendSleep(0.1f);
+                this.remnant?.Sleeper.Sleep(1f);
+                this.ball?.Sleeper.Sleep(1f);
 
                 return true;
             }
 
-            if (abilityHelper.UseAbility(remnant))
+            if (abilityHelper.UseAbility(this.remnant))
             {
-                ComboSleeper.ExtendSleep(0.1f);
-                ball?.Sleeper.Sleep(1f);
+                this.ComboSleeper.ExtendSleep(0.1f);
+                this.ball?.Sleeper.Sleep(1f);
 
                 return true;
             }
 
-            if (abilityHelper.UseAbilityIfCondition(ball, remnant, vortex))
+            if (abilityHelper.UseAbilityIfCondition(this.ball, this.remnant, this.vortex))
             {
-                ComboSleeper.ExtendSleep(0.3f);
+                this.ComboSleeper.ExtendSleep(0.3f);
 
                 return true;
             }
 
-            if (abilityHelper.UseAbility(this.overload, Owner.GetAttackRange()))
+            if (abilityHelper.UseAbility(this.overload, this.Owner.GetAttackRange()))
             {
                 return true;
             }
@@ -229,7 +228,7 @@
                 return true;
             }
 
-            if (abilityHelper.UseMoveAbility(ball))
+            if (abilityHelper.UseMoveAbility(this.ball))
             {
                 return true;
             }

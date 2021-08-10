@@ -40,7 +40,7 @@
                 return;
             }
 
-            for (var i = 0; i < _optionsCount; i++)
+            for (int i = 0; i < _optionsCount; i++)
             {
                 if (e.Position.IsUnderRectangle(new RectangleF(vector4PosClick[(Lane)i].X - 5, vector4PosClick[(Lane)i].Y - 5, vector4PosClick[(Lane)i].Z, vector4PosClick[(Lane)i].W)))
                 {
@@ -51,13 +51,13 @@
 
         public static void ButtonDrawOn()
         {
-            var scaling = RendererManager.Scaling;
-            var optionsCount = _optionsCount;
+            float scaling = RendererManager.Scaling;
+            int optionsCount = _optionsCount;
             var positionX = positionSliderX;
             var positionY = positionSliderY;
             var sizeMenuX = sizeMenuSlider;
-            var sizeMenuY = sizeMenuX / 1.2f;
-            var indent = sizeMenuX / 5;
+            float sizeMenuY = sizeMenuX / 1.2f;
+            int indent = sizeMenuX / 5;
 
             var rectBase = new RectangleF(
                 positionX,
@@ -82,14 +82,14 @@
 
             vector4PosClick.Clear();
 
-            var fontSize = 35 * scaling;
+            float fontSize = 35 * scaling;
 
-            for (var i = 0; i < optionsCount; i++)
+            for (int i = 0; i < optionsCount; i++)
             {
-                var posX = rect.X + indent / 2 * scaling + i * ((sizeMenuX + indent / 2) * scaling);
-                var posY = rect.Y + indent / 2 * scaling;
-                var width = sizeMenuX * scaling;
-                var height = sizeMenuY * scaling;
+                float posX = rect.X + indent / 2 * scaling + i * ((sizeMenuX + indent / 2) * scaling);
+                float posY = rect.Y + indent / 2 * scaling;
+                float width = sizeMenuX * scaling;
+                float height = sizeMenuY * scaling;
                 vector4PosClick.Add((Lane)i, new Vector4(posX, posY, width, height));
 
                 var rectBorderImage = new RectangleF(

@@ -20,7 +20,7 @@
         public Overload(Ability baseAbility)
             : base(baseAbility)
         {
-            DamageData = new SpecialData(baseAbility, "overload_damage");
+            this.DamageData = new SpecialData(baseAbility, "overload_damage");
         }
 
         public string BuffModifierName { get; } = "modifier_storm_spirit_electric_rave";
@@ -39,9 +39,9 @@
         {
             var damage = new Damage();
 
-            if (!unit.IsBuilding && unit.IsUnit && !unit.IsAlly(Owner))
+            if (!unit.IsBuilding && unit.IsUnit && !unit.IsAlly(this.Owner))
             {
-                damage[DamageType] = DamageData.GetValue(Level);
+                damage[this.DamageType] = this.DamageData.GetValue(this.Level);
             }
 
             return damage;

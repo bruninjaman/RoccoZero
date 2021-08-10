@@ -40,7 +40,7 @@
         public BallLightning(ActiveAbility ability)
             : base(ability)
         {
-            ball = (BaseBallLightning)ability;
+            this.ball = (BaseBallLightning)ability;
         }
 
         public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)
@@ -49,9 +49,9 @@
 
             if (menu != null)
             {
-                menuMaxCastRange = menu.MaxCastRange;
-                maxDamage = menu.MaxDamageCombo;
-                mode = menu.Mode;
+                this.menuMaxCastRange = menu.MaxCastRange;
+                this.maxDamage = menu.MaxDamageCombo;
+                this.mode = menu.Mode;
             }
 
             return true;
@@ -59,17 +59,17 @@
 
         public override bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper)
         {
-            return UseAbility(targetManager, comboSleeper, Owner.IsMoving ? Owner.InFront(100) : Owner.InFront(25));
+            return this.UseAbility(targetManager, comboSleeper, this.Owner.IsMoving ? this.Owner.InFront(100) : this.Owner.InFront(25));
         }
 
         public override UsableAbilityMenu GetAbilityMenu(string simplifiedName)
         {
-            return new BallLightningMenu(Ability, simplifiedName);
+            return new BallLightningMenu(this.Ability, simplifiedName);
         }
 
         public override bool ShouldCast(TargetManager targetManager)
         {
-            if (Owner.IsInvulnerable)
+            if (this.Owner.IsInvulnerable)
             {
                 return false;
             }
@@ -93,26 +93,26 @@
         {
             var target = targetManager.Target;
             var targetPosition = target.Position;
-            var ownerPosition = Owner.Position;
-            var distance = Owner.Distance(target);
+            var ownerPosition = this.Owner.Position;
+            float distance = this.Owner.Distance(target);
 
-            if (distance > menuMaxCastRange)
+            if (distance > this.menuMaxCastRange)
             {
                 return false;
             }
 
-            var attackRange = Owner.GetAttackRange(target);
-            var isInAttackRange = distance < attackRange;
-            var immobilityDuration = target.GetImmobilityDuration();
-            var aggressive = mode == Mode.Aggressive;
+            float attackRange = this.Owner.GetAttackRange(target);
+            bool isInAttackRange = distance < attackRange;
+            float immobilityDuration = target.GetImmobilityDuration();
+            bool aggressive = this.mode == Mode.Aggressive;
 
-            var maxRange = ball.MaxCastRange;
-            var input = Ability.GetPredictionInput(targetManager.Target);
+            float maxRange = this.ball.MaxCastRange;
+            var input = this.Ability.GetPredictionInput(targetManager.Target);
             input.CastRange = maxRange;
             input.Range = maxRange;
             input.Radius = 1;
             input.Delay += 0.3f;
-            var output = Ability.GetPredictionOutput(input);
+            var output = this.Ability.GetPredictionOutput(input);
             var predictedPosition = output.CastPosition;
 
             if (aggressive)
@@ -122,19 +122,19 @@
 
                 if (remnant != null && distance > 200)
                 {
-                    if (vortex != null && ball.GetRemainingMana(predictedPosition)
+                    if (vortex != null && this.ball.GetRemainingMana(predictedPosition)
                         > remnant.Ability.ManaCost + vortex.Ability.ManaCost)
                     {
-                        ballPosition = predictedPosition;
+                        this.ballPosition = predictedPosition;
 
                         return true;
                     }
 
                     if (!target.HasModifier("modifier_storm_spirit_electric_vortex_pull"))
                     {
-                        if (ball.GetRemainingMana(predictedPosition) > remnant.Ability.ManaCost)
+                        if (this.ball.GetRemainingMana(predictedPosition) > remnant.Ability.ManaCost)
                         {
-                            ballPosition = predictedPosition;
+                            this.ballPosition = predictedPosition;
 
                             return true;
                         }
@@ -143,7 +143,7 @@
 
                 if (!target.IsVisible)
                 {
-                    ballPosition = predictedPosition;
+                    this.ballPosition = predictedPosition;
 
                     return true;
                 }
@@ -151,29 +151,29 @@
 
             if (isInAttackRange)
             {
-                if (!maxDamage || !Owner.CanAttack(target) || Owner.HasModifier("modifier_storm_spirit_electric_rave"))
+                if (!this.maxDamage || !this.Owner.CanAttack(target) || this.Owner.HasModifier("modifier_storm_spirit_electric_rave"))
                 {
                     return false;
                 }
 
                 if (immobilityDuration > 0.5f)
                 {
-                    ballPosition = Owner.InFront(25);
+                    this.ballPosition = this.Owner.InFront(25);
 
                     return true;
                 }
 
-                if (aggressive || target.IsRanged || target.GetAngle(Owner) > 1f)
+                if (aggressive || target.IsRanged || target.GetAngle(this.Owner) > 1f)
                 {
                     var position1 = predictedPosition.Extend2D(ownerPosition, attackRange - 50);
 
                     var position2 = ownerPosition.Extend2D(
                         predictedPosition,
-                        aggressive || Owner.IsMoving && !Owner.IsRotating ? 75 : 25);
+                        aggressive || this.Owner.IsMoving && !this.Owner.IsRotating ? 75 : 25);
 
-                    ballPosition = predictedPosition.Distance2D(position1) < predictedPosition.Distance2D(position2)
-                                       ? position1
-                                       : position2;
+                    this.ballPosition = predictedPosition.Distance2D(position1) < predictedPosition.Distance2D(position2)
+                                            ? position1
+                                            : position2;
 
                     return true;
                 }
@@ -184,38 +184,38 @@
 
                     var position = ownerPosition.Distance2D(position1) < ownerPosition.Distance2D(position2) ? position1 : position2;
 
-                    if (Owner.Distance(position) < 50)
+                    if (this.Owner.Distance(position) < 50)
                     {
-                        position = Owner.InFront(25);
+                        position = this.Owner.InFront(25);
                     }
 
-                    ballPosition = position;
+                    this.ballPosition = position;
 
                     return true;
                 }
             }
 
-            ballPosition = predictedPosition.Extend2D(ownerPosition, attackRange - 100);
+            this.ballPosition = predictedPosition.Extend2D(ownerPosition, attackRange - 100);
 
             return true;
         }
 
         public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
         {
-            return UseAbility(targetManager, comboSleeper, ballPosition);
+            return this.UseAbility(targetManager, comboSleeper, this.ballPosition);
         }
 
         public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, Vector3 toPosition)
         {
-            if (!Ability.UseAbility(toPosition))
+            if (!this.Ability.UseAbility(toPosition))
             {
                 return false;
             }
 
-            var delay = Ability.GetCastDelay(toPosition);
+            float delay = this.Ability.GetCastDelay(toPosition);
             comboSleeper.Sleep(delay);
-            Sleeper.Sleep(delay + 0.5f);
-            OrbwalkSleeper.Sleep(delay);
+            this.Sleeper.Sleep(delay + 0.5f);
+            this.OrbwalkSleeper.Sleep(delay);
 
             return true;
         }
