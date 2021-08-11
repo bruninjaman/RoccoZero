@@ -2,9 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
+    using Core.Entities.Abilities.Base;
+    using Core.Managers.Entity;
     using Core.Managers.Menu.Items;
+    using Core.Managers.Renderer.Utils;
 
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Extensions;
     using Divine.Input;
     using Divine.Input.EventArgs;
@@ -32,6 +37,15 @@
         public static string unitName { get; set; }
 
         public static bool pushComboStatus { get; set; }
+
+        private static List<AbilityId> CloneItems { get; } =
+            new()
+            {
+                AbilityId.item_hand_of_midas,
+                AbilityId.item_tpscroll
+            };
+
+        private static Dictionary<AbilityId, Ability9> CloneItemsAbilities { get; } = new();
 
         public static void OnMouseKeyDown(MouseEventArgs e)
         {
@@ -134,7 +148,39 @@
                 RendererManager.DrawText("Push combo ACTIVE", new Vector2(rect.X  , rect.Y + (sizeMenuX + indent * 0.5f) * scaling), Color.Red, fontSize);
             }
 
-            var rectForItemsCd = new RectangleF(rect.X + rect.Width * 0.5f - rect.Width / 3 * 0.5f, rect.Y + (sizeMenuX + indent * 0.5f) * scaling * 2, rect.Width / 3f, sizeMenuY * scaling);
+            foreach (var cloneItemId in CloneItems)
+            {
+                var clone = EntityManager9.Units.Where(x => x.IsIllusion && x.IsHero && x.IsMyControllable).FirstOrDefault();
+
+                var ability = clone?.Abilities.Where(x => x.Id == cloneItemId).FirstOrDefault();
+
+                if (ability is not null)
+                {
+                    CloneItemsAbilities[cloneItemId] = ability;
+                }
+            }
+
+            for (int i = 0; i < CloneItemsAbilities.Count; i++)
+            {
+                float posX = rect.X + indent / 2 * scaling + i * ((sizeMenuX + indent / 2) * scaling);
+                float posY = rect.Y + (sizeMenuX + indent * 0.5f) * scaling * 2;
+                float width = sizeMenuX * scaling;
+                float height = sizeMenuY * scaling;
+
+                var ability = CloneItemsAbilities.GetValueOrDefault(CloneItems[i]);
+
+                var rectangle9 = new Rectangle9(posX,
+                    posY,
+                    width,
+                    height);
+
+                if (ability is not null && ability.IsValid)
+                {
+                    var abilityDrawer = new AbilityDrawer(ability);
+
+                    abilityDrawer.Draw(rectangle9, sizeMenuX / 5f);
+                }
+            }
         }
     }
 }
