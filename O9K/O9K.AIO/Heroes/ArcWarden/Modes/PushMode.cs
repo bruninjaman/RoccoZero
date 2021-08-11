@@ -25,20 +25,20 @@
             : base(baseHero, menu)
         {
             Instance = this;
-            arcUnitManager1 = UnitManager as ArcWardenUnitManager;
+            this.arcUnitManager1 = this.UnitManager as ArcWardenUnitManager;
         }
 
         private ArcWarden Hero
         {
             get
             {
-                if (hero == null)
+                if (this.hero == null)
                 {
-                    hero = arcUnitManager1.PushControllableUnits.Where(
-                               x => x.Owner.IsHero).FirstOrDefault() as ArcWarden;
+                    this.hero = this.arcUnitManager1.PushControllableUnits.Where(
+                                    x => x.Owner.IsHero).FirstOrDefault() as ArcWarden;
                 }
 
-                return hero;
+                return this.hero;
             }
         }
 
@@ -48,15 +48,15 @@
         {
             get
             {
-                return  arcUnitManager1.PushControllableUnits.Where(
-                        x => x.Owner.IsIllusion && x.Owner != Hero?.Owner)
+                return  this.arcUnitManager1.PushControllableUnits.Where(
+                        x => x.Owner.IsIllusion && x.Owner != this.Hero?.Owner)
                     .Select(x => new PushUnit(x) as IPushUnit);
             }
         }
 
         public void TurnOffAutoPush()
         {
-            UpdateHandler.IsEnabled = false;
+            this.UpdateHandler.IsEnabled = false;
 
             ArcWardenDrawPanel.pushComboStatus = false;
         }
@@ -68,17 +68,17 @@
                 return;
             }
 
-            if (!UpdateHandler.IsEnabled)
+            if (!this.UpdateHandler.IsEnabled)
             {
                 ArcWarden.TpCount = 1;
 
-                UpdateHandler.IsEnabled = true;
+                this.UpdateHandler.IsEnabled = true;
 
                 ArcWardenDrawPanel.pushComboStatus = true;
             }
             else
             {
-                UpdateHandler.IsEnabled = false;
+                this.UpdateHandler.IsEnabled = false;
 
                 ArcWardenDrawPanel.pushComboStatus = false;
             }
@@ -96,16 +96,16 @@
             //     this.Hero.PushCombo();
             // }
 
-            var controllableUnitsTempest = ControllableUnitsTempest;
+            var controllableUnitsTempest = this.ControllableUnitsTempest;
 
-            if (Hero != null)
+            if (this.Hero != null)
             {
-                controllableUnitsTempest = controllableUnitsTempest.Append(Hero);
+                controllableUnitsTempest = controllableUnitsTempest.Append(this.Hero);
             }
 
             if (!controllableUnitsTempest.Any(x => x != null && x.IsValid))
             {
-                UpdateHandler.IsEnabled = false;
+                this.UpdateHandler.IsEnabled = false;
 
                 ArcWardenDrawPanel.pushComboStatus = false;
             }
