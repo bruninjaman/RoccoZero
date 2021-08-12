@@ -36,14 +36,6 @@
 
         public static void Init()
         {
-            if (EntityManager9.Owner.HeroId != HeroId.npc_dota_hero_nevermore)
-            {
-                return;
-            }
-
-            OrderManager.OrderAdding += OnUnitOrder;
-            RendererManager.Draw += OnDraw;
-
             ShadowFiendBase.drawRazesSwitcher.ValueChange += OnValueChange;
             ShadowFiendBase.razeToMouseSwitcher.ValueChange += OnValueChangeRazeToMouse;
         }
