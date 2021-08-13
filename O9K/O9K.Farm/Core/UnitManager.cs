@@ -90,8 +90,8 @@
         // private void DrawingOnOnDraw()
         // {
         //
-        //     RendererManager.DrawText("LH: " + this.missedLastHit, new Vector2(10, 110), Color.White, 20);
-        //     RendererManager.DrawText("DN: " + this.missedDeny, new Vector2(10, 130), Color.White, 20);
+        //     // RendererManager.DrawText("LH: " + this.missedLastHit, new Vector2(10, 110), Color.White, 20);
+        //     // RendererManager.DrawText("DN: " + this.missedDeny, new Vector2(10, 130), Color.White, 20);
         //
         //     var myHero = this.Units.FirstOrDefault(x => x.IsControllable && EntityManager9.Owner.SelectedUnits.Contains(x.Unit));
         //     if (myHero != null)
@@ -102,49 +102,49 @@
         //             Color.White,
         //             20);
         //     }
+
+        // foreach (var unit in this.Units)
+        // {
+        //     var position = unit.Unit.HealthBarPosition - new Vector2(40, 20);
         //
-        //     foreach (var unit in this.Units)
+        //     foreach (var damage in unit.IncomingDamage)
         //     {
-        //         var position = unit.Unit.HealthBarPosition - new Vector2(40, 20);
-        //
-        //         foreach (var damage in unit.IncomingDamage)
-        //         {
-        //             if (damage.MinDamage <= 0 || GameManager.RawGameTime > damage.IncludeTime)
-        //             {
-        //                 continue;
-        //             }
-        //
-        //             var text = damage.MinDamage.ToString();
-        //
-        //             if (damage is RangedDamage ranged && ranged.Projectile != null)
-        //             {
-        //                 text += "!";
-        //             }
-        //
-        //             if (damage.IsPredicted)
-        //             {
-        //                 text += "*";
-        //             }
-        //
-        //             if (damage.Source.IsControllable)
-        //             {
-        //                 text += "^";
-        //             }
-        //
-        //             RendererManager.DrawText(text, position += new Vector2(0, 20), Color.White, 20);
-        //         }
-        //
-        //         if (myHero == null || unit == myHero)
+        //         if (damage.MinDamage <= 0 || GameManager.RawGameTime > damage.IncludeTime)
         //         {
         //             continue;
         //         }
         //
-        //         RendererManager.DrawText(
-        //             unit.Unit.Health + " " + unit.GetPredictedHealth(myHero, myHero.GetAttackDelay(unit)),
-        //             unit.Unit.HealthBarPosition + new Vector2(20, 0),
-        //             Color.White,
-        //             20);
+        //         var text = damage.MinDamage.ToString();
+        //
+        //         if (damage is RangedDamage ranged && ranged.Projectile != null)
+        //         {
+        //             text += "!";
+        //         }
+        //
+        //         if (damage.IsPredicted)
+        //         {
+        //             text += "*";
+        //         }
+        //
+        //         if (damage.Source.IsControllable)
+        //         {
+        //             text += "^";
+        //         }
+        //
+        //         RendererManager.DrawText(text, position += new Vector2(0, 20), Color.White, 20);
         //     }
+        //
+        //     if (myHero == null || unit == myHero)
+        //     {
+        //         continue;
+        //     }
+        //
+        //     RendererManager.DrawText(
+        //         unit.Unit.Health + " " + unit.GetPredictedHealth(myHero, myHero.GetAttackDelay(unit)),
+        //         unit.Unit.HealthBarPosition + new Vector2(20, 0),
+        //         Color.White,
+        //         20);
+        // }
         // }
 
         private void OnAttackEnd(Unit9 unit)
