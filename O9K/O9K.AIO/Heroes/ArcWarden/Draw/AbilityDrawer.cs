@@ -83,15 +83,6 @@
                     RendererManager.DrawText(levelText, levelPosition, Color.White, FontFlags.VerticalCenter, position.Width * 0.45f);
                 }
 
-                if (this.Ability.IsDisplayingCharges)
-                {
-                    var chargesText = this.Ability.Charges.ToString("N0");
-                    var chargesPosition = position.SinkToBottomRight(position.Width * 0.5f, position.Height * 0.5f);
-                    RendererManager.DrawImage("o9k.charge_bg", chargesPosition);
-                    RendererManager.DrawImage("o9k.outline_green", chargesPosition * 1.07f);
-                    RendererManager.DrawText(chargesText, chargesPosition, Color.White, FontFlags.Center, position.Width * 0.45f);
-                }
-
                 if (this.Ability.IsChanneling)
                 {
                     return;
