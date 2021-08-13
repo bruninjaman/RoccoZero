@@ -27,7 +27,7 @@
 
             if (this.Unit.IsRanged)
             {
-                damage = new RangedDamage(this, target, attackStartTime, 138, 0.048f);
+                damage = new RangedDamage(this, target, attackStartTime, 128, 0.048f);
                 nextDamage = new RangedDamage(damage);
             }
             else
@@ -51,44 +51,44 @@
             // ReSharper disable once AsyncVoidFunctionExpression
             UpdateManager.BeginInvoke(
                 async () =>
+                {
+                    try
                     {
-                        try
+                        var rotation = 0f;
+
+                        // ReSharper disable once CompareOfFloatsByEqualityOperator
+                        while (rotation != this.Unit.BaseUnit.Rotation)
                         {
-                            var rotation = 0f;
-
-                            // ReSharper disable once CompareOfFloatsByEqualityOperator
-                            while (rotation != this.Unit.BaseUnit.Rotation)
-                            {
-                                rotation = this.Unit.BaseUnit.Rotation;
-                                await Task.Delay(10);
-                            }
-
-                            if (!this.Unit.IsAlive || !this.Unit.IsVisible)
-                            {
-                                return;
-                            }
-
-                            var target = units
-                                .Where(
-                                    x => x.Unit != this.Unit && x.Unit.IsValid
-                                                             && x.Unit.Distance(this.Unit) <= this.Unit.GetAttackRange(x.Unit)
-                                                             && !x.Unit.IsAlly(this.Unit))
-                                .OrderBy(x => this.Unit.GetAngle(x.Unit.Position))
-                                .FirstOrDefault(x => this.Unit.GetAngle(x.Unit.Position) < 0.2f);
-
-                            if (target == null)
-                            {
-                                return;
-                            }
-
-                            this.Target = target;
-                            this.AddDamage(target, attackStartTime, true, false);
+                            rotation = this.Unit.BaseUnit.Rotation;
+                            await Task.Delay(10);
                         }
-                        catch (Exception e)
+
+                        if (!this.Unit.IsAlive || !this.Unit.IsVisible)
                         {
-                            Logger.Error(e);
+                            return;
                         }
-                    });
+
+                        var target = units
+                            .Where(
+                                x => x.Unit != this.Unit && x.Unit.IsValid
+                                                         && x.Unit.Distance(this.Unit) <= this.Unit.GetAttackRange(x.Unit)
+                                                         && !x.Unit.IsAlly(this.Unit))
+                            .OrderBy(x => this.Unit.GetAngle(x.Unit.Position))
+                            .FirstOrDefault(x => this.Unit.GetAngle(x.Unit.Position) < 0.2f);
+
+                        if (target == null)
+                        {
+                            return;
+                        }
+
+                        this.Target = target;
+                        this.AddDamage(target, attackStartTime, true, false);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+                });
         }
     }
 }
