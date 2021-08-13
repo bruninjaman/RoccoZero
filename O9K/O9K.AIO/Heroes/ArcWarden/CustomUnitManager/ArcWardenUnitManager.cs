@@ -2,10 +2,14 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+
+    using AIO.Modes.Combo;
+
     using Base;
+
     using Divine.Game;
     using Divine.Numerics;
-    using Modes.Combo;
+
     using UnitManager;
 
     internal class ArcWardenUnitManager : UnitManager
@@ -15,19 +19,28 @@
         {
         }
 
-        public IEnumerable<ControllableUnit> ControllableUnitsTempest
+        public IEnumerable<ControllableUnit> CloneControllableUnits
         {
             get
             {
                 return this.controllableUnits.Where(
-                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled && x.ShouldControl &&
+                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled &&
                          x.Owner.Distance(this.targetManager.Target ?? this.owner) < 2500);
+            }
+        }
+
+        public IEnumerable<ControllableUnit> PushControllableUnits
+        {
+            get
+            {
+                return this.controllableUnits.Where(
+                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled && x.ShouldControl);
             }
         }
 
         public virtual void ExecuteCloneCombo(ComboModeMenu comboModeMenu)
         {
-            foreach (var controllable in this.ControllableUnitsTempest)
+            foreach (var controllable in this.CloneControllableUnits)
             {
                 if (controllable.ComboSleeper.IsSleeping)
                 {
@@ -53,20 +66,23 @@
                 return;
             }
 
-            var allUnits = this.ControllableUnitsTempest.OrderBy(x => this.IssuedActionTime(x.Handle)).ToList();
+            var allUnits = this.CloneControllableUnits.OrderBy(x => this.IssuedActionTime(x.Handle)).ToList();
 
             if (this.BodyBlock(allUnits, comboModeMenu))
             {
                 this.issuedAction.Sleep(0.05f);
+
                 return;
             }
 
             var noOrbwalkUnits = new List<ControllableUnit>();
+
             foreach (var controllable in allUnits)
             {
                 if (!controllable.OrbwalkEnabled)
                 {
                     noOrbwalkUnits.Add(controllable);
+
                     continue;
                 }
 
@@ -83,6 +99,7 @@
                 this.issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
                 this.unitIssuedAction.Sleep(controllable.Handle, 0.2f);
                 this.issuedAction.Sleep(0.05f);
+
                 return;
             }
 
