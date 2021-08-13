@@ -16,14 +16,13 @@
 
     internal class MagneticFieldAbility : ShieldAbility
     {
+        private readonly MagneticField field;
+
         public MagneticFieldAbility(ActiveAbility ability)
             : base(ability)
         {
-            this.field = (MagneticField) ability;
+            this.field = (MagneticField)ability;
         }
-
-        private readonly MagneticField field;
-
 
         public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)
         {
@@ -36,7 +35,6 @@
             var mainHero = EntityManager9.Owner.Hero;
 
             var enemyTarget = targetManager.Target;
-
 
             if (abilityOwner.Distance(enemyTarget) > abilityOwner.GetAttackRange() + 20)
             {
@@ -88,28 +86,25 @@
 
             var allies = heroes.Where(x => !x.IsInvulnerable && x.IsAlly(this.Owner))
                 .ToList();
+
             var enemies = heroes.Where(x => !x.IsInvulnerable && x.IsEnemy(this.Owner))
                 .ToList();
-
 
             var abilityOwner = this.Owner;
             var mainHero = EntityManager9.Owner;
 
-
             var isMainHero = abilityOwner.Equals(mainHero);
 
             if (enemies.Count(x =>
-                x.Distance(abilityOwner) < abilityOwner.GetAttackRange() ||
-                x.Distance(mainHero) < mainHero.Hero.GetAttackRange()) < 1)
+                    x.Distance(abilityOwner) < abilityOwner.GetAttackRange() ||
+                    x.Distance(mainHero) < mainHero.Hero.GetAttackRange()) < 1)
             {
                 return false;
             }
 
-
             var closestEnemy = enemies.OrderBy(x => x.Distance(abilityOwner)).FirstOrDefault();
 
             var closestEnemyToMain = enemies.OrderBy(x => x.Distance(mainHero)).FirstOrDefault();
-
 
             if (closestEnemyToMain != null && closestEnemyToMain.Distance(mainHero) < 300 &&
                 abilityOwner.Distance(mainHero) < 800)
@@ -118,11 +113,11 @@
 
                 if (this.Owner.Distance(position) < this.Ability.CastRange && this.Ability.UseAbility(position))
                 {
-                    Sleeper.Sleep(1);
+                    this.Sleeper.Sleep(1);
+
                     return true;
                 }
             }
-
 
             if (closestEnemy != null && closestEnemy.Distance(abilityOwner) < 300)
             {
@@ -130,7 +125,8 @@
 
                 if (this.Owner.Distance(position) < this.Ability.CastRange && this.Ability.UseAbility(position))
                 {
-                    Sleeper.Sleep(1);
+                    this.Sleeper.Sleep(1);
+
                     return true;
                 }
 

@@ -34,10 +34,10 @@
         public LaneHelper()
         {
             var isRadiant = EntityManager9.Owner.Team == Team.Radiant;
-            TopPath = isRadiant ? Map.radiantTopPath : Map.direTopPath;
-            MidPath = isRadiant ? Map.radiantMidPath : Map.direMidPath;
-            BotPath = isRadiant ? Map.radiantBotPath : Map.direBotPath;
-            LaneCache = new Dictionary<Unit, List<Vector3>>();
+            this.TopPath = isRadiant ? Map.radiantTopPath : Map.direTopPath;
+            this.MidPath = isRadiant ? Map.radiantMidPath : Map.direMidPath;
+            this.BotPath = isRadiant ? Map.radiantBotPath : Map.direBotPath;
+            this.LaneCache = new Dictionary<Unit, List<Vector3>>();
         }
 
         public List<Vector3> BotPath { get; set; }
@@ -48,36 +48,36 @@
 
         public List<Vector3> GetPathCache(Unit9 hero)
         {
-            if (!LaneCache.ContainsKey(hero))
+            if (!this.LaneCache.ContainsKey(hero))
             {
-                LaneCache.Add(hero, GetPath(hero));
+                this.LaneCache.Add(hero, this.GetPath(hero));
 
                 UpdateManager.BeginInvoke(150, () =>
                 {
-                    LaneCache.Remove(hero);
+                    this.LaneCache.Remove(hero);
                 });
             }
 
-            return LaneCache[hero];
+            return this.LaneCache[hero];
         }
 
         public List<Vector3> GetPath(Unit9 hero)
         {
-            var currentLane = GetCurrentLane(hero);
+            var currentLane = this.GetCurrentLane(hero);
 
             switch (currentLane)
             {
                 case Lane.TOP:
-                    return TopPath;
+                    return this.TopPath;
 
                 case Lane.MID:
-                    return MidPath;
+                    return this.MidPath;
 
                 case Lane.BOT:
-                    return BotPath;
+                    return this.BotPath;
 
                 default:
-                    return MidPath;
+                    return this.MidPath;
             }
         }
 
@@ -86,22 +86,22 @@
             switch (currentLane)
             {
                 case Lane.TOP:
-                    return TopPath;
+                    return this.TopPath;
 
                 case Lane.MID:
-                    return MidPath;
+                    return this.MidPath;
 
                 case Lane.BOT:
-                    return BotPath;
+                    return this.BotPath;
 
                 default:
-                    return MidPath;
+                    return this.MidPath;
             }
         }
 
         public Lane GetCurrentLane(Unit9 hero)
         {
-            return GetCurrentLane(hero.Position);
+            return this.GetCurrentLane(hero.Position);
         }
 
         public Lane GetCurrentLane(Vector3 pos)
@@ -116,22 +116,22 @@
             switch (currentLane)
             {
                 case Lane.TOP:
-                    list = TopPath;
+                    list = this.TopPath;
 
                     break;
 
                 case Lane.MID:
-                    list = MidPath;
+                    list = this.MidPath;
 
                     break;
 
                 case Lane.BOT:
-                    list = BotPath;
+                    list = this.BotPath;
 
                     break;
 
                 default:
-                    list = MidPath;
+                    list = this.MidPath;
 
                     break;
             }

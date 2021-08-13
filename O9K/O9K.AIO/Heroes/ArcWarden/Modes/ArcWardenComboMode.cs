@@ -29,43 +29,40 @@
 
         public override void Disable()
         {
-            UpdateHandler.IsEnabled = false;
-            OrderManager.OrderAdding -= OnOrderAdding;
+            this.UpdateHandler.IsEnabled = false;
+            OrderManager.OrderAdding -= this.OnOrderAdding;
 
-            ComboModeMenus.Where(x =>
-                    x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange -=
-                ToggleKeyOnValueChanged;
+            this.ComboModeMenus.Where(x =>
+                x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange -= this.ToggleKeyOnValueChanged;
 
-            foreach (var comboMenu in ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
+            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
             {
-                comboMenu.Key.ValueChange -= KeyOnValueChanged;
+                comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
             }
         }
 
         public override void Dispose()
         {
-            UpdateManager.DestroyIngameUpdate(UpdateHandler);
-            OrderManager.OrderAdding -= OnOrderAdding;
+            UpdateManager.DestroyIngameUpdate(this.UpdateHandler);
+            OrderManager.OrderAdding -= this.OnOrderAdding;
 
-            ComboModeMenus.Where(x => x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange -=
-                ToggleKeyOnValueChanged;
+            this.ComboModeMenus.Where(x => x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange -= this.ToggleKeyOnValueChanged;
 
-            foreach (var comboMenu in ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
+            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
             {
-                comboMenu.Key.ValueChange -= KeyOnValueChanged;
+                comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
             }
         }
 
         public override void Enable()
         {
-            OrderManager.OrderAdding += OnOrderAdding;
+            OrderManager.OrderAdding += this.OnOrderAdding;
 
-            ComboModeMenus.Where(x => x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange +=
-                ToggleKeyOnValueChanged;
+            this.ComboModeMenus.Where(x => x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange += this.ToggleKeyOnValueChanged;
 
-            foreach (var comboMenu in ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
+            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
             {
-                comboMenu.Key.ValueChange += KeyOnValueChanged;
+                comboMenu.Key.ValueChange += this.KeyOnValueChanged;
             }
         }
 
@@ -76,39 +73,39 @@
                 return;
             }
 
-            var arcUnitManager = UnitManager as ArcWardenUnitManager;
+            var arcUnitManager = this.UnitManager as ArcWardenUnitManager;
 
             if (arcUnitManager != null)
             {
                 try
                 {
-                    if (ComboModeMenu.SimplifiedName == "clonecombo")
+                    if (this.ComboModeMenu.SimplifiedName == "clonecombo")
                     {
                         if (!arcUnitManager.CloneControllableUnits.Any(x => x.IsValid))
                         {
-                            TurnOffCombo();
+                            this.TurnOffCombo();
                         }
                     }
 
-                    if (TargetManager.HasValidTarget)
+                    if (this.TargetManager.HasValidTarget)
                     {
-                        if (ComboModeMenu.SimplifiedName == "clonecombo")
+                        if (this.ComboModeMenu.SimplifiedName == "clonecombo")
                         {
-                            arcUnitManager.ExecuteCloneCombo(ComboModeMenu);
+                            arcUnitManager.ExecuteCloneCombo(this.ComboModeMenu);
                         }
                         else
                         {
-                            arcUnitManager.ExecuteCombo(ComboModeMenu);
+                            arcUnitManager.ExecuteCombo(this.ComboModeMenu);
                         }
                     }
 
-                    if (ComboModeMenu.SimplifiedName == "clonecombo")
+                    if (this.ComboModeMenu.SimplifiedName == "clonecombo")
                     {
-                        arcUnitManager.CloneOrbwalk(ComboModeMenu);
+                        arcUnitManager.CloneOrbwalk(this.ComboModeMenu);
                     }
                     else
                     {
-                        arcUnitManager.Orbwalk(ComboModeMenu);
+                        arcUnitManager.Orbwalk(this.ComboModeMenu);
                     }
                 }
                 catch (Exception e)
@@ -122,20 +119,20 @@
         {
             if (e.NewValue)
             {
-                if (UpdateHandler.IsEnabled && ComboModeMenu.SimplifiedName != "clonecombo")
+                if (this.UpdateHandler.IsEnabled && this.ComboModeMenu.SimplifiedName != "clonecombo")
                 {
-                    IgnoreComboEnd = true;
+                    this.IgnoreComboEnd = true;
                 }
 
-                ComboModeMenu = ComboModeMenus[(MenuHoldKey)sender];
-                TargetManager.TargetLocked = true;
-                UpdateHandler.IsEnabled = true;
-                ArcWardenDrawPanel.unitName = TargetManager.Target?.BaseUnit.InternalName;
+                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
+                this.TargetManager.TargetLocked = true;
+                this.UpdateHandler.IsEnabled = true;
+                ArcWardenPanel.unitName = this.TargetManager.Target?.BaseUnit.InternalName;
                 PushMode.Instance.TurnOffAutoPush();
             }
             else
             {
-                TurnOffCombo();
+                this.TurnOffCombo();
             }
         }
 
@@ -146,39 +143,39 @@
                 return;
             }
 
-            if (TargetManager.TargetLocked != true)
+            if (this.TargetManager.TargetLocked != true)
             {
-                if (UpdateHandler.IsEnabled)
+                if (this.UpdateHandler.IsEnabled)
                 {
-                    IgnoreComboEnd = true;
+                    this.IgnoreComboEnd = true;
                 }
 
-                ComboModeMenu = ComboModeMenus[(MenuHoldKey)sender];
-                TargetManager.TargetLocked = true;
-                UpdateHandler.IsEnabled = true;
-                ArcWardenDrawPanel.unitName = TargetManager.Target?.BaseUnit.InternalName;
+                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
+                this.TargetManager.TargetLocked = true;
+                this.UpdateHandler.IsEnabled = true;
+                ArcWardenPanel.unitName = this.TargetManager.Target?.BaseUnit.InternalName;
                 PushMode.Instance.TurnOffAutoPush();
             }
             else
             {
-                TurnOffCombo();
+                this.TurnOffCombo();
             }
         }
 
         private void TurnOffCombo()
         {
-            if (IgnoreComboEnd)
+            if (this.IgnoreComboEnd)
             {
-                IgnoreComboEnd = false;
+                this.IgnoreComboEnd = false;
 
                 return;
             }
 
-            UpdateHandler.IsEnabled = false;
-            TargetManager.TargetLocked = false;
-            ArcWardenDrawPanel.unitName = null;
+            this.UpdateHandler.IsEnabled = false;
+            this.TargetManager.TargetLocked = false;
+            ArcWardenPanel.unitName = null;
 
-            ComboEnd();
+            this.ComboEnd();
         }
     }
 }

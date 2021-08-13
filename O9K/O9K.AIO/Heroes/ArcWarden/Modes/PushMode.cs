@@ -58,7 +58,7 @@
         {
             this.UpdateHandler.IsEnabled = false;
 
-            ArcWardenDrawPanel.pushComboStatus = false;
+            ArcWardenPanel.pushComboStatus = false;
         }
 
         protected override void KeyOnValueChanged(object sender, KeyEventArgs e)
@@ -74,13 +74,13 @@
 
                 this.UpdateHandler.IsEnabled = true;
 
-                ArcWardenDrawPanel.pushComboStatus = true;
+                ArcWardenPanel.pushComboStatus = true;
             }
             else
             {
                 this.UpdateHandler.IsEnabled = false;
 
-                ArcWardenDrawPanel.pushComboStatus = false;
+                ArcWardenPanel.pushComboStatus = false;
             }
         }
 
@@ -107,7 +107,7 @@
             {
                 this.UpdateHandler.IsEnabled = false;
 
-                ArcWardenDrawPanel.pushComboStatus = false;
+                ArcWardenPanel.pushComboStatus = false;
             }
 
             foreach (var unit in controllableUnitsTempest.Where(x => x != null && x.IsValid))

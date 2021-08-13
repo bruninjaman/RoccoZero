@@ -46,27 +46,27 @@
             var nearestTower =
                 EntityManager9.EnemyUnits
                     .Where(x => x.BaseUnit.NetworkName == ClassId.CDOTA_BaseNPC_Tower.ToString() && x.IsValid && x.IsAlive)
-                    .OrderBy(y => Owner.Distance(y))
+                    .OrderBy(y => this.Owner.Distance(y))
                     .FirstOrDefault();
 
             if (nearestTower == null)
             {
-                nearestTower = EntityManager9.EnemyUnits.Where(x => x.IsBuilding && x.IsValid && x.IsAlive && x.CanDie).OrderBy(y => Owner.Distance(y))
+                nearestTower = EntityManager9.EnemyUnits.Where(x => x.IsBuilding && x.IsValid && x.IsAlive && x.CanDie).OrderBy(y => this.Owner.Distance(y))
                     .FirstOrDefault();
             }
 
-            var currentLane = laneHelper.GetCurrentLane(Owner);
-            var attackPoint = laneHelper.GetClosestAttackPoint(Owner, currentLane);
+            var currentLane = this.laneHelper.GetCurrentLane(this.Owner);
+            var attackPoint = this.laneHelper.GetClosestAttackPoint(this.Owner, currentLane);
 
-            if (Owner.Distance(nearestTower) <= 900)
+            if (this.Owner.Distance(nearestTower) <= 900)
             {
-                if (PushCommands.AttackTower(Owner, nearestTower))
+                if (PushCommands.AttackTower(this.Owner, nearestTower))
                 {
                     return true;
                 }
             }
 
-            if (PushCommands.AttackNextPoint(Owner, attackPoint))
+            if (PushCommands.AttackNextPoint(this.Owner, attackPoint))
             {
                 return true;
             }

@@ -66,7 +66,7 @@
 
                 if (this.displayLevel)
                 {
-                    uint level = this.Ability.Level;
+                    var level = this.Ability.Level;
 
                     if (level == 0)
                     {
@@ -75,7 +75,7 @@
                         return;
                     }
 
-                    string levelText = level.ToString("N0");
+                    var levelText = level.ToString("N0");
                     var levelSize = RendererManager.MeasureText(levelText, position.Width * 0.45f);
                     var levelPosition = position.SinkToBottomLeft(levelSize.X, levelSize.Y * 0.8f);
 
@@ -85,7 +85,7 @@
 
                 if (this.Ability.IsDisplayingCharges)
                 {
-                    string chargesText = this.Ability.Charges.ToString("N0");
+                    var chargesText = this.Ability.Charges.ToString("N0");
                     var chargesPosition = position.SinkToBottomRight(position.Width * 0.5f, position.Height * 0.5f);
                     RendererManager.DrawImage("o9k.charge_bg", chargesPosition);
                     RendererManager.DrawImage("o9k.outline_green", chargesPosition * 1.07f);
@@ -97,7 +97,7 @@
                     return;
                 }
 
-                float cooldown = this.Ability.RemainingCooldown;
+                var cooldown = this.Ability.RemainingCooldown;
 
                 if (cooldown > 0)
                 {
@@ -138,9 +138,9 @@
             try
             {
                 RendererManager.DrawImage("o9k.ability_minimal_bg", position);
-                float levelHeight = position.Height * 0.2f;
+                var levelHeight = position.Height * 0.2f;
 
-                float cooldown = this.Ability.RemainingCooldown;
+                var cooldown = this.Ability.RemainingCooldown;
 
                 if (cooldown > 0)
                 {
@@ -171,13 +171,13 @@
                 RendererManager.DrawRectangle(position - 1, this.Ability.IsCasting ? Color.LightGreen : Color.Black);
 
                 var rec = position - 5;
-                float levelWidth = rec.Width / this.maxLevel;
-                float space = levelWidth * 0.05f;
-                float posY = rec.Bottom - levelHeight;
-                float levelDrawWidth = levelWidth - space * 2;
-                uint lvl = this.Ability.Level;
+                var levelWidth = rec.Width / this.maxLevel;
+                var space = levelWidth * 0.05f;
+                var posY = rec.Bottom - levelHeight;
+                var levelDrawWidth = levelWidth - space * 2;
+                var lvl = this.Ability.Level;
 
-                for (int i = 0; i < lvl; i++)
+                for (var i = 0; i < lvl; i++)
                 {
                     var lvlPos = new Rectangle9(rec.X + space, posY, levelDrawWidth, levelHeight);
                     RendererManager.DrawImage("o9k.ability_level_rec", lvlPos);
