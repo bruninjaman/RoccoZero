@@ -1,5 +1,7 @@
 ﻿namespace O9K.AIO.Heroes.ArcWarden.Abilities
 {
+    using System;
+
     using AIO.Abilities;
 
     using Core.Entities.Abilities.Base;
@@ -16,18 +18,17 @@
 
         public override bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override bool ShouldCast(TargetManager targetManager)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-
     }
 }

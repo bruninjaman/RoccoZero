@@ -27,47 +27,47 @@
 
         public ArcWardenBase()
         {
-            pushMode = new PushMode(this, new KeyPressModeMenu(Menu.RootMenu, "Push mode"));
-            RendererManager.Draw += ArcWardenDrawPanel.ButtonDrawOn;
-            InputManager.MouseKeyDown += ArcWardenDrawPanel.OnMouseKeyDown;
-            var menuPanelSetting = Menu.RootMenu.Add(new Menu("Panel settings"));
+            this.pushMode = new PushMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Push mode"));
+            RendererManager.Draw += ArcWardenPanel.ButtonDrawOn;
+            InputManager.MouseKeyDown += ArcWardenPanel.OnMouseKeyDown;
+            var menuPanelSetting = this.Menu.RootMenu.Add(new Menu("Panel settings"));
 
-            menuPanelSetting.Add(ArcWardenDrawPanel.positionSliderX);
-            menuPanelSetting.Add(ArcWardenDrawPanel.positionSliderY);
-            menuPanelSetting.Add(ArcWardenDrawPanel.sizeMenuSlider);
+            menuPanelSetting.Add(ArcWardenPanel.positionSliderX);
+            menuPanelSetting.Add(ArcWardenPanel.positionSliderY);
+            menuPanelSetting.Add(ArcWardenPanel.size);
         }
 
         public override void CreateUnitManager()
         {
-            UnitManager = new ArcWardenUnitManager(this);
+            this.UnitManager = new ArcWardenUnitManager(this);
         }
 
         public override void CreateComboMode(BaseHero baseHero, List<ComboModeMenu> comboMenus)
         {
-            Combo = new ArcWardenComboMode(this, comboMenus);
+            this.Combo = new ArcWardenComboMode(this, comboMenus);
         }
 
         protected override void CreateComboMenus()
         {
-            ComboMenus.Add(new ComboModeMenu(Menu.RootMenu, "Combo"));
-            ComboMenus.Add(new ComboModeMenu(Menu.RootMenu, "Alternative combo"));
-            ComboMenus.Add(new ComboModeMenu(Menu.RootMenu, "Clone combo"));
+            this.ComboMenus.Add(new ComboModeMenu(this.Menu.RootMenu, "Combo"));
+            this.ComboMenus.Add(new ComboModeMenu(this.Menu.RootMenu, "Alternative combo"));
+            this.ComboMenus.Add(new ComboModeMenu(this.Menu.RootMenu, "Clone combo"));
         }
 
         public override void Dispose()
         {
             base.Dispose();
-            pushMode.Dispose();
+            this.pushMode.Dispose();
         }
 
         protected override void DisableCustomModes()
         {
-            pushMode.Disable();
+            this.pushMode.Disable();
         }
 
         protected override void EnableCustomModes()
         {
-            pushMode.Enable();
+            this.pushMode.Enable();
         }
     }
 }

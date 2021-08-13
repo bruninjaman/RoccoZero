@@ -1,12 +1,15 @@
 ﻿namespace O9K.AIO.Heroes.ArcWarden.Abilities
 {
     using AIO.Abilities;
+
     using Core.Entities.Abilities.Base;
     using Core.Entities.Abilities.Base.Types;
     using Core.Extensions;
     using Core.Helpers;
     using Core.Prediction.Data;
+
     using Divine.Entity.Entities.Abilities.Components;
+
     using TargetManager;
 
     internal class DisableAbilityArcWarden : UsableAbility
@@ -14,7 +17,7 @@
         public DisableAbilityArcWarden(ActiveAbility ability)
             : base(ability)
         {
-            this.Disable = (IDisable) ability;
+            this.Disable = (IDisable)ability;
         }
 
         protected IDisable Disable { get; }
@@ -83,15 +86,14 @@
                     {
                         return true;
                     }
-                    else if (this.Disable.Id == AbilityId.item_orchid &&
-                             !target.HasModifier("modifier_orchid_malevolence_debuff"))
+
+                    if (this.Disable.Id == AbilityId.item_orchid &&
+                        !target.HasModifier("modifier_orchid_malevolence_debuff"))
                     {
                         return true;
                     }
-                    else
-                    {
-                        return this.ChainStun(target, false);
-                    }
+
+                    return this.ChainStun(target, false);
                 }
 
                 if (target.IsSilenced)
