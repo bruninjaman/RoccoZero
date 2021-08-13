@@ -242,31 +242,33 @@
                     break;
                 }
 
+                // TODO Commented code with cancel attack logic, need rework.
                 var predictedDeathDelay = enemy.GetPredictedDeathTime(allies) - GameManager.RawGameTime;
+                var unitToHit = this.lastUnitToHit;
 
                 // test with attack cancel
-                if (predictedDeathDelay <= 2 && !canKill)
+                if (predictedDeathDelay <= 2)
                 {
                     if (this.lastUnitToHit == null || !this.lastUnitToHit.IsValid)
                     {
                         this.lastUnitToHit = enemy;
                     }
 
-                    foreach (var unit in myUnits)
-                    {
-                        if (!Divine.Helpers.MultiSleeper<string>.Sleeping("O9K.Farm.CancelHit" + unit.Unit.Name)
-                            && unit.Unit.GetAttackRange() >= unit.Unit.Distance(this.lastUnitToHit.Unit))
-                        {
-                            unit.Unit.BaseUnit.Attack(this.lastUnitToHit.Unit);
-                            unit.Unit.BaseUnit.Stop();
-
-                            Divine.Helpers.MultiSleeper<string>.Sleep("O9K.Farm.CancelHit" + unit.Unit, 400);
-                        }
-
-                        unit.MoveSleeper.Sleep(unit.GetAttackDelay(enemy));
-                    }
+                    // foreach (var unit in myUnits)
+                    // {
+                    //     if (!Divine.Helpers.MultiSleeper<string>.Sleeping("O9K.Farm.CancelHit" + unit.Unit.Name)
+                    //         && unit.Unit.GetAttackRange() >= unit.Unit.Distance(this.lastUnitToHit.Unit))
+                    //     {
+                    //         unit.Unit.BaseUnit.Attack(this.lastUnitToHit.Unit);
+                    //         unit.Unit.BaseUnit.Stop();
+                    //
+                    //         Divine.Helpers.MultiSleeper<string>.Sleep("O9K.Farm.CancelHit" + unit.Unit, 400);
+                    //     }
+                    //
+                    //     unit.MoveSleeper.Sleep(unit.GetAttackDelay(enemy));
+                    // }
                 }
-                else
+                else if (unitToHit != null && (unitToHit == enemy ||  !unitToHit.IsValid))
                 {
                     this.lastUnitToHit = null;
                 }

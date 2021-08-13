@@ -321,7 +321,7 @@
 
         public void Stop()
         {
-            this.Unit.BaseUnit.Stop();
+            this.Unit.Stop();
             this.AttackSleeper.Reset();
             this.MoveSleeper.Reset();
         }
