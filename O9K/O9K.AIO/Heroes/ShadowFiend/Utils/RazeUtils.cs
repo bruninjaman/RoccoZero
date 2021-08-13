@@ -40,7 +40,7 @@
             ShadowFiendBase.razeToMouseSwitcher.ValueChange += OnValueChangeRazeToMouse;
         }
 
-        private static void OnValueChangeRazeToMouse(object? sender, SwitcherEventArgs e)
+        private static void OnValueChangeRazeToMouse(object sender, SwitcherEventArgs e)
         {
             if (e.NewValue)
             {
@@ -52,7 +52,7 @@
             }
         }
 
-        private static void OnValueChange(object? sender, SwitcherEventArgs e)
+        private static void OnValueChange(object sender, SwitcherEventArgs e)
         {
             if (e.NewValue)
             {
@@ -62,7 +62,7 @@
             {
                 RendererManager.Draw -= OnDraw;
 
-                for (int i = 0; i < 3; i++)
+                for (var i = 0; i < 3; i++)
                 {
                     ParticleManager.RemoveParticle($"DrawRaze_{i}");
                 }
@@ -81,7 +81,7 @@
 
         public static Vector3 InFront(Unit unit, float distance)
         {
-            float alpha = unit.RotationRad;
+            var alpha = unit.RotationRad;
             var vector2FromPolarAngle = FromPolarCoordinates(1f, alpha);
 
             var v = unit.Position + vector2FromPolarAngle.ToVector3() * distance;
@@ -101,7 +101,7 @@
 
             int[] razes = { 200, 450, 700 };
 
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var inFront = InFront(owner, razes[i]);
 

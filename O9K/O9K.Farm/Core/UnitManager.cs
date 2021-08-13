@@ -21,17 +21,17 @@
     {
         private readonly MenuManager menuManager;
 
-        private readonly List<FarmUnit> units = new List<FarmUnit>();
+        private readonly List<FarmUnit> units = new();
 
-        private readonly Dictionary<string, Type> unitTypes = new Dictionary<string, Type>();
+        private readonly Dictionary<string, Type> unitTypes = new();
 
-        //private int deny = ObjectManager.LocalPlayer.DenyCount;
+        // private int deny = EntityManager.LocalPlayer.DenyCount;
+        //
+        // private int lastHit = EntityManager.LocalPlayer.LastHitCount;
 
-        //private int lastHit = ObjectManager.LocalPlayer.LastHitCount;
+        // private int missedDeny;
 
-        //private int missedDeny;
-
-        //private int missedLastHit;
+        // private int missedLastHit;
 
         public UnitManager(MenuManager menuManager)
         {
@@ -50,10 +50,10 @@
             EntityManager9.UnitAdded += this.OnUnitAdded;
             EntityManager9.UnitRemoved += this.OnUnitRemoved;
             EntityManager9.UnitMonitor.AttackEnd += this.OnAttackEnd;
-            //     EntityManager9.UnitMonitor.UnitDied += OnUnitDied;
+            EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
 
-            //     Drawing.OnDraw += DrawingOnOnDraw;
-            //     EntityManager9.UnitMonitor.UnitDied += UnitMonitorOnUnitDied;
+            // RendererManager.Draw += DrawingOnOnDraw;
+            // EntityManager9.UnitMonitor.UnitDied += UnitMonitorOnUnitDied;
         }
 
         public IEnumerable<FarmUnit> Units
@@ -87,73 +87,70 @@
             return this.units.Find(x => x.Unit.Handle == entity.Handle);
         }
 
-        //        private void DrawingOnOnDraw(EventArgs args)
-        //        {
-
-        //            Drawing.DrawText("LH: " + this.missedLastHit, "Arial", new Vector2(10, 110), new Vector2(20), Color.White, FontFlags.None);
-        //            Drawing.DrawText("DN: " + this.missedDeny, "Arial", new Vector2(10, 130), new Vector2(20), Color.White, FontFlags.None);
-
-        //            var myHero = this.Units.FirstOrDefault(x => x.IsControllable && EntityManager9.Owner.SelectedUnits.Contains(x.Unit));
-        //            if (myHero != null)
-        //            {
-        //                Drawing.DrawText(
-        //                    myHero.AttackSleeper.IsSleeping + " " + myHero.MoveSleeper.IsSleeping,
-        //                    "Arial",
-        //                    myHero.Unit.HealthBarPosition + new Vector2(20, 20),
-        //                    new Vector2(20),
-        //                    Color.White,
-        //                    FontFlags.None);
-        //            }
-
-        //            foreach (var unit in this.Units)
-        //            {
-        //                var position = unit.Unit.HealthBarPosition - new Vector2(40, 20);
-
-        //                foreach (var damage in unit.IncomingDamage)
-        //                {
-        //                    if (damage.MinDamage <= 0 || Game.RawGameTime > damage.IncludeTime)
-        //                    {
-        //                        continue;
-        //                    }
-
-        //                    var text = damage.MinDamage.ToString();
-
-        //                    if (damage is RangedDamage ranged && ranged.Projectile != null)
-        //                    {
-        //                        text += "!";
-        //                    }
-
-        //                    if (damage.IsPredicted)
-        //                    {
-        //                        text += "*";
-        //                    }
-
-        //                    if (damage.Source.IsControllable)
-        //                    {
-        //                        text += "^";
-        //                    }
-
-        //                    Drawing.DrawText(text, "Arial", position += new Vector2(0, 20), new Vector2(20), Color.White, FontFlags.None);
-        //                }
-
-        //                if (myHero == null || unit == myHero)
-        //                {
-        //                    continue;
-        //                }
-
-        //                Drawing.DrawText(
-        //                    unit.Unit.Health + " " + unit.GetPredictedHealth(myHero, myHero.GetAttackDelay(unit)),
-        //                    "Arial",
-        //                    unit.Unit.HealthBarPosition + new Vector2(20, 0),
-        //                    new Vector2(20),
-        //                    Color.White,
-        //                    FontFlags.None);
-        //            }
-        //        }
+        // private void DrawingOnOnDraw()
+        // {
+        //
+        //     RendererManager.DrawText("LH: " + this.missedLastHit, new Vector2(10, 110), Color.White, 20);
+        //     RendererManager.DrawText("DN: " + this.missedDeny, new Vector2(10, 130), Color.White, 20);
+        //
+        //     var myHero = this.Units.FirstOrDefault(x => x.IsControllable && EntityManager9.Owner.SelectedUnits.Contains(x.Unit));
+        //     if (myHero != null)
+        //     {
+        //         RendererManager.DrawText(
+        //             myHero.AttackSleeper.IsSleeping + " " + myHero.MoveSleeper.IsSleeping,
+        //             myHero.Unit.HealthBarPosition + new Vector2(20, 20),
+        //             Color.White,
+        //             20);
+        //     }
+        //
+        //     foreach (var unit in this.Units)
+        //     {
+        //         var position = unit.Unit.HealthBarPosition - new Vector2(40, 20);
+        //
+        //         foreach (var damage in unit.IncomingDamage)
+        //         {
+        //             if (damage.MinDamage <= 0 || GameManager.RawGameTime > damage.IncludeTime)
+        //             {
+        //                 continue;
+        //             }
+        //
+        //             var text = damage.MinDamage.ToString();
+        //
+        //             if (damage is RangedDamage ranged && ranged.Projectile != null)
+        //             {
+        //                 text += "!";
+        //             }
+        //
+        //             if (damage.IsPredicted)
+        //             {
+        //                 text += "*";
+        //             }
+        //
+        //             if (damage.Source.IsControllable)
+        //             {
+        //                 text += "^";
+        //             }
+        //
+        //             RendererManager.DrawText(text, position += new Vector2(0, 20), Color.White, 20);
+        //         }
+        //
+        //         if (myHero == null || unit == myHero)
+        //         {
+        //             continue;
+        //         }
+        //
+        //         RendererManager.DrawText(
+        //             unit.Unit.Health + " " + unit.GetPredictedHealth(myHero, myHero.GetAttackDelay(unit)),
+        //             unit.Unit.HealthBarPosition + new Vector2(20, 0),
+        //             Color.White,
+        //             20);
+        //     }
+        // }
 
         private void OnAttackEnd(Unit9 unit)
         {
             var controllable = this.GetControllableUnit(unit);
+
             if (controllable == null)
             {
                 return;
@@ -213,8 +210,7 @@
         {
             foreach (var farmUnit in this.Units.Where(x => x.IsControllable && x.Target?.Unit.Equals(unit) == true))
             {
-                farmUnit.AttackSleeper.Reset();
-                farmUnit.MoveSleeper.Reset();
+                farmUnit.Stop();
             }
         }
 
@@ -223,6 +219,7 @@
             try
             {
                 var farmUnit = this.units.Find(x => x.Unit == unit);
+
                 if (farmUnit == null)
                 {
                     return;
@@ -236,42 +233,41 @@
             }
         }
 
-        //private void UnitMonitorOnUnitDied(Unit9 unit)
-        //{
-        //    if (!unit.IsCreep)
-        //    {
-        //        return;
-        //    }
-
-        //    UpdateManager.BeginInvoke(
-        //        () =>
-        //            {
-        //                var owner = EntityManager9.Owner;
-        //                if (unit.Distance(owner) > 1500)
-        //                {
-        //                    return;
-        //                }
-
-        //                if (unit.IsAlly())
-        //                {
-        //                    if (owner.Player.DenyCount != this.deny + 1)
-        //                    {
-        //                        this.missedDeny++;
-        //                    }
-
-        //                    this.deny = owner.Player.DenyCount;
-        //                }
-        //                else
-        //                {
-        //                    if (owner.Player.LastHitCount != this.lastHit + 1)
-        //                    {
-        //                        this.missedLastHit++;
-        //                    }
-
-        //                    this.lastHit = owner.Player.LastHitCount;
-        //                }
-        //            },
-        //        100);
-        //}
+        // private void UnitMonitorOnUnitDied(Unit9 unit)
+        // {
+        //     if (!unit.IsCreep)
+        //     {
+        //         return;
+        //     }
+        //
+        //     UpdateManager.BeginInvoke(100,
+        //         () =>
+        //             {
+        //                 var owner = EntityManager9.Owner;
+        //                 if (unit.Distance(owner) > 1500)
+        //                 {
+        //                     return;
+        //                 }
+        //
+        //                 if (unit.IsAlly())
+        //                 {
+        //                     if (owner.Player.DenyCount != this.deny + 1)
+        //                     {
+        //                         this.missedDeny++;
+        //                     }
+        //
+        //                     this.deny = owner.Player.DenyCount;
+        //                 }
+        //                 else
+        //                 {
+        //                     if (owner.Player.LastHitCount != this.lastHit + 1)
+        //                     {
+        //                         this.missedLastHit++;
+        //                     }
+        //
+        //                     this.lastHit = owner.Player.LastHitCount;
+        //                 }
+        //             });
+        // }
     }
 }

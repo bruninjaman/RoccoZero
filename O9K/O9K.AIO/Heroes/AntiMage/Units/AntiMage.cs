@@ -31,17 +31,17 @@
 
         private AntiMageBlink blink;
 
+        private DisableAbility bloodthorn;
+
         private ShieldAbility counterspell;
 
         private BuffAbility manta;
 
         private Nullifier nullifier;
 
-        private SpeedBuffAbility phase;
-
-        private DisableAbility bloodthorn;
-
         private DisableAbility orchid;
+
+        private SpeedBuffAbility phase;
 
         public AntiMage(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
@@ -58,7 +58,7 @@
                 { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) },
 
                 { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
-                { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
+                { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) }
             };
 
             this.MoveComboAbilities.Add(AbilityId.antimage_blink, _ => this.blink);

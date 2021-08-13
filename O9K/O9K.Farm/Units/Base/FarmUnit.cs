@@ -1,15 +1,17 @@
-﻿using O9K.Core.Extensions;
-
-namespace O9K.Farm.Units.Base
+﻿namespace O9K.Farm.Units.Base
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
     using Damage;
+
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Game;
     using Divine.Numerics;
+
     using Menu;
+
     using O9K.Core.Entities.Units;
     using O9K.Core.Helpers;
     using O9K.Core.Helpers.Damage;
@@ -23,7 +25,7 @@ namespace O9K.Farm.Units.Base
             this.IsAlly = unit.IsAlly();
         }
 
-        public Sleeper AttackSleeper { get; } = new Sleeper();
+        public Sleeper AttackSleeper { get; } = new();
 
         public float AttackStartTime { get; set; }
 
@@ -40,59 +42,40 @@ namespace O9K.Farm.Units.Base
             }
         }
 
-        public List<UnitDamage> IncomingDamage { get; } = new List<UnitDamage>();
+        public List<UnitDamage> IncomingDamage { get; } = new();
 
         public bool IsAlly { get; }
 
         public bool IsControllable { get; protected set; }
 
-        public bool IsDenyEnabled
-        {
-            get
-            {
-                return this.Menu.LastHitMenu.Deny;
-            }
-        }
+        public bool IsDenyEnabled => this.Menu.LastHitMenu.Deny;
 
-        public bool IsHarassEnabled
-        {
-            get
-            {
-                return this.Menu.LastHitMenu.Harass;
-            }
-        }
+        public bool IsHarassEnabled => this.Menu.LastHitMenu.Harass;
 
         public bool IsHero { get; protected set; }
 
-        public bool IsLastHitEnabled
-        {
-            get
-            {
-                return this.Menu.LastHitMenu.LastHit;
-            }
-        }
+        public bool IsLastHitEnabled => this.Menu.LastHitMenu.LastHit;
 
         public bool IsMyHero { get; protected set; }
 
         public bool IsTower { get; protected set; }
 
-        public bool IsValid
-        {
-            get
-            {
-                return this.Unit.IsValid && this.Unit.IsVisible && this.Unit.IsAlive && !this.Unit.IsInvulnerable;
-            }
-        }
+        public bool IsValid => this.Unit.IsValid && this.Unit.IsVisible && this.Unit.IsAlive && !this.Unit.IsInvulnerable;
 
         public Vector3 LastMovePosition { get; set; } = Vector3.Zero;
 
-        public Sleeper MoveSleeper { get; } = new Sleeper();
+        public Sleeper MoveSleeper { get; } = new();
 
         public FarmUnit Target { get; set; }
 
         public Unit9 Unit { get; }
 
         protected UnitMenu Menu { get; private set; }
+
+        public bool Equals(FarmUnit other)
+        {
+            return this.Unit.Handle == other?.Unit.Handle;
+        }
 
         public virtual UnitDamage AddDamage(FarmUnit target, float attackStartTime, bool addNext, bool forceRanged)
         {
@@ -119,22 +102,24 @@ namespace O9K.Farm.Units.Base
                 return false;
             }
 
-            var ping = (GameManager.Ping / 2000) + 0.06f;
+            var ping = GameManager.Ping / 2000;
             var turnTime = this.Unit.GetTurnTime(target.Unit.Position);
             var distance = Math.Max(this.Unit.Distance(target.Unit) - this.Unit.GetAttackRange(target.Unit), 0) / this.Unit.Speed;
             var delay = turnTime + distance + ping + 0.25f;
 
             var attackPoint = this.Unit.GetAttackPoint(target.Unit);
+
             if (this.Unit.Abilities.Any(x => x.Id == AbilityId.item_echo_sabre && x.CanBeCasted()))
             {
                 attackPoint *= 2.5f;
             }
 
-            this.AttackSleeper.Sleep(this.Unit.GetAttackPoint(target.Unit) + this.Unit.GetAttackBackswing(target.Unit) + delay);
-            this.MoveSleeper.Sleep(attackPoint + delay + (this.Menu.AdditionalDelay / 1000f));
+            this.AttackSleeper.Sleep(this.Unit.GetAttackPoint(target.Unit) /* + this.Unit.GetAttackBackswing(target.Unit) + delay */);
+            this.MoveSleeper.Sleep(attackPoint + delay + this.Menu.AdditionalDelay / 1000f);
             this.LastMovePosition = Vector3.Zero;
             this.Target = target;
-            this.AddDamage(target, (GameManager.RawGameTime + distance) - ping, false, false);
+            this.AddDamage(target, GameManager.RawGameTime + distance - ping, false, false);
+
             return true;
         }
 
@@ -164,6 +149,7 @@ namespace O9K.Farm.Units.Base
             }
 
             var delay = this.Unit.GetTurnTime(target.Unit.Position);
+
             if (delay <= 0)
             {
                 return !this.AttackSleeper.IsSleeping;
@@ -198,17 +184,13 @@ namespace O9K.Farm.Units.Base
             this.IsControllable = true;
         }
 
-        public bool Equals(FarmUnit other)
-        {
-            return this.Unit.Handle == other?.Unit.Handle;
-        }
-
         public bool Farm(FarmUnit enemy)
         {
-            
-            return this.Attack(enemy);;
-            
-            
+
+            return this.Attack(enemy);
+
+            ;
+
         }
 
         public float GetAttackDelay(FarmUnit target)
@@ -247,7 +229,7 @@ namespace O9K.Farm.Units.Base
 
         public virtual int GetDamage(FarmUnit target)
         {
-            return this.Unit.GetAttackDamage(target.Unit, DamageValue.Minimum);
+            return this.Unit.GetAttackDamage(target.Unit);
         }
 
         public virtual int GetMaxDamage(FarmUnit target)
@@ -258,6 +240,7 @@ namespace O9K.Farm.Units.Base
         public float? GetPredictedDeathTime(IReadOnlyList<FarmUnit> units)
         {
             var enemies = units.Where(x => x.Target?.Unit.Equals(this.Unit) == true).ToList();
+
             if (enemies.Count == 0)
             {
                 return null;
@@ -272,6 +255,7 @@ namespace O9K.Farm.Units.Base
                 foreach (var enemy in enemies)
                 {
                     var dps = enemy.Unit.AttacksPerSecond * enemy.Unit.GetAttackDamage(this.Unit, DamageValue.Maximum);
+
                     if (dps < 0)
                     {
                         return null;
@@ -316,19 +300,20 @@ namespace O9K.Farm.Units.Base
                 return false;
             }
 
-            var ping = (GameManager.Ping / 2000) + 0.06f;
+            var ping = GameManager.Ping / 2000 + 0.06f;
             var turnTime = this.Unit.GetTurnTime(target.Unit.Position);
             var distance = Math.Max(this.Unit.Distance(target.Unit) - this.Unit.GetAttackRange(target.Unit), 0) / this.Unit.Speed;
             var delay = turnTime + distance + ping + 0.25f;
 
             var attackPoint = this.Unit.GetAttackPoint(target.Unit);
+
             if (this.Unit.Abilities.Any(x => x.Id == AbilityId.item_echo_sabre && x.CanBeCasted()))
             {
                 attackPoint *= 2.5f;
             }
 
-            this.AttackSleeper.Sleep(this.Unit.GetAttackPoint(target.Unit) + this.Unit.GetAttackBackswing(target.Unit) + delay);
-            this.MoveSleeper.Sleep(attackPoint + delay + (this.Menu.AdditionalDelay / 1000f));
+            this.AttackSleeper.Sleep(this.Unit.GetAttackPoint(target.Unit) /* + this.Unit.GetAttackBackswing(target.Unit) + delay */);
+            this.MoveSleeper.Sleep(attackPoint + delay + this.Menu.AdditionalDelay / 1000f);
             this.LastMovePosition = Vector3.Zero;
 
             return true;
@@ -336,7 +321,7 @@ namespace O9K.Farm.Units.Base
 
         public void Stop()
         {
-            this.Unit.Stop();
+            this.Unit.BaseUnit.Stop();
             this.AttackSleeper.Reset();
             this.MoveSleeper.Reset();
         }

@@ -1,20 +1,25 @@
 ﻿namespace O9K.Farm.Core.Modes
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
+
     using Damage;
+
     using Divine.Game;
+
     using Menu;
+
     using O9K.Core.Helpers;
-    using O9K.Core.Managers.Entity;
+
     using Units.Base;
 
     internal class LastHitMode : BaseMode
     {
-        private readonly Dictionary<FarmUnit, Sleeper> towerFarmSleeper = new Dictionary<FarmUnit, Sleeper>();
+        private readonly Dictionary<FarmUnit, Sleeper> towerFarmSleeper = new();
 
         private LastHitMenu lastHitMenu;
+
+        private FarmUnit lastUnitToHit;
 
         public LastHitMode(UnitManager unitManager, MenuManager menuManager)
             : base(unitManager)
@@ -37,6 +42,7 @@
                     }
 
                     var damageInfo = new DamageInfo(unit, ally);
+
                     if (!damageInfo.IsValid)
                     {
                         continue;
@@ -65,6 +71,7 @@
                     }
 
                     canKill = true;
+
                     break;
                 }
 
@@ -73,8 +80,8 @@
                     continue;
                 }
 
-                foreach (var damageInfo in attack.OrderByDescending(x => x.IsInAttackRange)
-                    .ThenByDescending(x => x.Delay))
+                foreach (var damageInfo in attack.Where(x => x.IsInAttackRange)
+                    .OrderByDescending(x => x.Delay))
                 {
                     //todo force attack if target will die soon
 
@@ -115,6 +122,7 @@
                 foreach (var enemy in enemies.Where(x => x.CanBeKilled))
                 {
                     var damageInfo = new DamageInfo(unit, enemy);
+
                     if (!damageInfo.IsValid || !damageInfo.IsInAttackRange)
                     {
                         continue;
@@ -127,6 +135,7 @@
                     }
 
                     available = false;
+
                     break;
                 }
 
@@ -158,6 +167,7 @@
                 foreach (var enemy in allies.Where(x => x.CanBeKilled))
                 {
                     var damageInfo = new DamageInfo(unit, enemy);
+
                     if (!damageInfo.IsValid || !damageInfo.IsInAttackRange)
                     {
                         continue;
@@ -170,6 +180,7 @@
                     }
 
                     available = false;
+
                     break;
                 }
 
@@ -181,8 +192,6 @@
 
             return list;
         }
-
-        private FarmUnit lastUnitToHit;
 
         protected bool LastHit(IReadOnlyList<FarmUnit> enemies, IReadOnlyList<FarmUnit> allies,
             IReadOnlyList<FarmUnit> myUnits)
@@ -200,6 +209,7 @@
                     }
 
                     var damageInfo = new DamageInfo(unit, enemy);
+
                     if (!damageInfo.IsValid)
                     {
                         continue;
@@ -222,32 +232,32 @@
                     damage += damageInfo.MinDamage;
                     attack.Add(damageInfo);
 
-
                     if (damage < damageInfo.PredictedHealth)
                     {
                         continue;
                     }
 
                     canKill = true;
+
                     break;
                 }
 
                 var predictedDeathDelay = enemy.GetPredictedDeathTime(allies) - GameManager.RawGameTime;
 
-
                 // test with attack cancel
                 if (predictedDeathDelay <= 2 && !canKill)
                 {
-                    if (lastUnitToHit == null || !lastUnitToHit.IsValid)
+                    if (this.lastUnitToHit == null || !this.lastUnitToHit.IsValid)
                     {
-                        lastUnitToHit = enemy;
+                        this.lastUnitToHit = enemy;
                     }
 
                     foreach (var unit in myUnits)
                     {
-                        if (!Divine.Helpers.MultiSleeper<string>.Sleeping("O9K.Farm.CancelHit" + unit.Unit.Name))
+                        if (!Divine.Helpers.MultiSleeper<string>.Sleeping("O9K.Farm.CancelHit" + unit.Unit.Name)
+                            && unit.Unit.GetAttackRange() >= unit.Unit.Distance(this.lastUnitToHit.Unit))
                         {
-                            unit.Unit.BaseUnit.Attack(lastUnitToHit.Unit);
+                            unit.Unit.BaseUnit.Attack(this.lastUnitToHit.Unit);
                             unit.Unit.BaseUnit.Stop();
 
                             Divine.Helpers.MultiSleeper<string>.Sleep("O9K.Farm.CancelHit" + unit.Unit, 400);
@@ -258,7 +268,7 @@
                 }
                 else
                 {
-                    lastUnitToHit = null;
+                    this.lastUnitToHit = null;
                 }
 
                 if (!canKill)
@@ -266,8 +276,8 @@
                     continue;
                 }
 
-                foreach (var damageInfo in attack.OrderByDescending(x => x.IsInAttackRange)
-                    .ThenByDescending(x => x.Delay))
+                foreach (var damageInfo in attack.Where(x => x.IsInAttackRange)
+                    .OrderByDescending(x => x.Delay))
                 {
                     //todo force attack if target will die soon
 
@@ -288,24 +298,27 @@
             var enemies = units.Where(x => !x.IsAlly).ToList();
 
             var availableUnitsForLastHit = myUnits.Where(x => x.IsLastHitEnabled).ToList();
+
             if (this.LastHit(enemies, allies, availableUnitsForLastHit))
             {
                 return;
             }
 
             var availableUnits = this.GetAvailableUnitsForDeny(enemies, allies, myUnits);
+
             if (this.TowerPrepare(enemies, allies, availableUnitsForLastHit))
             {
                 return;
             }
 
-            if ((lastUnitToHit == null || !lastUnitToHit.IsValid) && this.Deny(enemies, allies,
-                availableUnits.Where(x => x.IsDenyEnabled).ToList()))
+            if ((this.lastUnitToHit == null || !this.lastUnitToHit.IsValid) && this.Deny(enemies, allies,
+                    availableUnits.Where(x => x.IsDenyEnabled).ToList()))
             {
                 return;
             }
 
             availableUnits = this.GetAvailableUnitsForHarass(enemies, allies, availableUnits);
+
             if (this.Harass(enemies, allies, availableUnits))
             {
                 return;
@@ -348,6 +361,7 @@
                 x => x.IsTower && x.Target?.Unit.IsValid == true && x.Target.Unit.IsAlive))
             {
                 var target = tower.Target;
+
                 if (target.IsHero)
                 {
                     continue;
@@ -380,6 +394,7 @@
                             var sleep = new Sleeper();
                             sleep.Sleep(unit.GetAttackDelay(target) + 0.2f);
                             this.towerFarmSleeper[target] = sleep;
+
                             return true;
                         }
                     }

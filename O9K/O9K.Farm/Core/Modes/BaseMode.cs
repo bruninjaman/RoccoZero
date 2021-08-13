@@ -18,29 +18,31 @@
 
     internal abstract class BaseMode : IDisposable
     {
-        private readonly Sleeper actionSleeper = new Sleeper();
+        private readonly Sleeper actionSleeper = new();
 
         private readonly UpdateHandler handler;
 
-        private readonly List<FarmUnit> units = new List<FarmUnit>();
+        private readonly List<FarmUnit> units = new();
 
         protected BaseMode(UnitManager unitManager)
         {
             this.UnitManager = unitManager;
             this.handler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
+            Instances.Add(this);
         }
 
-        public bool IsActive
-        {
-            get
-            {
-                return this.handler.IsEnabled;
-            }
-        }
+        public bool IsActive => this.handler.IsEnabled;
 
-        public List<FarmUnit> LastAddedUnits { get; protected set; } = new List<FarmUnit>();
+        public static List<BaseMode> Instances { get; set; } = new();
+
+        public List<FarmUnit> LastAddedUnits { get; protected set; } = new();
 
         protected UnitManager UnitManager { get; }
+
+        public void Dispose()
+        {
+            UpdateManager.DestroyIngameUpdate(this.handler);
+        }
 
         public void AddUnits(IEnumerable<FarmUnit> farmUnits)
         {
@@ -63,7 +65,8 @@
                     continue;
                 }
 
-                var delay = (unit.AttackStartTime + unit.GetAttackDelay(target)) - GameManager.RawGameTime;
+                var delay = unit.AttackStartTime + unit.GetAttackDelay(target) - GameManager.RawGameTime;
+
                 if (target.GetPredictedHealth(unit, delay) > unit.GetDamage(target))
                 {
                     unit.Stop();
@@ -74,11 +77,6 @@
         public bool ContainsAllUnits(IEnumerable<FarmUnit> myUnits)
         {
             return myUnits.All(x => this.units.Contains(x));
-        }
-
-        public void Dispose()
-        {
-            UpdateManager.DestroyIngameUpdate(this.handler);
         }
 
         public void RemoveLastAddedUnits()
@@ -94,6 +92,7 @@
             }
 
             var farmUnit = this.units.Find(x => x.Unit == unit);
+
             if (farmUnit == null)
             {
                 return;
@@ -141,7 +140,8 @@
             }
 
             var mousePosition = GameManager.MousePosition;
-            var control = myUnits.Where(x => x.CanMoveToMouse() && x.LastMovePosition.Distance2D(mousePosition) > 50).ToList();
+            var control = myUnits.Where(x => x.CanMoveToMouse() && x.LastMovePosition.Distance2D(mousePosition) > 100).ToList();
+
             if (control.Count == 0)
             {
                 return;
