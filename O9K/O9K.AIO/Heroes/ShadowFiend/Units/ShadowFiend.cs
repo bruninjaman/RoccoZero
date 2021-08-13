@@ -6,8 +6,6 @@
 
     using Abilities;
 
-    using Ability;
-
     using AIO.Abilities;
     using AIO.Abilities.Items;
 
@@ -33,7 +31,7 @@
     [UnitName(nameof(HeroId.npc_dota_hero_nevermore))]
     internal class ShadowFiend : ControllableUnit
     {
-        private readonly List<NukeAbility> razes = new List<NukeAbility>();
+        private readonly List<NukeAbility> razes = new();
 
         private AbilityHelper abilityHelper;
 
@@ -42,6 +40,8 @@
         private BlinkAbility blink;
 
         private DisableAbility bloodthorn;
+
+        private bool continueAltCombo;
 
         private EtherealBlade ethereal;
 
@@ -62,7 +62,6 @@
         private NukeAbility requiem;
 
         private DebuffAbility veil;
-        private bool continueAltCombo;
 
         public ShadowFiend(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
@@ -74,6 +73,7 @@
                     {
                         var raze = new NukeAbility(x);
                         this.razes.Add(raze);
+
                         return raze;
                     }
                 },
@@ -82,6 +82,7 @@
                     {
                         var raze = new NukeAbility(x);
                         this.razes.Add(raze);
+
                         return raze;
                     }
                 },
@@ -90,6 +91,7 @@
                     {
                         var raze = new NukeAbility(x);
                         this.razes.Add(raze);
+
                         return raze;
                     }
                 },
@@ -109,7 +111,7 @@
                 { AbilityId.item_cyclone, x => this.euls = new EulsScepterOfDivinity(x) },
                 { AbilityId.item_wind_waker, x => this.euls = new EulsScepterOfDivinity(x) },
                 { AbilityId.item_hurricane_pike, x => this.pike = new HurricanePike(x) },
-                { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) },
+                { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) }
             };
         }
 
@@ -196,6 +198,7 @@
             {
                 var distance = this.Owner.Distance(target);
                 var predictedPosition = target.GetPredictedPosition(1);
+
                 if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.MoveToEnemy.Raze") &&
                     raze.CanBeCasted(targetManager, true, comboModeMenu) &&
                     raze.Ability.CastRange + raze.Ability.Radius > distance &&
@@ -205,8 +208,8 @@
 
                     this.MoveSleeper.Sleep(0.2f);
 
-
                     Divine.Helpers.MultiSleeper<string>.Sleep("ShadowFiend.MoveToEnemy.Raze", 1000);
+
                     return true;
                 }
 
@@ -214,7 +217,6 @@
                 {
                     continue;
                 }
-
 
                 // if (this.RazeCanWaitAttack(raze, target))
                 // {
@@ -228,14 +230,16 @@
             }
 
             this.razeOrbwalk = true;
+
             return false;
         }
 
         private bool AltUltCombo(TargetManager targetManager, AbilityHelper abilityHelper1)
         {
-            if (!abilityHelper.CanBeCasted(this.requiem, false, false))
+            if (!this.abilityHelper.CanBeCasted(this.requiem, false, false))
             {
-                continueAltCombo = false;
+                this.continueAltCombo = false;
+
                 return false;
             }
 
@@ -243,63 +247,67 @@
             var position = target.Position;
             var distance = this.Owner.Distance(position);
 
-            if (abilityHelper.CanBeCasted(this.blink))
+            if (this.abilityHelper.CanBeCasted(this.blink))
             {
                 var blinkRange = this.blink.Ability.CastRange;
+
                 if (blinkRange >= distance)
                 {
-                    abilityHelper.UseAbility(this.bkb);
+                    this.abilityHelper.UseAbility(this.bkb);
 
-                    if (abilityHelper.UseAbility(this.blink, position))
+                    if (this.abilityHelper.UseAbility(this.blink, position))
                     {
-                        continueAltCombo = true;
-
+                        this.continueAltCombo = true;
 
                         return true;
                     }
                 }
             }
 
-            if (continueAltCombo)
+            if (this.continueAltCombo)
             {
-                if (abilityHelper.UseAbility(this.bkb))
+                if (this.abilityHelper.UseAbility(this.bkb))
                 {
                     return true;
                 }
 
-                if (abilityHelper.UseAbility(this.hex))
+                if (this.abilityHelper.UseAbility(this.hex))
                 {
                     this.ComboSleeper.ExtendSleep(0.1f);
                     this.OrbwalkSleeper.ExtendSleep(0.1f);
+
                     return true;
                 }
 
-                if (abilityHelper.UseAbility(this.veil))
+                if (this.abilityHelper.UseAbility(this.veil))
                 {
                     return true;
                 }
 
-                if (abilityHelper.UseAbility(this.ethereal))
+                if (this.abilityHelper.UseAbility(this.ethereal))
                 {
                     this.OrbwalkSleeper.Sleep(0.5f);
+
                     return true;
                 }
 
-                if (abilityHelper.UseAbility(this.requiem))
+                if (this.abilityHelper.UseAbility(this.requiem))
                 {
-                    continueAltCombo = false;
+                    this.continueAltCombo = false;
+
                     return true;
                 }
             }
 
-            continueAltCombo = false;
+            this.continueAltCombo = false;
+
             return false;
         }
 
         public override bool Orbwalk(Unit9 target, bool attack, bool move, ComboModeMenu comboMenu = null)
         {
             if (this.razeOrbwalk && this.abilityHelper != null && target != null && this.Owner.Speed >= 305
-                && (target.GetImmobilityDuration() > 1))
+                && target.GetImmobilityDuration() > 1)
             {
                 var distance = this.Owner.Distance(target);
 
@@ -312,6 +320,7 @@
 
                     var position = target.Position.Extend2D(this.Owner.Position,
                         raze.Ability.CastRange - (raze.Ability.Radius - 100));
+
                     var distance2 = this.Owner.Distance(position);
 
                     if (target.GetImmobilityDuration() > 1)
@@ -370,24 +379,25 @@
             var target = targetManager.Target;
             var position = target.Position;
             var distance = this.Owner.Distance(position);
-            var requiredTime = this.requiem.Ability.CastPoint + (GameManager.Ping / 2000);
+            var requiredTime = this.requiem.Ability.CastPoint + GameManager.Ping / 2000;
             const float AdditionalTime = 0.3f;
-
 
             if (target.IsInvulnerable)
             {
                 var time = target.GetInvulnerabilityDuration();
+
                 if (time <= 0)
                 {
                     return true;
                 }
-                
+
                 var eulsModifier = target.BaseModifiers.FirstOrDefault(x =>
                     x.Name == "modifier_eul_cyclone" || x.Name == "modifier_wind_waker");
+
                 if (eulsModifier != null)
                 {
                     var particle = ParticleManager.Particles.FirstOrDefault(x => x.Name == "particles/items_fx/cyclone.vpcf" && x.Owner == target.BaseEntity);
-                    
+
                     if (particle != null)
                     {
                         position = particle.GetControlPoint(0);
@@ -432,17 +442,20 @@
 
                     this.OrbwalkSleeper.Sleep(0.1f);
                     this.ComboSleeper.Sleep(0.1f);
+
                     return this.Owner.BaseUnit.Move(position);
                 }
 
                 if (abilityHelper.CanBeCasted(this.blink))
                 {
-                    var blinkRange = this.blink.Ability.CastRange + (this.Owner.Speed * remainingTime);
+                    var blinkRange = this.blink.Ability.CastRange + this.Owner.Speed * remainingTime;
+
                     if (blinkRange > distance)
                     {
                         if (abilityHelper.UseAbility(this.blink, position))
                         {
                             this.OrbwalkSleeper.Sleep(0.1f);
+
                             return true;
                         }
                     }
@@ -456,15 +469,18 @@
             }
 
             var eulsTime = this.euls.Ability.Duration - requiredTime;
+
             if (abilityHelper.CanBeCasted(this.blink))
             {
-                var blinkRange = this.blink.Ability.CastRange + (this.Owner.Speed * eulsTime);
+                var blinkRange = this.blink.Ability.CastRange + this.Owner.Speed * eulsTime;
+
                 if (blinkRange > distance)
                 {
                     if (abilityHelper.UseAbility(this.blink, position))
                     {
                         this.OrbwalkSleeper.Sleep(0.1f);
                         this.ComboSleeper.ExtendSleep(0.1f);
+
                         return true;
                     }
                 }
@@ -476,6 +492,7 @@
                 {
                     this.ComboSleeper.ExtendSleep(0.1f);
                     this.OrbwalkSleeper.ExtendSleep(0.1f);
+
                     return true;
                 }
 
@@ -487,6 +504,7 @@
                 if (abilityHelper.UseAbility(this.ethereal))
                 {
                     this.OrbwalkSleeper.Sleep(0.5f);
+
                     return true;
                 }
 

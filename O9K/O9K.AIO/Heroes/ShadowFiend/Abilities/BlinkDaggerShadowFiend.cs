@@ -1,8 +1,8 @@
-﻿namespace O9K.AIO.Heroes.ShadowFiend.Ability
+﻿namespace O9K.AIO.Heroes.ShadowFiend.Abilities
 {
-    using Abilities;
     using AIO.Abilities;
     using AIO.Abilities.Menus;
+
     using Core.Entities.Abilities.Base;
 
     internal class BlinkDaggerShadowFiend : BlinkAbility
