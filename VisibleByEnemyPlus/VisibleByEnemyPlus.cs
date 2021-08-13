@@ -42,9 +42,9 @@ namespace VisibleByEnemyPlus
             UpdateManager.IngameUpdate += OnIngameUpdate;
         }
 
-        /*protected override void OnDeactivate()
+        protected override void OnDeactivate()
         {
-            UpdateManager.Unsubscribe(LoopEntities);
+            /*UpdateManager.Unsubscribe(LoopEntities);
 
             Config.EffectTypeItem.PropertyChanged -= ItemChanged;
 
@@ -54,8 +54,8 @@ namespace VisibleByEnemyPlus
             Config.AlphaItem.PropertyChanged -= ItemChanged;
 
             Config?.Dispose();
-            ParticleManager.Dispose();
-        }*/
+            ParticleManager.Dispose();*/
+        }
 
         private void UpdateMenu(string selector, int red, int green, int blue, int alpha)
         {
