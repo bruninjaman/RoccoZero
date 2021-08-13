@@ -9,8 +9,5 @@
     [HeroId(HeroId.npc_dota_hero_antimage)]
     internal class AntiMageBase : BaseHero
     {
-        public AntiMageBase()
-        {
-        }
     }
 }
