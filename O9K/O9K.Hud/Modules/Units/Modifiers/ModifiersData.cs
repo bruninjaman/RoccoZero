@@ -639,7 +639,7 @@
             { "modifier_item_princes_knife_hex", ModifierType.Temporary },
             { "modifier_havoc_hammer_slow", ModifierType.Temporary },
             { "modifier_minotaur_horn_immune", ModifierType.Temporary },
-            { "modifier_woodland_striders_active", ModifierType.Temporary }
+            { "modifier_woodland_striders_active", ModifierType.Temporary },
         };
 
         private readonly HashSet<string> unitNames = new()
@@ -650,7 +650,7 @@
             "npc_dota_brewmaster_earth_3",
             "npc_dota_visage_familiar1",
             "npc_dota_visage_familiar2",
-            "npc_dota_visage_familiar3"
+            "npc_dota_visage_familiar3",
         };
 
         internal enum ModifierType
@@ -667,7 +667,7 @@
 
             ChargeCounter,
 
-            Permanent
+            Permanent,
         }
     }
 }
