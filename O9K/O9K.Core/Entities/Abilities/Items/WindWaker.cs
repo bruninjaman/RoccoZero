@@ -1,6 +1,7 @@
 ﻿namespace O9K.Core.Entities.Abilities.Items
 {
     using Base;
+    using Base.Components;
     using Base.Types;
 
     using Divine.Entity.Entities.Abilities;
@@ -11,8 +12,6 @@
 
     using Metadata;
 
-    using O9K.Core.Entities.Abilities.Base.Components;
-
     [AbilityId(AbilityId.item_wind_waker)]
     public class WindWaker : RangedAbility, IDisable, IShield, IAppliesImmobility
     {
@@ -22,9 +21,9 @@
             this.DurationData = new SpecialData(baseAbility, "cyclone_duration");
         }
 
-        public UnitState AppliesUnitState { get; } = UnitState.Invulnerable;
-
         public string ImmobilityModifierName { get; } = "modifier_wind_waker";
+
+        public UnitState AppliesUnitState { get; } = UnitState.Invulnerable;
 
         public string ShieldModifierName { get; } = "modifier_wind_waker";
 

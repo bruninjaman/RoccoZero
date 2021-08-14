@@ -5,26 +5,10 @@
 
     internal partial class Modifiers
     {
-        internal enum ModifierType
-        {
-            Temporary,
-
-            TemporaryHidden,
-
-            TemporaryNoTime,
-
-            StackHidden,
-
-            Aura,
-
-            ChargeCounter,
-
-            Permanent
-        }
 
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
         [SuppressMessage("ReSharper", "CommentTypo")]
-        private readonly Dictionary<string, ModifierType> data = new Dictionary<string, ModifierType>
+        private readonly Dictionary<string, ModifierType> data = new()
         {
             { "modifier_rune_arcane", ModifierType.Temporary },
             { "modifier_rune_doubledamage", ModifierType.Temporary },
@@ -613,6 +597,7 @@
             //  { "modifier_item_glimmer_cape_fade", ModifierType.Temporary }, //invisible
             { "modifier_item_veil_of_discord_debuff", ModifierType.Temporary },
             { "modifier_eul_cyclone", ModifierType.Temporary },
+            { "modifier_wind_waker", ModifierType.Temporary },
             { "modifier_rod_of_atos_debuff", ModifierType.Temporary },
             { "modifier_item_solar_crest_armor_addition", ModifierType.Temporary },
             { "modifier_item_solar_crest_armor_reduction", ModifierType.Temporary },
@@ -657,7 +642,7 @@
             { "modifier_woodland_striders_active", ModifierType.Temporary },
         };
 
-        private readonly HashSet<string> unitNames = new HashSet<string>
+        private readonly HashSet<string> unitNames = new()
         {
             "npc_dota_phoenix_sun",
             "npc_dota_brewmaster_earth_1",
@@ -667,5 +652,22 @@
             "npc_dota_visage_familiar2",
             "npc_dota_visage_familiar3",
         };
+
+        internal enum ModifierType
+        {
+            Temporary,
+
+            TemporaryHidden,
+
+            TemporaryNoTime,
+
+            StackHidden,
+
+            Aura,
+
+            ChargeCounter,
+
+            Permanent,
+        }
     }
 }
