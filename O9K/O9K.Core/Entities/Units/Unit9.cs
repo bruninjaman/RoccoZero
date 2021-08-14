@@ -38,25 +38,25 @@
 
     public class Unit9 : Entity9
     {
-        private readonly List<Ability9> abilities = new List<Ability9>();
+        private readonly List<Ability9> abilities = new();
 
-        private readonly Sleeper actionSleeper = new Sleeper();
+        private readonly Sleeper actionSleeper = new();
 
-        private readonly List<IHasDamageAmplify> amplifiers = new List<IHasDamageAmplify>();
+        private readonly List<IHasDamageAmplify> amplifiers = new();
 
-        private readonly Dictionary<string, IHasDamageBlock> blockers = new Dictionary<string, IHasDamageBlock>();
+        private readonly Dictionary<string, IHasDamageBlock> blockers = new();
 
-        private readonly Sleeper channelingSleeper = new Sleeper();
+        private readonly Sleeper channelingSleeper = new();
 
-        private readonly MultiSleeper<UnitState> expectedUnitStateSleeper = new MultiSleeper<UnitState>();
+        private readonly MultiSleeper<UnitState> expectedUnitStateSleeper = new();
 
-        private readonly List<Modifier> immobilityModifiers = new List<Modifier>();
+        private readonly List<Modifier> immobilityModifiers = new();
 
-        private readonly List<Modifier> invulnerabilityModifiers = new List<Modifier>();
+        private readonly List<Modifier> invulnerabilityModifiers = new();
 
-        private readonly List<IHasPassiveDamageIncrease> passiveDamageAbilities = new List<IHasPassiveDamageIncrease>();
+        private readonly List<IHasPassiveDamageIncrease> passiveDamageAbilities = new();
 
-        private readonly List<IHasRangeIncrease> ranges = new List<IHasRangeIncrease>();
+        private readonly List<IHasRangeIncrease> ranges = new();
 
         private float baseAttackAnimationPoint = -1;
 
@@ -113,43 +113,19 @@
 
         public AttackCapability AttackCapability { get; }
 
-        public float AttacksPerSecond
-        {
-            get
-            {
-                return this.BaseUnit.AttacksPerSecond;
-            }
-        }
+        public float AttacksPerSecond => this.BaseUnit.AttacksPerSecond;
 
         public AttackDamageType AttackType { get; }
 
-        public Inventory BaseInventory
-        {
-            get
-            {
-                return this.BaseUnit.Inventory;
-            }
-        }
+        public Inventory BaseInventory => this.BaseUnit.Inventory;
 
-        public IEnumerable<Modifier> BaseModifiers
-        {
-            get
-            {
-                return this.BaseUnit.Modifiers;
-            }
-        }
+        public IEnumerable<Modifier> BaseModifiers => this.BaseUnit.Modifiers;
 
         public Entity BaseOwner { get; internal set; }
 
         public Vector3 BasePosition { get; internal set; }
 
-        public Spellbook BaseSpellbook
-        {
-            get
-            {
-                return this.BaseUnit.Spellbook;
-            }
-        }
+        public Spellbook BaseSpellbook => this.BaseUnit.Spellbook;
 
         public Unit BaseUnit { get; }
 
@@ -181,13 +157,7 @@
             }
         }
 
-        public virtual bool CanReincarnate
-        {
-            get
-            {
-                return this.HasAegis;
-            }
-        }
+        public virtual bool CanReincarnate => this.HasAegis;
 
         public bool CanUseAbilities { get; protected set; } = true;
 
@@ -199,10 +169,8 @@
 
         public float ChannelEndTime
         {
-            get
-            {
-                return this.channelEndTime;
-            }
+            get => this.channelEndTime;
+
             internal set
             {
                 this.channelEndTime = value;
@@ -214,13 +182,7 @@
 
         public Team EnemyTeam { get; internal set; }
 
-        public bool HasAghanimsScepter
-        {
-            get
-            {
-                return this.HasAghanimsScepterBlessing || this.AghanimsScepter?.IsUsable == true;
-            }
-        }
+        public bool HasAghanimsScepter => this.HasAghanimsScepterBlessing || this.AghanimsScepter?.IsUsable == true;
 
         public bool HasAghanimShard
         {
@@ -237,7 +199,7 @@
                 if (!this.IsVisible)
                 {
                     return Math.Min(
-                        this.BaseHealth + ((GameManager.RawGameTime - this.LastVisibleTime) * this.HealthRegeneration),
+                        this.BaseHealth + (GameManager.RawGameTime - this.LastVisibleTime) * this.HealthRegeneration,
                         this.MaximumHealth);
                 }
 
@@ -250,12 +212,14 @@
             get
             {
                 var position = this.HealthBarPosition;
+
                 if (position.IsZero)
                 {
                     return Rectangle9.Zero;
                 }
 
                 var size = this.HealthBarSize;
+
                 return new Rectangle9(position, size.X, size.Y);
             }
         }
@@ -271,6 +235,7 @@
 
                 var position = this.BasePosition.IncreaseZ(this.HpBarOffset);
                 var screenPosition = RendererManager.WorldToScreen(position);
+
                 if (screenPosition.IsZero)
                 {
                     return Vector2.Zero;
@@ -296,32 +261,14 @@
         /// <summary>
         ///     x%
         /// </summary>
-        public float HealthPercentage
-        {
-            get
-            {
-                return this.HealthPercentageBase * 100;
-            }
-        }
+        public float HealthPercentage => this.HealthPercentageBase * 100;
 
         /// <summary>
         ///     0.x%
         /// </summary>
-        public float HealthPercentageBase
-        {
-            get
-            {
-                return this.Health / this.MaximumHealth;
-            }
-        }
+        public float HealthPercentageBase => this.Health / this.MaximumHealth;
 
-        public virtual float HealthRegeneration
-        {
-            get
-            {
-                return this.BaseUnit.HealthRegeneration;
-            }
-        }
+        public virtual float HealthRegeneration => this.BaseUnit.HealthRegeneration;
 
         public bool HideHud { get; internal set; } = false;
 
@@ -344,13 +291,7 @@
 
         public bool IsAncient { get; protected set; }
 
-        public bool IsAttackImmune
-        {
-            get
-            {
-                return (this.UnitState & UnitState.AttackImmune) != 0;
-            }
-        }
+        public bool IsAttackImmune => (this.UnitState & UnitState.AttackImmune) != 0;
 
         public bool IsAttacking { get; internal set; }
 
@@ -359,13 +300,7 @@
         /// <summary>
         ///     Lotus, Linkens, Spell shield, Untargetable
         /// </summary>
-        public bool IsBlockingAbilities
-        {
-            get
-            {
-                return this.IsLotusProtected || this.IsLinkensProtected || this.IsSpellShieldProtected || this.IsUntargetable;
-            }
-        }
+        public bool IsBlockingAbilities => this.IsLotusProtected || this.IsLinkensProtected || this.IsSpellShieldProtected || this.IsUntargetable;
 
         public bool IsBuilding { get; protected set; }
 
@@ -381,13 +316,7 @@
 
         public bool IsCharging { get; internal set; } = false;
 
-        public bool IsCommandRestricted
-        {
-            get
-            {
-                return (this.UnitState & UnitState.CommandRestricted) != 0;
-            }
-        }
+        public bool IsCommandRestricted => (this.UnitState & UnitState.CommandRestricted) != 0;
 
         public bool IsControllable { get; internal set; }
 
@@ -397,13 +326,7 @@
 
         public bool IsDarkPactProtected { get; internal set; }
 
-        public bool IsDisarmed
-        {
-            get
-            {
-                return (this.UnitState & UnitState.Disarmed) != 0 || this.AttackCapability == AttackCapability.None;
-            }
-        }
+        public bool IsDisarmed => (this.UnitState & UnitState.Disarmed) != 0 || this.AttackCapability == AttackCapability.None;
 
         public bool IsEthereal { get; internal set; } = false;
 
@@ -411,87 +334,33 @@
 
         public bool IsHero { get; protected set; }
 
-        public bool IsHexed
-        {
-            get
-            {
-                return (this.UnitState & UnitState.Hexed) != 0;
-            }
-        }
+        public bool IsHexed => (this.UnitState & UnitState.Hexed) != 0;
 
         public bool IsIllusion { get; protected set; } = false;
 
         public bool IsImportant { get; protected set; } = false;
 
-        public bool IsInNormalState
-        {
-            get
-            {
-                return (this.UnitState & (UnitState.Disarmed | UnitState.Silenced | UnitState.Stunned | UnitState.Rooted | UnitState.Hexed
-                                          | UnitState.Muted)) == 0 && this.GetImmobilityDuration() <= 0;
-            }
-        }
+        public bool IsInNormalState => (this.UnitState & (UnitState.Disarmed | UnitState.Silenced | UnitState.Stunned | UnitState.Rooted | UnitState.Hexed
+                                                          | UnitState.Muted)) == 0 && this.GetImmobilityDuration() <= 0;
 
-        public bool IsInvisible
-        {
-            get
-            {
-                return (this.UnitState & UnitState.Invisible) != 0 || this.BaseUnit.InvisiblityLevel > 0.5f;
-            }
-        }
+        public bool IsInvisible => (this.UnitState & UnitState.Invisible) != 0 || this.BaseUnit.InvisiblityLevel > 0.5f;
 
-        public virtual bool IsInvulnerable
-        {
-            get
-            {
-                return (this.UnitState & (UnitState.Invulnerable | UnitState.NoHealthbar)) != 0;
-            }
-        }
+        public virtual bool IsInvulnerable => (this.UnitState & (UnitState.Invulnerable | UnitState.NoHealthbar)) != 0;
 
         public bool IsLaneCreep { get; }
 
-        public bool IsLeashed
-        {
-            get
-            {
-                return (this.UnitState & UnitState.Tethered) != 0;
-            }
-        }
+        public bool IsLeashed => (this.UnitState & UnitState.Tethered) != 0;
 
-        public virtual bool IsLinkensProtected
-        {
-            get
-            {
-                return this.IsLinkensTargetProtected
-                       || (this.CanUseAbilities && (this.LinkensSphere?.IsReady == true || this.MirrorShield?.IsReady == true));
-            }
-        }
+        public virtual bool IsLinkensProtected => this.IsLinkensTargetProtected
+                                                  || this.CanUseAbilities && (this.LinkensSphere?.IsReady == true || this.MirrorShield?.IsReady == true);
 
         public bool IsLotusProtected { get; internal set; }
 
-        public bool IsMagicImmune
-        {
-            get
-            {
-                return (this.UnitState & UnitState.MagicImmune) != 0;
-            }
-        }
+        public bool IsMagicImmune => (this.UnitState & UnitState.MagicImmune) != 0;
 
-        public bool IsMoving
-        {
-            get
-            {
-                return this.BaseUnit.IsMoving;
-            }
-        }
+        public bool IsMoving => this.BaseUnit.IsMoving;
 
-        public bool IsMuted
-        {
-            get
-            {
-                return (this.UnitState & UnitState.Muted) != 0;
-            }
-        }
+        public bool IsMuted => (this.UnitState & UnitState.Muted) != 0;
 
         public bool IsMyControllable
         {
@@ -524,41 +393,17 @@
 
         public bool IsReflectingDamage { get; internal set; }
 
-        public bool IsRooted
-        {
-            get
-            {
-                return (this.UnitState & UnitState.Rooted) != 0 || this.MoveCapability == MoveCapability.None;
-            }
-        }
+        public bool IsRooted => (this.UnitState & UnitState.Rooted) != 0 || this.MoveCapability == MoveCapability.None;
 
-        public bool IsRotating
-        {
-            get
-            {
-                return (int)this.BaseUnit.RotationDifference != 0;
-            }
-        }
+        public bool IsRotating => (int)this.BaseUnit.RotationDifference != 0;
 
         public bool IsRuptured { get; internal set; }
 
-        public bool IsSilenced
-        {
-            get
-            {
-                return (this.UnitState & UnitState.Silenced) != 0;
-            }
-        }
+        public bool IsSilenced => (this.UnitState & UnitState.Silenced) != 0;
 
         public virtual bool IsSpellShieldProtected { get; internal set; }
 
-        public bool IsStunned
-        {
-            get
-            {
-                return (this.UnitState & (UnitState.Stunned | UnitState.CommandRestricted)) != 0;
-            }
-        }
+        public bool IsStunned => (this.UnitState & (UnitState.Stunned | UnitState.CommandRestricted)) != 0;
 
         public bool IsTeleporting { get; internal set; } = false;
 
@@ -566,23 +411,11 @@
 
         public bool IsUnit { get; protected set; }
 
-        public bool IsUntargetable
-        {
-            get
-            {
-                return (this.UnitState & UnitState.Untargetable) != 0;
-            }
-        }
+        public bool IsUntargetable => (this.UnitState & UnitState.Untargetable) != 0;
 
         public bool IsVisible { get; internal set; }
 
-        public bool IsVisibleToEnemies
-        {
-            get
-            {
-                return this.BaseUnit.IsVisibleToEnemies;
-            }
-        }
+        public bool IsVisibleToEnemies => this.BaseUnit.IsVisibleToEnemies;
 
         public float LastNotVisibleTime { get; internal set; }
 
@@ -590,13 +423,7 @@
 
         public float LastVisibleTime { get; internal set; }
 
-        public uint Level
-        {
-            get
-            {
-                return this.BaseUnit.Level;
-            }
-        }
+        public uint Level => this.BaseUnit.Level;
 
         public virtual float Mana
         {
@@ -604,62 +431,26 @@
             {
                 if (!this.IsVisible)
                 {
-                    return Math.Min(this.BaseMana + ((GameManager.RawGameTime - this.LastVisibleTime) * this.ManaRegeneration), this.MaximumMana);
+                    return Math.Min(this.BaseMana + (GameManager.RawGameTime - this.LastVisibleTime) * this.ManaRegeneration, this.MaximumMana);
                 }
 
                 return this.BaseMana;
             }
         }
 
-        public float ManaPercentage
-        {
-            get
-            {
-                return this.ManaPercentageBase * 100;
-            }
-        }
+        public float ManaPercentage => this.ManaPercentageBase * 100;
 
-        public float ManaPercentageBase
-        {
-            get
-            {
-                return this.Mana / this.MaximumMana;
-            }
-        }
+        public float ManaPercentageBase => this.Mana / this.MaximumMana;
 
-        public virtual float ManaRegeneration
-        {
-            get
-            {
-                return this.BaseUnit.ManaRegeneration;
-            }
-        }
+        public virtual float ManaRegeneration => this.BaseUnit.ManaRegeneration;
 
-        public float MaximumHealth
-        {
-            get
-            {
-                return this.BaseUnit.MaximumHealth;
-            }
-        }
+        public float MaximumHealth => this.BaseUnit.MaximumHealth;
 
-        public float MaximumMana
-        {
-            get
-            {
-                return this.BaseUnit.MaximumMana;
-            }
-        }
+        public float MaximumMana => this.BaseUnit.MaximumMana;
 
         public MoveCapability MoveCapability { get; }
 
-        public virtual Vector3 Position
-        {
-            get
-            {
-                return this.BasePosition;
-            }
-        }
+        public virtual Vector3 Position => this.BasePosition;
 
         public Attribute PrimaryAttribute { get; protected set; } = Attribute.Invalid;
 
@@ -683,26 +474,14 @@
             }
         }
 
-        public float SecondsPerAttack
-        {
-            get
-            {
-                return this.BaseUnit.SecondsPerAttack;
-            }
-        }
+        public float SecondsPerAttack => this.BaseUnit.SecondsPerAttack;
 
         public float Speed { get; internal set; }
 
         /// <summary>
         ///     0.x%
         /// </summary>
-        public float StatusResistance
-        {
-            get
-            {
-                return this.BaseUnit.StatusResistance;
-            }
-        }
+        public float StatusResistance => this.BaseUnit.StatusResistance;
 
         public virtual float Strength { get; } = 0;
 
@@ -757,13 +536,7 @@
             }
         }
 
-        internal IEnumerable<Ability9> AbilitiesFast
-        {
-            get
-            {
-                return this.abilities;
-            }
-        }
+        internal IEnumerable<Ability9> AbilitiesFast => this.abilities;
 
         internal AghanimsScepter AghanimsScepter { get; set; }
 
@@ -784,17 +557,10 @@
             }
         }
 
-        internal float BonusCastRange
-        {
-            get
-            {
-                return this.BaseUnit.BonusCastRange;
+        internal float BonusCastRange => this.BaseUnit.BonusCastRange;
 
-                /*return this.ranges.Where(x => x.IsValid && (x.RangeIncreaseType & RangeIncreaseType.Ability) != 0)
+        /*return this.ranges.Where(x => x.IsValid && (x.RangeIncreaseType & RangeIncreaseType.Ability) != 0)
                     .Sum(x => x.GetRangeIncrease(this, RangeIncreaseType.Ability));*/
-            }
-        }
-
         internal bool HasAegis { get; set; }
 
         internal bool HasAghanimsScepterBlessing { get; set; }
@@ -862,6 +628,7 @@
             }
 
             this.actionSleeper.Sleep(0.1f);
+
             return true;
         }
 
@@ -954,9 +721,10 @@
         public virtual float GetAngle(Vector3 position, bool rotationDifference = false)
         {
             var angle = Math.Abs(Math.Atan2(position.Y - this.Position.Y, position.X - this.Position.X) - this.BaseUnit.NetworkRotationRad);
+
             if (angle > Math.PI)
             {
-                angle = Math.Abs((Math.PI * 2) - angle);
+                angle = Math.Abs(Math.PI * 2 - angle);
             }
 
             return (float)angle;
@@ -984,7 +752,7 @@
 
         public float GetAttackPoint(Unit9 target = null)
         {
-            return this.BaseAttackAnimationPoint / (1 + ((this.GetAttackSpeed(target) - 100) / 100));
+            return this.BaseAttackAnimationPoint / (1 + (this.GetAttackSpeed(target) - 100) / 100);
         }
 
         public float GetAttackRange()
@@ -1027,12 +795,14 @@
                 case DamageType.Magical:
                 {
                     amp *= 1 - this.BaseUnit.MagicalDamageResistance;
+
                     break;
                 }
 
                 case DamageType.Physical:
                 {
                     amp *= 1 - (this.IsEthereal ? 1 : this.BaseUnit.PhysicalDamageResistance);
+
                     break;
                 }
             }
@@ -1053,6 +823,7 @@
         public virtual float GetImmobilityDuration()
         {
             var modifiers = this.immobilityModifiers.Where(x => x.IsValid && x.ElapsedTime > 0.1f).ToList();
+
             if (modifiers.Count == 0)
             {
                 return 0;
@@ -1064,6 +835,7 @@
         public virtual float GetInvulnerabilityDuration()
         {
             var modifiers = this.invulnerabilityModifiers.Where(x => x.IsValid && x.ElapsedTime > 0.1f).ToList();
+
             if (modifiers.Count == 0)
             {
                 return 0;
@@ -1092,7 +864,7 @@
             var rotation = this.BaseUnit.NetworkRotationRad;
             var polar = new Vector3((float)Math.Cos(rotation), (float)Math.Sin(rotation), 0);
 
-            return this.Position + (polar * delay * this.Speed);
+            return this.Position + polar * delay * this.Speed;
         }
 
         public float GetTurnTime(Vector3 position)
@@ -1109,7 +881,7 @@
                 return 0;
             }
 
-            return (0.03f / this.TurnRate) * angleRad * 1.15f;
+            return 0.03f / this.TurnRate * angleRad * 1.15f;
         }
 
         public bool HasModifier(params string[] names)
@@ -1128,7 +900,7 @@
             var alpha = this.BaseUnit.NetworkRotationRad + diff;
             var polar = new Vector3((float)Math.Cos(alpha), (float)Math.Sin(alpha), 0);
 
-            return this.Position + (polar * range);
+            return this.Position + polar * range;
         }
 
         public bool IsAlly()
@@ -1185,6 +957,24 @@
             }
 
             this.actionSleeper.Sleep(0.1f);
+
+            return true;
+        }
+
+        public bool MoveToDirection(Vector3 mousePosition)
+        {
+            if (this.actionSleeper.IsSleeping)
+            {
+                return false;
+            }
+
+            if (!this.BaseUnit.MoveToDirection(mousePosition))
+            {
+                return false;
+            }
+
+            this.actionSleeper.Sleep(0.1f);
+
             return true;
         }
 
@@ -1211,6 +1001,7 @@
             }
 
             this.actionSleeper.Sleep(0.1f);
+
             return true;
         }
 
@@ -1265,6 +1056,7 @@
             {
                 // todo fix
                 var mod = this.immobilityModifiers.Find(x => x.Index == modifier.Index);
+
                 if (mod != null)
                 {
                     this.immobilityModifiers.Remove(mod);
@@ -1284,12 +1076,13 @@
 
         internal virtual float GetAttackRate(Unit9 target = null)
         {
-            return this.BaseAttackTime / (1 + ((this.GetAttackSpeed(target) - 100) / 100));
+            return this.BaseAttackTime / (1 + (this.GetAttackSpeed(target) - 100) / 100);
         }
 
         internal virtual float GetAttackSpeed(Unit9 target = null)
         {
             var bonusAttackSpeed = 0f;
+
             if (this.HurricanePikeTarget?.Equals(target) == true)
             {
                 //todo change
@@ -1330,12 +1123,17 @@
             {
                 case DamageValue.Minimum:
                     multipliedPhysDamage += this.BaseUnit.MinimumDamage;
+
                     break;
+
                 case DamageValue.Average:
                     multipliedPhysDamage += this.BaseUnit.DamageAverage;
+
                     break;
+
                 case DamageValue.Maximum:
                     multipliedPhysDamage += this.BaseUnit.MaximumDamage;
+
                     break;
             }
 
@@ -1374,7 +1172,7 @@
                 }
             }
 
-            damage[DamageType.Physical] += (multipliedPhysDamage * physCritMultiplier) + additionalPhysicalDamage;
+            damage[DamageType.Physical] += multipliedPhysDamage * physCritMultiplier + additionalPhysicalDamage;
             damage[DamageType.Physical] *= DamageExtensions.GetMeleeDamageMultiplier(this, target);
 
             return damage;
