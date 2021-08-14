@@ -135,9 +135,17 @@
                                                                         || order.Id == AbilityId.nevermore_shadowraze2
                                                                         || order.Id == AbilityId.nevermore_shadowraze3))
             {
-                owner.Hero.BaseUnit.MoveToDirection(GameManager.MousePosition);
-                order.Cast();
-                e.Process = true;
+                if (owner.Hero.GetAngle(GameManager.MousePosition) > 0.2)
+                {
+                    owner.Hero.MoveToDirection(GameManager.MousePosition);
+                    e.Process = true;
+
+                }
+                else
+                {
+                    e.Process = true;
+                }
+
             }
         }
     }
