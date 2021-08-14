@@ -113,19 +113,43 @@
 
         public AttackCapability AttackCapability { get; }
 
-        public float AttacksPerSecond => this.BaseUnit.AttacksPerSecond;
+        public float AttacksPerSecond
+        {
+            get
+            {
+                return this.BaseUnit.AttacksPerSecond;
+            }
+        }
 
         public AttackDamageType AttackType { get; }
 
-        public Inventory BaseInventory => this.BaseUnit.Inventory;
+        public Inventory BaseInventory
+        {
+            get
+            {
+                return this.BaseUnit.Inventory;
+            }
+        }
 
-        public IEnumerable<Modifier> BaseModifiers => this.BaseUnit.Modifiers;
+        public IEnumerable<Modifier> BaseModifiers
+        {
+            get
+            {
+                return this.BaseUnit.Modifiers;
+            }
+        }
 
         public Entity BaseOwner { get; internal set; }
 
         public Vector3 BasePosition { get; internal set; }
 
-        public Spellbook BaseSpellbook => this.BaseUnit.Spellbook;
+        public Spellbook BaseSpellbook
+        {
+            get
+            {
+                return this.BaseUnit.Spellbook;
+            }
+        }
 
         public Unit BaseUnit { get; }
 
@@ -157,7 +181,13 @@
             }
         }
 
-        public virtual bool CanReincarnate => this.HasAegis;
+        public virtual bool CanReincarnate
+        {
+            get
+            {
+                return this.HasAegis;
+            }
+        }
 
         public bool CanUseAbilities { get; protected set; } = true;
 
@@ -169,7 +199,10 @@
 
         public float ChannelEndTime
         {
-            get => this.channelEndTime;
+            get
+            {
+                return this.channelEndTime;
+            }
 
             internal set
             {
@@ -182,7 +215,13 @@
 
         public Team EnemyTeam { get; internal set; }
 
-        public bool HasAghanimsScepter => this.HasAghanimsScepterBlessing || this.AghanimsScepter?.IsUsable == true;
+        public bool HasAghanimsScepter
+        {
+            get
+            {
+                return this.HasAghanimsScepterBlessing || this.AghanimsScepter?.IsUsable == true;
+            }
+        }
 
         public bool HasAghanimShard
         {
@@ -261,14 +300,32 @@
         /// <summary>
         ///     x%
         /// </summary>
-        public float HealthPercentage => this.HealthPercentageBase * 100;
+        public float HealthPercentage
+        {
+            get
+            {
+                return this.HealthPercentageBase * 100;
+            }
+        }
 
         /// <summary>
         ///     0.x%
         /// </summary>
-        public float HealthPercentageBase => this.Health / this.MaximumHealth;
+        public float HealthPercentageBase
+        {
+            get
+            {
+                return this.Health / this.MaximumHealth;
+            }
+        }
 
-        public virtual float HealthRegeneration => this.BaseUnit.HealthRegeneration;
+        public virtual float HealthRegeneration
+        {
+            get
+            {
+                return this.BaseUnit.HealthRegeneration;
+            }
+        }
 
         public bool HideHud { get; internal set; } = false;
 
@@ -291,7 +348,13 @@
 
         public bool IsAncient { get; protected set; }
 
-        public bool IsAttackImmune => (this.UnitState & UnitState.AttackImmune) != 0;
+        public bool IsAttackImmune
+        {
+            get
+            {
+                return (this.UnitState & UnitState.AttackImmune) != 0;
+            }
+        }
 
         public bool IsAttacking { get; internal set; }
 
@@ -300,7 +363,13 @@
         /// <summary>
         ///     Lotus, Linkens, Spell shield, Untargetable
         /// </summary>
-        public bool IsBlockingAbilities => this.IsLotusProtected || this.IsLinkensProtected || this.IsSpellShieldProtected || this.IsUntargetable;
+        public bool IsBlockingAbilities
+        {
+            get
+            {
+                return this.IsLotusProtected || this.IsLinkensProtected || this.IsSpellShieldProtected || this.IsUntargetable;
+            }
+        }
 
         public bool IsBuilding { get; protected set; }
 
@@ -316,7 +385,13 @@
 
         public bool IsCharging { get; internal set; } = false;
 
-        public bool IsCommandRestricted => (this.UnitState & UnitState.CommandRestricted) != 0;
+        public bool IsCommandRestricted
+        {
+            get
+            {
+                return (this.UnitState & UnitState.CommandRestricted) != 0;
+            }
+        }
 
         public bool IsControllable { get; internal set; }
 
@@ -326,7 +401,13 @@
 
         public bool IsDarkPactProtected { get; internal set; }
 
-        public bool IsDisarmed => (this.UnitState & UnitState.Disarmed) != 0 || this.AttackCapability == AttackCapability.None;
+        public bool IsDisarmed
+        {
+            get
+            {
+                return (this.UnitState & UnitState.Disarmed) != 0 || this.AttackCapability == AttackCapability.None;
+            }
+        }
 
         public bool IsEthereal { get; internal set; } = false;
 
@@ -334,33 +415,87 @@
 
         public bool IsHero { get; protected set; }
 
-        public bool IsHexed => (this.UnitState & UnitState.Hexed) != 0;
+        public bool IsHexed
+        {
+            get
+            {
+                return (this.UnitState & UnitState.Hexed) != 0;
+            }
+        }
 
         public bool IsIllusion { get; protected set; } = false;
 
         public bool IsImportant { get; protected set; } = false;
 
-        public bool IsInNormalState => (this.UnitState & (UnitState.Disarmed | UnitState.Silenced | UnitState.Stunned | UnitState.Rooted | UnitState.Hexed
-                                                          | UnitState.Muted)) == 0 && this.GetImmobilityDuration() <= 0;
+        public bool IsInNormalState
+        {
+            get
+            {
+                return (this.UnitState & (UnitState.Disarmed | UnitState.Silenced | UnitState.Stunned | UnitState.Rooted | UnitState.Hexed
+                                          | UnitState.Muted)) == 0 && this.GetImmobilityDuration() <= 0;
+            }
+        }
 
-        public bool IsInvisible => (this.UnitState & UnitState.Invisible) != 0 || this.BaseUnit.InvisiblityLevel > 0.5f;
+        public bool IsInvisible
+        {
+            get
+            {
+                return (this.UnitState & UnitState.Invisible) != 0 || this.BaseUnit.InvisiblityLevel > 0.5f;
+            }
+        }
 
-        public virtual bool IsInvulnerable => (this.UnitState & (UnitState.Invulnerable | UnitState.NoHealthbar)) != 0;
+        public virtual bool IsInvulnerable
+        {
+            get
+            {
+                return (this.UnitState & (UnitState.Invulnerable | UnitState.NoHealthbar)) != 0;
+            }
+        }
 
         public bool IsLaneCreep { get; }
 
-        public bool IsLeashed => (this.UnitState & UnitState.Tethered) != 0;
+        public bool IsLeashed
+        {
+            get
+            {
+                return (this.UnitState & UnitState.Tethered) != 0;
+            }
+        }
 
-        public virtual bool IsLinkensProtected => this.IsLinkensTargetProtected
-                                                  || this.CanUseAbilities && (this.LinkensSphere?.IsReady == true || this.MirrorShield?.IsReady == true);
+        public virtual bool IsLinkensProtected
+        {
+            get
+            {
+                return this.IsLinkensTargetProtected
+                       || this.CanUseAbilities && (this.LinkensSphere?.IsReady == true || this.MirrorShield?.IsReady == true);
+            }
+        }
 
         public bool IsLotusProtected { get; internal set; }
 
-        public bool IsMagicImmune => (this.UnitState & UnitState.MagicImmune) != 0;
+        public bool IsMagicImmune
+        {
+            get
+            {
+                return (this.UnitState & UnitState.MagicImmune) != 0;
+            }
+        }
 
-        public bool IsMoving => this.BaseUnit.IsMoving;
+        public bool IsMoving
+        {
+            get
+            {
+                return this.BaseUnit.IsMoving;
+            }
+        }
 
-        public bool IsMuted => (this.UnitState & UnitState.Muted) != 0;
+        public bool IsMuted
+        {
+            get
+            {
+                return (this.UnitState & UnitState.Muted) != 0;
+            }
+        }
 
         public bool IsMyControllable
         {
@@ -393,17 +528,41 @@
 
         public bool IsReflectingDamage { get; internal set; }
 
-        public bool IsRooted => (this.UnitState & UnitState.Rooted) != 0 || this.MoveCapability == MoveCapability.None;
+        public bool IsRooted
+        {
+            get
+            {
+                return (this.UnitState & UnitState.Rooted) != 0 || this.MoveCapability == MoveCapability.None;
+            }
+        }
 
-        public bool IsRotating => (int)this.BaseUnit.RotationDifference != 0;
+        public bool IsRotating
+        {
+            get
+            {
+                return (int)this.BaseUnit.RotationDifference != 0;
+            }
+        }
 
         public bool IsRuptured { get; internal set; }
 
-        public bool IsSilenced => (this.UnitState & UnitState.Silenced) != 0;
+        public bool IsSilenced
+        {
+            get
+            {
+                return (this.UnitState & UnitState.Silenced) != 0;
+            }
+        }
 
         public virtual bool IsSpellShieldProtected { get; internal set; }
 
-        public bool IsStunned => (this.UnitState & (UnitState.Stunned | UnitState.CommandRestricted)) != 0;
+        public bool IsStunned
+        {
+            get
+            {
+                return (this.UnitState & (UnitState.Stunned | UnitState.CommandRestricted)) != 0;
+            }
+        }
 
         public bool IsTeleporting { get; internal set; } = false;
 
@@ -411,11 +570,23 @@
 
         public bool IsUnit { get; protected set; }
 
-        public bool IsUntargetable => (this.UnitState & UnitState.Untargetable) != 0;
+        public bool IsUntargetable
+        {
+            get
+            {
+                return (this.UnitState & UnitState.Untargetable) != 0;
+            }
+        }
 
         public bool IsVisible { get; internal set; }
 
-        public bool IsVisibleToEnemies => this.BaseUnit.IsVisibleToEnemies;
+        public bool IsVisibleToEnemies
+        {
+            get
+            {
+                return this.BaseUnit.IsVisibleToEnemies;
+            }
+        }
 
         public float LastNotVisibleTime { get; internal set; }
 
@@ -423,7 +594,13 @@
 
         public float LastVisibleTime { get; internal set; }
 
-        public uint Level => this.BaseUnit.Level;
+        public uint Level
+        {
+            get
+            {
+                return this.BaseUnit.Level;
+            }
+        }
 
         public virtual float Mana
         {
@@ -438,19 +615,55 @@
             }
         }
 
-        public float ManaPercentage => this.ManaPercentageBase * 100;
+        public float ManaPercentage
+        {
+            get
+            {
+                return this.ManaPercentageBase * 100;
+            }
+        }
 
-        public float ManaPercentageBase => this.Mana / this.MaximumMana;
+        public float ManaPercentageBase
+        {
+            get
+            {
+                return this.Mana / this.MaximumMana;
+            }
+        }
 
-        public virtual float ManaRegeneration => this.BaseUnit.ManaRegeneration;
+        public virtual float ManaRegeneration
+        {
+            get
+            {
+                return this.BaseUnit.ManaRegeneration;
+            }
+        }
 
-        public float MaximumHealth => this.BaseUnit.MaximumHealth;
+        public float MaximumHealth
+        {
+            get
+            {
+                return this.BaseUnit.MaximumHealth;
+            }
+        }
 
-        public float MaximumMana => this.BaseUnit.MaximumMana;
+        public float MaximumMana
+        {
+            get
+            {
+                return this.BaseUnit.MaximumMana;
+            }
+        }
 
         public MoveCapability MoveCapability { get; }
 
-        public virtual Vector3 Position => this.BasePosition;
+        public virtual Vector3 Position
+        {
+            get
+            {
+                return this.BasePosition;
+            }
+        }
 
         public Attribute PrimaryAttribute { get; protected set; } = Attribute.Invalid;
 
@@ -474,14 +687,26 @@
             }
         }
 
-        public float SecondsPerAttack => this.BaseUnit.SecondsPerAttack;
+        public float SecondsPerAttack
+        {
+            get
+            {
+                return this.BaseUnit.SecondsPerAttack;
+            }
+        }
 
         public float Speed { get; internal set; }
 
         /// <summary>
         ///     0.x%
         /// </summary>
-        public float StatusResistance => this.BaseUnit.StatusResistance;
+        public float StatusResistance
+        {
+            get
+            {
+                return this.BaseUnit.StatusResistance;
+            }
+        }
 
         public virtual float Strength { get; } = 0;
 
@@ -536,7 +761,13 @@
             }
         }
 
-        internal IEnumerable<Ability9> AbilitiesFast => this.abilities;
+        internal IEnumerable<Ability9> AbilitiesFast
+        {
+            get
+            {
+                return this.abilities;
+            }
+        }
 
         internal AghanimsScepter AghanimsScepter { get; set; }
 
@@ -557,7 +788,13 @@
             }
         }
 
-        internal float BonusCastRange => this.BaseUnit.BonusCastRange;
+        internal float BonusCastRange
+        {
+            get
+            {
+                return this.BaseUnit.BonusCastRange;
+            }
+        }
 
         /*return this.ranges.Where(x => x.IsValid && (x.RangeIncreaseType & RangeIncreaseType.Ability) != 0)
                     .Sum(x => x.GetRangeIncrease(this, RangeIncreaseType.Ability));*/
