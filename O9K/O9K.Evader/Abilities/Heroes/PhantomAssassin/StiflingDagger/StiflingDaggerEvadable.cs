@@ -28,6 +28,7 @@
             this.Counters.UnionWith(Abilities.Suicide);
 
             this.ModifierCounters.UnionWith(Abilities.AllyPurge);
+            this.ModifierCounters.UnionWith(Abilities.SelfPurge);
             this.ModifierCounters.Remove(Abilities.EulsScepterOfDivinity);
             this.ModifierCounters.Remove(Abilities.WindWaker);
             this.ModifierCounters.Remove(Abilities.Stormcrafter);

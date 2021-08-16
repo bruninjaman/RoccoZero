@@ -18,6 +18,8 @@
             : base(ability, pathfinder, menu)
         {
             this.Blinks.UnionWith(Abilities.Blink);
+            this.Blinks.Remove(Abilities.Flicker);
+
 
             this.Disables.UnionWith(Abilities.Disable);
 
@@ -33,8 +35,10 @@
             this.Counters.Remove(Abilities.Stormcrafter);
             this.Counters.Remove(Abilities.FatesEdict);
             this.Counters.Remove(Abilities.BlackKingBar);
+            this.Counters.Remove(Abilities.MinotaurHorn);
+            this.Counters.Remove(Abilities.Flicker);
 
-            this.ModifierCounters.Add(Abilities.MantaStyle);
+            this.ModifierCounters.UnionWith(Abilities.SelfPurge);
             this.ModifierCounters.UnionWith(Abilities.AllyPurge);
             this.ModifierCounters.Add(Abilities.PressTheAttack);
         }

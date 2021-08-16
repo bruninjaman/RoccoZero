@@ -57,6 +57,16 @@
             damageIgnore.AddTranslation(Lang.Cn, "如果损害百分比（相对于健康）较小");
             ability.DamageIgnore = ignoreMenu.GetOrAdd(damageIgnore);
 
+            var enemyAroundIgnore = new MenuSlider("When there are less than X enemy heroes around you", "enemyAroundIgnore", 0, 0, 5);
+            damageIgnore.AddTranslation(Lang.Ru, "Если вокруг тебя меньше X вражеских героев");
+            damageIgnore.AddTranslation(Lang.Cn, "当你周围的敌方英雄少于X数时");
+            ability.EnemyAroundIgnore = ignoreMenu.GetOrAdd(enemyAroundIgnore);
+
+            var rangeToCheckEnemies = new MenuSlider("Range to check enemy heroes around you", "rangeToCheckEnemy", 1000, 0, 5000);
+            damageIgnore.AddTranslation(Lang.Ru, "Если вокруг тебя меньше X вражеских героев");
+            damageIgnore.AddTranslation(Lang.Cn, "范围检查");
+            ability.RangeToCheckEnemy = ignoreMenu.GetOrAdd(rangeToCheckEnemies);
+
             var abilityEnabled = new MenuSwitcher("Evade", "enabled");
             abilityEnabled.AddTranslation(Lang.Ru, "Уворачиваться");
             abilityEnabled.AddTranslation(Lang.Cn, "启用");

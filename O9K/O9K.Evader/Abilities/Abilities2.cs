@@ -63,9 +63,9 @@
         public static AbilityId EtherealBlade { get; } = AbilityId.item_ethereal_blade;
 
         public static AbilityId EulsScepterOfDivinity { get; } = AbilityId.item_cyclone;
-        
+
         public static AbilityId WindWaker { get; } = AbilityId.item_wind_waker;
-        
+
         public static AbilityId Stormcrafter { get; } = AbilityId.item_stormcrafter;
 
         public static AbilityId FatesEdict { get; } = AbilityId.oracle_fates_edict;
@@ -78,6 +78,8 @@
 
         public static AbilityId FortunesEnd { get; } = AbilityId.oracle_fortunes_end;
 
+        public static AbilityId Flicker { get; } = AbilityId.item_flicker;
+
         public static AbilityId Ghost { get; } = AbilityId.item_ghost;
 
         public static AbilityId GlimmerCape { get; } = AbilityId.item_glimmer_cape;
@@ -89,6 +91,8 @@
         public static AbilityId HeavenlyGrace { get; } = AbilityId.omniknight_repel;
 
         public static AbilityId HoodOfDefiance { get; } = AbilityId.item_hood_of_defiance;
+
+        public static AbilityId MinotaurHorn { get; } = AbilityId.item_minotaur_horn;
 
         public static AbilityId EternalShroud { get; } = AbilityId.item_eternal_shroud;
 

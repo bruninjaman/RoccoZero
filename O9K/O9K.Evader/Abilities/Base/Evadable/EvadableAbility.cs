@@ -5,9 +5,11 @@
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
+    using Core.Managers.Entity;
     using Core.Managers.Menu.Items;
-    using Divine.Game;
+
     using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Game;
 
     using Evader.EvadeModes;
 
@@ -40,9 +42,12 @@
         public virtual bool CanBeDodged { get; } = true;
 
         public virtual HashSet<AbilityId> Counters { get; } = new HashSet<AbilityId>();
-
+        
         public MenuSlider DamageIgnore { get; set; }
 
+        public MenuSlider EnemyAroundIgnore { get; set; }
+
+        public MenuSlider RangeToCheckEnemy { get; set; }
         public virtual HashSet<AbilityId> Disables { get; } = new HashSet<AbilityId>();
 
         public MenuSwitcher Enabled { get; set; }
@@ -146,8 +151,10 @@
             {
                 case CounterAbility _:
                     return this.AllCounters.Contains(ability.Ability.Id);
+
                 case BlinkAbility _:
                     return this.AllBlinks.Contains(ability.Ability.Id);
+
                 case DisableAbility _:
                     return this.AllDisables.Contains(ability.Ability.Id);
             }
@@ -166,8 +173,10 @@
             {
                 case CounterAbility _:
                     return this.AllModifierCounters.Contains(ability.Ability.Id);
+
                 case BlinkAbility _:
                     return this.AllModifierBlinks.Contains(ability.Ability.Id);
+
                 case DisableAbility _:
                     return this.AllModifierDisables.Contains(ability.Ability.Id);
             }
@@ -190,7 +199,16 @@
             if (this.DamageIgnore > 0)
             {
                 var damagePercentage = (obstacle.GetDamage(unit) / unit.Health) * 100;
+
                 if (damagePercentage < this.DamageIgnore)
+                {
+                    return true;
+                }
+            }
+
+            if (this.EnemyAroundIgnore > 0)
+            {
+                if (EntityManager9.EnemyHeroes.Where(x => x.Distance(unit) < this.RangeToCheckEnemy).Count() < this.EnemyAroundIgnore)
                 {
                     return true;
                 }

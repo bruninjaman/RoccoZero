@@ -27,10 +27,11 @@
 
             var health = ally.Health;
             var damage = obstacle.GetDamage(ally);
-            if (damage < health)
-            {
-                return false;
-            }
+
+            // if (damage < health)
+            // {
+            //     return false;
+            // }
 
             if (this.healAbility == null)
             {
@@ -43,10 +44,10 @@
                 return false;
             }
 
-            if (ally.MaximumHealth - health < damage)
-            {
-                return false;
-            }
+            // if (ally.MaximumHealth - health < damage)
+            // {
+            //     return false;
+            // }
 
             if (damage >= health + this.healAbility.GetHealthRestore(ally))
             {
