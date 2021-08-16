@@ -565,6 +565,8 @@
             { "modifier_snapfire_magma_burn_slow", ModifierType.Temporary },
             { "modifier_snapfire_gobble_up_belly_has_unit", ModifierType.Temporary },
 
+            { "modifier_dawnbreaker_fire_wreath_smash_stun", ModifierType.Temporary },
+
             { "modifier_teleporting", ModifierType.Temporary },
             { "modifier_clarity_potion", ModifierType.Temporary },
             { "modifier_smoke_of_deceit", ModifierType.Temporary },
