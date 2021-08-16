@@ -929,6 +929,20 @@
             return Vector2.Distance(new Vector2(p1.X, p1.Y), new Vector2(position.X, position.Y));
         }
 
+        public float Distance3D(Vector3 position)
+        {
+            var p1 = this.Position;
+
+            return Vector3.Distance(p1, position);
+        }
+
+        public float Distance3D(Unit9 targetUnit)
+        {
+            var p1 = this.Position;
+
+            return Vector3.Distance(p1, targetUnit.Position);
+        }
+
         public float DistanceSquared(Unit9 unit)
         {
             var p1 = this.Position;

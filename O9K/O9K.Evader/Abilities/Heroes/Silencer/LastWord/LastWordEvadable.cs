@@ -8,8 +8,9 @@
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
-    using Divine.Modifier.Modifiers;
+
     using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Modifier.Modifiers;
 
     using Metadata;
 
@@ -34,6 +35,8 @@
             this.ModifierCounters.Add(Abilities.WindWaker);
             this.ModifierCounters.Add(Abilities.Stormcrafter);
             this.ModifierCounters.UnionWith(Abilities.MagicShield);
+            this.ModifierCounters.UnionWith(Abilities.SelfPurge);
+
 
             this.modifierCountersIgnoreTime.UnionWith(Abilities.AllyPurge);
             this.modifierCountersIgnoreTime.Add(Abilities.MantaStyle);

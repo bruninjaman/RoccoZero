@@ -3,11 +3,14 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Core.Entities.Abilities.Base.Components;
     using Core.Entities.Abilities.Base.Types;
     using Core.Entities.Units;
     using Core.Prediction.Data;
-    using Divine.Extensions;
+
     using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Extensions;
 
     using Settings;
 
@@ -35,6 +38,7 @@
             var lowMp = this.Owner.ManaPercentage < this.settings.MpThreshold;
 
             var allies = heroes.Where(x => !x.IsInvulnerable && x.IsAlly(this.Owner)).OrderBy(x => x.Health).ToList();
+
             var enemies = heroes.Where(x => !x.IsInvulnerable && x.IsEnemy(this.Owner) && this.settings.IsEnemyHeroEnabled(x.Name))
                 .ToList();
 
@@ -53,6 +57,7 @@
                 if (this.settings.OnChannel && ally.IsChanneling)
                 {
                     var ability = ally.Abilities.FirstOrDefault(x => x.IsChanneling);
+
                     if (ability == null || ability.Id == AbilityId.lion_mana_drain || ability.Id == AbilityId.windrunner_powershot
                         || ability.Id == AbilityId.oracle_fortunes_end)
                     {
@@ -87,6 +92,16 @@
                 }
 
                 if (ally.BaseUnit.HasModifier(this.Shield.ShieldModifierName))
+                {
+                    continue;
+                }
+
+                if (ally.IsChanneling && this.Ability is IAppliesImmobility)
+                {
+                    continue;
+                }
+
+                if (ally.IsChanneling && this.Ability is IShield shield && (shield.AppliesUnitState & UnitState.Stunned) != 0)
                 {
                     continue;
                 }

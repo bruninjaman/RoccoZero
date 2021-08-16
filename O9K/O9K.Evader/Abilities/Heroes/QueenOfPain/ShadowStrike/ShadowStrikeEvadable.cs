@@ -28,6 +28,8 @@
 
             this.ModifierCounters.UnionWith(Abilities.AllyPurge);
             this.ModifierCounters.UnionWith(Abilities.MagicShield);
+            this.ModifierCounters.UnionWith(Abilities.SelfPurge);
+
         }
 
         public bool ModifierAllyCounter { get; } = true;

@@ -7,8 +7,7 @@
 
     using Metadata;
 
-    //todo id
-    [AbilityId((AbilityId)7307)]
+    [AbilityId(AbilityId.pangolier_lucky_shot)]
     public class LuckyShot : PassiveAbility
     {
         public LuckyShot(Ability baseAbility)

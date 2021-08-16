@@ -20,6 +20,7 @@
         {
             this.ModifierCounters.Add(Abilities.MantaStyle);
             this.ModifierCounters.UnionWith(Abilities.AllyPurge);
+            this.ModifierCounters.UnionWith(Abilities.SelfPurge);
 
             this.ProactiveBlinks.UnionWith(Abilities.ProactiveBlink);
 

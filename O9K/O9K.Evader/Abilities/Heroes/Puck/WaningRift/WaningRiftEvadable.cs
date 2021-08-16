@@ -19,6 +19,7 @@
             this.ModifierCounters.Add(Abilities.MantaStyle);
             this.ModifierCounters.UnionWith(Abilities.AllyPurge);
             this.ModifierCounters.UnionWith(Abilities.StrongMagicShield);
+            this.ModifierCounters.UnionWith(Abilities.SelfPurge);
         }
 
         public override bool ModifierAllyCounter { get; } = true;

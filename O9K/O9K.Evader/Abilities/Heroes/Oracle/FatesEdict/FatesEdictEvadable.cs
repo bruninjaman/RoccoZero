@@ -17,6 +17,7 @@
             : base(ability, pathfinder, menu)
         {
             this.ModifierCounters.UnionWith(Abilities.AllyPurge);
+            this.ModifierCounters.UnionWith(Abilities.SelfPurge);
             this.ModifierCounters.Add(Abilities.Enrage);
             this.ModifierCounters.Add(Abilities.ChemicalRage);
             //todo enemy counter?

@@ -35,6 +35,21 @@
             //    AbilityId.oracle_false_promise, //todo add as purge with some logic?
         };
 
+        public static IEnumerable<AbilityId> SelfPurge { get; } = new[]
+        {
+            AbilityId.item_flicker,
+            AbilityId.item_manta,
+            AbilityId.item_minotaur_horn,
+            AbilityId.item_lotus_orb,
+            AbilityId.item_guardian_greaves,
+            AbilityId.life_stealer_rage,
+            AbilityId.alchemist_chemical_rage,
+            AbilityId.slark_dark_pact,
+            AbilityId.item_cyclone,
+            AbilityId.item_wind_waker,
+            AbilityId.item_black_king_bar,
+        };
+
         public static IEnumerable<AbilityId> Blink { get; } = new[]
         {
             AbilityId.ember_spirit_activate_fire_remnant,
@@ -392,6 +407,8 @@
             AbilityId.antimage_blink,
             AbilityId.queenofpain_blink,
             AbilityId.void_spirit_astral_step,
+            AbilityId.item_flicker,
+
         };
 
         public static IEnumerable<AbilityId> Invisibility { get; } = new[]

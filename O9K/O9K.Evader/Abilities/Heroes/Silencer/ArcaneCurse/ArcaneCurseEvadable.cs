@@ -6,6 +6,7 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
 
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Modifier.Modifiers;
 
     using Metadata;
@@ -20,6 +21,8 @@
             this.Counters.Add(Abilities.PhaseShift);
 
             this.ModifierCounters.UnionWith(Abilities.AllyPurge);
+            this.ModifierCounters.UnionWith(Abilities.SelfPurge);
+            this.ModifierCounters.Remove(AbilityId.item_black_king_bar);
         }
 
         public bool ModifierAllyCounter { get; } = true;

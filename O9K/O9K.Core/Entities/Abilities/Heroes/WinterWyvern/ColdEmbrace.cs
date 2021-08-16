@@ -13,7 +13,7 @@
     using Metadata;
 
     [AbilityId(AbilityId.winter_wyvern_cold_embrace)]
-    public class ColdEmbrace : RangedAbility, IHasDamageAmplify, IShield
+    public class ColdEmbrace : RangedAbility, IHasDamageAmplify, IShield, IAppliesImmobility
     {
         public ColdEmbrace(Ability baseAbility)
             : base(baseAbility)
@@ -23,6 +23,8 @@
         public DamageType AmplifierDamageType { get; } = DamageType.Physical;
 
         public string[] AmplifierModifierNames { get; } = { "modifier_winter_wyvern_cold_embrace" };
+
+        public string ImmobilityModifierName { get; } = "modifier_winter_wyvern_cold_embrace";
 
         public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
 
