@@ -31,7 +31,13 @@
             Instances.Add(this);
         }
 
-        public bool IsActive => this.handler.IsEnabled;
+        public bool IsActive
+        {
+            get
+            {
+                return this.handler.IsEnabled;
+            }
+        }
 
         public static List<BaseMode> Instances { get; set; } = new();
 
