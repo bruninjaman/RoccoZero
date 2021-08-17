@@ -119,7 +119,7 @@
                 attackPoint *= 2.5f;
             }
 
-            this.AttackSleeper.Sleep(this.Unit.GetAttackPoint(target.Unit) /* + this.Unit.GetAttackBackswing(target.Unit) + delay */);
+            this.AttackSleeper.Sleep(this.Unit.GetAttackPoint(target.Unit) + this.Unit.GetAttackBackswing(target.Unit) + delay);
             this.MoveSleeper.Sleep(attackPoint + delay + this.Menu.AdditionalDelay / 1000f);
             this.LastMovePosition = Vector3.Zero;
             this.Target = target;
