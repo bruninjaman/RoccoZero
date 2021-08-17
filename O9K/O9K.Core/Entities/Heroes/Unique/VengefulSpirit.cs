@@ -27,7 +27,7 @@
                     return;
                 }
 
-                this.CanUseAbilities = mainHero.GetAbilityById(AbilityId.special_bonus_unique_vengeful_spirit_7)?.Level > 0;
+                this.CanUseAbilities = mainHero.GetAbilityById(AbilityId.vengefulspirit_command_aura)?.Level > 0 && mainHero.HasAghanimsScepter;
             }
         }
     }
