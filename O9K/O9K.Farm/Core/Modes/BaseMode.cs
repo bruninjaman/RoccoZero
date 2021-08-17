@@ -157,7 +157,7 @@
             }
 
             var mousePosition = GameManager.MousePosition;
-            var control = myUnits.Where(x => x.CanMoveToMouse() && x.LastMovePosition.Distance2D(mousePosition) > 100).ToList();
+            var control = myUnits.Where(x => x.CanMoveToMouse() && x.LastMovePosition.Distance2D(mousePosition) > 50).ToList();
 
             if (control.Count == 0)
             {

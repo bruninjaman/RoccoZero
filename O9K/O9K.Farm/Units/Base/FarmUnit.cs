@@ -186,7 +186,12 @@
 
         public bool Farm(FarmUnit enemy)
         {
-            return this.Attack(enemy);
+            if (!this.AttackSleeper.IsSleeping)
+            {
+                return this.Attack(enemy);
+            }
+
+            return false;
         }
 
         public float GetAttackDelay(FarmUnit target)
