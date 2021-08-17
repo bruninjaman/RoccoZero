@@ -29,7 +29,7 @@
 
         private BlinkQueen blink;
 
-        private DisableAbility bloodthorn;
+        private Bloodthorn bloodthorn;
 
         private DisableAbility hex;
 
