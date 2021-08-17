@@ -23,7 +23,7 @@
             this.unitManager = unitManager;
 
             EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
-            EntityManager9.UnitMonitor.AttackEnd += this.OnUnitDied;
+            // EntityManager9.UnitMonitor.AttackEnd += this.OnUnitDied;
             EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
             ProjectileManager.TrackingProjectileAdded += this.OnAddTrackingProjectile;
             // RendererManager.Draw += this.TrackAddedProjectile;

@@ -5,8 +5,6 @@
 
     using Damage;
 
-    using Divine.Game;
-
     using Menu;
 
     using O9K.Core.Helpers;
@@ -18,8 +16,6 @@
         private readonly Dictionary<FarmUnit, Sleeper> towerFarmSleeper = new();
 
         private LastHitMenu lastHitMenu;
-
-        private FarmUnit lastUnitToHit;
 
         public LastHitMode(UnitManager unitManager, MenuManager menuManager)
             : base(unitManager)
@@ -197,7 +193,7 @@
             IReadOnlyList<FarmUnit> myUnits)
         {
             foreach (var enemy in enemies.Where(x => x.CanBeKilled)
-                .OrderBy(x => x.GetPredictedDeathTime(allies)).ThenBy(x => x.GetPredictedHealth(2)))
+                .OrderBy(x => x.GetPredictedHealth(2)).ThenBy(x => x.GetPredictedDeathTime(allies)))
             {
                 var damages = new List<DamageInfo>();
 
@@ -242,25 +238,6 @@
                     break;
                 }
 
-                var predictedDeathDelay = enemy.GetPredictedDeathTime(allies) - GameManager.RawGameTime;
-
-                if (predictedDeathDelay <= 2)
-                {
-                    if (this.lastUnitToHit == null || !this.lastUnitToHit.IsValid)
-                    {
-                        this.lastUnitToHit = enemy;
-                    }
-                }
-                else if (this.lastUnitToHit != null && !this.lastUnitToHit.IsValid)
-                {
-                    this.lastUnitToHit = null;
-                }
-
-                if (canKill)
-                {
-                    this.lastUnitToHit = null;
-                }
-
                 if (!canKill)
                 {
                     continue;
@@ -301,8 +278,8 @@
                 return;
             }
 
-            if ((this.lastUnitToHit == null || !this.lastUnitToHit.IsValid) && this.Deny(enemies, allies,
-                    availableUnits.Where(x => x.IsDenyEnabled).ToList()))
+            if (this.Deny(enemies, allies,
+                availableUnits.Where(x => x.IsDenyEnabled).ToList()))
             {
                 return;
             }
