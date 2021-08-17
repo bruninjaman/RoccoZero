@@ -25,6 +25,14 @@
             this.killThresholdData = new SpecialData(baseAbility, "kill_threshold");
         }
 
+        public float KillThreshold
+        {
+            get
+            {
+                return this.killThresholdData.GetValue(this.Level);
+            }
+        }
+
         protected override float BaseCastRange
         {
             get
@@ -35,7 +43,7 @@
 
         public override int GetDamage(Unit9 unit)
         {
-            var threshold = this.killThresholdData.GetValue(this.Level);
+            var threshold = this.KillThreshold;
             var healthRegen = unit.HealthRegeneration * this.GetCastDelay(unit) * 1.5f;
 
             if (unit.Health + healthRegen < threshold)

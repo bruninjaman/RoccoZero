@@ -2,7 +2,10 @@
 {
     using Core.Entities.Abilities.Base;
     using Core.Entities.Abilities.Base.Types;
+    using Core.Entities.Abilities.Heroes.Axe;
     using Core.Entities.Units;
+
+    using Divine.Entity.Entities.Abilities.Components;
 
     using Metadata;
 
@@ -28,10 +31,22 @@
             var health = ally.Health;
             var damage = obstacle.GetDamage(ally);
 
-            // if (damage < health)
-            // {
-            //     return false;
-            // }
+            if (obstacle.EvadableAbility.Ability.Id == AbilityId.axe_culling_blade)
+            {
+                var ability = (CullingBlade)obstacle.EvadableAbility.Ability;
+                var threshold =  ability.KillThreshold;
+
+                if (threshold < health + this.healAbility.GetHealthRestore(ally))
+                {
+                    return true;
+                }
+
+            }
+
+            if (damage < health)
+            {
+                return false;
+            }
 
             if (this.healAbility == null)
             {
