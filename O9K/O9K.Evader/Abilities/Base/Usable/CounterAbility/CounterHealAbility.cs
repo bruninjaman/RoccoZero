@@ -42,11 +42,11 @@
                 }
 
             }
-            
-            // if (damage < health)
-            // {
-            //     return false;
-            // }
+
+            if (damage < health)
+            {
+                return false;
+            }
 
             if (this.healAbility == null)
             {
