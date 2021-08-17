@@ -38,7 +38,7 @@
 
         public override UnitDamage AddDamage(FarmUnit target, float attackStartTime, bool addNext, bool forceRanged)
         {
-            var damage = new RangedDamage(this, target, attackStartTime, 0, 0f); // BEFORE WAS 0.15f, -0.3f
+            var damage = new RangedDamage(this, target, attackStartTime, 0, 0.15f, -0.3f);
             target.IncomingDamage.Add(damage);
 
             return damage;

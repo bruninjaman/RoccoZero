@@ -6,7 +6,6 @@
     using System.Reflection;
 
     using Divine.Entity.Entities;
-    using Divine.Entity.Entities.Players;
     using Divine.Entity.Entities.Units.Components;
 
     using Menu;
@@ -218,18 +217,11 @@
         private void OnUnitDied(Unit9 unit)
         {
             var farmUnits = this.Units.Where(x => x.IsControllable && x.Target?.Unit.Equals(unit) == true);
-            List<FarmUnit> farmUnitsToStop = new();
 
             foreach (var farmUnit in farmUnits)
             {
-                if (farmUnit.Unit.IsAttacking)
-                {
-                    farmUnitsToStop.Add(farmUnit);
-                }
+                farmUnit.ResetSleepers();
             }
-
-            Player.Stop(farmUnitsToStop.Select(x => x.Unit.BaseUnit));
-            farmUnitsToStop.ForEach(x => x.ResetSleepers());
         }
 
         private void OnUnitRemoved(Unit9 unit)

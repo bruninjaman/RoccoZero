@@ -97,6 +97,11 @@
 
         public virtual bool Attack(FarmUnit target)
         {
+            if (this.AttackSleeper.IsSleeping)
+            {
+                return false;
+            }
+
             if (!this.Unit.Attack(target.Unit))
             {
                 return false;
@@ -114,7 +119,7 @@
                 attackPoint *= 2.5f;
             }
 
-            this.AttackSleeper.Sleep(this.Unit.GetAttackPoint(target.Unit) /* + this.Unit.GetAttackBackswing(target.Unit) + delay */);
+            this.AttackSleeper.Sleep(this.Unit.GetAttackPoint(target.Unit) + this.Unit.GetAttackBackswing(target.Unit) + delay);
             this.MoveSleeper.Sleep(attackPoint + delay + this.Menu.AdditionalDelay / 1000f);
             this.LastMovePosition = Vector3.Zero;
             this.Target = target;
@@ -186,12 +191,9 @@
 
         public bool Farm(FarmUnit enemy)
         {
-            if (!this.AttackSleeper.IsSleeping)
-            {
-                return this.Attack(enemy);
-            }
 
-            return false;
+            return this.Attack(enemy);
+
         }
 
         public float GetAttackDelay(FarmUnit target)
@@ -320,6 +322,11 @@
 
         public bool Harass(FarmUnit target)
         {
+            if (this.AttackSleeper.IsSleeping)
+            {
+                return false;
+            }
+            
             if (!this.Unit.Attack(target.Unit))
             {
                 return false;
@@ -337,7 +344,7 @@
                 attackPoint *= 2.5f;
             }
 
-            this.AttackSleeper.Sleep(this.Unit.GetAttackPoint(target.Unit) /* + this.Unit.GetAttackBackswing(target.Unit) + delay */);
+            this.AttackSleeper.Sleep(this.Unit.GetAttackPoint(target.Unit) + this.Unit.GetAttackBackswing(target.Unit) + delay);
             this.MoveSleeper.Sleep(attackPoint + delay + this.Menu.AdditionalDelay / 1000f);
             this.LastMovePosition = Vector3.Zero;
 

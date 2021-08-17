@@ -26,7 +26,7 @@
             float attackStartTime,
             float additionalRange,
             float additionalTime,
-            float additionalIncludeTime =  0f) // BEFORE WAS -0.07F
+            float additionalIncludeTime =  -0.07f)
             : base(source, target)
         {
             var distance = Math.Max(source.Unit.Distance3D(target.Unit) - target.Unit.HullRadius - additionalRange, 20)
