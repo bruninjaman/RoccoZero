@@ -33,7 +33,7 @@
 
         private readonly DamageTracker damageTracker;
 
-        private readonly List<BaseMode> farmModes = new List<BaseMode>();
+        private static readonly List<BaseMode> farmModes = new();
 
         private readonly LastHitMarker lastHitMarker;
 
@@ -59,10 +59,15 @@
             OrderType.CastPosition,
             OrderType.CastTarget,
             OrderType.CastRune,
-            OrderType.CastTree
+            OrderType.CastTree,
         };
 
         private readonly UnitManager unitManager;
+
+        public static bool IsFarmActive()
+        {
+            return farmModes.Any(x => x.IsActive);
+        }
 
         public FarmManager(MenuManager menuManager)
         {
@@ -72,8 +77,8 @@
             this.damageTracker = new DamageTracker(this.unitManager);
             this.lastHitMarker = new LastHitMarker(this.unitManager, menuManager);
 
-            this.farmModes.Add(this.lastHitMode = new LastHitMode(this.unitManager, menuManager));
-            this.farmModes.Add(this.pushMode = new PushMode(this.unitManager, menuManager));
+            farmModes.Add(this.lastHitMode = new LastHitMode(this.unitManager, menuManager));
+            farmModes.Add(this.pushMode = new PushMode(this.unitManager, menuManager));
 
             this.menuManager.LastHitMenu.HoldKey.ValueChange += this.LastHitHoldKeyOnValueChange;
             this.menuManager.LastHitMenu.ToggleKey.ValueChange += this.LastHitToggleKeyOnValueChange;
@@ -129,7 +134,7 @@
                         .Where(x => x != null)
                         .ToList();
 
-                    foreach (var farmMode in this.farmModes)
+                    foreach (var farmMode in farmModes)
                     {
                         farmMode.RemoveUnits(units);
                     }
@@ -162,7 +167,7 @@
 
                 var disable = this.lastHitMode.ContainsAllUnits(units);
 
-                foreach (var farmMode in this.farmModes)
+                foreach (var farmMode in farmModes)
                 {
                     farmMode.RemoveUnits(units);
                 }
@@ -186,7 +191,12 @@
 
         private void OnAttackCanceled(object sender, UnitDamage damage)
         {
-            foreach (var farmMode in this.farmModes.Where(x => x.IsActive))
+            if (!IsFarmActive())
+            {
+                return;
+            }
+
+            foreach (var farmMode in farmModes)
             {
                 farmMode.AttackCanceled(damage.Target);
             }
@@ -205,7 +215,7 @@
                 return;
             }
 
-            foreach (var farmMode in this.farmModes)
+            foreach (var farmMode in farmModes)
             {
                 this.RemoveEffects(order.Units);
                 farmMode.RemoveUnits(order.Units);
@@ -216,7 +226,7 @@
         {
             try
             {
-                foreach (var farmMode in this.farmModes)
+                foreach (var farmMode in farmModes)
                 {
                     farmMode.RemoveUnit(unit);
                 }
@@ -227,7 +237,7 @@
                     this.controlEffects.Remove(unit.Handle);
                 }
 
-                if (this.farmModes.Any(x => x.IsActive))
+                if (farmModes.Any(x => x.IsActive))
                 {
                     return;
                 }
@@ -250,7 +260,7 @@
                         .Where(x => x != null)
                         .ToList();
 
-                    foreach (var farmMode in this.farmModes)
+                    foreach (var farmMode in farmModes)
                     {
                         farmMode.RemoveUnits(units);
                     }
@@ -283,7 +293,7 @@
 
                 var disable = this.pushMode.ContainsAllUnits(units);
 
-                foreach (var farmMode in this.farmModes)
+                foreach (var farmMode in farmModes)
                 {
                     farmMode.RemoveUnits(units);
                 }

@@ -151,6 +151,11 @@
 
         private void OnAttackEnd(Unit9 unit)
         {
+            if (!FarmManager.IsFarmActive())
+            {
+                return;
+            }
+
             var controllable = this.GetControllableUnit(unit);
 
             if (controllable == null)
@@ -166,6 +171,7 @@
             {
                 controllable.ResetSleepers();
             }
+            
         }
 
         private void OnUnitAdded(Unit9 unit)
