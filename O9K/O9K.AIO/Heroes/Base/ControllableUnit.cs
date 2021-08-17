@@ -12,12 +12,13 @@
     using Core.Entities.Units;
     using Core.Extensions;
     using Core.Helpers;
-    using Divine.Extensions;
-    using Divine.Game;
-    using Divine.Numerics;
+
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Units.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
 
     using FailSafe;
 
@@ -225,6 +226,7 @@
                 if (this.Move(this.Owner.Distance(side1) < this.Owner.Distance(side2) ? side1 : side2))
                 {
                     this.MoveSleeper.Sleep(0.1f);
+
                     return true;
                 }
 
@@ -241,6 +243,7 @@
                 if (this.Owner.IsMoving && !this.AttackSleeper.IsSleeping)
                 {
                     this.MoveSleeper.Sleep(0.2f);
+
                     return this.Owner.BaseUnit.Stop();
                 }
 
@@ -250,6 +253,7 @@
             if (this.Move(target.Position.Extend2D(blockPosition, this.BodyBlockRange)))
             {
                 this.MoveSleeper.Sleep(0.1f);
+
                 return true;
             }
 
@@ -263,6 +267,12 @@
                 return false;
             }
 
+            if (target.HasModifier("modifier_bane_nightmare") &&
+                this.Owner.Name != nameof(HeroId.npc_dota_hero_bane))
+            {
+                return  false;
+            }
+            
             if (!this.Owner.CanAttack(target, additionalRange))
             {
                 return false;
@@ -277,6 +287,7 @@
             }
 
             var delay = this.Owner.GetTurnTime(target.Position) + (GameManager.Ping / 2000f);
+
             if (delay <= 0)
             {
                 return !this.AttackSleeper.IsSleeping;
@@ -323,6 +334,7 @@
             }
 
             this.LastMovePosition = movePosition;
+
             return true;
         }
 
@@ -402,6 +414,7 @@
             if (attack && this.CanAttack(target))
             {
                 this.LastMovePosition = Vector3.Zero;
+
                 return this.Attack(target, comboMenu);
             }
 
@@ -422,6 +435,7 @@
         public bool Orbwalk(Unit9 target, ComboModeMenu comboMenu)
         {
             var move = comboMenu.Move.IsEnabled;
+
             if (target != null && this.Owner.IsRanged && this.Owner.HasModifier("modifier_item_hurricane_pike_range"))
             {
                 move = false;
@@ -451,6 +465,7 @@
             {
                 //hack
                 var q = (IActiveAbility)this.Owner.Abilities.FirstOrDefault(x => x.Id == AbilityId.rubick_telekinesis);
+
                 if (q?.CanBeCasted() == true && comboMenu?.IsAbilityEnabled(q) == true)
                 {
                     return false;
@@ -468,6 +483,7 @@
             var delay = turnTime + distance + ping;
 
             var attackPoint = this.Owner.GetAttackPoint(target);
+
             if (this.Owner.Abilities.Any(x => x.Id == AbilityId.item_echo_sabre && x.CanBeCasted()))
             {
                 attackPoint *= 2.5f;
@@ -492,7 +508,7 @@
                 {
                     return false;
                 }
-                
+
                 if (this.Menu.OrbwalkingMode == "Move to target" || this.CanAttack(target, 400))
                 {
                     movePosition = targetPosition;
@@ -515,6 +531,7 @@
                         if (targetDistance < dangerRange)
                         {
                             var angle = (targetPosition - this.Owner.Position).AngleBetween(movePosition - targetPosition);
+
                             if (angle < 90)
                             {
                                 if (angle < 30)
@@ -560,12 +577,14 @@
             {
                 return false;
             }
+
             if (!this.Owner.BaseUnit.Move(movePosition))
             {
                 return false;
             }
 
             this.LastMovePosition = movePosition;
+
             return true;
         }
 
@@ -630,7 +649,7 @@
             {
                 return true;
             }
-            
+
             if (abilityHelper.UseAbility(this.moveGungir))
             {
                 return true;
