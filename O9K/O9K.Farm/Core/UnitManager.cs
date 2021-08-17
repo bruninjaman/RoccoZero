@@ -8,8 +8,6 @@
     using Divine.Entity.Entities;
     using Divine.Entity.Entities.Players;
     using Divine.Entity.Entities.Units.Components;
-    using Divine.Numerics;
-    using Divine.Renderer;
 
     using Menu;
 
@@ -55,7 +53,7 @@
             EntityManager9.UnitMonitor.AttackEnd += this.OnAttackEnd;
             EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
 
-            RendererManager.Draw += this.DrawingOnOnDraw;
+            // RendererManager.Draw += this.DrawingOnOnDraw;
             // EntityManager9.UnitMonitor.UnitDied += UnitMonitorOnUnitDied;
         }
 
@@ -90,23 +88,23 @@
             return this.units.Find(x => x.Unit.Handle == entity.Handle);
         }
 
-        private void DrawingOnOnDraw()
-        {
-
-            // RendererManager.DrawText("LH: " + this.missedLastHit, new Vector2(10, 110), Color.White, 20);
-            // RendererManager.DrawText("DN: " + this.missedDeny, new Vector2(10, 130), Color.White, 20);
-
-            var myHero = this.Units.FirstOrDefault(x => x.IsControllable && EntityManager9.Owner.SelectedUnits.Contains(x.Unit));
-
-            if (myHero != null)
-            {
-                RendererManager.DrawText(
-                    myHero.AttackSleeper.IsSleeping + " " + myHero.MoveSleeper.IsSleeping,
-                    myHero.Unit.HealthBarPosition + new Vector2(20, 20),
-                    Color.White,
-                    20);
-            }
-        }
+        // private void DrawingOnOnDraw()
+        // {
+        //
+        //     // RendererManager.DrawText("LH: " + this.missedLastHit, new Vector2(10, 110), Color.White, 20);
+        //     // RendererManager.DrawText("DN: " + this.missedDeny, new Vector2(10, 130), Color.White, 20);
+        //
+        //     var myHero = this.Units.FirstOrDefault(x => x.IsControllable && EntityManager9.Owner.SelectedUnits.Contains(x.Unit));
+        //
+        //     if (myHero != null)
+        //     {
+        //         RendererManager.DrawText(
+        //             myHero.AttackSleeper.IsSleeping + " " + myHero.MoveSleeper.IsSleeping,
+        //             myHero.Unit.HealthBarPosition + new Vector2(20, 20),
+        //             Color.White,
+        //             20);
+        //     }
+        // }
 
         // foreach (var unit in this.Units)
         // {
