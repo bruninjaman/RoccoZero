@@ -215,16 +215,18 @@
         private void OnUnitDied(Unit9 unit)
         {
             var farmUnits = this.Units.Where(x => x.IsControllable && x.Target?.Unit.Equals(unit) == true);
-
+            List<FarmUnit> farmUnitsToStop = new();
+            
             foreach (var farmUnit in farmUnits)
             {
                 if (farmUnit.Unit.IsAttacking)
                 {
                     farmUnit.ResetSleepers();
+                    farmUnitsToStop.Add(farmUnit);
                 }
             }
 
-            Player.Stop(farmUnits.Select(x => x.Unit.BaseUnit));
+            Player.Stop(farmUnitsToStop.Select(x => x.Unit.BaseUnit));
         }
 
         private void OnUnitRemoved(Unit9 unit)
