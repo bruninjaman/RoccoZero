@@ -16,7 +16,7 @@
             FarmUnit target,
             float attackStartTime,
             float additionalTime,
-            float additionalIncludeTime = -0.07f)
+            float additionalIncludeTime = 0F)  // BEFORE WAS -0.07F
             : base(source, target)
         {
             this.HitTime = attackStartTime + source.Unit.GetAttackPoint(target.Unit) + additionalTime;

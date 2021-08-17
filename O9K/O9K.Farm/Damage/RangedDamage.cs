@@ -26,10 +26,10 @@
             float attackStartTime,
             float additionalRange,
             float additionalTime,
-            float additionalIncludeTime = -0.07f)
+            float additionalIncludeTime =  0f) // BEFORE WAS -0.07F
             : base(source, target)
         {
-            var distance = Math.Max(source.Unit.Distance(target.Unit) - target.Unit.HullRadius - additionalRange, 20)
+            var distance = Math.Max(source.Unit.Distance3D(target.Unit) - target.Unit.HullRadius - additionalRange, 20)
                            / source.Unit.ProjectileSpeed;
             this.hitTime = attackStartTime + source.Unit.GetAttackPoint(target.Unit) + distance + additionalTime;
             this.includeTime = this.hitTime + additionalIncludeTime;
@@ -41,7 +41,7 @@
             {
                 if (this.Projectile?.IsValid == true)
                 {
-                    var distance = Math.Max(this.Target.Unit.Distance(this.Projectile.Position) - (this.Target.Unit.HullRadius * 0.5f), 0);
+                    var distance = Math.Max(this.Target.Unit.Distance3D(this.Projectile.Position) - this.Target.Unit.HullRadius * 0.5f, 0);
 
                     if (this.Target.Unit.IsMoving)
                     {
@@ -54,6 +54,7 @@
                             distance += 40;
                         }
                     }
+                    
 
                     return GameManager.RawGameTime + (distance / this.Source.Unit.ProjectileSpeed);
                 }
@@ -74,7 +75,7 @@
             {
                 if (this.Projectile?.IsValid == true)
                 {
-                    var distance = Math.Max(this.Target.Unit.Distance(this.Projectile.Position) - this.Target.Unit.HullRadius, 0);
+                    var distance = Math.Max(this.Target.Unit.Distance3D(this.Projectile.Position) - this.Target.Unit.HullRadius, 0);
                     return (GameManager.RawGameTime + (distance / this.Source.Unit.ProjectileSpeed)) - 0.07f;
                 }
 

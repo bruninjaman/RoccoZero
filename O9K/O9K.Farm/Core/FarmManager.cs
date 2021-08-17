@@ -7,7 +7,6 @@
     using Damage;
 
     using Divine.Entity.Entities;
-
     using Divine.Order;
     using Divine.Order.EventArgs;
     using Divine.Order.Orders.Components;
@@ -22,6 +21,7 @@
     using O9K.Core.Entities.Units;
     using O9K.Core.Logger;
     using O9K.Core.Managers.Entity;
+    using O9K.Core.Managers.Menu.EventArgs;
 
     using Units.Base;
 
@@ -119,7 +119,7 @@
             }
         }
 
-        private void LastHitHoldKeyOnValueChange(object sender, O9K.Core.Managers.Menu.EventArgs.KeyEventArgs e)
+        private void LastHitHoldKeyOnValueChange(object sender, KeyEventArgs e)
         {
             try
             {
@@ -149,7 +149,7 @@
             }
         }
 
-        private void LastHitToggleKeyOnValueChange(object sender, O9K.Core.Managers.Menu.EventArgs.KeyEventArgs e)
+        private void LastHitToggleKeyOnValueChange(object sender, KeyEventArgs e)
         {
             try
             {
@@ -186,7 +186,7 @@
 
         private void OnAttackCanceled(object sender, UnitDamage damage)
         {
-            foreach (var farmMode in this.farmModes)
+            foreach (var farmMode in this.farmModes.Where(x => x.IsActive))
             {
                 farmMode.AttackCanceled(damage.Target);
             }
@@ -240,7 +240,7 @@
             }
         }
 
-        private void PushHoldKeyOnValueChange(object sender, O9K.Core.Managers.Menu.EventArgs.KeyEventArgs e)
+        private void PushHoldKeyOnValueChange(object sender, KeyEventArgs e)
         {
             try
             {
@@ -270,7 +270,7 @@
             }
         }
 
-        private void PushToggleKeyOnValueChange(object sender, O9K.Core.Managers.Menu.EventArgs.KeyEventArgs e)
+        private void PushToggleKeyOnValueChange(object sender, KeyEventArgs e)
         {
             try
             {

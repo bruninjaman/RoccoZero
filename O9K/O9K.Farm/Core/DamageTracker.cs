@@ -9,8 +9,6 @@
     using Divine.Projectile;
     using Divine.Projectile.EventArgs;
 
-    using Modes;
-
     using O9K.Core.Entities.Units;
     using O9K.Core.Extensions;
     using O9K.Core.Logger;
@@ -86,11 +84,6 @@
 
                 if (source?.IsControllable != false)
                 {
-                    if (BaseMode.Instances.Any(x => x.IsActive))
-                    {
-                        source?.Stop();
-                    }
-
                     return;
                 }
 

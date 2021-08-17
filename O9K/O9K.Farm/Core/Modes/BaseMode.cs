@@ -59,7 +59,14 @@
 
         public void AttackCanceled(FarmUnit target)
         {
-            foreach (var unit in this.units)
+            IEnumerable<FarmUnit> myFarmUnits;
+            myFarmUnits = this.units.Where(x => x.IsControllable);
+
+            List<FarmUnit> myFarmUnitToStop = new();
+            float damages = 0;
+            float delay = 0;
+
+            foreach (var unit in myFarmUnits)
             {
                 if (unit.Target?.Equals(target) != true)
                 {
@@ -71,12 +78,16 @@
                     continue;
                 }
 
-                var delay = unit.AttackStartTime + unit.GetAttackDelay(target) - GameManager.RawGameTime;
+                var newDelay = unit.AttackStartTime + unit.GetAttackDelay(target) - GameManager.RawGameTime;
+                delay = delay > newDelay ? delay : newDelay;
+                damages += unit.GetDamage(target);
+                myFarmUnitToStop.Add(unit);
+            }
 
-                if (target.GetPredictedHealth(unit, delay) > unit.GetDamage(target))
-                {
-                    unit.Stop();
-                }
+            if (target.GetPredictedHealth(delay) > damages)
+            {
+                Player.Stop(myFarmUnitToStop.Select(x => x.Unit.BaseUnit));
+                myFarmUnitToStop.ForEach(x => x.ResetSleepers());
             }
         }
 

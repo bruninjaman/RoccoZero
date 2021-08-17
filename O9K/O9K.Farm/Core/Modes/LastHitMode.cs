@@ -197,7 +197,7 @@
             IReadOnlyList<FarmUnit> myUnits)
         {
             foreach (var enemy in enemies.Where(x => x.CanBeKilled)
-                .OrderBy(x => x.GetPredictedDeathTime(allies)))
+                .OrderBy(x => x.GetPredictedDeathTime(allies)).ThenBy(x => x.GetPredictedHealth(2)))
             {
                 var damages = new List<DamageInfo>();
 
@@ -251,7 +251,12 @@
                         this.lastUnitToHit = enemy;
                     }
                 }
-                else if (this.lastUnitToHit != null && (this.lastUnitToHit == enemy ||  !this.lastUnitToHit.IsValid))
+                else if (this.lastUnitToHit != null && !this.lastUnitToHit.IsValid)
+                {
+                    this.lastUnitToHit = null;
+                }
+
+                if (canKill)
                 {
                     this.lastUnitToHit = null;
                 }
@@ -296,11 +301,6 @@
                 return;
             }
 
-            // if (this.FakeAttack(enemies, allies, availableUnitsForLastHit))
-            // {
-            //     return;
-            // }
-
             if ((this.lastUnitToHit == null || !this.lastUnitToHit.IsValid) && this.Deny(enemies, allies,
                     availableUnits.Where(x => x.IsDenyEnabled).ToList()))
             {
@@ -315,30 +315,6 @@
             }
 
             this.MoveToMouse(myUnits);
-        }
-
-        private bool FakeAttack(List<FarmUnit> enemies, List<FarmUnit> allies, List<FarmUnit> myUnits)
-        {
-            if (this.lastUnitToHit != null && this.lastUnitToHit.IsValid)
-            {
-                foreach (var unit in myUnits)
-                {
-                    if (!Divine.Helpers.MultiSleeper<string>.Sleeping("O9K.Farm.CancelHit" + unit.Unit.Name)
-                        && unit.Unit.GetAttackRange() >= unit.Unit.Distance(this.lastUnitToHit.Unit))
-                    {
-                        unit.Unit.BaseUnit.Attack(this.lastUnitToHit.Unit);
-                        unit.Unit.BaseUnit.Stop();
-
-                        Divine.Helpers.MultiSleeper<string>.Sleep("O9K.Farm.CancelHit" + unit.Unit, 400);
-                        unit.MoveSleeper.Sleep(unit.GetAttackDelay(this.lastUnitToHit));
-                    }
-
-                }
-
-                return true;
-            }
-
-            return  false;
         }
 
         private bool Harass(IReadOnlyList<FarmUnit> enemies, IReadOnlyList<FarmUnit> allies,

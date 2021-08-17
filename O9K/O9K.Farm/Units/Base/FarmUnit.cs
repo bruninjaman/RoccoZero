@@ -83,11 +83,11 @@
 
             if (this.Unit.IsRanged || forceRanged)
             {
-                damage = new RangedDamage(this, target, attackStartTime, 0, 0.05f);
+                damage = new RangedDamage(this, target, attackStartTime, 0, 0f);  // BEFORE WAS 0.05f
             }
             else
             {
-                damage = new MeleeDamage(this, target, attackStartTime, 0.033f);
+                damage = new MeleeDamage(this, target, attackStartTime, 0f); // BEFORE WAS 0.033f
             }
 
             target.IncomingDamage.Add(damage);
@@ -186,11 +186,7 @@
 
         public bool Farm(FarmUnit enemy)
         {
-
             return this.Attack(enemy);
-
-            ;
-
         }
 
         public float GetAttackDelay(FarmUnit target)
@@ -198,9 +194,10 @@
             var attackPoint = this.Unit.GetAttackPoint(target.Unit);
             var attackRange = this.Unit.GetAttackRange(target.Unit);
             var distance = this.Unit.Distance(target.Unit);
+            var distance3D = this.Unit.Distance3D(target.Unit);
             var moveDistance = Math.Max(distance - attackRange, 0);
             var moveTime = moveDistance / this.Unit.Speed;
-            var projectileTime = this.Unit.IsRanged ? Math.Max(distance - moveDistance, 0) / this.Unit.ProjectileSpeed : 0;
+            var projectileTime = this.Unit.IsRanged ? Math.Max(distance3D - moveDistance, 0) / this.Unit.ProjectileSpeed : 0;
             var turnTime = this.Unit.GetTurnTime(target.Unit.Position);
             var customDelay = this.Menu.AdditionalDelay / 1000f;
             var ping = GameManager.Ping / 2000;
@@ -293,6 +290,29 @@
             return health + regen;
         }
 
+        public float GetPredictedHealth(float delay)
+        {
+            var time = GameManager.RawGameTime;
+            var hitTime = time + delay;
+            var health = this.Unit.Health;
+            var regen = (int)Math.Ceiling(this.Unit.HealthRegeneration * delay);
+
+            foreach (var damage in this.IncomingDamage)
+            {
+                if (damage.MinDamage <= 0)
+                {
+                    continue;
+                }
+
+                if (damage.WillHit(time, hitTime))
+                {
+                    health -= damage.MinDamage;
+                }
+            }
+
+            return health + regen;
+        }
+
         public bool Harass(FarmUnit target)
         {
             if (!this.Unit.Attack(target.Unit))
@@ -322,6 +342,11 @@
         public void Stop()
         {
             this.Unit.Stop();
+            this.ResetSleepers();
+        }
+
+        public void ResetSleepers()
+        {
             this.AttackSleeper.Reset();
             this.MoveSleeper.Reset();
         }

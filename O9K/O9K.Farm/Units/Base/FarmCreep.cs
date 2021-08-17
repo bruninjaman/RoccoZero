@@ -27,12 +27,12 @@
 
             if (this.Unit.IsRanged)
             {
-                damage = new RangedDamage(this, target, attackStartTime, 128, 0.048f);
+                damage = new RangedDamage(this, target, attackStartTime, 0, 0);
                 nextDamage = new RangedDamage(damage);
             }
             else
             {
-                damage = new MeleeDamage(this, target, attackStartTime, 0.036f);
+                damage = new MeleeDamage(this, target, attackStartTime, 0);
                 nextDamage = new MeleeDamage(damage);
             }
 

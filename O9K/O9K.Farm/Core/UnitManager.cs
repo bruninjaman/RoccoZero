@@ -6,6 +6,7 @@
     using System.Reflection;
 
     using Divine.Entity.Entities;
+    using Divine.Entity.Entities.Players;
     using Divine.Entity.Entities.Units.Components;
 
     using Menu;
@@ -55,7 +56,6 @@
             // RendererManager.Draw += DrawingOnOnDraw;
             // EntityManager9.UnitMonitor.UnitDied += UnitMonitorOnUnitDied;
         }
-
         public IEnumerable<FarmUnit> Units
         {
             get
@@ -156,8 +156,14 @@
                 return;
             }
 
-            controllable.AttackSleeper.Reset();
-            controllable.MoveSleeper.Reset();
+            if (controllable.IsHero)
+            {
+                controllable.Stop();
+            }
+            else
+            {
+                controllable.ResetSleepers();
+            }
         }
 
         private void OnUnitAdded(Unit9 unit)
@@ -208,10 +214,19 @@
 
         private void OnUnitDied(Unit9 unit)
         {
-            foreach (var farmUnit in this.Units.Where(x => x.IsControllable && x.Target?.Unit.Equals(unit) == true))
+            var farmUnits = this.Units.Where(x => x.IsControllable && x.Target?.Unit.Equals(unit) == true);
+            List<FarmUnit> farmUnitsToStop = new();
+            
+            foreach (var farmUnit in farmUnits)
             {
-                farmUnit.Stop();
+                if (farmUnit.Unit.IsAttacking)
+                {
+                    farmUnit.ResetSleepers();
+                    farmUnitsToStop.Add(farmUnit);
+                }
             }
+
+            Player.Stop(farmUnitsToStop.Select(x => x.Unit.BaseUnit));
         }
 
         private void OnUnitRemoved(Unit9 unit)
