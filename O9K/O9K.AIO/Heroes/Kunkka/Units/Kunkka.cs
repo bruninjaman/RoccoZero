@@ -18,7 +18,6 @@
     using Core.Extensions;
     using Core.Helpers;
     using Core.Logger;
-    using Core.Managers.Context;
     using Core.Managers.Entity;
 
     using Divine.Entity.Entities.Abilities.Components;
@@ -34,6 +33,8 @@
     using Divine.Particle.EventArgs;
     using Divine.Update;
 
+    using O9K.Core.Managers.Context;
+
     using TargetManager;
 
     [UnitName(nameof(HeroId.npc_dota_hero_kunkka))]
@@ -42,8 +43,6 @@
         private readonly uint playerHandle;
 
         private readonly Vector3[] ancientCamps;
-
-        private Vector3? lastEnemyPos = null;
 
         private BuffAbility armlet;
 
@@ -63,16 +62,6 @@
 
         private UntargetableAbility xReturn;
 
-        private MeteorHammerKunkka meteor;
-
-        private EtherealBlade ethereal;
-
-        private Nullifier nullifier;
-
-        private NukeAbility dagon;
-
-        private DebuffAbility veil;
-
         public Kunkka(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -85,18 +74,13 @@
                 { AbilityId.kunkka_x_marks_the_spot, x => this.xMark = new XMark(x) },
                 { AbilityId.kunkka_return, x => this.xReturn = new UntargetableAbility(x) },
                 { AbilityId.kunkka_ghostship, x => this.ship = new Ghostship(x) },
-                
+
                 { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
                 { AbilityId.item_armlet, x => this.armlet = new BuffAbility(x) },
                 { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
                 { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
-                { AbilityId.item_meteor_hammer, x => this.meteor = new MeteorHammerKunkka(x) },
-                { AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x) },
-                { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
-                { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) },
-                { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
             };
 
             this.ancientCamps = Context9.JungleManager.JungleCamps.Where(x => x.Id != 2 && x.Id != 18).Select(x => x.CreepsPosition).ToArray();
@@ -137,11 +121,6 @@
 
         public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
         {
-            if (OrderManager.Orders.Count() != 0)
-            {
-                return false;
-            }
-
             if (comboModeMenu.IsHarassCombo)
             {
                 return false;
@@ -169,12 +148,7 @@
                 }
             }
 
-            if (abilityHelper.UseAbility(veil))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbilityIfAny(this.xMark, this.torrent, this.ship, this.meteor))
+            if (abilityHelper.UseAbilityIfAny(this.xMark, this.torrent, this.ship))
             {
                 this.ComboSleeper.ExtendSleep(0.1f);
                 this.OrbwalkSleeper.ExtendSleep(0.1f);
@@ -185,24 +159,6 @@
             {
                 if (!this.xMark.Position.IsZero)
                 {
-                    if (this.meteor.ShouldReturn(this.xReturn.Ability, this.xMark.Position))
-                    {
-                        lastEnemyPos = this.xMark.Position;
-
-                        if (abilityHelper.UseAbility(this.xReturn))
-                        {
-                            return true;
-                        }
-                    }
-
-                    if (abilityHelper.CanBeCasted(this.meteor, false))
-                    {
-                        if (this.meteor.UseAbility(this.xMark.Position, targetManager, this.ComboSleeper))
-                        {
-                            return true;
-                        }
-                    }
-
                     if (abilityHelper.CanBeCasted(this.ship, false))
                     {
                         if (this.ship.UseAbility(this.xMark.Position, targetManager, this.ComboSleeper))
@@ -231,33 +187,6 @@
             }
             else
             {
-                if (lastEnemyPos != null)
-                {
-                    if (abilityHelper.CanBeCasted(this.torrent, false))
-                    {
-                        if (this.torrent.UseAbility((Vector3)lastEnemyPos, targetManager, this.ComboSleeper))
-                        {
-                            return true;
-                        }
-                    }
-
-                    if (abilityHelper.CanBeCasted(this.ship, false))
-                    {
-                        if (this.ship.UseAbility((Vector3)lastEnemyPos, targetManager, this.ComboSleeper))
-                        {
-                            return true;
-                        }
-                    }
-
-                    lastEnemyPos = null;
-
-                    return false;
-                }
-
-                if (abilityHelper.UseAbility(this.meteor))
-                {
-                    return true;
-                }
                 if (abilityHelper.UseAbility(this.torrent))
                 {
                     return true;
@@ -270,21 +199,6 @@
             }
 
             if (abilityHelper.UseAbility(this.armlet, 400))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(ethereal))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(dagon))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(nullifier))
             {
                 return true;
             }
@@ -489,21 +403,16 @@
                 {
                     case "particles/units/heroes/hero_kunkka/kunkka_spell_x_spot.vpcf":
                     case "particles/econ/items/kunkka/divine_anchor/hero_kunkka_dafx_skills/kunkka_spell_x_spot_fxset.vpcf":
-                    {
-                        UpdateManager.BeginInvoke(() => this.xMark.Position = particle.GetControlPoint(0));
-                        break;
-                    }
+                        {
+                            UpdateManager.BeginInvoke(() => this.xMark.Position = particle.GetControlPoint(0));
+                            break;
+                        }
                     case "particles/units/heroes/hero_kunkka/kunkka_ghostship_marker.vpcf":
-                    {
-                        var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
-                        UpdateManager.BeginInvoke(() => this.ship.CalculateTimings(particle.GetControlPoint(0), time));
-                        break;
-                    }
-                    case "particles/items4_fx/meteor_hammer_spell.vpcf":
-                    {
-                        this.meteor.setShouldReturn(true);
-                        break;
-                    }
+                        {
+                            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
+                            UpdateManager.BeginInvoke(() => this.ship.CalculateTimings(particle.GetControlPoint(0), time));
+                            break;
+                        }
                 }
             }
             catch (Exception ex)
