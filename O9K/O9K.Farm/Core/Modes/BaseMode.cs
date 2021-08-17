@@ -28,7 +28,6 @@
         {
             this.UnitManager = unitManager;
             this.handler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
-            Instances.Add(this);
         }
 
         public bool IsActive
@@ -38,9 +37,7 @@
                 return this.handler.IsEnabled;
             }
         }
-
-        public static List<BaseMode> Instances { get; set; } = new();
-
+        
         public List<FarmUnit> LastAddedUnits { get; protected set; } = new();
 
         protected UnitManager UnitManager { get; }
@@ -59,6 +56,11 @@
 
         public void AttackCanceled(FarmUnit target)
         {
+            if (!FarmManager.IsFarmActive())
+            {
+                return;
+            }
+            
             IEnumerable<FarmUnit> myFarmUnits;
             myFarmUnits = this.units.Where(x => x.IsControllable);
 
