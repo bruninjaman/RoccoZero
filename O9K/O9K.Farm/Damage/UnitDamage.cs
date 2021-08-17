@@ -30,7 +30,7 @@
             this.Target = target;
             this.MinDamage = source.Unit.GetAttackDamage(target.Unit, DamageValue.Minimum);
             this.MaxDamage = source.Unit.GetAttackDamage(target.Unit, DamageValue.Maximum);
-            this.AverageDamage = (this.MinDamage + this.MaxDamage) / 2;
+            this.AverageDamage = source.Unit.GetAttackDamage(target.Unit, DamageValue.Average);
         }
 
         public int AverageDamage
