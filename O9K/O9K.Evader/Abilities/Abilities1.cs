@@ -445,7 +445,6 @@
         {
             AbilityId.juggernaut_blade_fury,
             AbilityId.life_stealer_rage,
-            AbilityId.item_minotaur_horn,
             AbilityId.oracle_fates_edict,
             AbilityId.item_black_king_bar,
         };
@@ -458,6 +457,7 @@
             AbilityId.abaddon_aphotic_shield,
             AbilityId.item_glimmer_cape,
             AbilityId.bristleback_bristleback,
+            AbilityId.tinker_defense_matrix,
         };
 
         public static IEnumerable<AbilityId> PhysDisable { get; } = new[]
@@ -491,6 +491,7 @@
             AbilityId.lich_frost_shield,
             AbilityId.sven_warcry,
             AbilityId.bristleback_bristleback,
+            AbilityId.tinker_defense_matrix,
         };
 
         public static IEnumerable<AbilityId> ProactiveAbilityDisable { get; } = new[]
@@ -561,6 +562,7 @@
             AbilityId.item_blade_mail,
             AbilityId.item_crimson_guard,
             AbilityId.item_armlet,
+            AbilityId.tinker_defense_matrix,
         };
 
         public static IEnumerable<AbilityId> ProactiveItemDisable { get; } = new[]
@@ -603,6 +605,7 @@
             AbilityId.templar_assassin_meld,
             AbilityId.nyx_assassin_vendetta,
             AbilityId.sven_warcry,
+            AbilityId.tinker_defense_matrix,
         };
 
         public static IEnumerable<AbilityId> Root { get; } = new[]
@@ -628,6 +631,7 @@
             AbilityId.templar_assassin_refraction,
             AbilityId.phantom_lancer_doppelwalk,
             AbilityId.bristleback_bristleback,
+            AbilityId.tinker_defense_matrix,
         };
 
         public static IEnumerable<AbilityId> SimplePhysShield { get; } = new[]
@@ -640,6 +644,7 @@
             AbilityId.ogre_magi_frost_armor,
             AbilityId.lich_frost_shield,
             AbilityId.sven_warcry,
+            AbilityId.tinker_defense_matrix,
         };
 
         public static IEnumerable<AbilityId> SimpleStun { get; } = new[]
@@ -724,6 +729,7 @@
             AbilityId.oracle_fates_edict,
             AbilityId.life_stealer_infest,
             AbilityId.bristleback_bristleback,
+            AbilityId.tinker_defense_matrix,
         };
 
         public static IEnumerable<AbilityId> StrongPhysShield { get; } = new[]
@@ -779,7 +785,9 @@
             AbilityId.grimstroke_spirit_walk,
             AbilityId.bristleback_bristleback,
             AbilityId.spirit_breaker_bulldoze,
-            AbilityId.juggernaut_swift_slash
+            AbilityId.juggernaut_swift_slash,
+            AbilityId.tinker_defense_matrix,
+
         };
 
         public static IEnumerable<AbilityId> Stun { get; } = new[]
