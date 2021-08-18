@@ -8,10 +8,11 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
+
+    using Divine.Entity.Entities.Components;
     using Divine.Game;
     using Divine.Numerics;
     using Divine.Renderer;
-    using Divine.Entity.Entities.Components;
 
     using Helpers;
 
@@ -33,8 +34,12 @@
 
         private Team ownerTeam;
 
+        private readonly IHudMenu hudMenu;
+
         public GlyphTimer(IHudMenu hudMenu)
         {
+            this.hudMenu = hudMenu;
+
             var timersMenu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Timers"));
             timersMenu.AddTranslation(Lang.Ru, "Таймеры");
             timersMenu.AddTranslation(Lang.Cn, "计时 器");
@@ -97,6 +102,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var cd = this.ownerTeam == Team.Radiant ? GameManager.GlyphCooldownDire : GameManager.GlyphCooldownRadiant;

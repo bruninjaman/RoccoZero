@@ -11,16 +11,16 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
-    using Divine.Extensions;
+
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Game;
     using Divine.Helpers;
     using Divine.Modifier;
+    using Divine.Modifier.EventArgs;
+    using Divine.Modifier.Modifiers;
     using Divine.Numerics;
     using Divine.Renderer;
     using Divine.Update;
-    using Divine.Modifier.EventArgs;
-    using Divine.Modifier.Modifiers;
-    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 
@@ -53,8 +53,12 @@
 
         private readonly List<ModifierUnit> units = new List<ModifierUnit>();
 
+        private readonly IHudMenu hudMenu;
+
         public Modifiers(IHudMenu hudMenu)
         {
+            this.hudMenu = hudMenu;
+
             var menu = hudMenu.UnitsMenu.Add(new Menu("Modifiers"));
             menu.AddTranslation(Lang.Ru, "Баффы/дебаффы");
             menu.AddTranslation(Lang.Cn, "特效");
@@ -94,6 +98,7 @@
             this.ignoreAuras.AddTranslation(Lang.Ru, "Игнорировать ауры");
             this.ignoreAuras.AddTooltipTranslation(Lang.Ru, "Lunar blessing, feral impulse и т.д.");
             this.ignoreAuras.AddTranslation(Lang.Cn, "忽略光环");
+
             this.ignoreAuras.AddTooltipTranslation(
                 Lang.Cn,
                 LocalizationHelper.LocalizeName(AbilityId.luna_lunar_blessing) + ","
@@ -102,18 +107,22 @@
 
             this.ignoreHiddenAuras = ignoreMenu.Add(
                 new MenuSwitcher("Ignore hidden auras", false).SetTooltip("True sight, presence of dark lord etc."));
+
             this.ignoreHiddenAuras.AddTranslation(Lang.Ru, "Игнорировать скрытые ауры");
             this.ignoreHiddenAuras.AddTooltipTranslation(Lang.Ru, "True sight, presence of dark lord и т.д.");
             this.ignoreHiddenAuras.AddTranslation(Lang.Cn, "忽略隐藏光环");
+
             this.ignoreHiddenAuras.AddTooltipTranslation(
                 Lang.Cn,
                 "真实视域," + LocalizationHelper.LocalizeName(AbilityId.nevermore_dark_lord) + "等");
 
             this.ignoreUnknownTime = ignoreMenu.Add(
                 new MenuSwitcher("Ignore undefined remaining time", false).SetTooltip("Ice vortex, static storm, pulse nova etc."));
+
             this.ignoreUnknownTime.AddTranslation(Lang.Ru, "Игнорировать если время не определено");
             this.ignoreUnknownTime.AddTooltipTranslation(Lang.Ru, "Ice vortex, static storm, pulse nova и т.д.");
             this.ignoreUnknownTime.AddTranslation(Lang.Cn, "忽略未定义的剩余时间");
+
             this.ignoreUnknownTime.AddTooltipTranslation(
                 Lang.Cn,
                 LocalizationHelper.LocalizeName(AbilityId.ancient_apparition_ice_vortex) + ","
@@ -186,11 +195,11 @@
 
             UpdateManager.BeginInvoke(
                 () =>
-                    {
-                        this.units.Clear();
-                        EntityManager9.UnitAdded -= this.OnUnitAdded;
-                        EntityManager9.UnitAdded += this.OnUnitAdded;
-                    });
+                {
+                    this.units.Clear();
+                    EntityManager9.UnitAdded -= this.OnUnitAdded;
+                    EntityManager9.UnitAdded += this.OnUnitAdded;
+                });
         }
 
         private bool LoadModifierTexture(Modifier modifier)
@@ -228,6 +237,7 @@
                 {
                     ConvertType = ImageConvertType.Round
                 });
+
             RendererManager.LoadImage(
                 "o9k.modifier_bg",
                 @"panorama\images\masks\softedge_circle_sharp_png.vtex_c",
@@ -235,6 +245,7 @@
                 {
                     ColorTint = new Color(0, 0, 0, 114),
                 });
+
             RendererManager.LoadImage(
                 "o9k.outline_green",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
@@ -242,6 +253,7 @@
                 {
                     ColorTint = new Color(0, 229, 0),
                 });
+
             RendererManager.LoadImage(
                 "o9k.outline_red",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
@@ -249,6 +261,7 @@
                 {
                     ColorTint = new Color(229, 0, 0),
                 });
+
             RendererManager.LoadImage(
                 "o9k.outline_yellow",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
@@ -257,6 +270,7 @@
                     ColorTint = new Color(229, 229, 0),
                     Brightness = 50
                 });
+
             RendererManager.LoadImage(
                 "o9k.outline_black",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
@@ -269,6 +283,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var unit in this.units)
@@ -279,6 +298,7 @@
                     }
 
                     var hpPosition = unit.HealthBarPosition;
+
                     if (hpPosition.IsZero)
                     {
                         continue;
@@ -305,6 +325,7 @@
                             {
                                 var timePosition = start * 1.5f;
                                 RendererManager.DrawImage("o9k.modifier_bg", timePosition);
+
                                 RendererManager.DrawText(
                                     remainingTime < 10 ? remainingTime.ToString("N1") : remainingTime.ToString("N0"),
                                     timePosition,
@@ -343,6 +364,7 @@
             try
             {
                 var modifier = e.Modifier;
+
                 if (!modifier.IsValid)
                 {
                     return;
@@ -374,6 +396,7 @@
                 }
 
                 var modifierUnit = this.units.Find(x => x.Unit.Handle == modifier.Owner.Handle);
+
                 if (modifierUnit == null)
                 {
                     return;
@@ -452,6 +475,7 @@
                         }
 
                         var modifierUnit = this.units.Find(x => x.Unit.Handle == modifier.Owner.Handle);
+
                         if (modifierUnit == null)
                         {
                             return;
@@ -481,6 +505,7 @@
             try
             {
                 var modifierUnit = this.units.Find(x => x.Unit.Handle == entity.Handle);
+
                 if (modifierUnit == null)
                 {
                     return;
@@ -510,6 +535,7 @@
                     if (!unit.Unit.IsValid)
                     {
                         this.units.RemoveAt(i);
+
                         continue;
                     }
 

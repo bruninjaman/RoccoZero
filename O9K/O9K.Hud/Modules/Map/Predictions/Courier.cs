@@ -9,9 +9,10 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
+
+    using Divine.Entity.Entities.Components;
     using Divine.Game;
     using Divine.Renderer;
-    using Divine.Entity.Entities.Components;
 
     using Helpers;
 
@@ -29,9 +30,12 @@
 
         private Team ownerTeam;
 
+        private readonly IHudMenu hudMenu;
+
         public Courier(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var predictionsMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Predictions"));
             predictionsMenu.AddTranslation(Lang.Ru, "Предположения");
@@ -64,6 +68,7 @@
             RendererManager.LoadImage(
                 "o9k.courier",
                 @"panorama\images\hud\reborn\icon_courier_standard_psd.vtex_c");
+
             this.ownerTeam = EntityManager9.Owner.Team;
 
             EntityManager9.UnitAdded += this.OnUnitAdded;
@@ -80,6 +85,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var courier in this.units)
@@ -94,6 +104,7 @@
                     if (this.showOnMinimap)
                     {
                         var minimapPosition = this.minimap.WorldToMinimap(position, 20 * Hud.Info.ScreenRatio);
+
                         if (minimapPosition.IsZero)
                         {
                             continue;
@@ -105,6 +116,7 @@
                     if (this.showOnMap && !courier.IsVisible)
                     {
                         var mapPosition = this.minimap.WorldToScreen(position, 40 * Hud.Info.ScreenRatio);
+
                         if (mapPosition.IsZero)
                         {
                             continue;

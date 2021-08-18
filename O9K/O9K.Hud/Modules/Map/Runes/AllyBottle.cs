@@ -9,14 +9,15 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
+
     using Divine.Entity;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Runes;
     using Divine.Extensions;
     using Divine.Game;
     using Divine.Helpers;
     using Divine.Numerics;
     using Divine.Renderer;
-    using Divine.Entity.Entities.Runes;
-    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 
@@ -28,9 +29,12 @@
 
         private readonly IMinimap minimap;
 
+        private readonly IHudMenu hudMenu;
+
         public AllyBottle(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var runesMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Runes"));
             runesMenu.AddTranslation(Lang.Ru, "Руны");
@@ -92,6 +96,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var rune = EntityManager.GetEntities<Rune>()
@@ -112,6 +121,7 @@
                 foreach (var hero in allies)
                 {
                     var bottle = hero.Abilities.FirstOrDefault(x => x.Id == AbilityId.item_bottle);
+
                     if (bottle == null)
                     {
                         continue;
@@ -131,6 +141,7 @@
 
                     RendererManager.DrawImage("o9k.charge_bg", chargesPosition);
                     RendererManager.DrawImage("o9k.outline_green", chargesPosition * 1.07f);
+
                     RendererManager.DrawText(
                         chargesText,
                         chargesPosition,

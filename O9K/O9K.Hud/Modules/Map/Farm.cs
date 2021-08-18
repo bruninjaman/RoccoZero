@@ -39,7 +39,7 @@
         //    "particles/neutral_fx/neutral_item_drop_lvl5.vpcf"
         //};
 
-        private readonly Dictionary<uint, (HeroId, Vector3, Sleeper)> attacks = new Dictionary<uint, (HeroId, Vector3,Sleeper)>();
+        private readonly Dictionary<uint, (HeroId, Vector3, Sleeper)> attacks = new Dictionary<uint, (HeroId, Vector3, Sleeper)>();
 
         private readonly IMinimap minimap;
 
@@ -49,9 +49,12 @@
 
         private Owner owner;
 
+        private readonly IHudMenu hudMenu;
+
         public Farm(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var menu = hudMenu.MapMenu.Add(new Menu("Farm"));
             menu.AddTranslation(Lang.Ru, "Фарм");
@@ -88,6 +91,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var attack in this.attacks.ToList())
@@ -109,6 +117,7 @@
                     if (this.showOnMinimap)
                     {
                         var minimapPosition = minimap.WorldToMinimap(position, 25 * Hud.Info.ScreenRatio);
+
                         if (minimapPosition.IsZero)
                         {
                             return;
@@ -121,6 +130,7 @@
                     if (this.showOnMap)
                     {
                         var screenPosition = this.minimap.WorldToScreen(position, 40 * Hud.Info.ScreenRatio);
+
                         if (screenPosition.IsZero)
                         {
                             continue;
@@ -151,18 +161,21 @@
         private void OnGameEvent(GameEventEventArgs e)
         {
             var gameEvent = e.GameEvent;
+
             if (gameEvent.Name != "entity_hurt")
             {
                 return;
             }
 
             var attacked = EntityManager.GetEntityByIndex(gameEvent.GetInt32("entindex_killed"));
+
             if (attacked == null || attacked is not Neutral and not Roshan || attacked.Team != Team.Neutral)
             {
                 return;
             }
 
             var attacker = EntityManager.GetEntityByIndex(gameEvent.GetInt32("entindex_attacker"));
+
             if (attacker == null || attacker is not Hero attackerHero || attacker.IsVisible)
             {
                 return;

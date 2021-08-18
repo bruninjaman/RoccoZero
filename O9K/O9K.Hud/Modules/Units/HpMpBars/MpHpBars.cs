@@ -11,8 +11,10 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
-    using Divine.Renderer;
+
     using Divine.Entity.Entities.Components;
+    using Divine.Game;
+    using Divine.Renderer;
 
     using MainMenu;
 
@@ -44,8 +46,12 @@
 
         private Team ownerTeam;
 
+        private readonly IHudMenu hudMenu;
+
         public MpHpBars(IHudMenu hudMenu)
         {
+            this.hudMenu = hudMenu;
+
             var menuMp = hudMenu.UnitsMenu.Add(new Menu("Mana bars"));
             menuMp.AddTranslation(Lang.Ru, "Мана");
             menuMp.AddTranslation(Lang.Cn, "魔法条");
@@ -137,6 +143,7 @@
                 }
 
                 var owner = this.units.Find(x => x.Handle == ability.Owner.Handle);
+
                 if (owner == null)
                 {
                     return;
@@ -168,6 +175,7 @@
                 }
 
                 var owner = this.units.Find(x => x.Handle == ability.Owner.Handle);
+
                 if (owner == null)
                 {
                     return;
@@ -191,6 +199,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var unit in this.units)
@@ -201,6 +214,7 @@
                     }
 
                     var hpBar = unit.HealthBar;
+
                     if (hpBar.IsZero)
                     {
                         continue;
@@ -263,6 +277,7 @@
                 }
 
                 var hpMpUnit = this.units.Find(x => x.Handle == unit.Handle);
+
                 if (hpMpUnit == null)
                 {
                     return;

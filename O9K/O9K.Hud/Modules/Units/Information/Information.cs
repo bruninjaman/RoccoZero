@@ -11,12 +11,14 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
+
+    using Divine.Game;
     using Divine.Modifier;
+    using Divine.Modifier.EventArgs;
+    using Divine.Modifier.Modifiers;
     using Divine.Numerics;
     using Divine.Renderer;
     using Divine.Update;
-    using Divine.Modifier.EventArgs;
-    using Divine.Modifier.Modifiers;
 
     using Helpers;
 
@@ -42,8 +44,12 @@
 
         private Owner owner;
 
+        private readonly IHudMenu hudMenu;
+
         public Information(IHudMenu hudMenu)
         {
+            this.hudMenu = hudMenu;
+
             var menu = hudMenu.UnitsMenu.GetOrAdd(new Menu("Information"));
             menu.AddTranslation(Lang.Ru, "Информация");
             menu.AddTranslation(Lang.Cn, "信息");
@@ -95,9 +101,11 @@
         public void Activate()
         {
             this.owner = EntityManager9.Owner;
+
             RendererManager.LoadImage(
                 "o9k.attack_minimalistic",
                 @"panorama\images\hud\reborn\icon_damage_psd.vtex_c");
+
             RendererManager.LoadImage(
                 "o9k.speed_minimalistic",
                 @"panorama\images\hud\reborn\icon_speed_psd.vtex_c");
@@ -168,6 +176,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var mySpeed = this.owner.Hero.Speed;
@@ -212,27 +225,30 @@
                 }
 
                 var sender = modifier.Owner;
+
                 if (sender.Handle == this.owner.HeroHandle)
                 {
                     UpdateManager.BeginInvoke(this.OnUpdate);
+
                     return;
                 }
 
                 var unit = this.units.Find(x => x.Unit.Handle == sender.Handle);
+
                 if (unit != null)
                 {
                     UpdateManager.BeginInvoke(
                         () =>
+                        {
+                            try
                             {
-                                try
-                                {
-                                    unit.UpdateDamage(this.owner.Hero);
-                                }
-                                catch (Exception e)
-                                {
-                                    Logger.Error(e);
-                                }
-                            });
+                                unit.UpdateDamage(this.owner.Hero);
+                            }
+                            catch (Exception e)
+                            {
+                                Logger.Error(e);
+                            }
+                        });
                 }
             }
             catch (Exception e)
@@ -268,6 +284,7 @@
                 }
 
                 var autoAttackUnit = this.units.Find(x => x.Unit.Handle == unit.Handle);
+
                 if (autoAttackUnit != null)
                 {
                     this.units.Remove(autoAttackUnit);
@@ -292,6 +309,7 @@
                     if (!unit.Unit.IsValid)
                     {
                         this.units.RemoveAt(i);
+
                         continue;
                     }
 

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Windows.Input;
 
     using Core.Data;
     using Core.Entities.Abilities.Base;
@@ -20,7 +21,6 @@
     using Divine.Game.EventArgs;
     using Divine.GameConsole;
     using Divine.Input;
-    using Divine.Input.EventArgs;
     using Divine.Numerics;
     using Divine.Renderer;
     using Divine.Update;
@@ -30,7 +30,8 @@
     using MainMenu;
 
     using Drawer = Helpers.Drawer;
-    using Key = System.Windows.Input.Key;
+    using InputManager = Divine.Input.InputManager;
+    using MouseEventArgs = Divine.Input.EventArgs.MouseEventArgs;
 
     internal class RoshanTimer : IHudModule
     {
@@ -79,11 +80,14 @@
         private float lastTime;
 
         private readonly Sleeper attackedSleeper = new();
-        
+
         private readonly Sleeper showSleeper = new();
+
+        private readonly IHudMenu hudMenu;
 
         public RoshanTimer(ITopPanel topPanel, IHudMenu hudMenu)
         {
+            this.hudMenu = hudMenu;
             this.topPanel = topPanel;
 
             var menu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Roshan"));
@@ -199,6 +203,7 @@
                 }
 
                 var cd = GameManager.RawGameTime - this.roshanKillTime;
+
                 if (cd > GameData.RoshanMaxRespawnTime)
                 {
                     return;
@@ -252,6 +257,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 OnDrawDrop();
@@ -280,6 +290,7 @@
                 else if (cd > GameData.RoshanMinRespawnTime)
                 {
                     var time = GameData.RoshanMaxRespawnTime - cd;
+
                     if (!showRemainingTime)
                     {
                         time += GameManager.GameTime;
@@ -290,6 +301,7 @@
                 else if (aegisCd <= GameData.AegisExpirationTime)
                 {
                     var time = GameData.AegisExpirationTime - aegisCd;
+
                     if (!showRemainingTime)
                     {
                         time += GameManager.GameTime;
@@ -300,6 +312,7 @@
                 else
                 {
                     var time = GameData.RoshanMaxRespawnTime - cd;
+
                     if (!showRemainingTime)
                     {
                         time += GameManager.GameTime;
@@ -340,6 +353,7 @@
                 if (attacked)
                 {
                     scale = (gameTime % 1) + 0.5f;
+
                     if (scale > 1)
                     {
                         scale = 2 - scale;
@@ -351,6 +365,7 @@
                 }
 
                 var cd = gameTime - this.roshanKillTime;
+
                 if (cd > GameData.RoshanMaxRespawnTime)
                 {
                     if (spawned)
@@ -373,9 +388,11 @@
                 RendererManager.DrawImage("o9k.roshan_icon", position * scale);
 
                 var center = position.Center + new Vector2(0, position.Height * 0.65f);
+
                 var items = this.roshan?.IsValid == true && this.roshan.BaseInventory != null
                                 ? this.roshan.BaseInventory.MainItems.Select(x => x.Id).ToArray()
                                 : this.roshanDrop[this.roshansKilled];
+
                 var abilitiesSize = 20 * Hud.Info.ScreenRatio;
                 var gap = 4 * Hud.Info.ScreenRatio;
                 var start = new Vector2(center.X - ((abilitiesSize / 2f) * items.Length) - ((gap / 2f) * (items.Length - 1)), center.Y);
@@ -411,36 +428,42 @@
             switch (gameEvent.Name)
             {
                 case "dota_roshan_kill":
+                {
+                    this.roshanKillTime = GameManager.RawGameTime;
+                    this.roshan = null;
+
+                    if (this.roshansKilled < this.roshanDrop.Length - 1)
                     {
-                        this.roshanKillTime = GameManager.RawGameTime;
-                        this.roshan = null;
-
-                        if (this.roshansKilled < this.roshanDrop.Length - 1)
-                        {
-                            this.roshansKilled++;
-                        }
-
-                        health = 0;
+                        this.roshansKilled++;
                     }
+
+                    health = 0;
+                }
+
                     break;
+
                 case "aegis_event":
-                    {
-                        this.aegisPickUpTime = GameManager.RawGameTime;
-                        EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
-                    }
-                    break;
-                case "entity_hurt":
-                    {
-                        var attackedIndex = gameEvent.GetInt32("entindex_killed");
-                        if (attackedIndex != Roshan.PredictEntityIndex)
-                        {
-                            break;
-                        }
+                {
+                    this.aegisPickUpTime = GameManager.RawGameTime;
+                    EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
+                }
 
-                        health = (float)Math.Max(Math.Round(health - gameEvent.GetSingle("damage")), 0);
-                        attackedSleeper.Sleep(5);
-                        showSleeper.Sleep(10);
+                    break;
+
+                case "entity_hurt":
+                {
+                    var attackedIndex = gameEvent.GetInt32("entindex_killed");
+
+                    if (attackedIndex != Roshan.PredictEntityIndex)
+                    {
+                        break;
                     }
+
+                    health = (float)Math.Max(Math.Round(health - gameEvent.GetSingle("damage")), 0);
+                    attackedSleeper.Sleep(5);
+                    showSleeper.Sleep(10);
+                }
+
                     break;
             }
         }
@@ -462,6 +485,7 @@
                 maximumHealth = roshan.MaximumHealth;
                 health = roshan.Health;
                 lastTime = time;
+
                 return;
             }
 
@@ -478,6 +502,7 @@
         private int GetBonusHealth(float time)
         {
             var honusHealth = 115;
+
             if (GameManager.GameMode == GameMode.Turbo)
             {
                 honusHealth *= 2;

@@ -11,9 +11,10 @@
     using Core.Managers.Entity;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
+
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Game;
     using Divine.Renderer;
-    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 
@@ -36,9 +37,12 @@
 
         private Owner owner;
 
+        private readonly IHudMenu hudMenu;
+
         public UsableItems(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var notificationMenu = hudMenu.NotificationsMenu.GetOrAdd(new Menu("Abilities"));
             notificationMenu.AddTranslation(Lang.Ru, "Способности");
@@ -105,6 +109,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var ability in this.abilities)
@@ -120,12 +129,14 @@
                     }
 
                     var position = this.minimap.WorldToScreen(ability.Owner.Position, 35 * Hud.Info.ScreenRatio);
+
                     if (position.IsZero)
                     {
                         continue;
                     }
 
                     var scale = (GameManager.RawGameTime % 1) + 0.5f;
+
                     if (scale > 1)
                     {
                         scale = 2 - scale;

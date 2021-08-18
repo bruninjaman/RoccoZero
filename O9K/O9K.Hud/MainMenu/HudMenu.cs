@@ -1,13 +1,12 @@
 ﻿namespace O9K.Hud.MainMenu
 {
+    using Core.Managers.Context;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
 
     using Divine.Renderer;
 
     using Modules;
-
-    using O9K.Core.Managers.Context;
 
     internal class HudMenu : IHudModule, IHudMenu
     {
@@ -54,7 +53,13 @@
             this.UniqueMenu = this.RootMenu.Add(new Menu("Unique"));
             this.UniqueMenu.AddTranslation(Lang.Ru, "Уникальные");
             this.UniqueMenu.AddTranslation(Lang.Cn, "独特");
+
+            this.DontDrawWhenShopIsOpen = this.RootMenu.Add(new MenuSwitcher("Dont draw when shop is open", false));
+            this.DontDrawWhenShopIsOpen.AddTranslation(Lang.Ru, "Не рисовать, когда открыт магазин");
+            this.DontDrawWhenShopIsOpen.AddTranslation(Lang.Cn, "商店营业时不要画画");
         }
+
+        public MenuSwitcher DontDrawWhenShopIsOpen { get; set; }
 
         public Menu MapMenu { get; }
 

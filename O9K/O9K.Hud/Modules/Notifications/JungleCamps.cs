@@ -36,9 +36,12 @@
 
         private Owner owner;
 
+        private readonly IHudMenu hudMenu;
+
         public JungleCamps(IHudMenu hudMenu)
         {
             this.jungleManager = Context9.JungleManager;
+            this.hudMenu = hudMenu;
 
             var menu = hudMenu.NotificationsMenu.GetOrAdd(new Menu("Jungle stacks"));
             menu.AddTranslation(Lang.Ru, "Стаки");
@@ -111,6 +114,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var seconds = GameManager.GameTime % 60;
@@ -118,12 +126,14 @@
                 foreach (var camp in this.drawCamps)
                 {
                     var position = RendererManager.WorldToScreen(camp.DrawPosition);
+
                     if (position.IsZero)
                     {
                         continue;
                     }
 
                     var stackTime = Math.Ceiling(camp.StackTime - seconds);
+
                     if (stackTime <= -2)
                     {
                         continue;
@@ -154,20 +164,25 @@
             try
             {
                 var time = GameManager.GameTime;
+
                 if (time % 60 < 45)
                 {
                     this.DisableDraw();
+
                     return;
                 }
 
                 var hero = this.owner.Hero;
+
                 if (!hero.IsAlive)
                 {
                     this.DisableDraw();
+
                     return;
                 }
 
                 var position = hero.Position;
+
                 var closestCamp = this.jungleManager.JungleCamps
                     .Where(x => x.Team == hero.Team && !x.IsSmall && x.CreepsPosition.Distance2D(position) < 1000)
                     .OrderBy(x => x.CreepsPosition.DistanceSquared(position))
@@ -176,6 +191,7 @@
                 if (closestCamp == null)
                 {
                     this.DisableDraw();
+
                     return;
                 }
 
@@ -192,6 +208,7 @@
             try
             {
                 var time = GameManager.GameTime;
+
                 if (time < GameData.JungleCreepsSpawnStartTime)
                 {
                     return;

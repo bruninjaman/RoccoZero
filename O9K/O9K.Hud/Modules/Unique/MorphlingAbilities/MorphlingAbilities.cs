@@ -18,6 +18,7 @@
 
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Game;
     using Divine.Modifier;
     using Divine.Modifier.EventArgs;
     using Divine.Numerics;
@@ -56,8 +57,11 @@
 
         private Owner owner;
 
+        private readonly IHudMenu hudMenu;
+
         public MorphlingAbilities(IHudMenu hudMenu)
         {
+            this.hudMenu = hudMenu;
 
             var abilitiesMenu = hudMenu.UniqueMenu
                 .Add(new Menu(Divine.Helpers.LocalizationHelper.LocalizeName(HeroId.npc_dota_hero_morphling), "Morphling"))
@@ -65,6 +69,7 @@
 
             this.abilitiesEnabled = abilitiesMenu.Add(
                 new MenuSwitcher("Abilities").SetTooltip("Show ability cooldowns when playing morphling"));
+
             this.abilitiesEnabled.AddTranslation(Lang.Ru, "Cпособности");
             this.abilitiesEnabled.AddTooltipTranslation(Lang.Ru, "Показывать время перезарядки способностей");
             this.abilitiesEnabled.AddTranslation(Lang.Cn, "播放声音");
@@ -193,6 +198,7 @@
                 }
 
                 var morphlingAbility = this.morphedAbilities.Find(x => x.Handle == ability.Handle);
+
                 if (morphlingAbility == null)
                 {
                     return;
@@ -208,9 +214,15 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var hpPosition = this.owner.Hero.HealthBarPosition;
+
                 if (hpPosition.IsZero)
                 {
                     return;
@@ -218,6 +230,7 @@
 
                 var healthBarSize = this.owner.Hero.HealthBarSize;
                 var abilities = this.morphedAbilities.Where(x => x.Display(this.isMorphed)).OrderBy(x => x.AbilitySlot).ToArray();
+
                 var start = (new Vector2(hpPosition.X + (healthBarSize.X * 0.5f), hpPosition.Y - this.abilitiesSize)
                              + this.abilitiesPosition) - new Vector2((this.abilitiesSize * abilities.Length) / 2f, 0);
 
@@ -245,6 +258,7 @@
             try
             {
                 var order = e.Order;
+
                 if (order.Type != OrderType.Cast || order.Ability.Id != AbilityId.morphling_morph_replicate)
                 {
                     return;
@@ -264,6 +278,7 @@
             {
                 var modifier = e.Modifier;
                 var sender = modifier.Owner;
+
                 if (sender.Handle != this.owner.HeroHandle)
                 {
                     return;
@@ -293,6 +308,7 @@
             {
                 var modifier = e.Modifier;
                 var sender = modifier.Owner;
+
                 if (sender.Handle != this.owner.HeroHandle)
                 {
                     return;

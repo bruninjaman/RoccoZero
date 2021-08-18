@@ -16,6 +16,7 @@
     using Divine.Entity.Entities.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
     using Divine.Extensions;
+    using Divine.Game;
     using Divine.Numerics;
     using Divine.Particle;
     using Divine.Particle.EventArgs;
@@ -59,9 +60,12 @@
 
         private Team ownerTeam;
 
+        private readonly IHudMenu hudMenu;
+
         public TeleportMonitor(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var menu = hudMenu.MapMenu.Add(new Menu("Teleports"));
             menu.AddTranslation(Lang.Ru, "Телепорты");
@@ -116,6 +120,7 @@
                 }
 
                 var colorCp = particle.GetControlPoint(2);
+
                 var color = new Color(
                     (int)(255 * Math.Round(colorCp.X, 2)),
                     (int)(255 * Math.Round(colorCp.Y, 2)),
@@ -127,12 +132,14 @@
                 }
 
                 var player = EntityManager.GetPlayerById(id);
+
                 if (player == null || player.Hero == null || player.Team == this.ownerTeam)
                 {
                     return;
                 }
 
                 var hero = (Hero9)EntityManager9.GetUnit(player.Hero.Handle);
+
                 if (hero == null || (hero.IsVisible && start))
                 {
                     return;
@@ -169,6 +176,7 @@
             if (start)
             {
                 var end = this.teleports.LastOrDefault(x => x.HeroId == heroId);
+
                 if (end == null)
                 {
                     return 3f;
@@ -190,6 +198,7 @@
             }
 
             var sleepers = this.teleportSleeper.Count(x => x.Value.IsSleeping && x.Key.Distance2D(position) < TeleportCheckRadius);
+
             if (sleepers > 0)
             {
                 duration += (sleepers * 0.5f) + 1.5f;
@@ -202,6 +211,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 for (var i = this.teleports.Count - 1; i > -1; i--)
@@ -244,6 +258,7 @@
         private void OnParticleAdded(ParticleAddedEventArgs e)
         {
             var particle = e.Particle;
+
             switch (particle.Name)
             {
                 case "particles/items2_fx/teleport_start.vpcf":
@@ -252,13 +267,16 @@
                 case "particles/econ/events/ti10/teleport/teleport_start_ti10_lvl2.vpcf":
                 case "particles/econ/events/ti10/teleport/teleport_start_ti10_lvl3.vpcf":
                     UpdateManager.BeginInvoke(100, () => this.CheckTeleport(particle, true));
+
                     break;
+
                 case "particles/items2_fx/teleport_end.vpcf":
                 case "particles/econ/items/tinker/boots_of_travel/teleport_end_bots.vpcf":
                 case "particles/econ/events/ti10/teleport/teleport_end_ti10.vpcf":
                 case "particles/econ/events/ti10/teleport/teleport_end_ti10_lvl2.vpcf":
                 case "particles/econ/events/ti10/teleport/teleport_end_ti10_lvl3.vpcf":
                     UpdateManager.BeginInvoke(() => this.CheckTeleport(particle, false));
+
                     break;
                 //default:
                 //{

@@ -11,16 +11,18 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
+    using Core.Managers.Renderer.Utils;
+
+    using Divine.Entity.Entities.Components;
     using Divine.Extensions;
+    using Divine.Game;
     using Divine.Numerics;
     using Divine.Renderer;
     using Divine.Update;
-    using Divine.Entity.Entities.Components;
 
     using Helpers;
 
     using MainMenu;
-    using O9K.Core.Managers.Renderer.Utils;
 
     internal class JungleStacks : IHudModule
     {
@@ -57,9 +59,12 @@
 
         private Vector3[] campPositions;
 
+        private readonly IHudMenu hudMenu;
+
         public JungleStacks(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var predictionsMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Predictions"));
             predictionsMenu.AddTranslation(Lang.Ru, "Предположения");
@@ -92,6 +97,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var stack in this.stacks)
@@ -131,6 +141,7 @@
                 foreach (var camp in this.campPositions)
                 {
                     var units = neutrals.Where(x => x.Position.Distance2D(camp) < 500).ToList();
+
                     var count = units.Count(x => this.singleCreeps.Contains(x.Name))
                                 + (units.Count(x => this.doubleCreeps.Contains(x.Name)) / 2);
 
