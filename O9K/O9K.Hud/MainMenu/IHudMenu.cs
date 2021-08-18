@@ -25,5 +25,7 @@
         Menu UniqueMenu { get; }
 
         Menu UnitsMenu { get; }
+
+        MenuSwitcher DontDrawWhenShopIsOpen { get; }
     }
 }

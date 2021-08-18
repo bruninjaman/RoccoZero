@@ -14,9 +14,11 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
+
+    using Divine.Entity.Entities.Components;
+    using Divine.Game;
     using Divine.Numerics;
     using Divine.Renderer;
-    using Divine.Entity.Entities.Components;
 
     using Helpers;
 
@@ -48,8 +50,12 @@
 
         private float textSize;
 
+        private readonly IHudMenu hudMenu;
+
         public NetWorthPanel(IHudMenu hudMenu)
         {
+            this.hudMenu = hudMenu;
+
             var panelsMenu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Panels"));
             panelsMenu.AddTranslation(Lang.Ru, "Панели");
             panelsMenu.AddTranslation(Lang.Cn, "面板");
@@ -109,6 +115,7 @@
                     Brightness = -80,
                     ColorTint = new Color(0, 255, 0, 229)
                 });
+
             RendererManager.LoadImage(
                 "o9k.net_worth_bg_enemy",
                 @"panorama\images\masks\gradient_leftright_png.vtex_c",
@@ -153,9 +160,11 @@
                 }
 
                 var owner = ability.Owner;
+
                 if (owner is SpiritBear)
                 {
                     owner = owner.Owner;
+
                     if (owner == null)
                     {
                         return;
@@ -185,9 +194,11 @@
                 }
 
                 var owner = ability.Owner;
+
                 if (owner is SpiritBear)
                 {
                     owner = owner.Owner;
+
                     if (owner == null)
                     {
                         return;
@@ -209,6 +220,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var heroPosition = this.position.Value;
@@ -216,6 +232,7 @@
                 foreach (var pair in this.units.OrderByDescending(x => x.Value))
                 {
                     var unit = pair.Key;
+
                     if (!unit.IsValid)
                     {
                         continue;
@@ -241,11 +258,13 @@
                     }
 
                     RendererManager.DrawImage(unit.Name, new RectangleF(heroPosition.X, heroPosition.Y, this.heroSize.X, this.heroSize.Y), UnitImageType.Default);
+
                     RendererManager.DrawText(
                         pair.Value.ToString("N0"),
                         heroPosition + new Vector2(this.heroSize.X + 5, (this.lineSize.Y - this.textSize) / 5),
                         Color.White,
                         this.textSize);
+
                     heroPosition += new Vector2(0, this.heroSize.Y + 1);
                 }
             }

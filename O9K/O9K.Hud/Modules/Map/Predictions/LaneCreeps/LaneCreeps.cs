@@ -11,6 +11,7 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
+    using Core.Managers.Renderer.Utils;
 
     using Divine.Entity.Entities;
     using Divine.Entity.Entities.Components;
@@ -26,8 +27,6 @@
     using LaneData;
 
     using MainMenu;
-
-    using O9K.Core.Managers.Renderer.Utils;
 
     internal class LaneCreeps : IHudModule
     {
@@ -49,9 +48,12 @@
 
         private Team ownerTeam;
 
+        private readonly IHudMenu hudMenu;
+
         public LaneCreeps(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var predictionsMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Predictions"));
             predictionsMenu.AddTranslation(Lang.Ru, "Предположения");
@@ -171,6 +173,7 @@
 
             var newValue = e.NewValue.GetBoolean();
             var oldValue = e.OldValue.GetBoolean();
+
             if (newValue == oldValue || (!oldValue && newValue))
             {
                 return;
@@ -186,6 +189,7 @@
                     }
 
                     var unit = EntityManager9.GetUnit(sender.Handle);
+
                     if (unit == null || !unit.IsLaneCreep || unit.Team != this.ownerTeam)
                     {
                         return;
@@ -207,6 +211,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var wave in this.creepWaves)
@@ -266,12 +275,14 @@
                 }
 
                 var lane = this.lanePaths.GetCreepLane(unit);
+
                 if (lane == LanePosition.Unknown)
                 {
                     return;
                 }
 
                 var wave = this.creepWaves.SingleOrDefault(x => !x.IsSpawned && x.Lane == lane);
+
                 if (wave == null)
                 {
                     this.creepWaves.Add(wave = new CreepWave(lane, this.lanePaths.GetLanePath(lane)));
@@ -295,6 +306,7 @@
                 }
 
                 var wave = this.creepWaves.Find(x => x.Creeps.Contains(unit));
+
                 if (wave == null)
                 {
                     return;
@@ -333,6 +345,7 @@
                     if (!wave.IsValid)
                     {
                         this.creepWaves.RemoveAt(i);
+
                         continue;
                     }
 
@@ -346,6 +359,7 @@
                         {
                             merge.Creeps.AddRange(wave.Creeps);
                             this.creepWaves.RemoveAt(i);
+
                             continue;
                         }
                     }

@@ -13,6 +13,8 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
+
+    using Divine.Game;
     using Divine.Numerics;
     using Divine.Renderer;
     using Divine.Update;
@@ -39,9 +41,12 @@
 
         private float textureSize;
 
+        private readonly IHudMenu hudMenu;
+
         public Awareness(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var menu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Map awareness"));
             menu.AddTranslation(Lang.Ru, "Осведомленность");
@@ -101,6 +106,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var rec = new Rectangle9(this.start, this.textureSize, this.textureSize);
@@ -161,6 +171,7 @@
                 }
 
                 var hero = this.heroes.Find(x => x.Handle == entity.Handle);
+
                 if (hero == null)
                 {
                     return;
@@ -180,6 +191,7 @@
             try
             {
                 var myHero = this.owner.Hero;
+
                 if (myHero == null)
                 {
                     return;

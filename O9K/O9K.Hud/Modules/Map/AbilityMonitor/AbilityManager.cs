@@ -14,17 +14,19 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
+
     using Divine.Entity;
-    using Divine.Extensions;
-    using Divine.Numerics;
-    using Divine.Particle;
-    using Divine.Renderer;
-    using Divine.Update;
-    using Divine.Entity.EventArgs;
-    using Divine.Particle.EventArgs;
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Components;
     using Divine.Entity.Entities.Units;
-    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.EventArgs;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Particle.EventArgs;
+    using Divine.Renderer;
+    using Divine.Update;
 
     using Helpers;
     using Helpers.Notificator;
@@ -55,10 +57,13 @@
 
         private Team allyTeam;
 
+        private readonly IHudMenu hudMenu;
+
         public AbilityManager(IMinimap minimap, INotificator notificator, IHudMenu hudMenu)
         {
             this.minimap = minimap;
             this.notificator = notificator;
+            this.hudMenu = hudMenu;
 
             var abilitiesMenu = hudMenu.MapMenu.Add(new Menu("Abilities"));
             abilitiesMenu.AddTranslation(Lang.Ru, "Способности");
@@ -208,8 +213,8 @@
         {
             return this.enemyUnits.Any(
                 x => x.Unit.IsValid && !x.Equals(enemy) && x.Unit.IsVisible && x.Unit.IsAlive && x.Unit.Distance(enemy.Unit) <= 600
-                && x.ObserversCount + x.SentryCount
-                < x.CountWards(AbilityId.item_ward_observer) + x.CountWards(AbilityId.item_ward_sentry));
+                     && x.ObserversCount + x.SentryCount
+                     < x.CountWards(AbilityId.item_ward_observer) + x.CountWards(AbilityId.item_ward_sentry));
         }
 
         private void LoadTextures()
@@ -221,6 +226,7 @@
                 {
                     ColorTint = new Color(255, 153, 0)
                 });
+
             RendererManager.LoadImage(
                 "o9k.minimap_item_ward_sentry",
                 @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
@@ -235,6 +241,7 @@
             try
             {
                 var unit = e.Entity as Unit;
+
                 if (unit == null || unit.Team == this.allyTeam)
                 {
                     return;
@@ -252,6 +259,7 @@
                     }
 
                     var vision = unit.DayVision;
+
                     if (vision <= 0)
                     {
                         return;
@@ -259,6 +267,7 @@
 
                     var ids = this.abilityData.AbilityUnitVision.Where(x => x.Value.Vision == unit.DayVision)
                         .ToDictionary(x => x.Key, x => x.Value);
+
                     var abilities = EntityManager9.Abilities.Where(
                             x => x.Owner.Team != this.allyTeam && x.Owner.CanUseAbilities && ids.ContainsKey(x.Id)
                                  && (!x.Owner.IsVisible || x.TimeSinceCasted < 0.5f + x.ActivationDelay))
@@ -289,6 +298,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var ability in this.drawableAbilities)
@@ -317,6 +331,7 @@
                 }
 
                 var mines = this.drawableAbilities.Where(x => x.AbilityId == AbilityId.techies_remote_mines).ToArray();
+
                 if (mines.Length < 2)
                 {
                     return;
@@ -332,6 +347,7 @@
                     }
 
                     var stack = mines.Where(x => x.Position.DistanceSquared(mine.Position) < 10000).ToList();
+
                     if (stack.Count < 2)
                     {
                         continue;
@@ -340,6 +356,7 @@
                     ignoredMines.AddRange(stack);
 
                     var position = this.minimap.WorldToScreen(mine.Position, 24 * Hud.Info.ScreenRatio);
+
                     if (position.IsZero)
                     {
                         continue;
@@ -379,26 +396,27 @@
 
                 UpdateManager.BeginInvoke(
                     () =>
+                    {
+                        try
                         {
-                            try
-                            {
-                                var particle = e.Particle;
-                                if (!particle.IsValid)
-                                {
-                                    return;
-                                }
+                            var particle = e.Particle;
 
-                                data.AddDrawableAbility(
-                                    this.drawableAbilities,
-                                    particle,
-                                    this.allyTeam,
-                                    this.notificationsEnabled ? this.notificator : null);
-                            }
-                            catch (Exception ex)
+                            if (!particle.IsValid)
                             {
-                                Logger.Error(ex);
+                                return;
                             }
-                        });
+
+                            data.AddDrawableAbility(
+                                this.drawableAbilities,
+                                particle,
+                                this.allyTeam,
+                                this.notificationsEnabled ? this.notificator : null);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex);
+                        }
+                    });
             }
             catch (Exception ex)
             {
@@ -442,6 +460,7 @@
             try
             {
                 var entity = e.Entity;
+
                 if (entity.Team == this.allyTeam)
                 {
                     return;
@@ -453,6 +472,7 @@
                 }
 
                 var unit = this.drawableAbilities.OfType<DrawableUnitAbility>().FirstOrDefault(x => x.Unit == entity);
+
                 if (unit != null)
                 {
                     this.drawableAbilities.Remove(unit);
@@ -491,6 +511,7 @@
                 }
 
                 var unit = this.enemyUnits.Find(x => x.Unit == entity);
+
                 if (unit != null)
                 {
                     this.enemyUnits.Remove(unit);
@@ -544,6 +565,7 @@
                     {
                         enemy.ObserversCount = 0;
                         enemy.SentryCount = 0;
+
                         continue;
                     }
 
@@ -566,6 +588,7 @@
         private bool PlacedWard(EnemyUnit enemy, AbilityId id)
         {
             var count = enemy.CountWards(id);
+
             if (count < enemy.GetWardsCount(id))
             {
                 enemy.SetWardsCount(id, count);

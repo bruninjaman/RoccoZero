@@ -9,6 +9,7 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
+    using Divine.Game;
     using Divine.Numerics;
     using Divine.Renderer;
 
@@ -26,8 +27,12 @@
 
         private readonly string timeFormat;
 
+        private readonly IHudMenu hudMenu;
+
         public SystemTime(IHudMenu hudMenu)
         {
+            this.hudMenu = hudMenu;
+
             var timeMenu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Time"));
             timeMenu.AddTranslation(Lang.Ru, "Время");
             timeMenu.AddTranslation(Lang.Cn, "时间");
@@ -90,6 +95,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var time = DateTime.Now.ToString(this.timeFormat);

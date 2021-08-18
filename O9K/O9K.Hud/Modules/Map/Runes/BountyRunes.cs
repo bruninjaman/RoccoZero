@@ -11,13 +11,14 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
     using Core.Managers.Particle;
+
     using Divine.Entity;
+    using Divine.Entity.Entities.Abilities.Items;
     using Divine.Extensions;
     using Divine.Game;
     using Divine.Numerics;
     using Divine.Renderer;
     using Divine.Update;
-    using Divine.Entity.Entities.Abilities.Items;
 
     using Helpers;
 
@@ -35,9 +36,12 @@
 
         private Vector3[] bountySpawns;
 
+        private readonly IHudMenu hudMenu;
+
         public BountyRunes(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var runesMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Runes"));
             runesMenu.AddTranslation(Lang.Ru, "Руны");
@@ -85,6 +89,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var pickedRune in this.pickedRunes)
@@ -98,6 +107,7 @@
                     if (this.showOnMap)
                     {
                         var position = this.minimap.WorldToScreen(pickedRune, 40 * Hud.Info.ScreenRatio);
+
                         if (position.IsZero)
                         {
                             continue;
@@ -121,13 +131,14 @@
         {
             try
             {
-                if (/*!particle.Released || */particle.Name != "particles/generic_gameplay/rune_bounty_owner.vpcf")
+                if ( /*!particle.Released || */particle.Name != "particles/generic_gameplay/rune_bounty_owner.vpcf")
                 {
                     return;
                 }
 
                 var position = particle.GetControlPoint(0);
                 var runeSpawn = Array.Find(this.bountySpawns, x => x.Distance2D(position) < 500);
+
                 if (runeSpawn.IsZero)
                 {
                     return;

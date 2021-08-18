@@ -10,8 +10,10 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
-    using Divine.Renderer;
+
     using Divine.Entity.Entities.Components;
+    using Divine.Game;
+    using Divine.Renderer;
 
     using Helpers;
 
@@ -31,9 +33,12 @@
 
         private Team ownerTeam;
 
+        private readonly IHudMenu hudMenu;
+
         public Heroes(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var predictionsMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Predictions"));
             predictionsMenu.AddTranslation(Lang.Ru, "Предположения");
@@ -93,6 +98,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var unit in this.units)

@@ -13,10 +13,12 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
+
+    using Divine.Entity.Entities.Units.Components;
     using Divine.Extensions;
+    using Divine.Game;
     using Divine.Numerics;
     using Divine.Renderer;
-    using Divine.Entity.Entities.Units.Components;
 
     using Helpers;
 
@@ -52,8 +54,16 @@
 
         private readonly List<HudUnit> units = new List<HudUnit>();
 
+        private readonly MenuSwitcher itemsShowMyHero;
+
+        private readonly MenuSwitcher abilitiesShowMyHero;
+
+        private readonly IHudMenu hudMenu;
+
         public Abilities(IHudMenu hudMenu)
         {
+            this.hudMenu = hudMenu;
+
             var abilitiesMenu = hudMenu.UnitsMenu.Add(new Menu("Abilities"));
             abilitiesMenu.AddTranslation(Lang.Ru, "Способности");
             abilitiesMenu.AddTranslation(Lang.Cn, "播放声音");
@@ -69,6 +79,10 @@
             this.abilitiesShowAlly = abilitiesMenu.Add(new MenuSwitcher("Show ally abilities", false));
             this.abilitiesShowAlly.AddTranslation(Lang.Ru, "Показать способности союзников");
             this.abilitiesShowAlly.AddTranslation(Lang.Cn, "显示盟友技能");
+
+            this.abilitiesShowMyHero = abilitiesMenu.Add(new MenuSwitcher("Show my abilities", false));
+            this.abilitiesShowMyHero.AddTranslation(Lang.Ru, "Показать способности моего героя");
+            this.abilitiesShowMyHero.AddTranslation(Lang.Cn, "展示我的能力");
 
             var abilitiesSettings = abilitiesMenu.Add(new Menu("Settings"));
             abilitiesSettings.AddTranslation(Lang.Ru, "Настройки");
@@ -94,6 +108,10 @@
             this.itemsShowAlly = itemsMenu.Add(new MenuSwitcher("Show ally items", false));
             this.itemsShowAlly.AddTranslation(Lang.Ru, "Показать предметы союзников");
             this.itemsShowAlly.AddTranslation(Lang.Cn, "盟友物品");
+
+            this.itemsShowMyHero = itemsMenu.Add(new MenuSwitcher("Show my items", false));
+            this.itemsShowMyHero.AddTranslation(Lang.Ru, "Показать предметы моего героя");
+            this.itemsShowMyHero.AddTranslation(Lang.Cn, "显示我的物品");
 
             var itemsSettings = itemsMenu.Add(new Menu("Settings"));
             itemsSettings.AddTranslation(Lang.Ru, "Настройки");
@@ -149,6 +167,7 @@
         private float GetTextureScale(HudUnit unit)
         {
             var position = unit.Unit.Position;
+
             var closest = this.units.Where(x => x.Unit != unit.Unit && x.IsValid && x.Unit.DistanceSquared(position) < 50000)
                 .OrderBy(x => x.Unit.DistanceSquared(position))
                 .FirstOrDefault();
@@ -156,6 +175,7 @@
             if (closest != null)
             {
                 var distance = position.DistanceSquared(closest.Unit.Position);
+
                 return Math.Min(Math.Max(0.5f, distance / 50000f), 1f);
             }
 
@@ -182,6 +202,7 @@
                 {
                     Brightness = 35
                 });
+
             RendererManager.LoadImage(
                 "o9k.ability_cd_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
@@ -189,6 +210,7 @@
                 {
                     ColorTint = new Color(0, 0, 0, 153)
                 });
+
             RendererManager.LoadImage(
                 "o9k.ability_0lvl_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
@@ -196,6 +218,7 @@
                 {
                     ColorTint = new Color(76, 76, 76, 102)
                 });
+
             RendererManager.LoadImage(
                 "o9k.ability_lvl_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
@@ -203,6 +226,7 @@
                 {
                     ColorTint = new Color(0, 0, 0, 229)
                 });
+
             RendererManager.LoadImage(
                 "o9k.ability_minimal_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
@@ -210,6 +234,7 @@
                 {
                     ColorTint = new Color(0, 0, 0, 178)
                 });
+
             RendererManager.LoadImage(
                 "o9k.ability_minimal_cd_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
@@ -217,6 +242,7 @@
                 {
                     ColorTint = new Color(0, 0, 0)
                 });
+
             RendererManager.LoadImage(
                 "o9k.ability_minimal_mana_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
@@ -224,6 +250,7 @@
                 {
                     ColorTint = new Color(0, 0, 229)
                 });
+
             RendererManager.LoadImage(
                 "o9k.ability_mana_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
@@ -231,6 +258,7 @@
                 {
                     ColorTint = new Color(0, 0, 229, 204)
                 });
+
             RendererManager.LoadImage(
                 "o9k.charge_bg",
                 @"panorama\images\masks\softedge_circle_sharper_png.vtex_c",
@@ -250,7 +278,8 @@
                 }
 
                 var abilityOwner = ability.Owner;
-                if (!abilityOwner.IsHero || abilityOwner.IsMyHero)
+
+                if (!abilityOwner.IsHero)
                 {
                     return;
                 }
@@ -261,6 +290,7 @@
                 }
 
                 var hudUnit = this.units.Find(x => x.Unit.Handle == abilityOwner.Handle);
+
                 if (hudUnit == null)
                 {
                     hudUnit = new HudUnit(abilityOwner);
@@ -285,7 +315,8 @@
                 }
 
                 var abilityOwner = ability.Owner;
-                if (!abilityOwner.IsHero || abilityOwner.IsMyHero)
+
+                if (!abilityOwner.IsHero)
                 {
                     return;
                 }
@@ -301,6 +332,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var unit in this.units)
@@ -311,6 +347,7 @@
                     }
 
                     var hpPosition = unit.HealthBarPosition;
+
                     if (hpPosition.IsZero)
                     {
                         continue;
@@ -319,7 +356,7 @@
                     var healthBarSize = unit.HealthBarSize;
                     var scale = this.GetTextureScale(unit);
 
-                    if (this.abilitiesEnabled && (!unit.IsAlly || this.abilitiesShowAlly))
+                    if (this.abilitiesEnabled && (!unit.IsAlly || this.abilitiesShowAlly) && (!unit.Unit.IsMyHero || this.abilitiesShowMyHero))
                     {
                         var abilities = unit.Abilities.ToArray();
 
@@ -342,6 +379,7 @@
                         else
                         {
                             var textureSize = this.abilitiesSize * scale;
+
                             var start = (new Vector2(hpPosition.X + (healthBarSize.X * 0.5f), hpPosition.Y - textureSize)
                                          + this.abilitiesPosition) - new Vector2((textureSize * abilities.Length) / 2f, 0);
 
@@ -355,11 +393,11 @@
                         }
                     }
 
-
-                    if (this.itemsEnabled && (!unit.IsAlly || this.itemsShowAlly))
+                    if (this.itemsEnabled && (!unit.IsAlly || this.itemsShowAlly) && (!unit.Unit.IsMyHero || this.itemsShowMyHero))
                     {
                         var textureSize = this.itemsSize * scale;
                         var items = unit.Items.ToArray();
+
                         var start = (new Vector2(hpPosition.X + (healthBarSize.X * 0.5f), hpPosition.Y + 18) + this.itemsPosition)
                                     - new Vector2((textureSize * items.Length) / 2f, 0);
 
@@ -384,6 +422,7 @@
             try
             {
                 var hudUnit = this.units.Find(x => x.Unit.Handle == entity.Handle);
+
                 if (hudUnit == null)
                 {
                     return;

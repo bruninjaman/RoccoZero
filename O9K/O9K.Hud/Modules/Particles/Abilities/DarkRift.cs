@@ -10,13 +10,14 @@
     using Core.Managers.Entity;
     using Core.Managers.Particle;
     using Core.Managers.Renderer.Utils;
+
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Game;
     using Divine.Modifier;
-    using Divine.Numerics;
-    using Divine.Renderer;
     using Divine.Modifier.EventArgs;
     using Divine.Modifier.Modifiers;
-    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Numerics;
+    using Divine.Renderer;
 
     using Helpers.Notificator;
 
@@ -33,9 +34,12 @@
 
         private Unit9 unit;
 
+        private readonly IHudMenu hudMenu;
+
         public DarkRift(INotificator notificator, IHudMenu hudMenu)
             : base(notificator, hudMenu)
         {
+            this.hudMenu = hudMenu;
             this.EnemyOnly = false;
         }
 
@@ -56,11 +60,17 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 if (this.modifier?.IsValid != true)
                 {
                     RendererManager.Draw -= this.OnDraw;
+
                     return;
                 }
 
@@ -70,6 +80,7 @@
                 }
 
                 var position = RendererManager.WorldToScreen(this.unit.Position);
+
                 if (position.IsZero)
                 {
                     return;
@@ -100,6 +111,7 @@
             try
             {
                 var modifier = e.Modifier;
+
                 if (modifier.Name != "modifier_abyssal_underlord_dark_rift")
                 {
                     return;
@@ -137,7 +149,7 @@
         {
             try
             {
-                if (/*particle.Released || */particle.Name != "particles/units/heroes/heroes_underlord/abbysal_underlord_darkrift_ambient.vpcf")
+                if ( /*particle.Released || */particle.Name != "particles/units/heroes/heroes_underlord/abbysal_underlord_darkrift_ambient.vpcf")
                 {
                     return;
                 }

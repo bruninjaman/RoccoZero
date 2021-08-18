@@ -9,15 +9,16 @@
     using Core.Logger;
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
+
     using Divine.Entity;
+    using Divine.Entity.Entities.Abilities.Items;
+    using Divine.Entity.Entities.Runes;
+    using Divine.Entity.Entities.Runes.Components;
+    using Divine.Entity.EventArgs;
     using Divine.Extensions;
     using Divine.Game;
     using Divine.Renderer;
     using Divine.Update;
-    using Divine.Entity.EventArgs;
-    using Divine.Entity.Entities.Runes;
-    using Divine.Entity.Entities.Abilities.Items;
-    using Divine.Entity.Entities.Runes.Components;
 
     using Helpers;
 
@@ -43,9 +44,12 @@
 
         private RuneData[] runeSpawns;
 
+        private readonly IHudMenu hudMenu;
+
         public PowerRunes(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var runesMenu = hudMenu.MapMenu.GetOrAdd(new Menu("Runes"));
             runesMenu.AddTranslation(Lang.Ru, "Руны");
@@ -113,6 +117,7 @@
             try
             {
                 var rune = e.Entity as Rune;
+
                 if (rune == null || rune.RuneType == RuneType.Bounty)
                 {
                     return;
@@ -129,6 +134,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 foreach (var rune in this.runeSpawns)
@@ -147,6 +157,7 @@
                     if (this.showOnMap)
                     {
                         var position = this.minimap.WorldToScreen(rune.Position, 40 * Hud.Info.ScreenRatio);
+
                         if (position.IsZero)
                         {
                             continue;
@@ -167,6 +178,7 @@
             try
             {
                 var rune = e.Entity as Rune;
+
                 if (rune == null || rune.RuneType == RuneType.Bounty)
                 {
                     return;

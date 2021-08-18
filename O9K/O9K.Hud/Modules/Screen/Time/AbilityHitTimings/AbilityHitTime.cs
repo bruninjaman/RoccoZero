@@ -22,8 +22,6 @@
 
     using MainMenu;
 
-    using AbilityEventArgs = Core.Managers.Menu.EventArgs.AbilityEventArgs;
-
     internal class AbilityHitTime : IHudModule
     {
         private readonly MenuSwitcher enabled;
@@ -42,8 +40,12 @@
 
         private UpdateHandler updateHandler;
 
+        private readonly IHudMenu hudMenu;
+
         public AbilityHitTime(IHudMenu hudMenu)
         {
+            this.hudMenu = hudMenu;
+
             var timeMenu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Time"));
             timeMenu.AddTranslation(Lang.Ru, "Время");
             timeMenu.AddTranslation(Lang.Cn, "时间");
@@ -186,6 +188,7 @@
                 }
 
                 var find = this.timings.Find(x => x.Handle == ability.Handle);
+
                 if (find != null)
                 {
                     this.timings.Remove(find);
@@ -199,6 +202,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var startPosition = GameManager.MouseScreenPosition + this.textPosition;
@@ -207,6 +215,7 @@
                 {
                     var textureSize = new Vector2(this.textSize * Hud.Info.ScreenRatio * 1.75f);
                     var outlineSize = textureSize * 1.17f;
+
                     var outlinePosition = startPosition - new Vector2(
                                               (outlineSize.X - textureSize.X) / 2f,
                                               (outlineSize.Y - textureSize.Y) / 2f);

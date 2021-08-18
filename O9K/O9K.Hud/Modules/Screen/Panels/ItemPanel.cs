@@ -16,6 +16,7 @@
 
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Components;
+    using Divine.Game;
     using Divine.Input;
     using Divine.Input.EventArgs;
     using Divine.Numerics;
@@ -53,8 +54,12 @@
 
         private Team ownerTeam;
 
+        private readonly IHudMenu hudMenu;
+
         public ItemPanel(IHudMenu hudMenu)
         {
+            this.hudMenu = hudMenu;
+
             var panelsMenu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Panels"));
             panelsMenu.AddTranslation(Lang.Ru, "Панели");
             panelsMenu.AddTranslation(Lang.Cn, "面板");
@@ -149,6 +154,7 @@
                 }
 
                 var startPosition = this.position.Value;
+
                 var itemPanel = new Rectangle9(
                     startPosition,
                     new Vector2(this.heroSize.X + ((this.itemSize.X + 1) * 7), this.heroSize.Y * this.units.Count));
@@ -188,6 +194,7 @@
                         if (itemPosition.Contains(e.Position))
                         {
                             ability.BaseAbility.Announce();
+
                             return;
                         }
 
@@ -206,6 +213,7 @@
         private void LoadTextures()
         {
             RendererManager.LoadImage("o9k.inventory_item_bg", @"panorama\images\hud\reborn\inventory_item_well_psd.vtex_c");
+
             RendererManager.LoadImage(
                 "o9k.inventory_tp_cd_bg",
                 @"panorama\images\masks\softedge_circle_sharp_png.vtex_c",
@@ -213,6 +221,7 @@
                 {
                     ColorTint = new Color(0, 0, 0, 204)
                 });
+
             RendererManager.LoadImage(
                 "o9k.inventory_item_cd_bg",
                 @"panorama\images\masks\softedge_horizontal_png.vtex_c",
@@ -224,6 +233,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var heroPosition = this.position.Value;
@@ -263,9 +277,11 @@
                             if (this.showCooldown)
                             {
                                 var cooldown = ability.RemainingCooldown;
+
                                 if (cooldown > 0)
                                 {
                                     RendererManager.DrawImage("o9k.inventory_tp_cd_bg", tpPosition);
+
                                     RendererManager.DrawText(
                                         Math.Ceiling(cooldown).ToString("N0"),
                                         tpPosition,
@@ -300,9 +316,11 @@
                         if (this.showCooldown)
                         {
                             var cooldown = ability.RemainingCooldown;
+
                             if (cooldown > 0)
                             {
                                 RendererManager.DrawImage("o9k.inventory_item_cd_bg", itemPosition);
+
                                 RendererManager.DrawText(
                                     Math.Ceiling(cooldown).ToString("N0"),
                                     itemPosition,

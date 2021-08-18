@@ -14,19 +14,20 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
+
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Players;
+    using Divine.Extensions;
     using Divine.Game;
+    using Divine.Game.EventArgs;
     using Divine.Modifier;
+    using Divine.Modifier.EventArgs;
     using Divine.Numerics;
     using Divine.Renderer;
-    using Divine.Game.EventArgs;
-    using Divine.Modifier.EventArgs;
-    using Divine.Entity.Entities.Players;
-    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 
     using MainMenu;
-    using Divine.Extensions;
 
     internal class HeroStatus : IHudModule
     {
@@ -83,9 +84,12 @@
 
         private readonly TopPanelUnit[] units = new TopPanelUnit[10];
 
+        private readonly IHudMenu hudMenu;
+
         public HeroStatus(ITopPanel topPanel, IHudMenu hudMenu)
         {
             this.topPanel = topPanel;
+            this.hudMenu = hudMenu;
 
             var statusMenu = hudMenu.TopPanelMenu.Add(new Menu("Status"));
             statusMenu.AddTranslation(Lang.Ru, "Статус");
@@ -167,6 +171,7 @@
 
             this.dimHpMp = visibilityMenu.Add(new MenuSwitcher("Dim health and mana"))
                 .SetTooltip("Dim health and mana bars when unit is not visible");
+
             this.dimHpMp.AddTranslation(Lang.Ru, "Затемнять хп/мп");
             this.dimHpMp.AddTooltipTranslation(Lang.Ru, "Затемнять хп/мп если враг в тумане войны");
             this.dimHpMp.AddTranslation(Lang.Cn, "昏暗的健康和马纳");
@@ -208,7 +213,9 @@
                 {
                     Brightness = -60
                 });
+
             RendererManager.LoadImage("o9k.health_ally_visible", @"panorama\images\hud\reborn\topbar_health_psd.vtex_c");
+
             RendererManager.LoadImage(
                 "o9k.health_ally_bg",
                 @"panorama\images\hud\reborn\topbar_health_psd.vtex_c",
@@ -216,7 +223,9 @@
                 {
                     Brightness = -170
                 });
+
             RendererManager.LoadImage("o9k.health_enemy", @"panorama\images\hud\reborn\topbar_health_dire_psd.vtex_c");
+
             RendererManager.LoadImage(
                 "o9k.health_enemy_invis",
                 @"panorama\images\hud\reborn\topbar_health_dire_psd.vtex_c",
@@ -224,6 +233,7 @@
                 {
                     Brightness = -60
                 });
+
             RendererManager.LoadImage(
                 "o9k.health_enemy_bg",
                 @"panorama\images\hud\reborn\topbar_health_dire_psd.vtex_c",
@@ -231,7 +241,9 @@
                 {
                     Brightness = -170
                 });
+
             RendererManager.LoadImage("o9k.mana", @"panorama\images\hud\reborn\topbar_mana_psd.vtex_c");
+
             RendererManager.LoadImage(
                 "o9k.mana_invis",
                 @"panorama\images\hud\reborn\topbar_mana_psd.vtex_c",
@@ -239,6 +251,7 @@
                 {
                     Brightness = -60
                 });
+
             RendererManager.LoadImage(
                 "o9k.mana_bg",
                 @"panorama\images\hud\reborn\topbar_mana_psd.vtex_c",
@@ -246,11 +259,13 @@
                 {
                     Brightness = -170
                 });
+
             RendererManager.LoadImage("o9k.ult_rdy", @"panorama\images\hud\reborn\ult_ready_psd.vtex_c");
             RendererManager.LoadImage("o9k.ult_cd", @"panorama\images\hud\reborn\ult_cooldown_psd.vtex_c");
             RendererManager.LoadImage("o9k.ult_mp", @"panorama\images\hud\reborn\ult_no_mana_psd.vtex_c");
             RendererManager.LoadImage("o9k.buyback", @"panorama\images\hud\reborn\buyback_header_psd.vtex_c");
             RendererManager.LoadImage("o9k.buyback_alive", @"panorama\images\hud\reborn\buyback_topbar_alive_psd.vtex_c");
+
             RendererManager.LoadImage(
                 "o9k.top_ult_cd_bg",
                 @"panorama\images\masks\softedge_circle_sharp_png.vtex_c",
@@ -258,7 +273,9 @@
                 {
                     ColorTint = new Color(0, 0, 0, 127)
                 });
+
             RendererManager.LoadImage("o9k.outline", @"panorama\images\hud\reborn\buff_outline_psd.vtex_c");
+
             RendererManager.LoadImage(
                 "o9k.outline_green_pct",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
@@ -267,6 +284,7 @@
                     ColorTint = new Color(0, 255, 0),
                     IsSliced = true
                 });
+
             RendererManager.LoadImage(
                 "o9k.outline_blue_pct",
                 @"panorama\images\hud\reborn\buff_outline_psd.vtex_c",
@@ -300,6 +318,7 @@
                     }
 
                     var id = ability.BaseItem.PurchaserId;
+
                     if (id == -1)
                     {
                         return;
@@ -331,6 +350,7 @@
                 }
 
                 var id = ability.BaseItem.PurchaserId;
+
                 if (id == -1)
                 {
                     return;
@@ -346,6 +366,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var altPressed = this.altKey.IsActive;
@@ -354,6 +379,7 @@
                 for (var i = 0; i < this.units.Length; i++)
                 {
                     var hero = this.units[i];
+
                     if (hero?.IsValid != true)
                     {
                         continue;
@@ -457,6 +483,7 @@
         private void OnGameEvent(GameEventEventArgs e)
         {
             var gameEvent = e.GameEvent;
+
             if (gameEvent.Name != "dota_buyback")
             {
                 return;
@@ -478,6 +505,7 @@
             try
             {
                 var modifier = args.Modifier;
+
                 if (!this.runeModifiers.Contains(modifier.Name))
                 {
                     return;
@@ -485,6 +513,7 @@
 
                 var sender = modifier.Owner;
                 var hero = this.units.Find(x => x?.Handle == sender.Handle);
+
                 if (hero == null)
                 {
                     return;

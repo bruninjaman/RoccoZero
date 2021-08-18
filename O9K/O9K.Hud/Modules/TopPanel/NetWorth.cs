@@ -12,9 +12,11 @@
     using Core.Managers.Menu;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
+
+    using Divine.Entity.Entities.Components;
+    using Divine.Game;
     using Divine.Numerics;
     using Divine.Renderer;
-    using Divine.Entity.Entities.Components;
 
     using Helpers;
 
@@ -30,9 +32,12 @@
 
         private Team ownerTeam;
 
+        private readonly IHudMenu hudMenu;
+
         public NetWorth(ITopPanel topPanel, IHudMenu hudMenu)
         {
             this.topPanel = topPanel;
+            this.hudMenu = hudMenu;
 
             var menu = hudMenu.TopPanelMenu.Add(new Menu("Net worth"));
             menu.AddTranslation(Lang.Ru, "Стоимость");
@@ -70,9 +75,11 @@
                 {
                     ColorTint = new Color(0, 0, 0, 153)
                 });
+
             RendererManager.LoadImage(
                 "o9k.net_worth_arrow_ally",
                 @"panorama\images\hud\reborn\arrow_gold_dif_psd.vtex_c");
+
             RendererManager.LoadImage(
                 "o9k.net_worth_arrow_enemy",
                 @"panorama\images\hud\reborn\arrow_plus_stats_red_psd.vtex_c");
@@ -91,8 +98,10 @@
                 {
                     case Meepo meepo when !meepo.IsMainMeepo:
                         return;
+
                     case SpiritBear _:
                         break;
+
                     default:
                     {
                         if (!ability.Owner.IsHero)
@@ -125,8 +134,10 @@
                 {
                     case Meepo meepo when !meepo.IsMainMeepo:
                         return;
+
                     case SpiritBear _:
                         break;
+
                     default:
                     {
                         if (!ability.Owner.IsHero)
@@ -148,6 +159,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var diff = this.teams[Team.Radiant] - this.teams[Team.Dire];
@@ -175,6 +191,7 @@
                 var measureText = (position.Width - (RendererManager.MeasureText(text, textSize).X + (24 * ratio))) / 2f;
 
                 RendererManager.DrawImage("o9k.net_worth_bg_top", position);
+
                 RendererManager.DrawImage(
                     this.ownerTeam == team ? "o9k.net_worth_arrow_ally" : "o9k.net_worth_arrow_enemy",
                     new RectangleF(position.X + measureText, position.Y + (4 * ratio), 12 * ratio, 12 * ratio));

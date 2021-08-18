@@ -9,11 +9,13 @@
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
+
+    using Divine.Game;
     using Divine.Input;
+    using Divine.Input.EventArgs;
     using Divine.Numerics;
     using Divine.Renderer;
     using Divine.Update;
-    using Divine.Input.EventArgs;
 
     using MainMenu;
 
@@ -41,9 +43,12 @@
 
         private UpdateHandler updateHandler;
 
+        private readonly IHudMenu hudMenu;
+
         public Notificator(IMinimap minimap, IHudMenu hudMenu)
         {
             this.minimap = minimap;
+            this.hudMenu = hudMenu;
 
             var settings = hudMenu.NotificationsSettingsMenu;
             this.debug = settings.Add(new MenuSwitcher("Debug", false));
@@ -60,6 +65,7 @@
 
             this.position = settings.Add(
                 new MenuSlider("Position", "position", (int)(Hud.Info.ScreenSize.Y * 0.7f), 0, (int)Hud.Info.ScreenSize.Y));
+
             this.position.AddTranslation(Lang.Ru, "Позиция");
             this.position.AddTranslation(Lang.Cn, "位置");
         }
@@ -120,6 +126,7 @@
                 {
                     Brightness = 10
                 });
+
             RendererManager.LoadImage("o9k.gold", @"panorama\images\hud\reborn\gold_large_png.vtex_c");
             RendererManager.LoadImage("o9k.ping", @"panorama\images\hud\reborn\ping_icon_default_psd.vtex_c");
             RendererManager.LoadImage("o9k.outpost", @"panorama\images\hud\icon_outpost_psd.vtex_c");
@@ -129,6 +136,11 @@
 
         private void OnDraw()
         {
+            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            {
+                return;
+            }
+
             try
             {
                 var drawPosition = this.panel;
@@ -206,6 +218,7 @@
                 this.notifications.RemoveAll(x => x.IsExpired);
 
                 var count = Math.Min(this.queue.Count, MaxNotifications - this.notifications.Count);
+
                 for (var i = 0; i < count; i++)
                 {
                     var notification = this.queue.Dequeue();
