@@ -92,8 +92,6 @@
 
         public static AbilityId HoodOfDefiance { get; } = AbilityId.item_hood_of_defiance;
 
-        public static AbilityId MinotaurHorn { get; } = AbilityId.item_minotaur_horn;
-
         public static AbilityId EternalShroud { get; } = AbilityId.item_eternal_shroud;
 
         public static AbilityId HurricanePike { get; } = AbilityId.item_hurricane_pike;

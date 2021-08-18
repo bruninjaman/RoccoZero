@@ -39,7 +39,6 @@
         {
             AbilityId.item_flicker,
             AbilityId.item_manta,
-            AbilityId.item_minotaur_horn,
             AbilityId.item_lotus_orb,
             AbilityId.item_guardian_greaves,
             AbilityId.life_stealer_rage,
@@ -219,6 +218,7 @@
             // disable projectile
             AbilityId.brewmaster_earth_hurl_boulder,
             AbilityId.chaos_knight_chaos_bolt,
+            AbilityId.riki_poison_dart,
             //  AbilityId.earth_spirit_boulder_smash, //todo add ?
             AbilityId.lion_impale,
             AbilityId.morphling_adaptive_strike_str,

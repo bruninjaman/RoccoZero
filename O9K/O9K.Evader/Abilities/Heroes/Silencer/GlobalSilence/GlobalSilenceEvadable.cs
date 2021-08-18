@@ -35,7 +35,6 @@
             this.Counters.Remove(Abilities.Stormcrafter);
             this.Counters.Remove(Abilities.FatesEdict);
             this.Counters.Remove(Abilities.BlackKingBar);
-            this.Counters.Remove(Abilities.MinotaurHorn);
             this.Counters.Remove(Abilities.Flicker);
 
             this.ModifierCounters.UnionWith(Abilities.SelfPurge);
