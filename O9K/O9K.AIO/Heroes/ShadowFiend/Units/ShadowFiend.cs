@@ -204,22 +204,9 @@
 
             foreach (var raze in orderedRazes)
             {
-                var predictedPosition = target.GetPredictedPosition(raze.Ability.GetCastDelay());
+                var castDelay = raze.Ability.GetCastDelay() + 0.2f;
+                var predictedPosition = target.GetPredictedPosition(castDelay);
                 var distance = this.Owner.Distance(predictedPosition);
-
-                if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.MoveToEnemy.Raze") &&
-                    raze.CanBeCasted(targetManager, true, comboModeMenu) &&
-                    raze.Ability.CastRange + raze.Ability.Radius > distance &&
-                    raze.Ability.CastRange - raze.Ability.Radius < distance && this.Owner.GetAngle(predictedPosition) > 0.2)
-                {
-                    this.Owner.BaseUnit.MoveToDirection(predictedPosition);
-
-                    this.MoveSleeper.Sleep(0.2f);
-
-                    Divine.Helpers.MultiSleeper<string>.Sleep("ShadowFiend.MoveToEnemy.Raze", 1000);
-
-                    return true;
-                }
 
                 if (!this.abilityHelper.CanBeCasted(raze))
                 {
@@ -229,6 +216,18 @@
                 if (this.RazeCanWaitAttack(raze, target))
                 {
                     continue;
+                }
+
+                if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.AIO.MoveToDirection") &&
+                    raze.Ability.CastRange + raze.Ability.Radius > distance &&
+                    raze.Ability.CastRange - raze.Ability.Radius < distance && this.Owner.GetAngle(predictedPosition) > 0.4)
+                {
+                    this.Owner.BaseUnit.MoveToDirection(predictedPosition);
+
+                    this.MoveSleeper.Sleep(castDelay * 2);
+                    Divine.Helpers.MultiSleeper<string>.Sleep("ShadowFiend.AIO.MoveToDirection", 500);
+
+                    return true;
                 }
 
                 if (this.abilityHelper.UseAbility(raze))
@@ -350,7 +349,7 @@
             {
                 return false;
             }
-            
+
             if (raze.Ability.GetDamage(target) > target.Health)
             {
                 return false;
