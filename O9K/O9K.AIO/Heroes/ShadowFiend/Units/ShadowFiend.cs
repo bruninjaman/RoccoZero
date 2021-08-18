@@ -204,13 +204,13 @@
 
             foreach (var raze in orderedRazes)
             {
-                var distance = this.Owner.Distance(target);
-                var predictedPosition = target.GetPredictedPosition(1);
+                var predictedPosition = target.GetPredictedPosition(raze.Ability.GetCastDelay());
+                var distance = this.Owner.Distance(predictedPosition);
 
                 if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.MoveToEnemy.Raze") &&
                     raze.CanBeCasted(targetManager, true, comboModeMenu) &&
                     raze.Ability.CastRange + raze.Ability.Radius > distance &&
-                    raze.Ability.CastRange - raze.Ability.Radius < distance && this.Owner.GetAngle(predictedPosition) > 1)
+                    raze.Ability.CastRange - raze.Ability.Radius < distance && this.Owner.GetAngle(predictedPosition) > 0.2)
                 {
                     this.Owner.BaseUnit.MoveToDirection(predictedPosition);
 
@@ -226,10 +226,10 @@
                     continue;
                 }
 
-                // if (this.RazeCanWaitAttack(raze, target))
-                // {
-                //     continue;
-                // }
+                if (this.RazeCanWaitAttack(raze, target))
+                {
+                    continue;
+                }
 
                 if (this.abilityHelper.UseAbility(raze))
                 {
@@ -344,9 +344,13 @@
             return base.Orbwalk(target, attack, move, comboMenu);
         }
 
-        // Not usable in current meta + must be improved before using.
         private bool RazeCanWaitAttack(UsableAbility raze, Unit9 target)
         {
+            if (target.HasModifier("modifier_nevermore_requiem_slow"))
+            {
+                return false;
+            }
+            
             if (raze.Ability.GetDamage(target) > target.Health)
             {
                 return false;
@@ -369,7 +373,7 @@
 
             var output = raze.Ability.GetPredictionOutput(input);
 
-            if (output.HitChance < HitChance.Low)
+            if (output.HitChance < HitChance.Medium)
             {
                 return false;
             }
@@ -388,7 +392,7 @@
             var position = target.Position;
             var distance = this.Owner.Distance(position);
             var requiredTime = this.requiem.Ability.CastPoint + GameManager.Ping / 2000;
-            const float AdditionalTime = 0.3f;
+            const float AdditionalTime = 1f;
 
             if (target.IsInvulnerable)
             {
@@ -420,7 +424,7 @@
                     return false;
                 }
 
-                if (distance < 100)
+                if (distance < 150)
                 {
                     if (abilityHelper.UseAbility(this.bkb))
                     {
