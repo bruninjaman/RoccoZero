@@ -16,11 +16,11 @@
     using Core.Extensions;
     using Core.Helpers;
 
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
     using Divine.Extensions;
     using Divine.Game;
     using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Heroes.Components;
 
     using Modes.Combo;
 
@@ -35,7 +35,7 @@
 
         private BlinkAbility blink;
 
-        private NukeAbility blinkStrike;
+        private RikiBlinkStrike blinkStrike;
 
         private DisableAbility bloodthorn;
 
@@ -65,7 +65,7 @@
             this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
             {
                 { AbilityId.riki_smoke_screen, x => this.smoke = new SmokeScreen(x) },
-                { AbilityId.riki_blink_strike, x => this.blinkStrike = new NukeAbility(x) },
+                { AbilityId.riki_blink_strike, x => this.blinkStrike = new RikiBlinkStrike(x) },
                 { AbilityId.riki_poison_dart, x => this.dart = new DisableAbility(x) },
                 { AbilityId.riki_tricks_of_the_trade, x => this.tricks = new TricksOfTheTrade(x) },
 

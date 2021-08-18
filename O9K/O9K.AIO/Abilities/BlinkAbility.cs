@@ -7,9 +7,9 @@
     using Core.Helpers;
     using Core.Prediction.Data;
 
-    using Modes.Combo;
-
     using Divine.Numerics;
+
+    using Modes.Combo;
 
     using TargetManager;
 
@@ -33,6 +33,7 @@
             }
 
             this.Sleeper.Sleep(this.Ability.GetCastDelay(targetManager.Target) + 0.5f);
+
             return true;
         }
 
@@ -69,6 +70,7 @@
             comboSleeper.Sleep(delay);
             this.Sleeper.Sleep(delay + 0.5f);
             this.OrbwalkSleeper.Sleep(delay);
+
             return true;
         }
 
@@ -80,6 +82,7 @@
             }
 
             var position = this.Owner.Position.Extend2D(toPosition, Math.Min(this.Ability.CastRange - 25, this.Owner.Distance(toPosition)));
+
             if (!this.Ability.UseAbility(position))
             {
                 return false;
@@ -101,6 +104,7 @@
             }
 
             var position = targetManager.Target.Position.Extend2D(this.Owner.Position, blinkDistance);
+
             if (this.Owner.Distance(position) > this.Ability.CastRange)
             {
                 return false;
