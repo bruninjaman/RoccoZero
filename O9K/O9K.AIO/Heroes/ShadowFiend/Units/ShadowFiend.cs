@@ -204,32 +204,31 @@
 
             foreach (var raze in orderedRazes)
             {
-                var distance = this.Owner.Distance(target);
-                var predictedPosition = target.GetPredictedPosition(1);
-
-                if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.MoveToEnemy.Raze") &&
-                    raze.CanBeCasted(targetManager, true, comboModeMenu) &&
-                    raze.Ability.CastRange + raze.Ability.Radius > distance &&
-                    raze.Ability.CastRange - raze.Ability.Radius < distance && this.Owner.GetAngle(predictedPosition) > 1)
-                {
-                    this.Owner.BaseUnit.MoveToDirection(predictedPosition);
-
-                    this.MoveSleeper.Sleep(0.2f);
-
-                    Divine.Helpers.MultiSleeper<string>.Sleep("ShadowFiend.MoveToEnemy.Raze", 1000);
-
-                    return true;
-                }
+                var castDelay = raze.Ability.GetCastDelay() + 0.2f;
+                var predictedPosition = target.GetPredictedPosition(castDelay);
+                var distance = this.Owner.Distance(predictedPosition);
 
                 if (!this.abilityHelper.CanBeCasted(raze))
                 {
                     continue;
                 }
 
-                // if (this.RazeCanWaitAttack(raze, target))
-                // {
-                //     continue;
-                // }
+                if (this.RazeCanWaitAttack(raze, target))
+                {
+                    continue;
+                }
+
+                if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.AIO.MoveToDirection") &&
+                    raze.Ability.CastRange + raze.Ability.Radius > distance &&
+                    raze.Ability.CastRange - raze.Ability.Radius < distance && this.Owner.GetAngle(predictedPosition) > 0.4)
+                {
+                    this.Owner.BaseUnit.MoveToDirection(predictedPosition);
+
+                    this.MoveSleeper.Sleep(castDelay * 2);
+                    Divine.Helpers.MultiSleeper<string>.Sleep("ShadowFiend.AIO.MoveToDirection", 500);
+
+                    return true;
+                }
 
                 if (this.abilityHelper.UseAbility(raze))
                 {
@@ -344,9 +343,13 @@
             return base.Orbwalk(target, attack, move, comboMenu);
         }
 
-        // Not usable in current meta + must be improved before using.
         private bool RazeCanWaitAttack(UsableAbility raze, Unit9 target)
         {
+            if (target.HasModifier("modifier_nevermore_requiem_slow"))
+            {
+                return false;
+            }
+
             if (raze.Ability.GetDamage(target) > target.Health)
             {
                 return false;
@@ -369,7 +372,7 @@
 
             var output = raze.Ability.GetPredictionOutput(input);
 
-            if (output.HitChance < HitChance.Low)
+            if (output.HitChance < HitChance.Medium)
             {
                 return false;
             }
@@ -388,7 +391,7 @@
             var position = target.Position;
             var distance = this.Owner.Distance(position);
             var requiredTime = this.requiem.Ability.CastPoint + GameManager.Ping / 2000;
-            const float AdditionalTime = 0.3f;
+            const float AdditionalTime = 1f;
 
             if (target.IsInvulnerable)
             {
@@ -420,7 +423,7 @@
                     return false;
                 }
 
-                if (distance < 100)
+                if (distance < 150)
                 {
                     if (abilityHelper.UseAbility(this.bkb))
                     {
