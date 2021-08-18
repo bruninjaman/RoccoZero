@@ -18,6 +18,7 @@
         public SleepingDart(Ability baseAbility)
             : base(baseAbility)
         {
+            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
         }
 
         public UnitState AppliesUnitState { get; } = UnitState.Stunned;

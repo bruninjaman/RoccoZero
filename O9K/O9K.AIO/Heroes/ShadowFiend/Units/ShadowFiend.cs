@@ -59,6 +59,8 @@
 
         private bool razeOrbwalk;
 
+        private NukeAbility necromastery;
+
         private NukeAbility requiem;
 
         private DebuffAbility veil;
@@ -95,6 +97,7 @@
                         return raze;
                     }
                 },
+                { AbilityId.nevermore_necromastery, x => this.necromastery = new NukeAbility(x) },
                 { AbilityId.nevermore_requiem, x => this.requiem = new NukeAbility(x) },
 
                 { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
@@ -186,6 +189,11 @@
             }
 
             if (this.abilityHelper.UseAbility(this.manta, this.Owner.GetAttackRange()))
+            {
+                return true;
+            }
+
+            if (this.abilityHelper.UseAbility(this.necromastery))
             {
                 return true;
             }

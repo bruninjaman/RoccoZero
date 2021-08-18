@@ -19,19 +19,18 @@
     using Core.Logger;
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
+
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Game;
     using Divine.Numerics;
     using Divine.Renderer;
     using Divine.Update;
-    using Divine.Entity.Entities.Abilities.Components;
 
     using Heroes.Base;
 
     using Modes.Base;
 
     using TargetManager;
-
-    using Sleeper = Core.Helpers.Sleeper;
 
     internal class KillSteal : BaseMode
     {
@@ -306,7 +305,7 @@
                 {
                     continue;
                 }
-
+                
                 var castDelay = ability.Ability.GetCastDelay(target);
                 this.AbilitySleeper.Sleep(ability.Ability.Handle, hitTime);
                 this.orbwalkSleeper.Sleep(ability.Ability.Owner.Handle, castDelay);
@@ -318,30 +317,25 @@
             {
                 var ability = abilities[i];
 
-                if (this.orbwalkSleeper.IsSleeping(ability.Ability.Owner.Handle))
-                {
-                    return;
-                }
-
                 if (!ability.Ability.CanBeCasted())
                 {
                     continue;
                 }
-
+            
                 var amplifier = ability.Ability as IHasDamageAmplify;
                 var ampsDamage = amplifier?.IsIncomingDamageAmplifier() == true;
                 var targetAmplified = ampsDamage && target.HasModifier(amplifier.AmplifierModifierNames);
-
+            
                 if (targetAmplified && !(ability.Ability is INuke))
                 {
                     continue;
                 }
-
+            
                 if (!ability.UseAbility(target))
                 {
                     return;
                 }
-
+            
                 float delay;
                 if (!targetAmplified)
                 {
@@ -361,7 +355,7 @@
                 {
                     delay = ability.Ability.GetCastDelay(target);
                 }
-
+            
                 this.AbilitySleeper.Sleep(ability.Ability.Handle, ability.Ability.GetHitTime(target));
                 this.orbwalkSleeper.Sleep(ability.Ability.Owner.Handle, ability.Ability.GetCastDelay(target));
                 this.KillStealSleeper.Sleep(delay - ability.Ability.ActivationDelay);
