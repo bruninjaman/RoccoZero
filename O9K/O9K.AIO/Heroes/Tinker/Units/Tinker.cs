@@ -4,6 +4,11 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Abilities;
+
+    using AIO.Abilities;
+    using AIO.Abilities.Items;
+
     using Base;
 
     using Core.Entities.Abilities.Base;
@@ -17,10 +22,6 @@
 
     using Modes.Combo;
 
-    using O9K.AIO.Abilities;
-    using O9K.AIO.Abilities.Items;
-    using O9K.AIO.Heroes.Tinker.Abilities;
-
     using TargetManager;
 
     [UnitName(nameof(HeroId.npc_dota_hero_tinker))]
@@ -31,6 +32,8 @@
         private NukeAbility heatSeeking;
 
         private NukeAbility march;
+
+        private ShieldAbility defenseMatrix;
 
         private Rearm rearm;
 
@@ -66,6 +69,7 @@
                 { AbilityId.tinker_laser, x => this.laser = new NukeAbility(x) },
                 { AbilityId.tinker_heat_seeking_missile, x => this.heatSeeking = new NukeAbility(x) },
                 { AbilityId.tinker_march_of_the_machines, x => this.march = new NukeAbility(x) },
+                { AbilityId.tinker_defense_matrix, x => this.defenseMatrix = new ShieldAbility(x) },
                 { AbilityId.tinker_rearm, x => this.rearm = new Rearm(x) },
 
                 { AbilityId.item_glimmer_cape, x => this.glimmer = new ShieldAbility(x) },
@@ -161,6 +165,16 @@
             }
 
             if (abilityHelper.UseAbility(this.laser))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.march))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.defenseMatrix))
             {
                 return true;
             }
