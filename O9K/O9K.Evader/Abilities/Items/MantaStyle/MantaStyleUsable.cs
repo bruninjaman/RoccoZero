@@ -26,6 +26,11 @@
             {
             }
 
+            if (obstacle.EvadableAbility.Ability.Id == AbilityId.mirana_arrow)
+            {
+                bonusTime = 0.15f;
+            }
+
             return base.GetRequiredTime(ally, enemy, obstacle) + bonusTime;
         }
     }

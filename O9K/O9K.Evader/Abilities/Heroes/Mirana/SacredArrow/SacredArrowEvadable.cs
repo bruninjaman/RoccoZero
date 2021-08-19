@@ -33,7 +33,7 @@
             this.sacredArrow = (SacredArrow)ability;
 
             this.Counters.Add(Abilities.BallLightning);
-            // Counters.Add(Abilities.MantaStyle); //todo test
+            this.Counters.Add(Abilities.MantaStyle); //todo test
             this.Counters.Add(Abilities.AttributeShift);
             this.Counters.Add(Abilities.Spoink);
             this.Counters.UnionWith(Abilities.StrongShield);
