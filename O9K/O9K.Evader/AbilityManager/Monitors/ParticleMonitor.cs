@@ -23,6 +23,7 @@
         {
             { "particles/units/heroes/hero_ancient_apparition/ancient_apparition_ice_blast_final.vpcf", AbilityId.ancient_apparition_ice_blast },
             { "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack_projectile.vpcf", AbilityId.hoodwink_bushwhack },
+            { "particles/units/heroes/hero_hoodwink/hoodwink_sharpshooter_projectile.vpcf", AbilityId.hoodwink_sharpshooter },
             { "particles/units/heroes/hero_pudge/pudge_meathook.vpcf", AbilityId.pudge_meat_hook },
             { "particles/econ/items/pudge/pudge_trapper_beam_chain/pudge_nx_meathook.vpcf", AbilityId.pudge_meat_hook },
             { "particles/econ/items/pudge/pudge_hook_whale/pudge_meathook_whale.vpcf", AbilityId.pudge_meat_hook },
@@ -72,6 +73,8 @@
         private readonly HashSet<string> knownParticles = new HashSet<string>
         {
             "particles/units/heroes/hero_pudge/pudge_meathook.vpcf",
+            "particles/units/heroes/hero_hoodwink/hoodwink_sharpshooter_projectile.vpcf",
+            "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack_projectile.vpcf",
             "particles/econ/items/pudge/pudge_trapper_beam_chain/pudge_nx_meathook.vpcf",
             "particles/econ/items/pudge/pudge_hook_whale/pudge_meathook_whale.vpcf",
             "particles/econ/items/pudge/pudge_ti6_immortal/pudge_ti6_meathook.vpcf",
@@ -249,6 +252,7 @@
                     }
 
                     Logger.Error("Particle", name);
+
                     break;
                 }
             }
