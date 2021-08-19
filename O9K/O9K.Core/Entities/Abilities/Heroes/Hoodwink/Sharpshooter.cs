@@ -28,7 +28,7 @@
         {
             get
             {
-                return this.maxChargeTime.GetValue(0);
+                return this.maxChargeTime.GetValue(this.Level) + 2f;
             }
         }
 
