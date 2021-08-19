@@ -7,9 +7,10 @@
     using Core.Entities.Abilities.Base;
     using Core.Entities.Abilities.Heroes.Mirana;
     using Core.Entities.Units;
+
+    using Divine.Entity.Entities.Units;
     using Divine.Game;
     using Divine.Modifier.Modifiers;
-    using Divine.Entity.Entities.Units;
 
     using Metadata;
 
@@ -32,7 +33,7 @@
             this.sacredArrow = (SacredArrow)ability;
 
             this.Counters.Add(Abilities.BallLightning);
-            // Counters.Add(Abilities.MantaStyle); //todo test
+            this.Counters.Add(Abilities.MantaStyle); //todo test
             this.Counters.Add(Abilities.AttributeShift);
             this.Counters.Add(Abilities.Spoink);
             this.Counters.UnionWith(Abilities.StrongShield);
@@ -43,6 +44,7 @@
             this.Counters.UnionWith(Abilities.SlowHeal);
             this.Counters.Add(Abilities.BladeMail);
             this.Counters.Add(Abilities.Bulwark);
+            this.Counters.UnionWith(Abilities.VsDisableProjectile);
 
             this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
             this.ModifierCounters.Add(Abilities.PressTheAttack);
@@ -72,6 +74,7 @@
                 };
 
                 this.Pathfinder.AddObstacle(obstacle);
+
                 return;
             }
 

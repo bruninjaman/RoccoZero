@@ -4,8 +4,9 @@
 
     using Core.Data;
     using Core.Helpers;
-    using Divine.Numerics;
+
     using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Numerics;
 
     using UniqueAbilities.Blink;
     using UniqueAbilities.Cleave;
@@ -2636,6 +2637,26 @@
                     AbilityId = AbilityId.pudge_meat_hook,
                 }
             },
+
+            {
+                "particles/units/heroes/hero_hoodwink/hoodwink_sharpshooter_projectile.vpcf", new AbilityFullData
+                {
+                    AbilityId = AbilityId.hoodwink_sharpshooter,
+                }
+            },
+            {
+                "particles/units/heroes/hero_hoodwink/hoodwink_sharpshooter_timer.vpcf", new AbilityFullData
+                {
+                    AbilityId = AbilityId.hoodwink_sharpshooter,
+                }
+            },
+            {
+                "particles/units/heroes/hero_hoodwink/hoodwink_sharpshooter.vpcf", new AbilityFullData
+                {
+                    AbilityId = AbilityId.hoodwink_sharpshooter,
+                }
+            },
+
             {
                 "particles/econ/items/pudge/pudge_trapper_beam_chain/pudge_nx_meathook.vpcf", new AbilityFullData
                 {

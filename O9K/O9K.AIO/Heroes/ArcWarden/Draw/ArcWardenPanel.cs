@@ -11,6 +11,7 @@
 
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Extensions;
+    using Divine.Game;
     using Divine.Input;
     using Divine.Input.EventArgs;
     using Divine.Numerics;
@@ -63,8 +64,13 @@
             }
         }
 
-        public static void ButtonDrawOn()
+        public static void OnDraw()
         {
+            if (GameManager.IsShopOpen)
+            {
+                return;
+            }
+
             var scaling = RendererManager.Scaling;
             var optionsCount = _optionsCount;
             var positionX = positionSliderX;
