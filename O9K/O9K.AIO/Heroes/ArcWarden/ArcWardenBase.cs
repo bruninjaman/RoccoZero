@@ -28,7 +28,7 @@
         public ArcWardenBase()
         {
             this.pushMode = new PushMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Push mode"));
-            RendererManager.Draw += ArcWardenPanel.ButtonDrawOn;
+            RendererManager.Draw += ArcWardenPanel.OnDraw;
             InputManager.MouseKeyDown += ArcWardenPanel.OnMouseKeyDown;
             var menuPanelSetting = this.Menu.RootMenu.Add(new Menu("Panel settings"));
 
