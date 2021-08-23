@@ -31,6 +31,12 @@
                 bonusTime = 0.15f;
             }
 
+            if (obstacle.EvadableAbility.Ability.Id == AbilityId.magnataur_reverse_polarity)
+            {
+                bonusTime = 0.05f;
+            }
+
+
             return base.GetRequiredTime(ally, enemy, obstacle) + bonusTime;
         }
     }

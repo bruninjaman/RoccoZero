@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Core.Entities.Abilities.Base;
     using Core.Managers.Entity;
     using Core.Managers.Menu.Items;
     using Core.Managers.Renderer.Utils;
@@ -29,11 +28,11 @@
 
         public static Vector2 SizePanel;
 
-        public static MenuSlider positionSliderX = new("position x", 0, 0, 2000);
+        public static MenuSlider positionSliderX = new("position x", 0, 0, 5000);
 
-        public static MenuSlider positionSliderY = new("position y", 600, 0, 2000);
+        public static MenuSlider positionSliderY = new("position y", 600, 0, 5000);
 
-        public static MenuSlider size = new("SIZE", 100, 50, 150);
+        public static MenuSlider size = new("SIZE", 100, 50, 250);
 
         public static string unitName { get; set; }
 
@@ -43,11 +42,8 @@
             new()
             {
                 AbilityId.item_hand_of_midas,
-                AbilityId.item_tpscroll
+                AbilityId.item_tpscroll,
             };
-
-        private static Dictionary<AbilityId, Ability9> CloneItemsAbilities { get; } = new();
-
         public static void OnMouseKeyDown(MouseEventArgs e)
         {
             if (e.MouseKey != MouseKey.Left)

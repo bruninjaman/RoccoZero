@@ -67,10 +67,10 @@
                 var blink = (ActiveAbility)EntityManager9.GetAbility(order.Ability.Handle);
                 var hero = blink.Owner;
 
-                if (hero.IsChanneling)
-                {
-                    return;
-                }
+                // if (hero.IsChanneling)
+                // {
+                //     return;
+                // }
 
                 var blinkRange = blink.Range;
                 var blinkPosition = order.Position;

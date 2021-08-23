@@ -3,8 +3,6 @@
     using System;
     using System.Collections.Generic;
 
-    using ComboModes;
-
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
 
@@ -31,7 +29,7 @@
             { "Blue", Color.Blue },
             { "Yellow", Color.Yellow },
             { "Pink", Color.Pink },
-            { "Purple", Color.Purple }
+            { "Purple", Color.Purple },
         };
 
         public static void Init()
@@ -118,11 +116,7 @@
 
         private static void OnUnitOrder(OrderAddingEventArgs e)
         {
-            if (ShadowFiendComboMode.IsUpdateHandlerEnabled())
-            {
-                return;
-            }
-
+            
             var owner = EntityManager9.Owner;
             var order = e.Order.Ability;
 

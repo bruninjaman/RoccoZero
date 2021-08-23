@@ -1,17 +1,11 @@
 ﻿namespace O9K.AIO.Heroes.ShadowFiend
 {
-    using System.Collections.Generic;
-
     using Base;
-
-    using ComboModes;
 
     using Core.Entities.Metadata;
     using Core.Managers.Menu.Items;
 
     using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Modes.Combo;
 
     using Utils;
 
@@ -33,10 +27,6 @@
             colourSelector = razeMenu.Add(new MenuSelector("Colour", RazeUtils.Colours.Keys));
             RazeUtils.Init();
         }
-
-        public override void CreateComboMode(BaseHero baseHero, List<ComboModeMenu> comboMenus)
-        {
-            this.Combo = new ShadowFiendComboMode(this, this.ComboMenus);
-        }
+        
     }
 }
