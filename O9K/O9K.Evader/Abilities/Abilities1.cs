@@ -758,6 +758,8 @@
             AbilityId.ogre_magi_frost_armor,
             AbilityId.lich_frost_shield,
             AbilityId.sven_warcry,
+            AbilityId.tinker_defense_matrix,
+
         };
 
         public static IEnumerable<AbilityId> StrongShield { get; } = new[]

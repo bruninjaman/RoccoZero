@@ -15,6 +15,7 @@
             this.Counters.Add(Abilities.AttributeShift);
             this.Counters.UnionWith(Abilities.Shield);
             this.Counters.UnionWith(Abilities.StrongMagicShield);
+            this.Counters.UnionWith(Abilities.MagicShield);
             this.Counters.UnionWith(Abilities.Heal);
             this.Counters.Add(Abilities.Armlet);
             this.Counters.UnionWith(Abilities.Suicide);
