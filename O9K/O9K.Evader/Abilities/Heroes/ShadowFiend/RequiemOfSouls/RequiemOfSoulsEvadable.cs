@@ -23,6 +23,7 @@
             this.Disables.UnionWith(Abilities.Disable);
             this.Disables.UnionWith(Abilities.Invulnerability);
             this.Disables.UnionWith(Abilities.StrongDisable);
+            this.Disables.UnionWith(Abilities.ChannelDisable);
 
             this.Counters.Add(Abilities.Swiftslash);
             this.Counters.Add(Abilities.BallLightning);
