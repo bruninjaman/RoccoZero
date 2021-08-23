@@ -14,7 +14,7 @@
     using Metadata;
 
     [AbilityId(AbilityId.nevermore_necromastery)]
-    public class Necromastery : RangedAbility, INuke
+    public class Necromastery : OrbAbility, INuke
     {
         public Necromastery(Ability baseAbility)
             : base(baseAbility)
@@ -22,42 +22,30 @@
             this.RangeData = new SpecialData(baseAbility, "AbilityCastRange");
         }
 
-        public override float CastPoint
-        {
-            get
-            {
-                return this.Owner.GetAttackPoint();
-            }
-        }
-
         public override bool IsUsable
         {
             get
             {
-                if (!this.Owner.HasAghanimShard)
+                if (this.Owner.HasAghanimShard)
                 {
-                    return  false;
+                    return  true;
                 }
 
                 return base.IsUsable;
             }
         }
 
-        public override AbilityBehavior AbilityBehavior
+        public override bool CanBeCasted(bool checkChanneling = true)
         {
-            get
+            if (this.Owner.GetModifierStacks("modifier_nevermore_necromastery") == 0)
             {
-                return AbilityBehavior.UnitTarget;
+                return false;
             }
+
+            return base.CanBeCasted(checkChanneling);
         }
 
-        public override float CastRange
-        {
-            get
-            {
-                return this.RangeData.GetValue(this.Level);
-            }
-        }
+        public override AbilityBehavior AbilityBehavior { get; } = AbilityBehavior.UnitTarget;
 
         public override DamageType DamageType { get; } = DamageType.Physical;
 
@@ -69,5 +57,6 @@
 
             return this.Owner.GetRawAttackDamage(unit, DamageValue.Minimum, crit);
         }
+        
     }
 }

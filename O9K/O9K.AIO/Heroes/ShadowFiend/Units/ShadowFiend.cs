@@ -192,20 +192,14 @@
             {
                 return true;
             }
-
-            if (this.abilityHelper.UseAbility(this.necromastery))
-            {
-                return true;
-            }
-
+            
             var orderedRazes = target.GetAngle(this.Owner.Position) > 1 || !target.IsMoving
                                    ? this.razes.OrderBy(x => x.Ability.Id)
                                    : this.razes.OrderByDescending(x => x.Ability.Id);
 
             foreach (var raze in orderedRazes)
             {
-                var castDelay = raze.Ability.GetCastDelay() + 0.2f;
-                var predictedPosition = target.GetPredictedPosition(castDelay);
+                var predictedPosition = target.GetPredictedPosition(1.5f);
                 var distance = this.Owner.Distance(predictedPosition);
 
                 if (!this.abilityHelper.CanBeCasted(raze))
@@ -224,10 +218,12 @@
                 {
                     this.Owner.BaseUnit.MoveToDirection(predictedPosition);
 
-                    this.MoveSleeper.Sleep(castDelay * 2);
+                    if (this.abilityHelper.ForceUseAbility(raze))
+                    {
+                        return true;
+                    }
+                    
                     Divine.Helpers.MultiSleeper<string>.Sleep("ShadowFiend.AIO.MoveToDirection", 500);
-
-                    return true;
                 }
 
                 if (this.abilityHelper.UseAbility(raze))
@@ -235,6 +231,12 @@
                     return true;
                 }
             }
+
+            if (this.abilityHelper.UseAbility(this.necromastery))
+            {
+                return true;
+            }
+
 
             this.razeOrbwalk = true;
 
@@ -345,12 +347,10 @@
 
         private bool RazeCanWaitAttack(UsableAbility raze, Unit9 target)
         {
-            if (target.HasModifier("modifier_nevermore_requiem_slow"))
-            {
-                return false;
-            }
 
-            if (raze.Ability.GetDamage(target) > target.Health)
+            var damageFromRaze = raze.Ability.GetDamage(target);
+
+            if (damageFromRaze > target.Health || this.Owner.GetAttackDamage(target) * 2 < damageFromRaze)
             {
                 return false;
             }
@@ -372,7 +372,7 @@
 
             var output = raze.Ability.GetPredictionOutput(input);
 
-            if (output.HitChance < HitChance.Medium)
+            if (output.HitChance < HitChance.Low)
             {
                 return false;
             }
