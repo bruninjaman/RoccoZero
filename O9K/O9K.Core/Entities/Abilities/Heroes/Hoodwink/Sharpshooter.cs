@@ -1,6 +1,7 @@
 ﻿namespace O9K.Core.Entities.Abilities.Heroes.Hoodwink
 {
     using Base;
+    using Base.Components;
     using Base.Types;
 
     using Divine.Entity.Entities.Abilities;
@@ -11,7 +12,7 @@
     using Metadata;
 
     [AbilityId(AbilityId.hoodwink_sharpshooter)]
-    public class Sharpshooter : LineAbility, INuke, IDebuff
+    public class Sharpshooter : LineAbility, INuke, IDebuff, IChanneled
     {
         private readonly SpecialData maxChargeTime;
 
@@ -22,17 +23,33 @@
             this.RadiusData = new SpecialData(baseAbility, "arrow_width");
             this.SpeedData = new SpecialData(baseAbility, "arrow_speed");
             this.DamageData = new SpecialData(baseAbility, "max_damage");
+            this.RangeData = new SpecialData(baseAbility, "arrow_range");
+
+            this.ChannelTime = this.maxChargeTime.GetValue(1) + 2f;
+
         }
 
-        public override float ActivationDelay
+        public override float Range
         {
             get
             {
-                return this.maxChargeTime.GetValue(this.Level) + 2f;
+                return  this.RangeData.GetValue(this.Level);
+            }
+        }
+
+        public override float Speed
+        {
+            get
+            {
+                return this.SpeedData.GetValue(this.Level);
             }
         }
 
         public override bool HasAreaOfEffect { get; } = false;
+
+        public float ChannelTime { get; }
+
+        public bool IsActivatesOnChannelStart { get; } = true;
 
         public string DebuffModifierName { get; } = "modifier_hoodwink_sharpshooter_debuff";
 

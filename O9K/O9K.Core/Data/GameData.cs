@@ -2,9 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
+
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Game;
     using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities.Components;
 
     using Helpers;
 
@@ -99,6 +100,8 @@
             { AbilityId.invoker_chaos_meteor, (int)new SpecialData(AbilityId.invoker_chaos_meteor, "vision_distance").GetValue(1) },
             { AbilityId.rattletrap_rocket_flare, (int)new SpecialData(AbilityId.rattletrap_rocket_flare, "vision_radius").GetValue(1) },
             { AbilityId.lich_chain_frost, (int)new SpecialData(AbilityId.lich_chain_frost, "vision_radius").GetValue(1) },
+            { AbilityId.hoodwink_sharpshooter, (int)new SpecialData(AbilityId.hoodwink_sharpshooter, "arrow_vision").GetValue(1) },
+
         };
 
         public static string DisplayTime

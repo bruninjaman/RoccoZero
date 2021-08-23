@@ -4,8 +4,9 @@
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Units;
-    using Divine.Update;
+
     using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Update;
 
     using Metadata;
 
@@ -44,7 +45,13 @@
             {
                 case AbilityId.beastmaster_wild_axes:
                     bonusTime = -0.15f;
+
                     break;
+            }
+
+            if (this.Owner.HasAghanimShard)
+            {
+                bonusTime = 0.05f;
             }
 
             return base.GetRequiredTime(ally, enemy, obstacle) + bonusTime;
@@ -57,15 +64,22 @@
                 return false;
             }
 
+            var timeout = 300;
+
+            if (this.Owner.HasAghanimShard)
+            {
+                timeout = 800;
+            }
+
             UpdateManager.BeginInvoke(
-                300,
+                timeout,
                 () =>
+                {
+                    if (this.ActiveAbility.CanBeCasted())
                     {
-                        if (this.ActiveAbility.CanBeCasted())
-                        {
-                            this.ActiveAbility.UseAbility();
-                        }
-                    });
+                        this.ActiveAbility.UseAbility();
+                    }
+                });
 
             return true;
         }
