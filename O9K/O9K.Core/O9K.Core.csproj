@@ -1,5 +1,4 @@
 ﻿<Project>
-
   <PropertyGroup>
     <AssemblyName>O9K.Core</AssemblyName>
     <BaseIntermediateOutputPath>$(SolutionDir)obj\$(AssemblyName)\</BaseIntermediateOutputPath>
