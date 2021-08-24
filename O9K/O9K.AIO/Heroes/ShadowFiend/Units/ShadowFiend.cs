@@ -114,7 +114,7 @@
                 { AbilityId.item_cyclone, x => this.euls = new EulsScepterOfDivinity(x) },
                 { AbilityId.item_wind_waker, x => this.euls = new EulsScepterOfDivinity(x) },
                 { AbilityId.item_hurricane_pike, x => this.pike = new HurricanePike(x) },
-                { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) }
+                { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) },
             };
         }
 
@@ -129,20 +129,18 @@
             var target = targetManager.Target;
             this.razeOrbwalk = false;
 
-            if (this.blink?.Ability.Id == AbilityId.item_arcane_blink && comboModeMenu
-                    .GetAbilitySettingsMenu<BlinkDaggerShadowFiendMenu>(this.blink).DontUseEulInCombo)
+            if (this.blink?.Ability.Id == AbilityId.item_arcane_blink
+                && comboModeMenu.GetAbilitySettingsMenu<BlinkDaggerShadowFiendMenu>(this.blink).DontUseEulInCombo)
             {
                 if (this.AltUltCombo(targetManager, this.abilityHelper))
                 {
                     return true;
                 }
             }
-            else
+
+            if (this.UltCombo(targetManager, this.abilityHelper))
             {
-                if (this.UltCombo(targetManager, this.abilityHelper))
-                {
-                    return true;
-                }
+                return true;
             }
 
             if (this.abilityHelper.UseAbility(this.hex))
@@ -192,7 +190,7 @@
             {
                 return true;
             }
-            
+
             var orderedRazes = target.GetAngle(this.Owner.Position) > 1 || !target.IsMoving
                                    ? this.razes.OrderBy(x => x.Ability.Id)
                                    : this.razes.OrderByDescending(x => x.Ability.Id);
@@ -214,7 +212,8 @@
 
                 if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.AIO.MoveToDirection") &&
                     raze.Ability.CastRange + raze.Ability.Radius > distance &&
-                    raze.Ability.CastRange - raze.Ability.Radius < distance && this.Owner.GetAngle(predictedPosition) > 0.4)
+                    raze.Ability.CastRange - raze.Ability.Radius < distance
+                    && this.Owner.GetAngle(predictedPosition) > 0.4)
                 {
                     this.Owner.BaseUnit.MoveToDirection(predictedPosition);
 
@@ -222,7 +221,7 @@
                     {
                         return true;
                     }
-                    
+
                     Divine.Helpers.MultiSleeper<string>.Sleep("ShadowFiend.AIO.MoveToDirection", 500);
                 }
 
@@ -236,7 +235,6 @@
             {
                 return true;
             }
-
 
             this.razeOrbwalk = true;
 
@@ -253,8 +251,8 @@
             }
 
             var target = targetManager.Target;
-            var position = target.Position;
-            var distance = this.Owner.Distance(position);
+            var distance = this.Owner.Distance(target);
+            var position = this.Owner.Position.Extend2D(target.Position, distance - 50);
 
             if (this.abilityHelper.CanBeCasted(this.blink))
             {
@@ -299,6 +297,8 @@
 
                     return true;
                 }
+
+                this.Owner.BaseUnit.MoveToDirection(target.Position);
 
                 if (this.abilityHelper.UseAbility(this.requiem))
                 {
@@ -407,7 +407,8 @@
 
                 if (eulsModifier != null)
                 {
-                    var particle = ParticleManager.Particles.FirstOrDefault(x => x.Name == "particles/items_fx/cyclone.vpcf" && x.Owner == target.BaseEntity);
+                    var particle = ParticleManager.Particles.FirstOrDefault(x =>
+                        x.Name == "particles/items_fx/cyclone.vpcf" && x.Owner == target.BaseEntity);
 
                     if (particle != null)
                     {
@@ -523,6 +524,15 @@
                 {
                     return true;
                 }
+            }
+
+            if (this.abilityHelper.CanBeCasted(this.requiem, false, false)
+                && this.abilityHelper.CanBeCasted(this.euls, false, false)
+                && !target.IsMagicImmune)
+            {
+                this.OrbwalkSleeper.Sleep(0.1f);
+
+                return this.Owner.BaseUnit.Move(position);
             }
 
             return false;

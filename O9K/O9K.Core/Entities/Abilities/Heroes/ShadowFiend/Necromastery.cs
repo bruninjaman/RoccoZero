@@ -26,18 +26,13 @@
         {
             get
             {
-                if (this.Owner.HasAghanimShard)
-                {
-                    return  true;
-                }
-
-                return base.IsUsable;
+                return this.Owner.HasAghanimShard;
             }
         }
 
         public override bool CanBeCasted(bool checkChanneling = true)
         {
-            if (this.Owner.GetModifierStacks("modifier_nevermore_necromastery") == 0)
+            if (this.Owner.GetModifierStacks("modifier_nevermore_necromastery") == 0 || !this.IsUsable)
             {
                 return false;
             }
@@ -57,6 +52,6 @@
 
             return this.Owner.GetRawAttackDamage(unit, DamageValue.Minimum, crit);
         }
-        
+
     }
 }
