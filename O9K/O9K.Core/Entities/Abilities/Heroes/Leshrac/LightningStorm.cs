@@ -17,6 +17,7 @@
             : base(baseAbility)
         {
             this.RadiusData = new SpecialData(baseAbility, "radius");
+            this.DamageData = new SpecialData(baseAbility, "damage");
         }
 
         public string DebuffModifierName { get; } = "modifier_leshrac_lightning_storm_slow";
