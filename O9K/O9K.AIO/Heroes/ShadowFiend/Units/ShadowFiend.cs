@@ -132,15 +132,18 @@
             if (this.blink?.Ability.Id == AbilityId.item_arcane_blink
                 && comboModeMenu.GetAbilitySettingsMenu<BlinkDaggerShadowFiendMenu>(this.blink).DontUseEulInCombo)
             {
-                if (this.AltUltCombo(targetManager, this.abilityHelper))
+                if (this.AltUltCombo(targetManager))
                 {
                     return true;
                 }
             }
-
-            if (this.UltCombo(targetManager, this.abilityHelper))
+            else
             {
-                return true;
+
+                if (this.UltCombo(targetManager, this.abilityHelper))
+                {
+                    return true;
+                }
             }
 
             if (this.abilityHelper.UseAbility(this.hex))
@@ -191,7 +194,10 @@
                 return true;
             }
 
-            var orderedRazes = target.GetAngle(this.Owner.Position) > 1 || !target.IsMoving
+            var orderedRazes = target.GetAngle(this.Owner.Position) > 1
+                               || !target.IsMoving
+                               || target.HasModifier("modifier_nevermore_requiem_slow")
+                               || target.HasModifier("modifier_nevermore_requiem_fear")
                                    ? this.razes.OrderBy(x => x.Ability.Id)
                                    : this.razes.OrderByDescending(x => x.Ability.Id);
 
@@ -210,21 +216,6 @@
                     continue;
                 }
 
-                if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.AIO.MoveToDirection") &&
-                    raze.Ability.CastRange + raze.Ability.Radius > distance &&
-                    raze.Ability.CastRange - raze.Ability.Radius < distance
-                    && this.Owner.GetAngle(predictedPosition) > 0.4)
-                {
-                    this.Owner.BaseUnit.MoveToDirection(predictedPosition);
-
-                    if (this.abilityHelper.ForceUseAbility(raze))
-                    {
-                        return true;
-                    }
-
-                    Divine.Helpers.MultiSleeper<string>.Sleep("ShadowFiend.AIO.MoveToDirection", 500);
-                }
-
                 if (this.abilityHelper.UseAbility(raze))
                 {
                     return true;
@@ -241,26 +232,36 @@
             return false;
         }
 
-        private bool AltUltCombo(TargetManager targetManager, AbilityHelper abilityHelper1)
+        private bool AltUltCombo(TargetManager targetManager)
         {
             if (!this.abilityHelper.CanBeCasted(this.requiem, false, false))
             {
-                this.continueAltCombo = false;
-
                 return false;
             }
 
+            var castImprovement = 1f;
+
+            var specialData = new SpecialData(this.blink.Ability.BaseAbility, "cast_pct_improvement").GetValue(1);
+            castImprovement -= specialData / 100f;
+
+            var delay = this.requiem.Ability.GetCastDelay() * castImprovement;
+
             var target = targetManager.Target;
             var distance = this.Owner.Distance(target);
-            var position = this.Owner.Position.Extend2D(target.Position, distance - 50);
+            var predictedPosition = target.GetPredictedPosition(delay);
+            var position = predictedPosition;
 
             if (this.abilityHelper.CanBeCasted(this.blink))
             {
+
                 var blinkRange = this.blink.Ability.CastRange;
 
                 if (blinkRange >= distance)
                 {
-                    this.abilityHelper.UseAbility(this.bkb);
+                    if (this.abilityHelper.UseAbility(this.bkb))
+                    {
+                        return true;
+                    }
 
                     if (this.abilityHelper.UseAbility(this.blink, position))
                     {
@@ -269,6 +270,7 @@
                         return true;
                     }
                 }
+
             }
 
             if (this.continueAltCombo)
@@ -298,7 +300,7 @@
                     return true;
                 }
 
-                this.Owner.BaseUnit.MoveToDirection(target.Position);
+                this.Owner.BaseUnit.MoveToDirection(predictedPosition);
 
                 if (this.abilityHelper.UseAbility(this.requiem))
                 {
@@ -347,6 +349,11 @@
 
         private bool RazeCanWaitAttack(UsableAbility raze, Unit9 target)
         {
+            if (target.HasModifier("modifier_nevermore_requiem_slow")
+                || target.HasModifier("modifier_nevermore_requiem_fear"))
+            {
+                return false;
+            }
 
             var damageFromRaze = raze.Ability.GetDamage(target);
 
@@ -356,6 +363,8 @@
             }
 
             var input = raze.Ability.GetPredictionInput(target);
+
+            var outputBefore = raze.Ability.GetPredictionOutput(input);
 
             if (this.MoveSleeper.IsSleeping)
             {
@@ -370,9 +379,14 @@
                 input.Delay += this.Owner.GetAttackPoint(target) + this.Owner.GetTurnTime(target.Position);
             }
 
-            var output = raze.Ability.GetPredictionOutput(input);
+            var outputAfter = raze.Ability.GetPredictionOutput(input);
 
-            if (output.HitChance < HitChance.Low)
+            if (outputBefore.HitChance < outputAfter.HitChance)
+            {
+                return true;
+            }
+
+            if (outputAfter.HitChance < HitChance.Medium)
             {
                 return false;
             }

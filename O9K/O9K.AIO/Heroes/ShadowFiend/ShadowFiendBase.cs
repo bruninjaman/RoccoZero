@@ -25,8 +25,8 @@
             razeToMouseSwitcher = razeMenu.Add(new MenuSwitcher("Raze to mouse"));
             drawRazesSwitcher = razeMenu.Add(new MenuSwitcher("Draw razes"));
             colourSelector = razeMenu.Add(new MenuSelector("Colour", RazeUtils.Colours.Keys));
-            RazeUtils.Init();
+            RazeUtils.Init(this.TargetManager);
         }
-        
+
     }
 }
