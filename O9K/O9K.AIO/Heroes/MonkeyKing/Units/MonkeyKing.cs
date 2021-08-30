@@ -39,6 +39,16 @@
 
         private TreeDance treeDance;
 
+        private BuffAbility manta;
+
+        private Nullifier nullifier;
+
+        private DisableAbility bloodthorn;
+
+        private DisableAbility orchid;
+
+        private ShieldAbility bkb;
+
         public MonkeyKing(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
             : base(owner, abilitySleeper, orbwalkSleeper, menu)
         {
@@ -52,6 +62,13 @@
                 { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
                 { AbilityId.item_diffusal_blade, x => this.diffusal = new DebuffAbility(x) },
                 { AbilityId.item_abyssal_blade, x => this.abyssal = new DisableAbility(x) },
+
+                { AbilityId.item_manta, x => this.manta = new BuffAbility(x) },
+                { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
+                { AbilityId.item_black_king_bar, x => this.bkb = new ShieldAbility(x) },
+
+                { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
+                { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
             };
 
             this.MoveComboAbilities.Add(AbilityId.monkey_king_tree_dance, _ => this.treeDance);
@@ -64,10 +81,36 @@
             if (this.spring.CancelChanneling(targetManager))
             {
                 this.ComboSleeper.Sleep(0.1f);
+
                 return true;
             }
 
             if (abilityHelper.UseAbility(this.abyssal))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.orchid))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.bloodthorn))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.nullifier))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.manta, this.Owner.GetAttackRange()))
+            {
+                return true;
+            }
+
+            if (!this.Owner.IsSpellShieldProtected && abilityHelper.UseAbility(this.bkb, 500))
             {
                 return true;
             }
@@ -91,6 +134,7 @@
             }
 
             var target = targetManager.Target;
+
             if (!target.IsRooted && !target.IsStunned && !target.IsHexed)
             {
                 if (abilityHelper.UseAbility(this.treeDance, 500, 0))
