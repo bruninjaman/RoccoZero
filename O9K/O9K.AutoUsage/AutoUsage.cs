@@ -15,6 +15,7 @@
     using Abilities.Nuke;
     using Abilities.Shield;
     using Abilities.Special;
+    using Abilities.TreeCutter;
 
     using Core.Entities.Abilities.Base;
     using Core.Entities.Abilities.Base.Components.Base;
@@ -57,6 +58,9 @@
             this.groups.Add(new ManaRestoreGroup<IManaRestore, ManaRestoreAbility>(sleeper, settings.MpRestoreSettings));
             this.groups.Add(new AutoUsageLinkensBreakGroup<IActiveAbility, LinkensBreakAbility>(sleeper, settings.LinkensBreakSettings));
             this.groups.Add(new AutoUsageGroup<OrbAbility, AutocastAbility>(sleeper, settings.AutocastSettings));
+
+            this.groups.Add(
+                new AutoUsageTreeCutGroup<IActiveAbility, TreeCutAbility>(sleeper, settings.TreeCutSettings));
 
             EntityManager9.AbilityAdded += this.OnAbilityAdded;
             EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
