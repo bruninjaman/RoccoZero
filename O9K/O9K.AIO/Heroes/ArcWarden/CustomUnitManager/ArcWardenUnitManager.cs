@@ -19,6 +19,14 @@
         {
         }
 
+        public ControllableUnit GetClone
+        {
+            get
+            {
+                return this.CloneControllableUnits.Where(x => x.Owner.IsHero && x.Owner.IsIllusion).FirstOrDefault();
+            }
+        }
+
         public IEnumerable<ControllableUnit> CloneControllableUnits
         {
             get

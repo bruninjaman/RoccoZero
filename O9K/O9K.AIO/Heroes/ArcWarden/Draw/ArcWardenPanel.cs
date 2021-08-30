@@ -16,9 +16,11 @@
     using Divine.Numerics;
     using Divine.Renderer;
 
+    using TargetManager;
+
     using Utils;
 
-    public static class ArcWardenPanel
+    internal static class ArcWardenPanel
     {
         public static Lane lane;
 
@@ -34,7 +36,20 @@
 
         public static MenuSlider size = new("SIZE", 100, 50, 250);
 
-        public static string unitName { get; set; }
+        public static string unitName
+        {
+            get
+            {
+                return targetManager.Target?.BaseUnit.InternalName;
+            }
+        }
+
+        private static TargetManager targetManager;
+
+        public static void Init(TargetManager targetManager)
+        {
+            ArcWardenPanel.targetManager = targetManager;
+        }
 
         public static bool pushComboStatus { get; set; } = false;
 
@@ -44,6 +59,7 @@
                 AbilityId.item_hand_of_midas,
                 AbilityId.item_tpscroll,
             };
+
         public static void OnMouseKeyDown(MouseEventArgs e)
         {
             if (e.MouseKey != MouseKey.Left)
@@ -53,7 +69,8 @@
 
             for (var i = 0; i < _optionsCount; i++)
             {
-                if (e.Position.IsUnderRectangle(new RectangleF(vector4PosClick[(Lane)i].X - 5, vector4PosClick[(Lane)i].Y - 5, vector4PosClick[(Lane)i].Z, vector4PosClick[(Lane)i].W)))
+                if (e.Position.IsUnderRectangle(new RectangleF(vector4PosClick[(Lane)i].X - 5, vector4PosClick[(Lane)i].Y - 5,
+                    vector4PosClick[(Lane)i].Z, vector4PosClick[(Lane)i].W)))
                 {
                     lane = (Lane)i;
                 }
@@ -177,13 +194,15 @@
                 {
                     RendererManager.DrawRectangle(rectBorderImage, Color.Green);
 
-                    RendererManager.DrawText(((Lane)i).ToString(), rectBorderImage, Color.Green, FontFlags.Center | FontFlags.VerticalCenter, buttonFontSize);
+                    RendererManager.DrawText(((Lane)i).ToString(), rectBorderImage, Color.Green, FontFlags.Center | FontFlags.VerticalCenter,
+                        buttonFontSize);
                 }
                 else
                 {
                     RendererManager.DrawRectangle(rectBorderImage, Color.Red);
 
-                    RendererManager.DrawText(((Lane)i).ToString(), rectBorderImage, Color.White, FontFlags.Center | FontFlags.VerticalCenter, buttonFontSize);
+                    RendererManager.DrawText(((Lane)i).ToString(), rectBorderImage, Color.White, FontFlags.Center | FontFlags.VerticalCenter,
+                        buttonFontSize);
                 }
 
                 inRectPosX += buttonWidth + indent * 0.68f;
@@ -229,7 +248,9 @@
                 new Vector2(cloneCDsTextRect.X + cloneCDsTextRect.Width, cloneCDsTextRect.Y),
                 Color.Gray);
 
-            RendererManager.DrawText("CLONE COOLDOWN ITEMS", cloneCDsTextRect, Color.White, FontFlags.Center | FontFlags.VerticalCenter, cloneCDsTextSize);
+            RendererManager.DrawText("CLONE COOLDOWN ITEMS", cloneCDsTextRect, Color.White, FontFlags.Center | FontFlags.VerticalCenter,
+                cloneCDsTextSize);
+
             inRectPosY += cloneCDsTextHeight + indent;
             inRectPosX = rect.X + rect.Width * 0.13f;
 
