@@ -6,18 +6,20 @@
 
     using Core.Entities.Heroes;
     using Core.Entities.Units;
+    using Core.Helpers;
     using Core.Logger;
     using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
+
     using Divine.Entity;
-    using Divine.Game;
-    using Divine.Numerics;
-    using Divine.Particle;
-    using Divine.Update;
-    using Divine.Particle.Particles;
     using Divine.Entity.Entities.Players;
     using Divine.Entity.Entities.Units.Components;
     using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Game;
+    using Divine.Numerics;
+    using Divine.Particle;
+    using Divine.Particle.Particles;
+    using Divine.Update;
 
     using Menu;
 
@@ -189,12 +191,22 @@
 
         public bool TargetLocked { get; set; }
 
-        public Core.Helpers.Sleeper TargetSleeper { get; } = new Core.Helpers.Sleeper();
+        public Sleeper TargetSleeper { get; } = new Sleeper();
 
         public Unit9 ClosestAllyHeroToMouse(Unit9 unit, bool ignoreSelf = true)
         {
             var mouse = GameManager.MousePosition;
+
             return this.AllyHeroes.Where(x => (!ignoreSelf || !x.Equals(unit)) && x.Distance(mouse) < 500)
+                .OrderBy(x => x.DistanceSquared(mouse))
+                .FirstOrDefault();
+        }
+
+        public Unit9 ClosestEnemyHeroToMouse()
+        {
+            var mouse = GameManager.MousePosition;
+
+            return this.EnemyHeroes.Where(x => x.Distance(mouse) < 500)
                 .OrderBy(x => x.DistanceSquared(mouse))
                 .FirstOrDefault();
         }
@@ -285,16 +297,21 @@
                 case "Near mouse":
                 {
                     this.getTargetsFunc = this.ClosestToMouse;
+
                     break;
                 }
+
                 case "Near hero":
                 {
                     this.getTargetsFunc = this.ClosestToUnit;
+
                     break;
                 }
+
                 case "Lowest health":
                 {
                     this.getTargetsFunc = this.LowestHealth;
+
                     break;
                 }
             }
@@ -382,6 +399,7 @@
                 if (!this.HasValidTarget)
                 {
                     this.RemoveTargetParticle();
+
                     return;
                 }
 
