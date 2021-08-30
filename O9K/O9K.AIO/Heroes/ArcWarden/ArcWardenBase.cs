@@ -35,6 +35,8 @@
             menuPanelSetting.Add(ArcWardenPanel.positionSliderX);
             menuPanelSetting.Add(ArcWardenPanel.positionSliderY);
             menuPanelSetting.Add(ArcWardenPanel.size);
+
+            ArcWardenPanel.Init(this.TargetManager);
         }
 
         public override void CreateUnitManager()
