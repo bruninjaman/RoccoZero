@@ -29,9 +29,11 @@
             this.SpecialSettings = new GroupSettings(this.Menu, settingsMenu, "Special", 200);
             this.LinkensBreakSettings = new GroupSettings(this.Menu, settingsMenu, "Linken\'s break", 300, false);
             this.AutocastSettings = new GroupSettings(this.Menu, settingsMenu, "Autocast", 0);
-
+            this.TreeCutSettings = new GroupSettings(this.Menu, settingsMenu, "Tree cut", 200);
             menuManager.AddRootMenu(this.Menu);
         }
+
+        public GroupSettings TreeCutSettings { get; }
 
         public GroupSettings AutocastSettings { get; }
 
