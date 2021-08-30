@@ -1,6 +1,5 @@
-﻿namespace O9K.AutoUsage.Abilities.HealthRestore.Unique.Bottle
+﻿namespace O9K.AutoUsage.Abilities.ManaRestore.Unique.Bottle
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -8,14 +7,9 @@
     using Core.Entities.Metadata;
     using Core.Entities.Units;
     using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Entity;
     using Core.Prediction.Data;
 
-    using Divine.Update;
     using Divine.Entity.Entities.Abilities.Components;
-
-    using ManaRestore;
 
     using Settings;
 
@@ -69,8 +63,7 @@
                 {
                     continue;
                 }
-                
-                
+
                 if (ally.HasModifier("modifier_bottle_regeneration"))
                 {
                     continue;
