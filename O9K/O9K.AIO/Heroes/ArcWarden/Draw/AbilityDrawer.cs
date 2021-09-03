@@ -66,7 +66,7 @@
 
                 if (this.displayLevel)
                 {
-                    var level = this.Ability.Level;
+                    uint level = this.Ability.Level;
 
                     if (level == 0)
                     {
@@ -75,7 +75,7 @@
                         return;
                     }
 
-                    var levelText = level.ToString("N0");
+                    string levelText = level.ToString("N0");
                     var levelSize = RendererManager.MeasureText(levelText, position.Width * 0.45f);
                     var levelPosition = position.SinkToBottomLeft(levelSize.X, levelSize.Y * 0.8f);
 
@@ -88,30 +88,30 @@
                     return;
                 }
 
-                var cooldown = this.Ability.RemainingCooldown;
+                float cooldown = this.Ability.RemainingCooldown;
 
                 if (cooldown > 0)
                 {
                     RendererManager.DrawImage("o9k.ability_cd_bg", position);
 
                     RendererManager.DrawText(
-                        Math.Ceiling(cooldown).ToString("N0"),
-                        position,
-                        Color.White,
-                        FontFlags.Center | FontFlags.VerticalCenter,
-                        cooldownSize);
+                                             Math.Ceiling(cooldown).ToString("N0"),
+                                             position,
+                                             Color.White,
+                                             FontFlags.Center | FontFlags.VerticalCenter,
+                                             cooldownSize);
                 }
                 else if (this.Ability.ManaCost > this.Ability.Owner.Mana)
                 {
                     RendererManager.DrawImage("o9k.ability_mana_bg", position);
 
                     RendererManager.DrawText(
-                        Math.Ceiling((this.Ability.ManaCost - this.Ability.Owner.Mana) / this.Ability.Owner.ManaRegeneration)
-                            .ToString("N0"),
-                        position,
-                        Color.White,
-                        FontFlags.Center | FontFlags.VerticalCenter,
-                        cooldownSize);
+                                             Math.Ceiling((this.Ability.ManaCost - this.Ability.Owner.Mana) / this.Ability.Owner.ManaRegeneration)
+                                                 .ToString("N0"),
+                                             position,
+                                             Color.White,
+                                             FontFlags.Center | FontFlags.VerticalCenter,
+                                             cooldownSize);
                 }
                 else if (!this.Ability.IsUsable)
                 {
@@ -129,9 +129,9 @@
             try
             {
                 RendererManager.DrawImage("o9k.ability_minimal_bg", position);
-                var levelHeight = position.Height * 0.2f;
+                float levelHeight = position.Height * 0.2f;
 
-                var cooldown = this.Ability.RemainingCooldown;
+                float cooldown = this.Ability.RemainingCooldown;
 
                 if (cooldown > 0)
                 {
@@ -139,11 +139,11 @@
                     RendererManager.DrawImage("o9k.ability_minimal_cd_bg", position);
 
                     RendererManager.DrawText(
-                        Math.Ceiling(cooldown).ToString("N0"),
-                        position.MoveTopBorder(cooldownSize * 0.2f),
-                        Color.White,
-                        FontFlags.Center | FontFlags.VerticalCenter,
-                        cooldownSize);
+                                             Math.Ceiling(cooldown).ToString("N0"),
+                                             position.MoveTopBorder(cooldownSize * 0.2f),
+                                             Color.White,
+                                             FontFlags.Center | FontFlags.VerticalCenter,
+                                             cooldownSize);
                 }
                 else if (this.Ability.ManaCost > this.Ability.Owner.Mana)
                 {
@@ -151,24 +151,24 @@
                     RendererManager.DrawImage("o9k.ability_minimal_mana_bg", position);
 
                     RendererManager.DrawText(
-                        Math.Ceiling((this.Ability.ManaCost - this.Ability.Owner.Mana) / this.Ability.Owner.ManaRegeneration)
-                            .ToString("N0"),
-                        position.MoveTopBorder(cooldownSize * 0.2f),
-                        Color.White,
-                        FontFlags.Center | FontFlags.VerticalCenter,
-                        cooldownSize);
+                                             Math.Ceiling((this.Ability.ManaCost - this.Ability.Owner.Mana) / this.Ability.Owner.ManaRegeneration)
+                                                 .ToString("N0"),
+                                             position.MoveTopBorder(cooldownSize * 0.2f),
+                                             Color.White,
+                                             FontFlags.Center | FontFlags.VerticalCenter,
+                                             cooldownSize);
                 }
 
                 RendererManager.DrawRectangle(position - 1, this.Ability.IsCasting ? Color.LightGreen : Color.Black);
 
                 var rec = position - 5;
-                var levelWidth = rec.Width / this.maxLevel;
-                var space = levelWidth * 0.05f;
-                var posY = rec.Bottom - levelHeight;
-                var levelDrawWidth = levelWidth - space * 2;
-                var lvl = this.Ability.Level;
+                float levelWidth = rec.Width / this.maxLevel;
+                float space = levelWidth * 0.05f;
+                float posY = rec.Bottom - levelHeight;
+                float levelDrawWidth = levelWidth - space * 2;
+                uint lvl = this.Ability.Level;
 
-                for (var i = 0; i < lvl; i++)
+                for (int i = 0; i < lvl; i++)
                 {
                     var lvlPos = new Rectangle9(rec.X + space, posY, levelDrawWidth, levelHeight);
                     RendererManager.DrawImage("o9k.ability_level_rec", lvlPos);

@@ -7,23 +7,49 @@
 
     using Base;
 
+    using Core.Entities.Units;
+    using Core.Managers.Entity;
+
     using Divine.Game;
     using Divine.Numerics;
 
+    using TargetManager;
+
     using UnitManager;
 
-    internal class ArcWardenUnitManager : UnitManager
+    internal sealed class ArcWardenUnitManager : UnitManager
     {
+        private readonly TargetManager cloneTargetManager;
+
+        private TargetManager GetTargetManagerForClone
+        {
+            get
+            {
+                return this.cloneTargetManager.Target.IsAlive
+                       && this.cloneTargetManager.Target.IsValid
+                       && this.GetClone.Owner.Distance(this.cloneTargetManager.Target) < 2000
+                       && this.cloneTargetManager.Target != EntityManager9.Owner
+                           ? this.cloneTargetManager
+                           : this.targetManager;
+            }
+        }
+
         public ArcWardenUnitManager(BaseHero baseHero)
             : base(baseHero)
         {
+            this.cloneTargetManager = new TargetManager(baseHero.Menu);
+        }
+
+        public void SetTargetForClone(Unit9 unit)
+        {
+            this.cloneTargetManager.ForceSetTarget(unit);
         }
 
         public ControllableUnit GetClone
         {
             get
             {
-                return this.CloneControllableUnits.Where(x => x.Owner.IsHero && x.Owner.IsIllusion).FirstOrDefault();
+                return this.CloneControllableUnits.FirstOrDefault(x => x.Owner.IsHero && x.Owner.IsIllusion);
             }
         }
 
@@ -32,8 +58,8 @@
             get
             {
                 return this.controllableUnits.Where(
-                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled &&
-                         x.Owner.Distance(this.targetManager.Target ?? this.owner) < 2500);
+                                                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled &&
+                                                         x.Owner.Distance(this.targetManager.Target ?? this.owner) < 2500);
             }
         }
 
@@ -42,12 +68,13 @@
             get
             {
                 return this.controllableUnits.Where(
-                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled && x.ShouldControl);
+                                                    x => x.IsValid && x.Owner.IsIllusion && x.CanBeControlled && x.ShouldControl);
             }
         }
 
-        public virtual void ExecuteCloneCombo(ComboModeMenu comboModeMenu)
+        public void ExecuteCloneCombo(ComboModeMenu comboModeMenu)
         {
+
             foreach (var controllable in this.CloneControllableUnits)
             {
                 if (controllable.ComboSleeper.IsSleeping)
@@ -60,23 +87,24 @@
                     return;
                 }
 
-                if (controllable.Combo(this.targetManager, comboModeMenu))
+                if (controllable.Combo(this.GetTargetManagerForClone, comboModeMenu))
                 {
                     controllable.LastMovePosition = Vector3.Zero;
                 }
             }
         }
 
-        public virtual void CloneOrbwalk(ComboModeMenu comboModeMenu)
+        public void CloneOrbwalk(ComboModeMenu comboModeMenu)
         {
+
             if (this.issuedAction.IsSleeping)
             {
                 return;
             }
 
-            var allUnits = this.CloneControllableUnits.OrderBy(x => this.IssuedActionTime(x.Handle)).ToList();
+            var allUnits = this.CloneControllableUnits.OrderBy(x => IssuedActionTime(x.Handle)).ToList();
 
-            if (this.BodyBlock(allUnits, comboModeMenu))
+            if (BodyBlock(allUnits, comboModeMenu))
             {
                 this.issuedAction.Sleep(0.05f);
 
@@ -99,7 +127,7 @@
                     continue;
                 }
 
-                if (!controllable.Orbwalk(this.targetManager.Target, comboModeMenu))
+                if (!controllable.Orbwalk(this.GetTargetManagerForClone.Target, comboModeMenu))
                 {
                     continue;
                 }
@@ -113,7 +141,7 @@
 
             if (noOrbwalkUnits.Count > 0 && !this.unitIssuedAction.IsSleeping(uint.MaxValue))
             {
-                this.ControlAllUnits(noOrbwalkUnits);
+                ControlAllUnits(noOrbwalkUnits);
             }
         }
     }
