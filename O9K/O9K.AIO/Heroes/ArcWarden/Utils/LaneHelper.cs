@@ -26,14 +26,14 @@
 
             { new Vector3(-600, -300, 384), Lane.MID },
             { new Vector3(3600, 3200, 384), Lane.MID },
-            { new Vector3(-4400, -3900, 384), Lane.MID }
+            { new Vector3(-4400, -3900, 384), Lane.MID },
         };
 
         public Dictionary<Unit, List<Vector3>> LaneCache;
 
         public LaneHelper()
         {
-            var isRadiant = EntityManager9.Owner.Team == Team.Radiant;
+            bool isRadiant = EntityManager9.Owner.Team == Team.Radiant;
             this.TopPath = isRadiant ? Map.radiantTopPath : Map.direTopPath;
             this.MidPath = isRadiant ? Map.radiantMidPath : Map.direMidPath;
             this.BotPath = isRadiant ? Map.radiantBotPath : Map.direBotPath;
@@ -50,12 +50,12 @@
         {
             if (!this.LaneCache.ContainsKey(hero))
             {
-                this.LaneCache.Add(hero, this.GetPath(hero));
+                this.LaneCache.Add(hero, GetPath(hero));
 
                 UpdateManager.BeginInvoke(150, () =>
-                {
-                    this.LaneCache.Remove(hero);
-                });
+                                               {
+                                                   this.LaneCache.Remove(hero);
+                                               });
             }
 
             return this.LaneCache[hero];
@@ -63,7 +63,7 @@
 
         public List<Vector3> GetPath(Unit9 hero)
         {
-            var currentLane = this.GetCurrentLane(hero);
+            var currentLane = GetCurrentLane(hero);
 
             switch (currentLane)
             {
@@ -101,7 +101,7 @@
 
         public Lane GetCurrentLane(Unit9 hero)
         {
-            return this.GetCurrentLane(hero.Position);
+            return GetCurrentLane(hero.Position);
         }
 
         public Lane GetCurrentLane(Vector3 pos)
@@ -136,9 +136,9 @@
                     break;
             }
 
-            var result = 0;
+            int result = 0;
 
-            for (var index = 0; index < list.Count; index++)
+            for (int index = 0; index < list.Count; index++)
             {
                 var vector3 = list[index];
 

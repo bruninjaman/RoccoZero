@@ -26,7 +26,7 @@
             new Vector3(-1201, -6308, 384),
             new Vector3(-3036, -6072, 257),
             new Vector3(-4368, -6071, 256),
-            new Vector3(-5546, -5050, 259)
+            new Vector3(-5546, -5050, 259),
         };
 
         public static readonly List<Vector3> direMidPath = new()
@@ -43,7 +43,7 @@
             new Vector3(-2988, -2522, 256),
             new Vector3(-4103, -3532, 256),
             new Vector3(-4874, -4335, 256),
-            new Vector3(-5546, -5050, 259)
+            new Vector3(-5546, -5050, 259),
         };
 
         public static readonly List<Vector3> direTopPath = new()
@@ -63,7 +63,7 @@
             new Vector3(-6419, 2888, 384),
             new Vector3(-6434, -2797, 256),
             new Vector3(-6594, -3685, 256),
-            new Vector3(-5546, -5050, 259)
+            new Vector3(-5546, -5050, 259),
         };
 
         public static readonly List<Vector3> radiantBotPath = new()
@@ -82,7 +82,7 @@
             new Vector3(6103, 1724, 256),
             new Vector3(6133, 2167, 256),
             new Vector3(6378, 3407, 255),
-            new Vector3(6317, 3419, 256)
+            new Vector3(6317, 3419, 256),
         };
 
         public static readonly List<Vector3> radiantMidPath = new()
@@ -102,7 +102,7 @@
             new Vector3(2919, 2467, 256),
             new Vector3(3785, 3132, 256),
             new Vector3(4651, 4078, 256),
-            new Vector3(5097, 4612, 263)
+            new Vector3(5097, 4612, 263),
         };
 
         public static readonly List<Vector3> radiantTopPath = new()
@@ -127,7 +127,7 @@
             new Vector3(-82, 6011, 384),
             new Vector3(1682, 5993, 311),
             new Vector3(3499, 5830, 256),
-            new Vector3(5097, 4612, 263)
+            new Vector3(5097, 4612, 263),
         };
     }
 }

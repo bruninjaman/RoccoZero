@@ -118,90 +118,16 @@
                 { AbilityId.item_silver_edge, x => this.silver = new BuffAbility(x) },
                 { AbilityId.item_invis_sword, x => this.shadow = new BuffAbility(x) },
 
-                { AbilityId.item_tpscroll, x => this.tpScroll = new TravelBoots(x) }
+                { AbilityId.item_tpscroll, x => this.tpScroll = new TravelBoots(x) },
             };
-        }
-
-        public bool PushCombo()
-        {
-            if (OrderManager.Orders.Count() != 0)
-            {
-                return false;
-            }
-
-            if (this.Owner.IsChanneling)
-            {
-                return false;
-            }
-
-            var allyCreeps = EntityManager9.AllyUnits.Where(
-                x => x.IsCreep && x.IsValid && x.IsAlive).ToList();
-
-            var enemyCreeps =  EntityManager9.EnemyUnits.Where(
-                x => x.IsCreep && x.IsValid && x.IsAlive).ToList();
-
-            if (TpCount > 0 && this.TravelTpToCreeps(enemyCreeps, allyCreeps))
-            {
-                return true;
-            }
-
-            if (this.UseMjolnir(allyCreeps))
-            {
-                return true;
-            }
-
-            var nearestTower =
-                EntityManager9.EnemyUnits
-                    .Where(x => x.BaseUnit.NetworkName == ClassId.CDOTA_BaseNPC_Tower.ToString() && x.IsValid && x.IsAlive)
-                    .OrderBy(y => this.Owner.Distance(y))
-                    .FirstOrDefault();
-
-            if (nearestTower == null)
-            {
-                nearestTower = EntityManager9.EnemyUnits.Where(x => x.IsBuilding && x.IsValid && x.IsAlive && x.CanDie).OrderBy(y => this.Owner.Distance(y))
-                    .FirstOrDefault();
-            }
-
-            var currentLane = this.laneHelper.GetCurrentLane(this.Owner);
-            var attackPoint = this.laneHelper.GetClosestAttackPoint(this.Owner, currentLane);
-
-            if (this.UseSpark(enemyCreeps))
-            {
-                return true;
-            }
-
-            if (nearestTower?.Distance(this.Owner) <= 900)
-            {
-                if (this.UseMagneticFieldNearTower(nearestTower))
-                {
-                    return true;
-                }
-
-                if (PushCommands.AttackTower(this.Owner, nearestTower))
-                {
-                    return true;
-                }
-            }
-
-            if (this.UseMagneticFieldNearCreeps(enemyCreeps))
-            {
-                return true;
-            }
-
-            if (PushCommands.AttackNextPoint(this.Owner, attackPoint))
-            {
-                return true;
-            }
-
-            return true;
         }
 
         public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
         {
             var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
-            var isMainHero = this.Owner == EntityManager9.Owner;
+            bool isMainHero = this.Owner == EntityManager9.Owner;
 
-            if (OrderManager.Orders.Count() != 0)
+            if (OrderManager.Orders.Any())
             {
                 return false;
             }
@@ -346,6 +272,80 @@
             return false;
         }
 
+        public bool PushCombo()
+        {
+            if (OrderManager.Orders.Any())
+            {
+                return false;
+            }
+
+            if (this.Owner.IsChanneling)
+            {
+                return false;
+            }
+
+            var allyCreeps = EntityManager9.AllyUnits.Where(
+                                                            x => x.IsCreep && x.IsValid && x.IsAlive).ToList();
+
+            var enemyCreeps = EntityManager9.EnemyUnits.Where(
+                                                              x => x.IsCreep && x.IsValid && x.IsAlive).ToList();
+
+            if (TpCount > 0 && TravelTpToCreeps(enemyCreeps, allyCreeps))
+            {
+                return true;
+            }
+
+            if (UseMjolnir(allyCreeps))
+            {
+                return true;
+            }
+
+            var nearestTower =
+                EntityManager9.EnemyUnits
+                              .Where(x => x.BaseUnit.NetworkName == ClassId.CDOTA_BaseNPC_Tower.ToString() && x.IsValid && x.IsAlive)
+                              .OrderBy(y => this.Owner.Distance(y))
+                              .FirstOrDefault();
+
+            if (nearestTower == null)
+            {
+                nearestTower = EntityManager9.EnemyUnits.Where(x => x.IsBuilding && x.IsValid && x.IsAlive && x.CanDie).OrderBy(y => this.Owner.Distance(y))
+                                             .FirstOrDefault();
+            }
+
+            var currentLane = this.laneHelper.GetCurrentLane(this.Owner);
+            var attackPoint = this.laneHelper.GetClosestAttackPoint(this.Owner, currentLane);
+
+            if (UseSpark(enemyCreeps))
+            {
+                return true;
+            }
+
+            if (nearestTower?.Distance(this.Owner) <= 900)
+            {
+                if (UseMagneticFieldNearTower(nearestTower))
+                {
+                    return true;
+                }
+
+                if (PushCommands.AttackTower(this.Owner, nearestTower))
+                {
+                    return true;
+                }
+            }
+
+            if (UseMagneticFieldNearCreeps(enemyCreeps))
+            {
+                return true;
+            }
+
+            if (PushCommands.AttackNextPoint(this.Owner, attackPoint))
+            {
+                return true;
+            }
+
+            return true;
+        }
+
         private bool UseMagneticFieldNearCreeps(List<Unit9> enemyCreeps)
         {
             if (enemyCreeps.Count(x => x.Distance(this.Owner) < this.Owner.GetAttackRange()) >= 4 && this.magneticFieldAbility.Ability.CanBeCasted())
@@ -376,7 +376,7 @@
             {
                 if (this.spark.Ability.CanBeCasted())
                 {
-                    var enemyCreep = enemyCreeps.FirstOrDefault(unit => unit.Distance(this.Owner) <= 1000 && unit.IsRanged) ??  enemyCreeps.FirstOrDefault(unit => unit.Distance(this.Owner) <= 1000);
+                    var enemyCreep = enemyCreeps.FirstOrDefault(unit => unit.Distance(this.Owner) <= 1000 && unit.IsRanged) ?? enemyCreeps.FirstOrDefault(unit => unit.Distance(this.Owner) <= 1000);
 
                     if (enemyCreep != null)
                     {
@@ -419,38 +419,37 @@
                 if (chosenLane == Lane.AUTO)
                 {
                     chosenLane = this.laneHelper.GetCurrentLane(
-                        allyCreeps.Where(x => this.laneHelper.GetCurrentLane(x) != this.laneHelper.GetCurrentLane(this.Owner))
-                            .OrderByDescending(x => this.Owner.Distance(x))
-                            .FirstOrDefault());
+                                                                allyCreeps.Where(x => this.laneHelper.GetCurrentLane(x) != this.laneHelper.GetCurrentLane(this.Owner))
+                                                                          .OrderByDescending(x => this.Owner.Distance(x))
+                                                                          .FirstOrDefault());
                 }
 
                 var finalPos = this.laneHelper.GetPath(chosenLane).Last();
 
                 var allyCreepsOrdered = allyCreeps.Where(
-                        x => this.laneHelper.GetCurrentLane(x) == chosenLane &&
-                             x.HealthPercentage > 75)
-                    .OrderBy(y => y.Distance(finalPos));
+                                                         x => this.laneHelper.GetCurrentLane(x) == chosenLane &&
+                                                              x.HealthPercentage > 75)
+                                                  .OrderBy(y => y.Distance(finalPos));
 
                 var ally =
                     allyCreepsOrdered
-                        .Where(x => (allyCreeps.Any(unit => unit.Distance(x) < 500 && unit.Handle != x.Handle)
-                                     || !enemyCreeps.Any(enemyCreep => enemyCreep.Distance(x) < 1000))
-                                    && !EntityManager9.EnemyHeroes.Any(enemyHero => x.Distance(enemyHero) < 3000))
-                        .FirstOrDefault();
+                        .FirstOrDefault(x => (allyCreeps.Any(unit => unit.Distance(x) < 500 && unit.Handle != x.Handle)
+                                              || !enemyCreeps.Any(enemyCreep => enemyCreep.Distance(x) < 1000))
+                                             && !EntityManager9.EnemyHeroes.Any(enemyHero => x.Distance(enemyHero) < 3000));
 
                 var allyTwr =
                     EntityManager9.AllyUnits.Where(
-                            x => x.IsTower && x.IsValid && x.IsAlive && this.laneHelper.GetCurrentLane(x) ==  chosenLane &&
-                                 x.HealthPercentage > 0.1)
-                        .OrderBy(y => y.Distance(finalPos))
-                        .FirstOrDefault();
+                                                   x => x.IsTower && x.IsValid && x.IsAlive && this.laneHelper.GetCurrentLane(x) == chosenLane &&
+                                                        x.HealthPercentage > 0.1)
+                                  .OrderBy(y => y.Distance(finalPos))
+                                  .FirstOrDefault();
 
                 Unit9 tpTarget = null;
 
                 if (ally != null && allyTwr != null)
                 {
-                    var dist1 = finalPos.Distance2D(ally.Position);
-                    var dist2 = finalPos.Distance2D(allyTwr.Position);
+                    float dist1 = finalPos.Distance2D(ally.Position);
+                    float dist2 = finalPos.Distance2D(allyTwr.Position);
 
                     if (dist1 > dist2)
                     {
@@ -465,12 +464,12 @@
                 if (tpTarget != null && tpTarget.Distance(this.Owner) > 1500)
                 {
                     var point = this.laneHelper.GetPath(chosenLane).Last();
-                    var distance1 = point.Distance2D(tpTarget.Position);
-                    var distance2 = point.Distance2D(this.Owner.Position);
+                    float distance1 = point.Distance2D(tpTarget.Position);
+                    float distance2 = point.Distance2D(this.Owner.Position);
 
                     if (distance1 < distance2 || this.laneHelper.GetCurrentLane(this.Owner) != chosenLane)
                     {
-                        if (this.UseTp(tpTarget))
+                        if (UseTp(tpTarget))
                         {
                             TpCount--;
 
@@ -490,7 +489,7 @@
                 return false;
             }
 
-            return  this.tpScroll.Ability.UseAbility(unit);
+            return this.tpScroll.Ability.UseAbility(unit);
         }
     }
 }

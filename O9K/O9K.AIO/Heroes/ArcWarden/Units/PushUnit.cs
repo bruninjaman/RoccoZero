@@ -45,14 +45,14 @@
 
             var nearestTower =
                 EntityManager9.EnemyUnits
-                    .Where(x => x.BaseUnit.NetworkName == ClassId.CDOTA_BaseNPC_Tower.ToString() && x.IsValid && x.IsAlive)
-                    .OrderBy(y => this.Owner.Distance(y))
-                    .FirstOrDefault();
+                              .Where(x => x.BaseUnit.NetworkName == ClassId.CDOTA_BaseNPC_Tower.ToString() && x.IsValid && x.IsAlive)
+                              .OrderBy(y => this.Owner.Distance(y))
+                              .FirstOrDefault();
 
             if (nearestTower == null)
             {
                 nearestTower = EntityManager9.EnemyUnits.Where(x => x.IsBuilding && x.IsValid && x.IsAlive && x.CanDie).OrderBy(y => this.Owner.Distance(y))
-                    .FirstOrDefault();
+                                             .FirstOrDefault();
             }
 
             var currentLane = this.laneHelper.GetCurrentLane(this.Owner);

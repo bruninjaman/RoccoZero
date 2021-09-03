@@ -34,8 +34,7 @@
             {
                 if (this.hero == null)
                 {
-                    this.hero = this.arcUnitManager1.PushControllableUnits.Where(
-                                    x => x.Owner.IsHero).FirstOrDefault() as ArcWarden;
+                    this.hero = this.arcUnitManager1.PushControllableUnits.FirstOrDefault(x => x.Owner.IsHero) as ArcWarden;
                 }
 
                 return this.hero;
@@ -48,9 +47,9 @@
         {
             get
             {
-                return  this.arcUnitManager1.PushControllableUnits.Where(
-                        x => x.Owner.IsIllusion && x.Owner != this.Hero?.Owner)
-                    .Select(x => new PushUnit(x) as IPushUnit);
+                return this.arcUnitManager1.PushControllableUnits.Where(
+                                                                        x => x.Owner.IsIllusion && x.Owner != this.Hero?.Owner)
+                           .Select(x => new PushUnit(x) as IPushUnit);
             }
         }
 
@@ -58,7 +57,7 @@
         {
             this.UpdateHandler.IsEnabled = false;
 
-            ArcWardenPanel.pushComboStatus = false;
+            ArcWardenPanel.PushComboStatus = false;
         }
 
         protected override void KeyOnValueChanged(object sender, KeyEventArgs e)
@@ -74,13 +73,13 @@
 
                 this.UpdateHandler.IsEnabled = true;
 
-                ArcWardenPanel.pushComboStatus = true;
+                ArcWardenPanel.PushComboStatus = true;
             }
             else
             {
                 this.UpdateHandler.IsEnabled = false;
 
-                ArcWardenPanel.pushComboStatus = false;
+                ArcWardenPanel.PushComboStatus = false;
             }
         }
 
@@ -107,7 +106,7 @@
             {
                 this.UpdateHandler.IsEnabled = false;
 
-                ArcWardenPanel.pushComboStatus = false;
+                ArcWardenPanel.PushComboStatus = false;
             }
 
             foreach (var unit in controllableUnitsTempest.Where(x => x != null && x.IsValid))
