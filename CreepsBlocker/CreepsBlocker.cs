@@ -68,9 +68,9 @@ namespace CreepsBlocker
 
             var creepsMoveDirection = creeps.Aggregate(new Vector3(), (sum, creep) => sum + creep.InFront(1000)) / creeps.Count;
 
-            var tower = EntityManager.GetEntities<Tower>().FirstOrDefault(x => x.IsValid && x.IsAlive && x.Distance2D(hero) < 500 && x.Name == "npc_dota_badguys_tower2_mid");
+            var tower = EntityManager.GetEntities<Tower>().FirstOrDefault(x => x.IsValid && x.IsAlive && x.Distance2D(hero) < 150 );
 
-            if (tower?.Distance2D(hero) < 120)
+            if (tower != null)
             {
                 // dont block near retarded dire mid t2 tower
                 hero.Move(creepsMoveDirection);
@@ -79,7 +79,7 @@ namespace CreepsBlocker
 
             foreach (var creep in creeps.OrderByDescending(x => x.IsMoving).ThenBy(x => x.Distance2D(creepsMoveDirection)))
             {
-                if (!config.BlockRangedCreep && creep.IsRanged)
+                if (!config.BlockRangedCreep.Value && creep.IsRanged)
                 {
                     continue;
                 }

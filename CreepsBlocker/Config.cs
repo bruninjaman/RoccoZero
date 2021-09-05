@@ -13,13 +13,13 @@ namespace CreepsBlocker
         {
             var factory = MenuManager.CreateRootMenu("Creeps Blocker");
             MenuKey = factory.CreateHoldKey("Hotkey", Key.None);
-            BlockRangedCreep = factory.CreateToggleKey("Block ranged creep", Key.None);
+            BlockRangedCreep = factory.CreateSwitcher("Block ranged creep");
             BlockSensitivity = factory.CreateSlider("Block sensitivity", 550, 500, 700);
             BlockSensitivity.SetTooltip("Bigger value will result in smaller block, but with higher success rate");
             CenterCamera = factory.CreateSwitcher("Center camera", true);
         }
 
-        public MenuToggleKey BlockRangedCreep { get; }
+        public MenuSwitcher BlockRangedCreep { get; }
 
         public MenuSlider BlockSensitivity { get; }
 
