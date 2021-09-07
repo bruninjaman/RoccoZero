@@ -1,152 +1,151 @@
-﻿namespace O9K.AIO.Heroes.Gyrocopter.Units
+﻿namespace O9K.AIO.Heroes.Gyrocopter.Units;
+
+using System;
+using System.Collections.Generic;
+
+using Abilities;
+
+using AIO.Abilities;
+using AIO.Abilities.Items;
+
+using Base;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+using Core.Helpers;
+
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Modes.Combo;
+
+using TargetManager;
+
+[UnitName(nameof(HeroId.npc_dota_hero_gyrocopter))]
+internal class Gyrocopter : ControllableUnit
 {
-    using System;
-    using System.Collections.Generic;
+    private NukeAbility barrage;
 
-    using Abilities;
+    private NukeAbility callDown;
 
-    using AIO.Abilities;
-    using AIO.Abilities.Items;
+    private FlakCannon flak;
 
-    using Base;
+    private ForceStaff force;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-    using Core.Helpers;
+    private BuffAbility manta;
 
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Heroes.Components;
+    private NukeAbility missile;
 
-    using Modes.Combo;
+    private ShieldAbility mjollnir;
 
-    using TargetManager;
+    private SpeedBuffAbility phase;
 
-    [UnitName(nameof(HeroId.npc_dota_hero_gyrocopter))]
-    internal class Gyrocopter : ControllableUnit
+    private HurricanePike pike;
+
+    public Gyrocopter(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
+        : base(owner, abilitySleeper, orbwalkSleeper, menu)
     {
-        private NukeAbility barrage;
-
-        private NukeAbility callDown;
-
-        private FlakCannon flak;
-
-        private ForceStaff force;
-
-        private BuffAbility manta;
-
-        private NukeAbility missile;
-
-        private ShieldAbility mjollnir;
-
-        private SpeedBuffAbility phase;
-
-        private HurricanePike pike;
-
-        public Gyrocopter(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
-            : base(owner, abilitySleeper, orbwalkSleeper, menu)
+        this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
         {
-            this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
-            {
-                { AbilityId.gyrocopter_rocket_barrage, x => this.barrage = new NukeAbility(x) },
-                { AbilityId.gyrocopter_homing_missile, x => this.missile = new NukeAbility(x) },
-                { AbilityId.gyrocopter_flak_cannon, x => this.flak = new FlakCannon(x) },
-                { AbilityId.gyrocopter_call_down, x => this.callDown = new NukeAbility(x) },
+            { AbilityId.gyrocopter_rocket_barrage, x => this.barrage = new NukeAbility(x) },
+            { AbilityId.gyrocopter_homing_missile, x => this.missile = new NukeAbility(x) },
+            { AbilityId.gyrocopter_flak_cannon, x => this.flak = new FlakCannon(x) },
+            { AbilityId.gyrocopter_call_down, x => this.callDown = new NukeAbility(x) },
 
-                { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
-                { AbilityId.item_hurricane_pike, x => this.pike = new HurricanePike(x) },
-                { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
-                { AbilityId.item_manta, x => this.manta = new BuffAbility(x) },
-                { AbilityId.item_mjollnir, x => this.mjollnir = new ShieldAbility(x) },
-            };
+            { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
+            { AbilityId.item_hurricane_pike, x => this.pike = new HurricanePike(x) },
+            { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
+            { AbilityId.item_manta, x => this.manta = new BuffAbility(x) },
+            { AbilityId.item_mjollnir, x => this.mjollnir = new ShieldAbility(x) },
+        };
 
-            this.MoveComboAbilities.Add(AbilityId.gyrocopter_homing_missile, _ => this.missile);
+        this.MoveComboAbilities.Add(AbilityId.gyrocopter_homing_missile, _ => this.missile);
+    }
+
+    public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
+    {
+        var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
+
+        if (abilityHelper.UseAbility(this.missile))
+        {
+            return true;
         }
 
-        public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
+        if (abilityHelper.UseAbility(this.callDown))
         {
-            var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
-
-            if (abilityHelper.UseAbility(this.missile))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.callDown))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.force, 500, 300))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.pike, 500, 300))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.flak))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.barrage))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.manta, this.Owner.GetAttackRange()))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.mjollnir, 600))
-            {
-                return true;
-            }
-
-            if (abilityHelper.CanBeCasted(this.pike) && !this.MoveSleeper.IsSleeping)
-            {
-                if (this.pike.UseAbilityOnTarget(targetManager, this.ComboSleeper))
-                {
-                    return true;
-                }
-            }
-
-            if (abilityHelper.UseAbility(this.phase))
-            {
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
-        public override bool Orbwalk(Unit9 target, bool attack, bool move, ComboModeMenu comboMenu = null)
+        if (abilityHelper.UseAbility(this.force, 500, 300))
         {
-            if (target != null && this.Owner.HasModifier("modifier_gyrocopter_rocket_barrage")
-                               && this.Owner.Distance(target) > this.barrage.Ability.Radius / 2)
-            {
-                return this.Move(target.Position);
-            }
-
-            return base.Orbwalk(target, attack, move, comboMenu);
+            return true;
         }
 
-        protected override bool MoveComboUseDisables(AbilityHelper abilityHelper)
+        if (abilityHelper.UseAbility(this.pike, 500, 300))
         {
-            if (base.MoveComboUseDisables(abilityHelper))
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.flak))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.barrage))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.manta, this.Owner.GetAttackRange()))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.mjollnir, 600))
+        {
+            return true;
+        }
+
+        if (abilityHelper.CanBeCasted(this.pike) && !this.MoveSleeper.IsSleeping)
+        {
+            if (this.pike.UseAbilityOnTarget(targetManager, this.ComboSleeper))
             {
                 return true;
             }
-
-            if (abilityHelper.UseAbility(this.missile))
-            {
-                return true;
-            }
-
-            return false;
         }
+
+        if (abilityHelper.UseAbility(this.phase))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public override bool Orbwalk(Unit9 target, bool attack, bool move, ComboModeMenu comboMenu = null)
+    {
+        if (target != null && this.Owner.HasModifier("modifier_gyrocopter_rocket_barrage")
+                           && this.Owner.Distance(target) > this.barrage.Ability.Radius / 2)
+        {
+            return this.Move(target.Position);
+        }
+
+        return base.Orbwalk(target, attack, move, comboMenu);
+    }
+
+    protected override bool MoveComboUseDisables(AbilityHelper abilityHelper)
+    {
+        if (base.MoveComboUseDisables(abilityHelper))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.missile))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

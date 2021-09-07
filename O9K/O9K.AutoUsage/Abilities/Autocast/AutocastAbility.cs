@@ -1,156 +1,155 @@
-﻿namespace O9K.AutoUsage.Abilities.Autocast
+﻿namespace O9K.AutoUsage.Abilities.Autocast;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+using Core.Logger;
+using Core.Managers.Entity;
+
+using Divine.Order;
+using Divine.Order.EventArgs;
+using Divine.Order.Orders.Components;
+using Divine.Update;
+
+using O9K.Core.Managers.Menu.EventArgs;
+
+using Settings;
+
+internal class AutocastAbility : UsableAbility, IDisposable
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly UpdateHandler autocastHandler;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-    using Core.Logger;
-    using Core.Managers.Entity;
+    private readonly GroupSettings groupSettings;
 
-    using Divine.Order;
-    using Divine.Order.EventArgs;
-    using Divine.Order.Orders.Components;
-    using Divine.Update;
+    private readonly AutocastSettings settings;
 
-    using O9K.Core.Managers.Menu.EventArgs;
+    private bool subbed;
 
-    using Settings;
+    private Unit9 target;
 
-    internal class AutocastAbility : UsableAbility, IDisposable
+    public AutocastAbility(OrbAbility orbAbility, GroupSettings settings)
+        : base(orbAbility)
     {
-        private readonly UpdateHandler autocastHandler;
+        this.OrbAbility = orbAbility;
+        this.settings = new AutocastSettings(settings.Menu, orbAbility);
+        this.groupSettings = settings;
 
-        private readonly GroupSettings groupSettings;
+        this.autocastHandler = UpdateManager.CreateIngameUpdate(0, false, this.AutocastOnUpdate);
+        this.groupSettings.GroupEnabled.ValueChange += this.EnabledOnPropertyChanged;
+    }
 
-        private readonly AutocastSettings settings;
+    protected OrbAbility OrbAbility { get; }
 
-        private bool subbed;
+    public void Dispose()
+    {
+        this.groupSettings.GroupEnabled.ValueChange -= this.EnabledOnPropertyChanged;
+        OrderManager.OrderAdding -= this.OnOrderAdding;
+        UpdateManager.DestroyIngameUpdate(this.autocastHandler);
+    }
 
-        private Unit9 target;
+    public override void Enabled(bool enabled)
+    {
+        base.Enabled(enabled);
 
-        public AutocastAbility(OrbAbility orbAbility, GroupSettings settings)
-            : base(orbAbility)
+        if (enabled && this.groupSettings.GroupEnabled)
         {
-            this.OrbAbility = orbAbility;
-            this.settings = new AutocastSettings(settings.Menu, orbAbility);
-            this.groupSettings = settings;
-
-            this.autocastHandler = UpdateManager.CreateIngameUpdate(0, false, this.AutocastOnUpdate);
-            this.groupSettings.GroupEnabled.ValueChange += this.EnabledOnPropertyChanged;
+            OrderManager.OrderAdding += this.OnOrderAdding;
+            this.subbed = true;
         }
-
-        protected OrbAbility OrbAbility { get; }
-
-        public void Dispose()
+        else
         {
-            this.groupSettings.GroupEnabled.ValueChange -= this.EnabledOnPropertyChanged;
             OrderManager.OrderAdding -= this.OnOrderAdding;
-            UpdateManager.DestroyIngameUpdate(this.autocastHandler);
+            this.autocastHandler.IsEnabled = false;
+            this.subbed = false;
+        }
+    }
+
+    public override bool UseAbility(List<Unit9> heroes)
+    {
+        return false;
+    }
+
+    private void AutocastOnUpdate()
+    {
+        if (this.target?.IsValid != true || !this.target.IsAlive || this.target.IsInvulnerable || !this.target.IsVisible
+            || (!this.OrbAbility.CanHitSpellImmuneEnemy && this.target.IsMagicImmune))
+        {
+            this.autocastHandler.IsEnabled = false;
+            return;
         }
 
-        public override void Enabled(bool enabled)
+        if (this.Ability.CanBeCasted())
         {
-            base.Enabled(enabled);
-
-            if (enabled && this.groupSettings.GroupEnabled)
-            {
-                OrderManager.OrderAdding += this.OnOrderAdding;
-                this.subbed = true;
-            }
-            else
-            {
-                OrderManager.OrderAdding -= this.OnOrderAdding;
-                this.autocastHandler.IsEnabled = false;
-                this.subbed = false;
-            }
+            this.Ability.UseAbility(this.target);
         }
+    }
 
-        public override bool UseAbility(List<Unit9> heroes)
+    private void EnabledOnPropertyChanged(object sender, SwitcherEventArgs e)
+    {
+        if (e.NewValue && !this.subbed && this.IsEnabled)
         {
-            return false;
+            OrderManager.OrderAdding += this.OnOrderAdding;
+            this.subbed = true;
         }
-
-        private void AutocastOnUpdate()
+        else
         {
-            if (this.target?.IsValid != true || !this.target.IsAlive || this.target.IsInvulnerable || !this.target.IsVisible
-                || (!this.OrbAbility.CanHitSpellImmuneEnemy && this.target.IsMagicImmune))
+            OrderManager.OrderAdding -= this.OnOrderAdding;
+            this.subbed = false;
+        }
+    }
+
+    private void OnOrderAdding(OrderAddingEventArgs e)
+    {
+        try
+        {
+            if (!e.Process || e.IsCustom)
             {
-                this.autocastHandler.IsEnabled = false;
                 return;
             }
 
-            if (this.Ability.CanBeCasted())
+            var order = e.Order;
+            if (order.IsQueued)
             {
-                this.Ability.UseAbility(this.target);
+                return;
             }
-        }
 
-        private void EnabledOnPropertyChanged(object sender, SwitcherEventArgs e)
-        {
-            if (e.NewValue && !this.subbed && this.IsEnabled)
+            if (order.Type == OrderType.AttackTarget)
             {
-                OrderManager.OrderAdding += this.OnOrderAdding;
-                this.subbed = true;
-            }
-            else
-            {
-                OrderManager.OrderAdding -= this.OnOrderAdding;
-                this.subbed = false;
-            }
-        }
-
-        private void OnOrderAdding(OrderAddingEventArgs e)
-        {
-            try
-            {
-                if (!e.Process || e.IsCustom)
+                if (this.OrbAbility.Enabled || !this.OrbAbility.CanBeCasted() || this.Owner.ManaPercentage < this.settings.MpThreshold)
                 {
                     return;
                 }
 
-                var order = e.Order;
-                if (order.IsQueued)
+                this.target = EntityManager9.GetUnit(order.Target.Handle);
+                if (this.target?.IsHero != true || this.target.IsIllusion || !this.settings.IsHeroEnabled(this.target.Name))
                 {
                     return;
                 }
 
-                if (order.Type == OrderType.AttackTarget)
+                if (order.Units.All(x => x.Handle != this.OwnerHandle))
                 {
-                    if (this.OrbAbility.Enabled || !this.OrbAbility.CanBeCasted() || this.Owner.ManaPercentage < this.settings.MpThreshold)
-                    {
-                        return;
-                    }
-
-                    this.target = EntityManager9.GetUnit(order.Target.Handle);
-                    if (this.target?.IsHero != true || this.target.IsIllusion || !this.settings.IsHeroEnabled(this.target.Name))
-                    {
-                        return;
-                    }
-
-                    if (order.Units.All(x => x.Handle != this.OwnerHandle))
-                    {
-                        return;
-                    }
-
-                    if (!this.groupSettings.UseWhenInvisible && !this.Owner.CanUseAbilitiesInInvisibility && this.Owner.IsInvisible)
-                    {
-                        return;
-                    }
-
-                    e.Process = false;
-                    this.autocastHandler.IsEnabled = true;
+                    return;
                 }
-                else if (this.autocastHandler.IsEnabled)
+
+                if (!this.groupSettings.UseWhenInvisible && !this.Owner.CanUseAbilitiesInInvisibility && this.Owner.IsInvisible)
                 {
-                    this.autocastHandler.IsEnabled = false;
+                    return;
                 }
+
+                e.Process = false;
+                this.autocastHandler.IsEnabled = true;
             }
-            catch (Exception ex)
+            else if (this.autocastHandler.IsEnabled)
             {
-                Logger.Error(ex);
+                this.autocastHandler.IsEnabled = false;
             }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
         }
     }
 }

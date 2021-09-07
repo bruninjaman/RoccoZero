@@ -1,97 +1,96 @@
-﻿namespace O9K.AIO.Heroes.StormSpirit.Modes
+﻿namespace O9K.AIO.Heroes.StormSpirit.Modes;
+
+using System;
+
+using AIO.Modes.Base;
+
+using Base;
+
+using Core.Entities.Abilities.Heroes.StormSpirit;
+using Core.Helpers;
+using Core.Logger;
+using Core.Managers.Entity;
+using Core.Managers.Menu.EventArgs;
+
+using Divine.Game;
+using Divine.Numerics;
+using Divine.Renderer;
+
+internal class ManaCalculatorMode : BaseMode
 {
-    using System;
+    private readonly ManaCalculatorModeMenu menu;
 
-    using AIO.Modes.Base;
+    private BallLightning ballLightning;
 
-    using Base;
-
-    using Core.Entities.Abilities.Heroes.StormSpirit;
-    using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Entity;
-    using Core.Managers.Menu.EventArgs;
-
-    using Divine.Game;
-    using Divine.Numerics;
-    using Divine.Renderer;
-
-    internal class ManaCalculatorMode : BaseMode
+    public ManaCalculatorMode(BaseHero baseHero, ManaCalculatorModeMenu menu)
+        : base(baseHero)
     {
-        private readonly ManaCalculatorModeMenu menu;
+        this.menu = menu;
+    }
 
-        private BallLightning ballLightning;
-
-        public ManaCalculatorMode(BaseHero baseHero, ManaCalculatorModeMenu menu)
-            : base(baseHero)
+    private BallLightning BallLightning
+    {
+        get
         {
-            this.menu = menu;
-        }
-
-        private BallLightning BallLightning
-        {
-            get
+            if (this.ballLightning?.IsValid != true)
             {
-                if (this.ballLightning?.IsValid != true)
-                {
-                    this.ballLightning = EntityManager9.GetAbility<BallLightning>(this.Owner.Hero);
-                }
-
-                return this.ballLightning;
+                this.ballLightning = EntityManager9.GetAbility<BallLightning>(this.Owner.Hero);
             }
-        }
 
-        public void Disable()
-        {
-            this.menu.Enabled.ValueChange -= this.EnabledOnValueChanged;
+            return this.ballLightning;
         }
+    }
 
-        public override void Dispose()
+    public void Disable()
+    {
+        this.menu.Enabled.ValueChange -= this.EnabledOnValueChanged;
+    }
+
+    public override void Dispose()
+    {
+        this.menu.Enabled.ValueChange -= this.EnabledOnValueChanged;
+    }
+
+    public void Enable()
+    {
+        this.menu.Enabled.ValueChange += this.EnabledOnValueChanged;
+    }
+
+    private void EnabledOnValueChanged(object sender, SwitcherEventArgs e)
+    {
+        if (e.NewValue)
         {
-            this.menu.Enabled.ValueChange -= this.EnabledOnValueChanged;
+            RendererManager.Draw += this.OnDraw;
         }
-
-        public void Enable()
+        else
         {
-            this.menu.Enabled.ValueChange += this.EnabledOnValueChanged;
+            RendererManager.Draw -= this.OnDraw;
         }
+    }
 
-        private void EnabledOnValueChanged(object sender, SwitcherEventArgs e)
+    private void OnDraw()
+    {
+        try
         {
-            if (e.NewValue)
+            if (this.BallLightning == null || this.ballLightning.Level <= 0 || !this.ballLightning.Owner.IsAlive)
             {
-                RendererManager.Draw += this.OnDraw;
+                return;
             }
-            else
-            {
-                RendererManager.Draw -= this.OnDraw;
-            }
+
+            var mousePosition = GameManager.MousePosition;
+            var mp = this.menu.ShowRemainingMp
+                         ? this.BallLightning.GetRemainingMana(mousePosition).ToString()
+                         : this.BallLightning.GetRequiredMana(mousePosition).ToString();
+
+            RendererManager.DrawText(
+                mp,
+                GameManager.MouseScreenPosition + (new Vector2(30, 30) * Hud.Info.ScreenRatio),
+                Color.White,
+                16 * Hud.Info.ScreenRatio);
         }
-
-        private void OnDraw()
+        catch (Exception exception)
         {
-            try
-            {
-                if (this.BallLightning == null || this.ballLightning.Level <= 0 || !this.ballLightning.Owner.IsAlive)
-                {
-                    return;
-                }
-
-                var mousePosition = GameManager.MousePosition;
-                var mp = this.menu.ShowRemainingMp
-                             ? this.BallLightning.GetRemainingMana(mousePosition).ToString()
-                             : this.BallLightning.GetRequiredMana(mousePosition).ToString();
-
-                RendererManager.DrawText(
-                    mp,
-                    GameManager.MouseScreenPosition + (new Vector2(30, 30) * Hud.Info.ScreenRatio),
-                    Color.White,
-                    16 * Hud.Info.ScreenRatio);
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-            }
+            Logger.Error(exception);
         }
     }
 }

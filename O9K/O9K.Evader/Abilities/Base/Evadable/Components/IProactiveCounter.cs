@@ -1,21 +1,20 @@
-﻿namespace O9K.Evader.Abilities.Base.Evadable.Components
+﻿namespace O9K.Evader.Abilities.Base.Evadable.Components;
+
+using System.Collections.Generic;
+
+using Core.Entities.Abilities.Base;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+internal interface IProactiveCounter
 {
-    using System.Collections.Generic;
+    Ability9 Ability { get; }
 
-    using Core.Entities.Abilities.Base;
+    HashSet<AbilityId> ProactiveBlinks { get; }
 
-    using Divine.Entity.Entities.Abilities.Components;
+    HashSet<AbilityId> ProactiveCounters { get; }
 
-    internal interface IProactiveCounter
-    {
-        Ability9 Ability { get; }
+    HashSet<AbilityId> ProactiveDisables { get; }
 
-        HashSet<AbilityId> ProactiveBlinks { get; }
-
-        HashSet<AbilityId> ProactiveCounters { get; }
-
-        HashSet<AbilityId> ProactiveDisables { get; }
-
-        void AddProactiveObstacle();
-    }
+    void AddProactiveObstacle();
 }

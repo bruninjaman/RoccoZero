@@ -1,19 +1,18 @@
-﻿namespace O9K.Hud.Modules.Unique.MorphlingAbilities.Abilities
+﻿namespace O9K.Hud.Modules.Unique.MorphlingAbilities.Abilities;
+
+using Core.Managers.Renderer.Utils;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+internal interface IMorphlingAbility
 {
-    using Core.Managers.Renderer.Utils;
+    AbilitySlot AbilitySlot { get; }
 
-    using Divine.Entity.Entities.Abilities.Components;
+    uint Handle { get; }
 
-    internal interface IMorphlingAbility
-    {
-        AbilitySlot AbilitySlot { get; }
+    bool Display(bool isMorphed);
 
-        uint Handle { get; }
+    void Draw(Rectangle9 position, float textSize);
 
-        bool Display(bool isMorphed);
-
-        void Draw(Rectangle9 position, float textSize);
-
-        bool Update(bool isMorphed);
-    }
+    bool Update(bool isMorphed);
 }

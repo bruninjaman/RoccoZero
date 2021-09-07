@@ -1,28 +1,27 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Lina.LagunaBlade
+﻿namespace O9K.Evader.Abilities.Heroes.Lina.LagunaBlade;
+
+using Base.Evadable;
+
+using Core.Entities.Units;
+
+using Divine.Game;
+
+using Pathfinder.Obstacles.Abilities.Targetable;
+
+internal class LagunaBladeObstacle : TargetableObstacle
 {
-    using Base.Evadable;
-
-    using Core.Entities.Units;
-
-    using Divine.Game;
-
-    using Pathfinder.Obstacles.Abilities.Targetable;
-
-    internal class LagunaBladeObstacle : TargetableObstacle
+    public LagunaBladeObstacle(EvadableAbility ability, float radius = 75)
+        : base(ability, radius)
     {
-        public LagunaBladeObstacle(EvadableAbility ability, float radius = 75)
-            : base(ability, radius)
+    }
+
+    public override float GetEvadeTime(Unit9 ally, bool blink)
+    {
+        if (blink)
         {
+            return this.GetDisableTime(null);
         }
 
-        public override float GetEvadeTime(Unit9 ally, bool blink)
-        {
-            if (blink)
-            {
-                return this.GetDisableTime(null);
-            }
-
-            return this.EndObstacleTime - GameManager.RawGameTime;
-        }
+        return this.EndObstacleTime - GameManager.RawGameTime;
     }
 }

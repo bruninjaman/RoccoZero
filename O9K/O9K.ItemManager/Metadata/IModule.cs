@@ -1,9 +1,8 @@
-﻿namespace O9K.ItemManager.Metadata
-{
-    using System;
+﻿namespace O9K.ItemManager.Metadata;
 
-    internal interface IModule : IDisposable
-    {
-        void Activate();
-    }
+using System;
+
+internal interface IModule : IDisposable
+{
+    void Activate();
 }

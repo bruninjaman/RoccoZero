@@ -1,30 +1,29 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Abaddon.AphoticShield
+﻿namespace O9K.Evader.Abilities.Heroes.Abaddon.AphoticShield;
+
+using Base;
+using Base.Evadable;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.abaddon_aphotic_shield)]
+internal class AphoticShieldBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>
 {
-    using Base;
-    using Base.Evadable;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.abaddon_aphotic_shield)]
-    internal class AphoticShieldBase : EvaderBaseAbility, IEvadable, IUsable<CounterAbility>
+    public AphoticShieldBase(Ability9 ability)
+        : base(ability)
     {
-        public AphoticShieldBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new AphoticShieldEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new AphoticShieldEvadable(this.Ability, this.Pathfinder, this.Menu);
+    }
 
-        public CounterAbility GetUsableAbility()
-        {
-            return new AphoticShieldUsable(this.Ability, this.ActionManager, this.Menu);
-        }
+    public CounterAbility GetUsableAbility()
+    {
+        return new AphoticShieldUsable(this.Ability, this.ActionManager, this.Menu);
     }
 }

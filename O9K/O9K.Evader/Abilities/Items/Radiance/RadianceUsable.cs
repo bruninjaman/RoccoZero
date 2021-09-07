@@ -1,62 +1,61 @@
-﻿namespace O9K.Evader.Abilities.Items.Radiance
+﻿namespace O9K.Evader.Abilities.Items.Radiance;
+
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Abilities.Items;
+using Core.Entities.Units;
+
+using Divine.Update;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+
+internal class RadianceUsable : CounterAbility
 {
-    using Base.Usable.CounterAbility;
+    private readonly Radiance radiance;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Abilities.Items;
-    using Core.Entities.Units;
-
-    using Divine.Update;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-
-    internal class RadianceUsable : CounterAbility
+    public RadianceUsable(Ability9 ability, IMainMenu menu)
+        : base(ability, menu)
     {
-        private readonly Radiance radiance;
+        this.radiance = (Radiance)ability;
+    }
 
-        public RadianceUsable(Ability9 ability, IMainMenu menu)
-            : base(ability, menu)
+    public override bool CanBeCasted(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        if (!base.CanBeCasted(ally, enemy, obstacle))
         {
-            this.radiance = (Radiance)ability;
+            return false;
         }
 
-        public override bool CanBeCasted(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+        if (this.radiance.Enabled)
         {
-            if (!base.CanBeCasted(ally, enemy, obstacle))
-            {
-                return false;
-            }
-
-            if (this.radiance.Enabled)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
-        public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
-        {
-            if (!this.radiance.UseAbility(false, true))
-            {
-                return false;
-            }
+        return true;
+    }
 
-            UpdateManager.BeginInvoke(
-                3000,
-                () =>
+    public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        if (!this.radiance.UseAbility(false, true))
+        {
+            return false;
+        }
+
+        UpdateManager.BeginInvoke(
+            3000,
+            () =>
+                {
+                    if (!this.radiance.IsValid || !this.radiance.Enabled)
                     {
-                        if (!this.radiance.IsValid || !this.radiance.Enabled)
-                        {
-                            return;
-                        }
+                        return;
+                    }
 
-                        this.radiance.UseAbility(false, true);
-                    });
+                    this.radiance.UseAbility(false, true);
+                });
 
-            return true;
-        }
+        return true;
     }
 }

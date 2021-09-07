@@ -1,105 +1,104 @@
-﻿namespace O9K.AIO.Heroes.Pangolier.Abilities
+﻿namespace O9K.AIO.Heroes.Pangolier.Abilities;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using AIO.Abilities;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+using Divine.Map;
+using Divine.Numerics;
+using Divine.Map.Components;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Modes.Combo;
+
+using TargetManager;
+
+using BaseRollingThunder = Core.Entities.Abilities.Heroes.Pangolier.RollingThunder;
+
+internal class RollingThunder : NukeAbility
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly BaseRollingThunder rollingThunder;
 
-    using AIO.Abilities;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-    using Divine.Map;
-    using Divine.Numerics;
-    using Divine.Map.Components;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Modes.Combo;
-
-    using TargetManager;
-
-    using BaseRollingThunder = Core.Entities.Abilities.Heroes.Pangolier.RollingThunder;
-
-    internal class RollingThunder : NukeAbility
+    public RollingThunder(ActiveAbility ability)
+        : base(ability)
     {
-        private readonly BaseRollingThunder rollingThunder;
+        this.rollingThunder = (BaseRollingThunder)ability;
+    }
 
-        public RollingThunder(ActiveAbility ability)
-            : base(ability)
+    public Vector3 GetPosition(Unit9 target)
+    {
+        var wallPositions = new List<Vector3>();
+
+        var center = this.Owner.Position;
+        const int CellCount = 40;
+        for (var i = 0; i < CellCount; ++i)
         {
-            this.rollingThunder = (BaseRollingThunder)ability;
-        }
-
-        public Vector3 GetPosition(Unit9 target)
-        {
-            var wallPositions = new List<Vector3>();
-
-            var center = this.Owner.Position;
-            const int CellCount = 40;
-            for (var i = 0; i < CellCount; ++i)
+            for (var j = 0; j < CellCount; ++j)
             {
-                for (var j = 0; j < CellCount; ++j)
-                {
-                    var p = new Vector2(
-                        (MapManager.MeshCellSize * (i - (CellCount / 2))) + center.X,
-                        (MapManager.MeshCellSize * (j - (CellCount / 2))) + center.Y);
+                var p = new Vector2(
+                    (MapManager.MeshCellSize * (i - (CellCount / 2))) + center.X,
+                    (MapManager.MeshCellSize * (j - (CellCount / 2))) + center.Y);
 
-                    if ((MapManager.GetMeshCellFlags(p) & MeshCellFlags.InteractionBlocker) != 0)
-                    {
-                        wallPositions.Add(new Vector3(p.X, p.Y, 0));
-                    }
+                if ((MapManager.GetMeshCellFlags(p) & MeshCellFlags.InteractionBlocker) != 0)
+                {
+                    wallPositions.Add(new Vector3(p.X, p.Y, 0));
                 }
             }
-
-            return wallPositions.Where(this.CheckWall).OrderBy(x => this.Owner.Distance(x)).FirstOrDefault();
         }
 
-        public override bool ShouldCast(TargetManager targetManager)
+        return wallPositions.Where(this.CheckWall).OrderBy(x => this.Owner.Distance(x)).FirstOrDefault();
+    }
+
+    public override bool ShouldCast(TargetManager targetManager)
+    {
+        if (!base.ShouldCast(targetManager))
         {
-            if (!base.ShouldCast(targetManager))
-            {
-                return false;
-            }
-
-            if (this.Owner.GetAngle(targetManager.Target.Position) > 0.75f)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
-        public override bool ShouldConditionCast(TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
+        if (this.Owner.GetAngle(targetManager.Target.Position) > 0.75f)
         {
-            var blink = usableAbilities.Find(x =>
-                              x.Ability.Id == AbilityId.item_blink ||
-                              x.Ability.Id == AbilityId.item_overwhelming_blink ||
-                              x.Ability.Id == AbilityId.item_swift_blink ||
-                              x.Ability.Id == AbilityId.item_arcane_blink);
-
-            if (blink == null)
-            {
-                return this.Owner.Distance(targetManager.Target) < 600;
-            }
-
-            return this.Owner.Distance(targetManager.Target) < blink.Ability.CastRange + 200;
+            return false;
         }
 
-        private bool CheckWall(Vector3 wall)
+        return true;
+    }
+
+    public override bool ShouldConditionCast(TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
+    {
+        var blink = usableAbilities.Find(x =>
+                          x.Ability.Id == AbilityId.item_blink ||
+                          x.Ability.Id == AbilityId.item_overwhelming_blink ||
+                          x.Ability.Id == AbilityId.item_swift_blink ||
+                          x.Ability.Id == AbilityId.item_arcane_blink);
+
+        if (blink == null)
         {
-            var distance = this.Owner.Distance(wall);
-            // var turnTime = (this.rollingThunder.TurnRate * this.Owner.GetAngle(wall))- 0.75f;
-            var turnTime = (this.Owner.GetAngle(wall) / this.rollingThunder.TurnRate) + 0.5f;
-
-            if (turnTime > distance / this.rollingThunder.Speed)
-            {
-                return false;
-            }
-
-            if (distance > 600)
-            {
-                return false;
-            }
-
-            return true;
+            return this.Owner.Distance(targetManager.Target) < 600;
         }
+
+        return this.Owner.Distance(targetManager.Target) < blink.Ability.CastRange + 200;
+    }
+
+    private bool CheckWall(Vector3 wall)
+    {
+        var distance = this.Owner.Distance(wall);
+        // var turnTime = (this.rollingThunder.TurnRate * this.Owner.GetAngle(wall))- 0.75f;
+        var turnTime = (this.Owner.GetAngle(wall) / this.rollingThunder.TurnRate) + 0.5f;
+
+        if (turnTime > distance / this.rollingThunder.Speed)
+        {
+            return false;
+        }
+
+        if (distance > 600)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

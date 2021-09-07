@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Grimstroke.Soulbind
+﻿namespace O9K.Evader.Abilities.Heroes.Grimstroke.Soulbind;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.grimstroke_soul_chain)]
+internal class SoulbindBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.grimstroke_soul_chain)]
-    internal class SoulbindBase : EvaderBaseAbility, IEvadable
+    public SoulbindBase(Ability9 ability)
+        : base(ability)
     {
-        public SoulbindBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new SoulbindEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new SoulbindEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Items.HeavensHalberd
+﻿namespace O9K.Evader.Abilities.Items.HeavensHalberd;
+
+using Base;
+using Base.Usable.DisableAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.item_heavens_halberd)]
+internal class HeavensHalberdBase : EvaderBaseAbility, IUsable<DisableAbility>
 {
-    using Base;
-    using Base.Usable.DisableAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.item_heavens_halberd)]
-    internal class HeavensHalberdBase : EvaderBaseAbility, IUsable<DisableAbility>
+    public HeavensHalberdBase(Ability9 ability)
+        : base(ability)
     {
-        public HeavensHalberdBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public DisableAbility GetUsableAbility()
-        {
-            return new DisableAbility(this.Ability, this.Menu);
-        }
+    public DisableAbility GetUsableAbility()
+    {
+        return new DisableAbility(this.Ability, this.Menu);
     }
 }

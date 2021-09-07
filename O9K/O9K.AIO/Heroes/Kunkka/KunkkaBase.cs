@@ -1,48 +1,47 @@
-﻿namespace O9K.AIO.Heroes.Kunkka
+﻿namespace O9K.AIO.Heroes.Kunkka;
+
+using AIO.Modes.KeyPress;
+using AIO.Modes.Permanent;
+
+using Base;
+
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Modes;
+
+[HeroId(HeroId.npc_dota_hero_kunkka)]
+internal class KunkkaBase : BaseHero
 {
-    using AIO.Modes.KeyPress;
-    using AIO.Modes.Permanent;
+    private readonly AutoReturnMode autoReturnMode;
 
-    using Base;
+    private readonly TorrentStackMode torrentStackMode;
 
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Modes;
-
-    [HeroId(HeroId.npc_dota_hero_kunkka)]
-    internal class KunkkaBase : BaseHero
+    public KunkkaBase()
     {
-        private readonly AutoReturnMode autoReturnMode;
+        this.autoReturnMode = new AutoReturnMode(
+            this,
+            new PermanentModeMenu(this.Menu.RootMenu, "Auto return", "Auto use \"X return\""));
+        this.torrentStackMode = new TorrentStackMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Stack camps"));
+    }
 
-        private readonly TorrentStackMode torrentStackMode;
+    public override void Dispose()
+    {
+        base.Dispose();
+        this.autoReturnMode.Dispose();
+        this.torrentStackMode.Dispose();
+    }
 
-        public KunkkaBase()
-        {
-            this.autoReturnMode = new AutoReturnMode(
-                this,
-                new PermanentModeMenu(this.Menu.RootMenu, "Auto return", "Auto use \"X return\""));
-            this.torrentStackMode = new TorrentStackMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Stack camps"));
-        }
+    protected override void DisableCustomModes()
+    {
+        this.autoReturnMode.Disable();
+        this.torrentStackMode.Disable();
+    }
 
-        public override void Dispose()
-        {
-            base.Dispose();
-            this.autoReturnMode.Dispose();
-            this.torrentStackMode.Dispose();
-        }
-
-        protected override void DisableCustomModes()
-        {
-            this.autoReturnMode.Disable();
-            this.torrentStackMode.Disable();
-        }
-
-        protected override void EnableCustomModes()
-        {
-            this.autoReturnMode.Enable();
-            this.torrentStackMode.Enable();
-        }
+    protected override void EnableCustomModes()
+    {
+        this.autoReturnMode.Enable();
+        this.torrentStackMode.Enable();
     }
 }

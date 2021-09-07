@@ -1,76 +1,75 @@
-﻿namespace O9K.Evader.Abilities.Heroes.StormSpirit.StaticRemnant
+﻿namespace O9K.Evader.Abilities.Heroes.StormSpirit.StaticRemnant;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Base.Evadable;
+using Base.Evadable.Components;
+
+using Core.Entities.Abilities.Base;
+using Core.Managers.Entity;
+using Divine.Game;
+using Divine.Entity.Entities.Units;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+using Pathfinder.Obstacles.Abilities.AreaOfEffect;
+
+internal sealed class StaticRemnantEvadable : AreaOfEffectEvadable, IUnit
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly HashSet<AbilityId> singleCounters = new HashSet<AbilityId>();
 
-    using Base.Evadable;
-    using Base.Evadable.Components;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Managers.Entity;
-    using Divine.Game;
-    using Divine.Entity.Entities.Units;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    internal sealed class StaticRemnantEvadable : AreaOfEffectEvadable, IUnit
+    public StaticRemnantEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
+        : base(ability, pathfinder, menu)
     {
-        private readonly HashSet<AbilityId> singleCounters = new HashSet<AbilityId>();
+        this.Counters.Add(Abilities.SleightOfFist);
+        this.Counters.Add(Abilities.BallLightning);
+        this.Counters.Add(Abilities.AttributeShift);
+        this.Counters.UnionWith(Abilities.Shield);
+        this.Counters.UnionWith(Abilities.MagicShield);
+        this.Counters.UnionWith(Abilities.Heal);
+        this.Counters.Add(Abilities.Armlet);
+        this.Counters.UnionWith(Abilities.Suicide);
+        this.Counters.Add(Abilities.BladeMail);
 
-        public StaticRemnantEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
-            : base(ability, pathfinder, menu)
+        this.singleCounters.Add(Abilities.Refraction);
+        this.singleCounters.Add(Abilities.SpikedCarapace);
+        this.singleCounters.Add(Abilities.AttributeShift);
+        this.singleCounters.UnionWith(Abilities.MagicShield);
+        this.singleCounters.UnionWith(Abilities.Heal);
+        this.singleCounters.Add(Abilities.Armlet);
+        this.singleCounters.UnionWith(Abilities.Suicide);
+        this.singleCounters.Add(Abilities.BladeMail);
+    }
+
+    public override bool CanBeDodged { get; } = false;
+
+    public void AddUnit(Unit unit)
+    {
+        var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
+
+        var obstacle = new AreaOfEffectObstacle(this, unit.Position)
         {
-            this.Counters.Add(Abilities.SleightOfFist);
-            this.Counters.Add(Abilities.BallLightning);
-            this.Counters.Add(Abilities.AttributeShift);
-            this.Counters.UnionWith(Abilities.Shield);
-            this.Counters.UnionWith(Abilities.MagicShield);
-            this.Counters.UnionWith(Abilities.Heal);
-            this.Counters.Add(Abilities.Armlet);
-            this.Counters.UnionWith(Abilities.Suicide);
-            this.Counters.Add(Abilities.BladeMail);
+            EndCastTime = time,
+            EndObstacleTime = time + this.Ability.ActivationDelay,
+        };
 
-            this.singleCounters.Add(Abilities.Refraction);
-            this.singleCounters.Add(Abilities.SpikedCarapace);
-            this.singleCounters.Add(Abilities.AttributeShift);
-            this.singleCounters.UnionWith(Abilities.MagicShield);
-            this.singleCounters.UnionWith(Abilities.Heal);
-            this.singleCounters.Add(Abilities.Armlet);
-            this.singleCounters.UnionWith(Abilities.Suicide);
-            this.singleCounters.Add(Abilities.BladeMail);
+        if (EntityManager9.Units.Count(
+                x => x.IsUnit && !x.IsAlly(this.Owner) && x.Distance(this.Owner) < this.Ability.Radius && x.IsAlive
+                     && !x.IsInvulnerable) <= 1)
+        {
+            obstacle.Counters = this.singleCounters.ToArray();
         }
 
-        public override bool CanBeDodged { get; } = false;
+        this.Pathfinder.AddObstacle(obstacle);
+    }
 
-        public void AddUnit(Unit unit)
-        {
-            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
+    public override void PhaseCancel()
+    {
+    }
 
-            var obstacle = new AreaOfEffectObstacle(this, unit.Position)
-            {
-                EndCastTime = time,
-                EndObstacleTime = time + this.Ability.ActivationDelay,
-            };
-
-            if (EntityManager9.Units.Count(
-                    x => x.IsUnit && !x.IsAlly(this.Owner) && x.Distance(this.Owner) < this.Ability.Radius && x.IsAlive
-                         && !x.IsInvulnerable) <= 1)
-            {
-                obstacle.Counters = this.singleCounters.ToArray();
-            }
-
-            this.Pathfinder.AddObstacle(obstacle);
-        }
-
-        public override void PhaseCancel()
-        {
-        }
-
-        public override void PhaseStart()
-        {
-        }
+    public override void PhaseStart()
+    {
     }
 }

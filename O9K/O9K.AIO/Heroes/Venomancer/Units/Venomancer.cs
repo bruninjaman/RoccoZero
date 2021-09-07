@@ -1,148 +1,147 @@
-﻿namespace O9K.AIO.Heroes.Venomancer.Units
+﻿namespace O9K.AIO.Heroes.Venomancer.Units;
+
+using System;
+using System.Collections.Generic;
+
+using Abilities;
+
+using AIO.Abilities;
+using AIO.Abilities.Items;
+
+using Base;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+using Core.Helpers;
+
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Modes.Combo;
+
+using TargetManager;
+
+[UnitName(nameof(HeroId.npc_dota_hero_venomancer))]
+internal class Venomancer : ControllableUnit
 {
-    using System;
-    using System.Collections.Generic;
+    private BlinkDaggerAOE blink;
 
-    using Abilities;
+    private DisableAbility bloodthorn;
 
-    using AIO.Abilities;
-    using AIO.Abilities.Items;
+    private ForceStaff force;
 
-    using Base;
+    private DebuffAbility gale;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-    using Core.Helpers;
+    private DebuffAbility nova;
 
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Heroes.Components;
+    private DisableAbility orchid;
 
-    using Modes.Combo;
+    private DebuffAbility shiva;
 
-    using TargetManager;
+    private DebuffAbility veil;
 
-    [UnitName(nameof(HeroId.npc_dota_hero_venomancer))]
-    internal class Venomancer : ControllableUnit
+    private AoeAbility ward;
+
+    public Venomancer(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
+        : base(owner, abilitySleeper, orbwalkSleeper, menu)
     {
-        private BlinkDaggerAOE blink;
-
-        private DisableAbility bloodthorn;
-
-        private ForceStaff force;
-
-        private DebuffAbility gale;
-
-        private DebuffAbility nova;
-
-        private DisableAbility orchid;
-
-        private DebuffAbility shiva;
-
-        private DebuffAbility veil;
-
-        private AoeAbility ward;
-
-        public Venomancer(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
-            : base(owner, abilitySleeper, orbwalkSleeper, menu)
+        this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
         {
-            this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
-            {
-                { AbilityId.venomancer_venomous_gale, x => this.gale = new DebuffAbility(x) },
-                { AbilityId.venomancer_plague_ward, x => this.ward = new PlagueWardAbility(x) },
-                { AbilityId.venomancer_poison_nova, x => this.nova = new PoisonNova(x) },
+            { AbilityId.venomancer_venomous_gale, x => this.gale = new DebuffAbility(x) },
+            { AbilityId.venomancer_plague_ward, x => this.ward = new PlagueWardAbility(x) },
+            { AbilityId.venomancer_poison_nova, x => this.nova = new PoisonNova(x) },
 
-                { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
-                { AbilityId.item_blink, x => this.blink = new BlinkDaggerAOE(x) },
-                { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerAOE(x) },
-                { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerAOE(x) },
-                { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerAOE(x) },
-                { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },
-                { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
-                { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
-                { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
-            };
+            { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
+            { AbilityId.item_blink, x => this.blink = new BlinkDaggerAOE(x) },
+            { AbilityId.item_swift_blink, x => this.blink = new BlinkDaggerAOE(x) },
+            { AbilityId.item_arcane_blink, x => this.blink = new BlinkDaggerAOE(x) },
+            { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerAOE(x) },
+            { AbilityId.item_shivas_guard, x => this.shiva = new DebuffAbility(x) },
+            { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
+            { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
+            { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
+        };
 
-            this.MoveComboAbilities.Add(AbilityId.venomancer_venomous_gale, _ => this.gale);
+        this.MoveComboAbilities.Add(AbilityId.venomancer_venomous_gale, _ => this.gale);
+    }
+
+    public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
+    {
+        var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
+        var target = targetManager.Target;
+
+        if (abilityHelper.UseAbility(this.bloodthorn))
+        {
+            return true;
         }
 
-        public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
+        if (abilityHelper.UseAbility(this.orchid))
         {
-            var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
-            var target = targetManager.Target;
-
-            if (abilityHelper.UseAbility(this.bloodthorn))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.orchid))
-            {
-                return true;
-            }
-
-            if (!abilityHelper.CanBeCasted(this.blink) || this.Owner.Distance(target) < 400)
-            {
-                if (abilityHelper.UseAbility(this.nova))
-                {
-                    return true;
-                }
-            }
-
-            if (abilityHelper.UseAbility(this.shiva))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbilityIfCondition(this.blink, this.nova))
-            {
-                return true;
-            }
-
-            if (!abilityHelper.CanBeCasted(this.nova, false, false))
-            {
-                if (abilityHelper.UseAbility(this.blink, 500, 300))
-                {
-                    return true;
-                }
-
-                if (abilityHelper.UseAbility(this.force, 500, 300))
-                {
-                    return true;
-                }
-            }
-
-            if (abilityHelper.UseAbility(this.veil))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.gale))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.ward))
-            {
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
-        protected override bool MoveComboUseDisables(AbilityHelper abilityHelper)
+        if (!abilityHelper.CanBeCasted(this.blink) || this.Owner.Distance(target) < 400)
         {
-            if (base.MoveComboUseDisables(abilityHelper))
+            if (abilityHelper.UseAbility(this.nova))
             {
                 return true;
             }
-
-            if (abilityHelper.UseAbility(this.gale))
-            {
-                return true;
-            }
-
-            return false;
         }
+
+        if (abilityHelper.UseAbility(this.shiva))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbilityIfCondition(this.blink, this.nova))
+        {
+            return true;
+        }
+
+        if (!abilityHelper.CanBeCasted(this.nova, false, false))
+        {
+            if (abilityHelper.UseAbility(this.blink, 500, 300))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.force, 500, 300))
+            {
+                return true;
+            }
+        }
+
+        if (abilityHelper.UseAbility(this.veil))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.gale))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.ward))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected override bool MoveComboUseDisables(AbilityHelper abilityHelper)
+    {
+        if (base.MoveComboUseDisables(abilityHelper))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.gale))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Invoker.Alacrity
+﻿namespace O9K.Evader.Abilities.Heroes.Invoker.Alacrity;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.invoker_alacrity)]
+internal class AlacrityBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.invoker_alacrity)]
-    internal class AlacrityBase : EvaderBaseAbility, IEvadable
+    public AlacrityBase(Ability9 ability)
+        : base(ability)
     {
-        public AlacrityBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new AlacrityEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new AlacrityEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

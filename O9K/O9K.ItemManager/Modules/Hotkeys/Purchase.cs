@@ -1,94 +1,93 @@
-﻿namespace O9K.ItemManager.Modules.Hotkeys
+﻿namespace O9K.ItemManager.Modules.Hotkeys;
+
+using System;
+using System.Collections.Generic;
+
+using Core.Entities.Heroes;
+using Core.Logger;
+using Core.Managers.Entity;
+using Core.Managers.Menu;
+using Core.Managers.Menu.Items;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Players;
+using Divine.Helpers;
+
+using Metadata;
+
+using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
+
+internal class Purchase : IModule
 {
-    using System;
-    using System.Collections.Generic;
-
-    using Core.Entities.Heroes;
-    using Core.Logger;
-    using Core.Managers.Entity;
-    using Core.Managers.Menu;
-    using Core.Managers.Menu.Items;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Players;
-    using Divine.Helpers;
-
-    using Metadata;
-
-    using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
-
-    internal class Purchase : IModule
+    private readonly string[] items =
     {
-        private readonly string[] items =
+        nameof(AbilityId.item_tango),
+        nameof(AbilityId.item_clarity),
+        nameof(AbilityId.item_flask),
+        nameof(AbilityId.item_enchanted_mango),
+        nameof(AbilityId.item_tpscroll),
+        nameof(AbilityId.item_tome_of_knowledge),
+        nameof(AbilityId.item_ward_observer),
+        nameof(AbilityId.item_ward_sentry),
+    };
+
+    private readonly List<MenuHoldKey> keys = new List<MenuHoldKey>();
+
+    private Owner owner;
+
+    public Purchase(IMainMenu mainMenu)
+    {
+        var menu = mainMenu.Hotkeys.Add(new Menu("Purchase"));
+        menu.AddTranslation(Lang.Ru, "Покупка");
+        menu.AddTranslation(Lang.Cn, "采购");
+
+        foreach (var item in this.items)
         {
-            nameof(AbilityId.item_tango),
-            nameof(AbilityId.item_clarity),
-            nameof(AbilityId.item_flask),
-            nameof(AbilityId.item_enchanted_mango),
-            nameof(AbilityId.item_tpscroll),
-            nameof(AbilityId.item_tome_of_knowledge),
-            nameof(AbilityId.item_ward_observer),
-            nameof(AbilityId.item_ward_sentry),
-        };
-
-        private readonly List<MenuHoldKey> keys = new List<MenuHoldKey>();
-
-        private Owner owner;
-
-        public Purchase(IMainMenu mainMenu)
-        {
-            var menu = mainMenu.Hotkeys.Add(new Menu("Purchase"));
-            menu.AddTranslation(Lang.Ru, "Покупка");
-            menu.AddTranslation(Lang.Cn, "采购");
-
-            foreach (var item in this.items)
-            {
-                this.keys.Add(menu.Add(new MenuHoldKey(LocalizationHelper.LocalizeAbilityName(item), item)));
-            }
+            this.keys.Add(menu.Add(new MenuHoldKey(LocalizationHelper.LocalizeAbilityName(item), item)));
         }
+    }
 
-        public void Activate()
+    public void Activate()
+    {
+        this.owner = EntityManager9.Owner;
+
+        foreach (var key in this.keys)
         {
-            this.owner = EntityManager9.Owner;
-
-            foreach (var key in this.keys)
-            {
-                key.ValueChange += this.KeyOnValueChange;
-            }
+            key.ValueChange += this.KeyOnValueChange;
         }
+    }
 
-        public void Dispose()
+    public void Dispose()
+    {
+        foreach (var key in this.keys)
         {
-            foreach (var key in this.keys)
-            {
-                key.ValueChange -= this.KeyOnValueChange;
-            }
+            key.ValueChange -= this.KeyOnValueChange;
         }
+    }
 
-        private void KeyOnValueChange(object sender, KeyEventArgs args)
+    private void KeyOnValueChange(object sender, KeyEventArgs args)
+    {
+        try
         {
-            try
+            if (!args.NewValue || this.owner.Hero == null)
             {
-                if (!args.NewValue || this.owner.Hero == null)
-                {
-                    return;
-                }
-
-                var menuItem = (MenuHoldKey)sender;
-                var itemData = Ability.GetAbilityDataByName(menuItem.Name);
-
-                if (this.owner.Player.ReliableGold + this.owner.Player.UnreliableGold < itemData.Cost)
-                {
-                    return;
-                }
-
-                Player.Buy(this.owner, itemData.Id);
+                return;
             }
-            catch (Exception e)
+
+            var menuItem = (MenuHoldKey)sender;
+            var itemData = Ability.GetAbilityDataByName(menuItem.Name);
+
+            if (this.owner.Player.ReliableGold + this.owner.Player.UnreliableGold < itemData.Cost)
             {
-                Logger.Error(e);
+                return;
             }
+
+            Player.Buy(this.owner, itemData.Id);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

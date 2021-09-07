@@ -1,95 +1,94 @@
-﻿namespace O9K.AIO.Modes.KeyPress
+﻿namespace O9K.AIO.Modes.KeyPress;
+
+using System;
+
+using Base;
+
+using Core.Logger;
+
+using Divine.Game;
+using Divine.Update;
+
+using Heroes.Base;
+
+using UnitManager;
+
+using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
+
+internal abstract class KeyPressMode : BaseMode
 {
-    using System;
+    private readonly KeyPressModeMenu menu;
 
-    using Base;
-
-    using Core.Logger;
-
-    using Divine.Game;
-    using Divine.Update;
-
-    using Heroes.Base;
-
-    using UnitManager;
-
-    using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
-
-    internal abstract class KeyPressMode : BaseMode
+    protected KeyPressMode(BaseHero baseHero, KeyPressModeMenu menu)
+        : base(baseHero)
     {
-        private readonly KeyPressModeMenu menu;
+        this.UnitManager = baseHero.UnitManager;
+        this.menu = menu;
 
-        protected KeyPressMode(BaseHero baseHero, KeyPressModeMenu menu)
-            : base(baseHero)
+        this.UpdateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
+    }
+
+    protected bool LockTarget { get; set; } = true;
+
+    protected IUnitManager UnitManager { get; }
+
+    protected UpdateHandler UpdateHandler { get; }
+
+    public virtual void Disable()
+    {
+        this.UpdateHandler.IsEnabled = false;
+        this.menu.Key.ValueChange -= this.KeyOnValueChanged;
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        this.menu.Key.ValueChange -= this.KeyOnValueChanged;
+    }
+
+    public virtual void Enable()
+    {
+        this.menu.Key.ValueChange += this.KeyOnValueChanged;
+    }
+
+    protected abstract void ExecuteCombo();
+
+    protected virtual void KeyOnValueChanged(object sender, KeyEventArgs e)
+    {
+        if (e.NewValue)
         {
-            this.UnitManager = baseHero.UnitManager;
-            this.menu = menu;
+            if (this.LockTarget)
+            {
+                this.TargetManager.TargetLocked = true;
+            }
 
-            this.UpdateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
+            this.UpdateHandler.IsEnabled = true;
         }
-
-        protected bool LockTarget { get; set; } = true;
-
-        protected IUnitManager UnitManager { get; }
-
-        protected UpdateHandler UpdateHandler { get; }
-
-        public virtual void Disable()
+        else
         {
             this.UpdateHandler.IsEnabled = false;
-            this.menu.Key.ValueChange -= this.KeyOnValueChanged;
-        }
 
-        public override void Dispose()
-        {
-            base.Dispose();
-            this.menu.Key.ValueChange -= this.KeyOnValueChanged;
-        }
-
-        public virtual void Enable()
-        {
-            this.menu.Key.ValueChange += this.KeyOnValueChanged;
-        }
-
-        protected abstract void ExecuteCombo();
-
-        protected virtual void KeyOnValueChanged(object sender, KeyEventArgs e)
-        {
-            if (e.NewValue)
+            if (this.LockTarget)
             {
-                if (this.LockTarget)
-                {
-                    this.TargetManager.TargetLocked = true;
-                }
-
-                this.UpdateHandler.IsEnabled = true;
-            }
-            else
-            {
-                this.UpdateHandler.IsEnabled = false;
-
-                if (this.LockTarget)
-                {
-                    this.TargetManager.TargetLocked = false;
-                }
+                this.TargetManager.TargetLocked = false;
             }
         }
+    }
 
-        protected void OnUpdate()
+    protected void OnUpdate()
+    {
+        if (GameManager.IsPaused)
         {
-            if (GameManager.IsPaused)
-            {
-                return;
-            }
+            return;
+        }
 
-            try
-            {
-                this.ExecuteCombo();
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+        try
+        {
+            this.ExecuteCombo();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

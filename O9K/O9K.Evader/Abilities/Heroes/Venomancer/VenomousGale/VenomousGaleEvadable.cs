@@ -1,66 +1,65 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Venomancer.VenomousGale
+﻿namespace O9K.Evader.Abilities.Heroes.Venomancer.VenomousGale;
+
+using Base;
+using Base.Evadable;
+using Base.Evadable.Components;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+
+using Divine.Game;
+using Divine.Modifier.Modifiers;
+using Divine.Particle.Particles;
+
+using Metadata;
+
+using Pathfinder.Obstacles.Abilities.LinearProjectile;
+using Pathfinder.Obstacles.Modifiers;
+
+internal sealed class VenomousGaleEvadable : LinearProjectileEvadable, IModifierCounter, IParticle
 {
-    using Base;
-    using Base.Evadable;
-    using Base.Evadable.Components;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-
-    using Divine.Game;
-    using Divine.Modifier.Modifiers;
-    using Divine.Particle.Particles;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles.Abilities.LinearProjectile;
-    using Pathfinder.Obstacles.Modifiers;
-
-    internal sealed class VenomousGaleEvadable : LinearProjectileEvadable, IModifierCounter, IParticle
+    public VenomousGaleEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
+        : base(ability, pathfinder, menu)
     {
-        public VenomousGaleEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
-            : base(ability, pathfinder, menu)
-        {
-            this.Counters.Add(Abilities.PhaseShift);
-            this.Counters.Add(Abilities.Doppelganger);
-            this.Counters.Add(Abilities.DarkPact);
-            this.Counters.Add(Abilities.Spoink);
+        this.Counters.Add(Abilities.PhaseShift);
+        this.Counters.Add(Abilities.Doppelganger);
+        this.Counters.Add(Abilities.DarkPact);
+        this.Counters.Add(Abilities.Spoink);
 
-            this.ModifierCounters.UnionWith(Abilities.AllyPurge);
-            this.ModifierCounters.Add(Abilities.PressTheAttack);
-            this.ModifierCounters.UnionWith(Abilities.MagicShield);
+        this.ModifierCounters.UnionWith(Abilities.AllyPurge);
+        this.ModifierCounters.Add(Abilities.PressTheAttack);
+        this.ModifierCounters.UnionWith(Abilities.MagicShield);
+    }
+
+    public bool ModifierAllyCounter { get; } = true;
+
+    public bool ModifierEnemyCounter { get; } = false;
+
+    public void AddModifier(Modifier modifier, Unit9 modifierOwner)
+    {
+        var obstacle = new ModifierAllyObstacle(this, modifier, modifierOwner);
+        this.Pathfinder.AddObstacle(obstacle);
+    }
+
+    public void AddParticle(Particle particle, string name)
+    {
+        if (!this.Owner.IsVisible)
+        {
+            return;
         }
 
-        public bool ModifierAllyCounter { get; } = true;
+        var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
-        public bool ModifierEnemyCounter { get; } = false;
-
-        public void AddModifier(Modifier modifier, Unit9 modifierOwner)
+        var obstacle = new LinearProjectileObstacle(this, this.Ability.Owner.Position)
         {
-            var obstacle = new ModifierAllyObstacle(this, modifier, modifierOwner);
-            this.Pathfinder.AddObstacle(obstacle);
-        }
+            EndCastTime = time,
+            EndObstacleTime = time + this.Ability.ActivationDelay + (this.RangedAbility.Range / this.RangedAbility.Speed)
+        };
 
-        public void AddParticle(Particle particle, string name)
-        {
-            if (!this.Owner.IsVisible)
-            {
-                return;
-            }
+        this.Pathfinder.AddObstacle(obstacle);
+    }
 
-            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
-
-            var obstacle = new LinearProjectileObstacle(this, this.Ability.Owner.Position)
-            {
-                EndCastTime = time,
-                EndObstacleTime = time + this.Ability.ActivationDelay + (this.RangedAbility.Range / this.RangedAbility.Speed)
-            };
-
-            this.Pathfinder.AddObstacle(obstacle);
-        }
-
-        protected override void AddObstacle()
-        {
-        }
+    protected override void AddObstacle()
+    {
     }
 }

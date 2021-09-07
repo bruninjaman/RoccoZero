@@ -1,41 +1,40 @@
-﻿namespace O9K.Farm.Core.Marker
+﻿namespace O9K.Farm.Core.Marker;
+
+using System.Collections.Generic;
+
+using O9K.Core.Entities.Abilities.Base;
+
+using Units.Base;
+
+internal class DamageData
 {
-    using System.Collections.Generic;
+    public Dictionary<Ability9, int> AbilityDamage = new Dictionary<Ability9, int>();
 
-    using O9K.Core.Entities.Abilities.Base;
-
-    using Units.Base;
-
-    internal class DamageData
+    public DamageData(FarmUnit source, IEnumerable<ActiveAbility> abilities, FarmUnit target)
+        : this(source, target)
     {
-        public Dictionary<Ability9, int> AbilityDamage = new Dictionary<Ability9, int>();
-
-        public DamageData(FarmUnit source, IEnumerable<ActiveAbility> abilities, FarmUnit target)
-            : this(source, target)
+        if (target.IsAlly || target.IsTower)
         {
-            if (target.IsAlly || target.IsTower)
-            {
-                return;
-            }
-
-            foreach (var ability in abilities)
-            {
-                this.AbilityDamage.Add(ability, ability.GetDamage(target.Unit));
-            }
+            return;
         }
 
-        public DamageData(FarmUnit source, FarmUnit target)
+        foreach (var ability in abilities)
         {
-            if (target.IsTower && target.Unit.HealthPercentage > 10)
-            {
-                this.AutoAttackDamage = 0;
-            }
-            else
-            {
-                this.AutoAttackDamage = source.GetDamage(target);
-            }
+            this.AbilityDamage.Add(ability, ability.GetDamage(target.Unit));
         }
-
-        public int AutoAttackDamage { get; }
     }
+
+    public DamageData(FarmUnit source, FarmUnit target)
+    {
+        if (target.IsTower && target.Unit.HealthPercentage > 10)
+        {
+            this.AutoAttackDamage = 0;
+        }
+        else
+        {
+            this.AutoAttackDamage = source.GetDamage(target);
+        }
+    }
+
+    public int AutoAttackDamage { get; }
 }

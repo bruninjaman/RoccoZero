@@ -1,31 +1,30 @@
-﻿namespace O9K.Evader.Abilities.Heroes.AncientApparition.ColdFeet
+﻿namespace O9K.Evader.Abilities.Heroes.AncientApparition.ColdFeet;
+
+using Base;
+
+using Core.Entities.Units;
+
+using Divine.Modifier.Modifiers;
+
+using Pathfinder.Obstacles.Modifiers;
+
+internal class ColdFeetEvadableModifier : ModifierAllyObstacle
 {
-    using Base;
+    private readonly float duration;
 
-    using Core.Entities.Units;
-
-    using Divine.Modifier.Modifiers;
-
-    using Pathfinder.Obstacles.Modifiers;
-
-    internal class ColdFeetEvadableModifier : ModifierAllyObstacle
+    public ColdFeetEvadableModifier(IModifierCounter ability, Modifier modifier, Unit9 modifierOwner, float duration)
+        : base(ability, modifier, modifierOwner)
     {
-        private readonly float duration;
+        this.duration = duration;
+    }
 
-        public ColdFeetEvadableModifier(IModifierCounter ability, Modifier modifier, Unit9 modifierOwner, float duration)
-            : base(ability, modifier, modifierOwner)
+    public override float GetEvadeTime(Unit9 ally, bool blink)
+    {
+        if (!this.Modifier.IsValid)
         {
-            this.duration = duration;
+            return 0;
         }
 
-        public override float GetEvadeTime(Unit9 ally, bool blink)
-        {
-            if (!this.Modifier.IsValid)
-            {
-                return 0;
-            }
-
-            return this.duration - this.Modifier.ElapsedTime;
-        }
+        return this.duration - this.Modifier.ElapsedTime;
     }
 }

@@ -1,23 +1,22 @@
-﻿namespace O9K.AIO.Modes.MoveCombo
+﻿namespace O9K.AIO.Modes.MoveCombo;
+
+using Heroes.Base;
+
+using KeyPress;
+
+internal class MoveComboMode : KeyPressMode
 {
-    using Heroes.Base;
+    private readonly MoveComboModeMenu menu;
 
-    using KeyPress;
-
-    internal class MoveComboMode : KeyPressMode
+    public MoveComboMode(BaseHero baseHero, MoveComboModeMenu menu)
+        : base(baseHero, menu)
     {
-        private readonly MoveComboModeMenu menu;
+        this.menu = menu;
+    }
 
-        public MoveComboMode(BaseHero baseHero, MoveComboModeMenu menu)
-            : base(baseHero, menu)
-        {
-            this.menu = menu;
-        }
-
-        protected override void ExecuteCombo()
-        {
-            this.UnitManager.ExecuteMoveCombo(this.menu);
-            this.UnitManager.Move();
-        }
+    protected override void ExecuteCombo()
+    {
+        this.UnitManager.ExecuteMoveCombo(this.menu);
+        this.UnitManager.Move();
     }
 }

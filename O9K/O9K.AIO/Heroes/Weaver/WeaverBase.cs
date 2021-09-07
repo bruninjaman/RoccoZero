@@ -1,39 +1,38 @@
-﻿namespace O9K.AIO.Heroes.Weaver
+﻿namespace O9K.AIO.Heroes.Weaver;
+
+using AIO.Modes.Permanent;
+
+using Base;
+
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Modes;
+
+[HeroId(HeroId.npc_dota_hero_weaver)]
+internal class WeaverBase : BaseHero
 {
-    using AIO.Modes.Permanent;
+    private readonly HealthTrackerMode healthTrackerMode;
 
-    using Base;
-
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Modes;
-
-    [HeroId(HeroId.npc_dota_hero_weaver)]
-    internal class WeaverBase : BaseHero
+    public WeaverBase()
     {
-        private readonly HealthTrackerMode healthTrackerMode;
+        this.healthTrackerMode = new HealthTrackerMode(this, new PermanentModeMenu(this.Menu.RootMenu, "Health tracker"));
+    }
 
-        public WeaverBase()
-        {
-            this.healthTrackerMode = new HealthTrackerMode(this, new PermanentModeMenu(this.Menu.RootMenu, "Health tracker"));
-        }
+    public override void Dispose()
+    {
+        base.Dispose();
+        this.healthTrackerMode.Dispose();
+    }
 
-        public override void Dispose()
-        {
-            base.Dispose();
-            this.healthTrackerMode.Dispose();
-        }
+    protected override void DisableCustomModes()
+    {
+        this.healthTrackerMode.Disable();
+    }
 
-        protected override void DisableCustomModes()
-        {
-            this.healthTrackerMode.Disable();
-        }
-
-        protected override void EnableCustomModes()
-        {
-            this.healthTrackerMode.Enable();
-        }
+    protected override void EnableCustomModes()
+    {
+        this.healthTrackerMode.Enable();
     }
 }

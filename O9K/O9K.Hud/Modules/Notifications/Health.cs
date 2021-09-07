@@ -1,112 +1,111 @@
-﻿namespace O9K.Hud.Modules.Notifications
+﻿namespace O9K.Hud.Modules.Notifications;
+
+using System;
+
+using Core.Entities.Units;
+using Core.Helpers;
+using Core.Logger;
+using Core.Managers.Entity;
+using Core.Managers.Menu;
+using Core.Managers.Menu.EventArgs;
+using Core.Managers.Menu.Items;
+
+using Divine.Entity.Entities.Components;
+
+using Helpers.Notificator;
+using Helpers.Notificator.Notifications;
+
+using MainMenu;
+
+internal class Health : IHudModule
 {
-    using System;
+    private readonly MenuSwitcher enabled;
 
-    using Core.Entities.Units;
-    using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Entity;
-    using Core.Managers.Menu;
-    using Core.Managers.Menu.EventArgs;
-    using Core.Managers.Menu.Items;
+    private readonly MenuSlider hpThreshold;
 
-    using Divine.Entity.Entities.Components;
+    private readonly MenuSwitcher moveCamera;
 
-    using Helpers.Notificator;
-    using Helpers.Notificator.Notifications;
+    private readonly INotificator notificator;
 
-    using MainMenu;
+    private readonly MultiSleeper sleeper = new MultiSleeper();
 
-    internal class Health : IHudModule
+    private Team ownerTeam;
+
+    public Health(IHudMenu hudMenu, INotificator notificator)
     {
-        private readonly MenuSwitcher enabled;
+        this.notificator = notificator;
 
-        private readonly MenuSlider hpThreshold;
+        var menu = hudMenu.NotificationsMenu.Add(new Menu("Health"));
+        menu.AddTranslation(Lang.Ru, "Здоровье");
+        menu.AddTranslation(Lang.Cn, "生命值");
 
-        private readonly MenuSwitcher moveCamera;
+        this.enabled = menu.Add(new MenuSwitcher("Enabled", false)).SetTooltip("Notify on low enemy health");
+        this.enabled.AddTranslation(Lang.Ru, "Включено");
+        this.enabled.AddTooltipTranslation(Lang.Ru, "Оповещать о низком здоровье врага");
+        this.enabled.AddTranslation(Lang.Cn, "启用");
+        this.enabled.AddTooltipTranslation(Lang.Cn, "通知敌人血量极低");
 
-        private readonly INotificator notificator;
+        this.moveCamera = menu.Add(new MenuSwitcher("Move camera")).SetTooltip("Move camera when clicked");
+        this.moveCamera.AddTranslation(Lang.Ru, "Двигать камеру");
+        this.moveCamera.AddTooltipTranslation(Lang.Ru, "Двигать камеру при нажатии");
+        this.moveCamera.AddTranslation(Lang.Cn, "移动视野");
+        this.moveCamera.AddTooltipTranslation(Lang.Cn, "单击时移动视角");
 
-        private readonly MultiSleeper sleeper = new MultiSleeper();
+        this.hpThreshold = menu.Add(new MenuSlider("Health%", 30, 5, 60));
+        this.hpThreshold.AddTranslation(Lang.Ru, "Здоровье%");
+        this.hpThreshold.AddTranslation(Lang.Cn, "生命值％");
+    }
 
-        private Team ownerTeam;
+    public void Activate()
+    {
+        this.ownerTeam = EntityManager9.Owner.Team;
+        this.enabled.ValueChange += this.EnabledOnValueChange;
+    }
 
-        public Health(IHudMenu hudMenu, INotificator notificator)
+    public void Dispose()
+    {
+        this.enabled.ValueChange -= this.EnabledOnValueChange;
+        EntityManager9.UnitMonitor.UnitHealthChange -= this.OnUnitHealthChange;
+    }
+
+    private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
+    {
+        if (e.NewValue)
         {
-            this.notificator = notificator;
-
-            var menu = hudMenu.NotificationsMenu.Add(new Menu("Health"));
-            menu.AddTranslation(Lang.Ru, "Здоровье");
-            menu.AddTranslation(Lang.Cn, "生命值");
-
-            this.enabled = menu.Add(new MenuSwitcher("Enabled", false)).SetTooltip("Notify on low enemy health");
-            this.enabled.AddTranslation(Lang.Ru, "Включено");
-            this.enabled.AddTooltipTranslation(Lang.Ru, "Оповещать о низком здоровье врага");
-            this.enabled.AddTranslation(Lang.Cn, "启用");
-            this.enabled.AddTooltipTranslation(Lang.Cn, "通知敌人血量极低");
-
-            this.moveCamera = menu.Add(new MenuSwitcher("Move camera")).SetTooltip("Move camera when clicked");
-            this.moveCamera.AddTranslation(Lang.Ru, "Двигать камеру");
-            this.moveCamera.AddTooltipTranslation(Lang.Ru, "Двигать камеру при нажатии");
-            this.moveCamera.AddTranslation(Lang.Cn, "移动视野");
-            this.moveCamera.AddTooltipTranslation(Lang.Cn, "单击时移动视角");
-
-            this.hpThreshold = menu.Add(new MenuSlider("Health%", 30, 5, 60));
-            this.hpThreshold.AddTranslation(Lang.Ru, "Здоровье%");
-            this.hpThreshold.AddTranslation(Lang.Cn, "生命值％");
+            EntityManager9.UnitMonitor.UnitHealthChange += this.OnUnitHealthChange;
         }
-
-        public void Activate()
+        else
         {
-            this.ownerTeam = EntityManager9.Owner.Team;
-            this.enabled.ValueChange += this.EnabledOnValueChange;
-        }
-
-        public void Dispose()
-        {
-            this.enabled.ValueChange -= this.EnabledOnValueChange;
             EntityManager9.UnitMonitor.UnitHealthChange -= this.OnUnitHealthChange;
         }
+    }
 
-        private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
+    private void OnUnitHealthChange(Unit9 unit, float health)
+    {
+        try
         {
-            if (e.NewValue)
+            if (!unit.IsHero || unit.IsIllusion || unit.Team == this.ownerTeam)
             {
-                EntityManager9.UnitMonitor.UnitHealthChange += this.OnUnitHealthChange;
+                return;
             }
-            else
+
+            if (this.sleeper.IsSleeping(unit.Handle) || unit.Distance(Hud.CameraPosition) < 900)
             {
-                EntityManager9.UnitMonitor.UnitHealthChange -= this.OnUnitHealthChange;
+                return;
             }
+
+            var hpPct = (health / unit.MaximumHealth) * 100;
+            if (hpPct > this.hpThreshold)
+            {
+                return;
+            }
+
+            this.notificator.PushNotification(new HealthNotification(unit, this.moveCamera));
+            this.sleeper.Sleep(unit.Handle, 20);
         }
-
-        private void OnUnitHealthChange(Unit9 unit, float health)
+        catch (Exception e)
         {
-            try
-            {
-                if (!unit.IsHero || unit.IsIllusion || unit.Team == this.ownerTeam)
-                {
-                    return;
-                }
-
-                if (this.sleeper.IsSleeping(unit.Handle) || unit.Distance(Hud.CameraPosition) < 900)
-                {
-                    return;
-                }
-
-                var hpPct = (health / unit.MaximumHealth) * 100;
-                if (hpPct > this.hpThreshold)
-                {
-                    return;
-                }
-
-                this.notificator.PushNotification(new HealthNotification(unit, this.moveCamera));
-                this.sleeper.Sleep(unit.Handle, 20);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            Logger.Error(e);
         }
     }
 }

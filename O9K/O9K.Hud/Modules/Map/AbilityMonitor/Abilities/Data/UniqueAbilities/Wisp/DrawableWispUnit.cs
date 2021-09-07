@@ -1,96 +1,95 @@
-﻿namespace O9K.Hud.Modules.Map.AbilityMonitor.Abilities.Data.UniqueAbilities.Wisp
+﻿namespace O9K.Hud.Modules.Map.AbilityMonitor.Abilities.Data.UniqueAbilities.Wisp;
+
+using Base;
+
+using Core.Entities.Units;
+using Core.Helpers;
+using Divine.Numerics;
+using Divine.Renderer;
+using Divine.Particle.Particles;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+internal class DrawableWispUnit : IDrawableAbility
 {
-    using Base;
+    private readonly string minimapHeroTexture;
 
-    using Core.Entities.Units;
-    using Core.Helpers;
-    using Divine.Numerics;
-    using Divine.Renderer;
-    using Divine.Particle.Particles;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly Particle particle;
 
-    using Helpers;
+    private readonly Unit9 unit;
 
-    internal class DrawableWispUnit : IDrawableAbility
+    public DrawableWispUnit(Unit9 unit, Particle particle)
     {
-        private readonly string minimapHeroTexture;
+        this.unit = unit;
+        this.particle = particle;
+        this.HeroTexture = unit.Name;
+        this.minimapHeroTexture = unit.Name;
+    }
 
-        private readonly Particle particle;
+    public AbilityId AbilityId { get; set; }
 
-        private readonly Unit9 unit;
+    public string AbilityTexture { get; } = string.Empty;
 
-        public DrawableWispUnit(Unit9 unit, Particle particle)
+    public bool Draw
+    {
+        get
         {
-            this.unit = unit;
-            this.particle = particle;
-            this.HeroTexture = unit.Name;
-            this.minimapHeroTexture = unit.Name;
+            return !this.unit.IsVisible && this.unit.IsAlive && this.particle?.IsValid == true;
+        }
+    }
+
+    public string HeroTexture { get; }
+
+    public bool IsShowingRange { get; } = false;
+
+    public bool IsValid
+    {
+        get
+        {
+            return this.unit.IsValid && this.particle.IsValid;
+        }
+    }
+
+    public Vector3 Position { get; set; }
+
+    public void DrawOnMap(IMinimap minimap)
+    {
+        var particlePosition = this.particle.Position;
+        if (particlePosition.IsZero)
+        {
+            return;
         }
 
-        public AbilityId AbilityId { get; set; }
-
-        public string AbilityTexture { get; } = string.Empty;
-
-        public bool Draw
+        var position = minimap.WorldToScreen(particlePosition, 45 * Hud.Info.ScreenRatio);
+        if (position.IsZero)
         {
-            get
-            {
-                return !this.unit.IsVisible && this.unit.IsAlive && this.particle?.IsValid == true;
-            }
+            return;
         }
 
-        public string HeroTexture { get; }
+        RendererManager.DrawImage("o9k.outline_red", position * 1.12f);
+        RendererManager.DrawImage(this.HeroTexture, position, ImageType.RoundUnit);
+    }
 
-        public bool IsShowingRange { get; } = false;
-
-        public bool IsValid
+    public void DrawOnMinimap(IMinimap minimap)
+    {
+        var particlePosition = this.particle.Position;
+        if (particlePosition.IsZero)
         {
-            get
-            {
-                return this.unit.IsValid && this.particle.IsValid;
-            }
+            return;
         }
 
-        public Vector3 Position { get; set; }
-
-        public void DrawOnMap(IMinimap minimap)
+        var position = minimap.WorldToMinimap(particlePosition, 25 * Hud.Info.ScreenRatio);
+        if (position.IsZero)
         {
-            var particlePosition = this.particle.Position;
-            if (particlePosition.IsZero)
-            {
-                return;
-            }
-
-            var position = minimap.WorldToScreen(particlePosition, 45 * Hud.Info.ScreenRatio);
-            if (position.IsZero)
-            {
-                return;
-            }
-
-            RendererManager.DrawImage("o9k.outline_red", position * 1.12f);
-            RendererManager.DrawImage(this.HeroTexture, position, ImageType.RoundUnit);
+            return;
         }
 
-        public void DrawOnMinimap(IMinimap minimap)
-        {
-            var particlePosition = this.particle.Position;
-            if (particlePosition.IsZero)
-            {
-                return;
-            }
+        RendererManager.DrawImage("o9k.outline_red", position * 1.08f);
+        RendererManager.DrawImage(this.minimapHeroTexture, position, ImageType.MiniUnit);
+    }
 
-            var position = minimap.WorldToMinimap(particlePosition, 25 * Hud.Info.ScreenRatio);
-            if (position.IsZero)
-            {
-                return;
-            }
-
-            RendererManager.DrawImage("o9k.outline_red", position * 1.08f);
-            RendererManager.DrawImage(this.minimapHeroTexture, position, ImageType.MiniUnit);
-        }
-
-        public void RemoveRange()
-        {
-        }
+    public void RemoveRange()
+    {
     }
 }

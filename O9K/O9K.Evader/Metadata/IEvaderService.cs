@@ -1,11 +1,10 @@
-﻿namespace O9K.Evader.Metadata
+﻿namespace O9K.Evader.Metadata;
+
+using System;
+
+internal interface IEvaderService : IDisposable
 {
-    using System;
+    LoadOrder LoadOrder { get; }
 
-    internal interface IEvaderService : IDisposable
-    {
-        LoadOrder LoadOrder { get; }
-
-        void Activate();
-    }
+    void Activate();
 }

@@ -1,38 +1,37 @@
-﻿namespace O9K.AIO.Heroes.Kunkka.Modes
+﻿namespace O9K.AIO.Heroes.Kunkka.Modes;
+
+using System.Linq;
+
+using AIO.Modes.KeyPress;
+
+using Base;
+
+using Units;
+
+internal class TorrentStackMode : KeyPressMode
 {
-    using System.Linq;
+    private Kunkka hero;
 
-    using AIO.Modes.KeyPress;
-
-    using Base;
-
-    using Units;
-
-    internal class TorrentStackMode : KeyPressMode
+    public TorrentStackMode(BaseHero baseHero, KeyPressModeMenu menu)
+        : base(baseHero, menu)
     {
-        private Kunkka hero;
+    }
 
-        public TorrentStackMode(BaseHero baseHero, KeyPressModeMenu menu)
-            : base(baseHero, menu)
+    private Kunkka Hero
+    {
+        get
         {
-        }
-
-        private Kunkka Hero
-        {
-            get
+            if (this.hero == null)
             {
-                if (this.hero == null)
-                {
-                    this.hero = this.UnitManager.ControllableUnits.FirstOrDefault(x => this.Owner.Hero.Handle == x.Handle) as Kunkka;
-                }
-
-                return this.hero;
+                this.hero = this.UnitManager.ControllableUnits.FirstOrDefault(x => this.Owner.Hero.Handle == x.Handle) as Kunkka;
             }
-        }
 
-        protected override void ExecuteCombo()
-        {
-            this.Hero?.StackAncients();
+            return this.hero;
         }
+    }
+
+    protected override void ExecuteCombo()
+    {
+        this.Hero?.StackAncients();
     }
 }

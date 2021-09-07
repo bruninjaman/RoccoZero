@@ -1,30 +1,29 @@
-﻿namespace O9K.Evader.Pathfinder.Obstacles.Modifiers
+﻿namespace O9K.Evader.Pathfinder.Obstacles.Modifiers;
+
+using Core.Entities.Units;
+
+using Divine.Modifier.Modifiers;
+
+using O9K.Evader.Abilities.Base;
+
+internal class ModifierStackAllyObstacle : ModifierAllyObstacle
 {
-    using Core.Entities.Units;
+    private readonly int stacks;
 
-    using Divine.Modifier.Modifiers;
-
-    using O9K.Evader.Abilities.Base;
-
-    internal class ModifierStackAllyObstacle : ModifierAllyObstacle
+    public ModifierStackAllyObstacle(IModifierCounter ability, Modifier modifier, Unit9 modifierOwner, int stacks)
+        : base(ability, modifier, modifierOwner)
     {
-        private readonly int stacks;
+        this.stacks = stacks;
+    }
 
-        public ModifierStackAllyObstacle(IModifierCounter ability, Modifier modifier, Unit9 modifierOwner, int stacks)
-            : base(ability, modifier, modifierOwner)
+    public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
+    {
+        if (!this.Modifier.IsValid)
         {
-            this.stacks = stacks;
+            //todo remove this if updatemanager is used for onupdate
+            return false;
         }
 
-        public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
-        {
-            if (!this.Modifier.IsValid)
-            {
-                //todo remove this if updatemanager is used for onupdate
-                return false;
-            }
-
-            return this.ModifierOwner.Equals(unit) && this.Modifier.StackCount >= this.stacks;
-        }
+        return this.ModifierOwner.Equals(unit) && this.Modifier.StackCount >= this.stacks;
     }
 }

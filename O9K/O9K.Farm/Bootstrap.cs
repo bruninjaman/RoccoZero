@@ -1,46 +1,45 @@
-﻿namespace O9K.Farm
+﻿namespace O9K.Farm;
+
+using System;
+
+using Core;
+
+using Divine.Service;
+
+using Menu;
+
+using O9K.Core.Logger;
+
+//[ExportPlugin("O9K // Farm", priority: int.MaxValue)]
+public class Bootstrap : Bootstrapper
 {
-    using System;
+    private FarmManager farmManager;
 
-    using Core;
+    private MenuManager menuManager;
 
-    using Divine.Service;
-
-    using Menu;
-
-    using O9K.Core.Logger;
-
-    //[ExportPlugin("O9K // Farm", priority: int.MaxValue)]
-    public class Bootstrap : Bootstrapper
+    protected override void OnActivate()
     {
-        private FarmManager farmManager;
-
-        private MenuManager menuManager;
-
-        protected override void OnActivate()
+        try
         {
-            try
-            {
-                this.menuManager = new MenuManager();
-                this.farmManager = new FarmManager(this.menuManager);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            this.menuManager = new MenuManager();
+            this.farmManager = new FarmManager(this.menuManager);
         }
-
-        protected override void OnDeactivate()
+        catch (Exception e)
         {
-            try
-            {
-                this.farmManager.Dispose();
-                this.menuManager.Dispose();
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            Logger.Error(e);
+        }
+    }
+
+    protected override void OnDeactivate()
+    {
+        try
+        {
+            this.farmManager.Dispose();
+            this.menuManager.Dispose();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

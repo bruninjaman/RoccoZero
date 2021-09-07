@@ -1,23 +1,22 @@
-﻿namespace O9K.Evader.Metadata
+﻿namespace O9K.Evader.Metadata;
+
+using System.Collections.Generic;
+
+using Abilities.Base.Evadable;
+using Abilities.Base.Usable.BlinkAbility;
+using Abilities.Base.Usable.CounterAbility;
+using Abilities.Base.Usable.DisableAbility;
+using Abilities.Base.Usable.DodgeAbility;
+
+internal interface IAbilityManager
 {
-    using System.Collections.Generic;
+    List<EvadableAbility> EvadableAbilities { get; }
 
-    using Abilities.Base.Evadable;
-    using Abilities.Base.Usable.BlinkAbility;
-    using Abilities.Base.Usable.CounterAbility;
-    using Abilities.Base.Usable.DisableAbility;
-    using Abilities.Base.Usable.DodgeAbility;
+    List<BlinkAbility> UsableBlinkAbilities { get; }
 
-    internal interface IAbilityManager
-    {
-        List<EvadableAbility> EvadableAbilities { get; }
+    List<CounterAbility> UsableCounterAbilities { get; }
 
-        List<BlinkAbility> UsableBlinkAbilities { get; }
+    List<DisableAbility> UsableDisableAbilities { get; }
 
-        List<CounterAbility> UsableCounterAbilities { get; }
-
-        List<DisableAbility> UsableDisableAbilities { get; }
-
-        List<DodgeAbility> UsableDodgeAbilities { get; }
-    }
+    List<DodgeAbility> UsableDodgeAbilities { get; }
 }

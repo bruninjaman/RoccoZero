@@ -1,40 +1,39 @@
-﻿namespace O9K.Evader.Abilities.Heroes.TemplarAssassin.Meld
+﻿namespace O9K.Evader.Abilities.Heroes.TemplarAssassin.Meld;
+
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+
+internal class MeldUsable : CounterInvisibilityAbility
 {
-    using Base.Usable.CounterAbility;
+    private readonly IActionManager actionManager;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-
-    internal class MeldUsable : CounterInvisibilityAbility
+    public MeldUsable(Ability9 ability, IActionManager actionManager, IMainMenu menu)
+        : base(ability, menu)
     {
-        private readonly IActionManager actionManager;
+        this.actionManager = actionManager;
+    }
 
-        public MeldUsable(Ability9 ability, IActionManager actionManager, IMainMenu menu)
-            : base(ability, menu)
+    public override float GetRequiredTime(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        return this.ActiveAbility.GetCastDelay();
+    }
+
+    public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        this.MoveCamera(this.Owner.Position);
+        if (!this.ActiveAbility.UseAbility(false, true))
         {
-            this.actionManager = actionManager;
+            return false;
         }
 
-        public override float GetRequiredTime(Unit9 ally, Unit9 enemy, IObstacle obstacle)
-        {
-            return this.ActiveAbility.GetCastDelay();
-        }
+        this.actionManager.BlockInput(this.Owner, 1);
 
-        public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
-        {
-            this.MoveCamera(this.Owner.Position);
-            if (!this.ActiveAbility.UseAbility(false, true))
-            {
-                return false;
-            }
-
-            this.actionManager.BlockInput(this.Owner, 1);
-
-            return true;
-        }
+        return true;
     }
 }

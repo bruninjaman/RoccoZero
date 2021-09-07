@@ -1,13 +1,12 @@
-﻿namespace O9K.Hud.Modules.Map.Predictions.LaneCreeps.LaneData
+﻿namespace O9K.Hud.Modules.Map.Predictions.LaneCreeps.LaneData;
+
+internal enum LanePosition
 {
-    internal enum LanePosition
-    {
-        Unknown,
+    Unknown,
 
-        Easy,
+    Easy,
 
-        Middle,
+    Middle,
 
-        Hard
-    }
+    Hard
 }

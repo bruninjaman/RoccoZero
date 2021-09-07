@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.AncientApparition.ChillingTouch
+﻿namespace O9K.Evader.Abilities.Heroes.AncientApparition.ChillingTouch;
+
+using Base;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.ancient_apparition_chilling_touch)]
+internal class ChillingTouchBase : EvaderBaseAbility, IUsable<CounterEnemyAbility>
 {
-    using Base;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.ancient_apparition_chilling_touch)]
-    internal class ChillingTouchBase : EvaderBaseAbility, IUsable<CounterEnemyAbility>
+    public ChillingTouchBase(Ability9 ability)
+        : base(ability)
     {
-        public ChillingTouchBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public CounterEnemyAbility GetUsableAbility()
-        {
-            return new CounterEnemyAbility(this.Ability, this.Menu);
-        }
+    public CounterEnemyAbility GetUsableAbility()
+    {
+        return new CounterEnemyAbility(this.Ability, this.Menu);
     }
 }

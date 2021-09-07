@@ -1,28 +1,27 @@
-﻿namespace O9K.Evader.Abilities.Base
+﻿namespace O9K.Evader.Abilities.Base;
+
+using System.Collections.Generic;
+
+using Core.Entities.Units;
+using Core.Managers.Menu.Items;
+using Divine.Modifier.Modifiers;
+using Divine.Entity.Entities.Abilities.Components;
+
+internal interface IModifierCounter
 {
-    using System.Collections.Generic;
+    bool ModifierAllyCounter { get; }
 
-    using Core.Entities.Units;
-    using Core.Managers.Menu.Items;
-    using Divine.Modifier.Modifiers;
-    using Divine.Entity.Entities.Abilities.Components;
+    HashSet<AbilityId> ModifierBlinks { get; }
 
-    internal interface IModifierCounter
-    {
-        bool ModifierAllyCounter { get; }
+    MenuSwitcher ModifierCounterEnabled { get; }
 
-        HashSet<AbilityId> ModifierBlinks { get; }
+    HashSet<AbilityId> ModifierCounters { get; }
 
-        MenuSwitcher ModifierCounterEnabled { get; }
+    HashSet<AbilityId> ModifierDisables { get; }
 
-        HashSet<AbilityId> ModifierCounters { get; }
+    bool ModifierEnemyCounter { get; }
 
-        HashSet<AbilityId> ModifierDisables { get; }
+    Unit9 Owner { get; }
 
-        bool ModifierEnemyCounter { get; }
-
-        Unit9 Owner { get; }
-
-        void AddModifier(Modifier modifier, Unit9 modifierOwner);
-    }
+    void AddModifier(Modifier modifier, Unit9 modifierOwner);
 }

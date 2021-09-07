@@ -1,40 +1,39 @@
-﻿namespace O9K.AIO.Heroes.Phoenix
+﻿namespace O9K.AIO.Heroes.Phoenix;
+
+using AIO.Modes.KeyPress;
+
+using Base;
+
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Modes;
+
+[HeroId(HeroId.npc_dota_hero_phoenix)]
+internal class PhoenixBase : BaseHero
 {
-    using AIO.Modes.KeyPress;
+    private readonly SunRayAllyMode sunRayAllyMode;
 
-    using Base;
-
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Modes;
-
-    [HeroId(HeroId.npc_dota_hero_phoenix)]
-    internal class PhoenixBase : BaseHero
+    public PhoenixBase()
     {
-        private readonly SunRayAllyMode sunRayAllyMode;
+        this.sunRayAllyMode = new SunRayAllyMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Sun ray ally"));
+    }
 
-        public PhoenixBase()
-        {
-            this.sunRayAllyMode = new SunRayAllyMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Sun ray ally"));
-        }
+    public override void Dispose()
+    {
+        base.Dispose();
+        this.sunRayAllyMode.Dispose();
+    }
 
-        public override void Dispose()
-        {
-            base.Dispose();
-            this.sunRayAllyMode.Dispose();
-        }
+    protected override void DisableCustomModes()
 
-        protected override void DisableCustomModes()
+    {
+        this.sunRayAllyMode.Disable();
+    }
 
-        {
-            this.sunRayAllyMode.Disable();
-        }
-
-        protected override void EnableCustomModes()
-        {
-            this.sunRayAllyMode.Enable();
-        }
+    protected override void EnableCustomModes()
+    {
+        this.sunRayAllyMode.Enable();
     }
 }

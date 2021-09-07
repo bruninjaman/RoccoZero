@@ -1,47 +1,46 @@
-﻿namespace O9K.Evader.Abilities.Heroes.ShadowFiend.Shadowraze
+﻿namespace O9K.Evader.Abilities.Heroes.ShadowFiend.Shadowraze;
+
+using Base.Evadable;
+
+using O9K.Core.Geometry;
+
+using Pathfinder.Obstacles.Abilities.AreaOfEffect;
+using Pathfinder.Obstacles.Types;
+
+internal class ShadowrazeObstacle : AreaOfEffectObstacle, IUpdatable
 {
-    using Base.Evadable;
+    private readonly float range;
 
-    using O9K.Core.Geometry;
-
-    using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-    using Pathfinder.Obstacles.Types;
-
-    internal class ShadowrazeObstacle : AreaOfEffectObstacle, IUpdatable
+    public ShadowrazeObstacle(EvadableAbility ability, float range)
+        : base(ability)
     {
-        private readonly float range;
+        this.range = range;
+        this.IsUpdated = false;
+    }
 
-        public ShadowrazeObstacle(EvadableAbility ability, float range)
-            : base(ability)
+    public bool IsUpdated { get; private set; }
+
+    public override void Draw()
+    {
+        if (this.NavMeshId == null)
         {
-            this.range = range;
-            this.IsUpdated = false;
+            return;
         }
 
-        public bool IsUpdated { get; private set; }
+        this.Drawer.DrawCircle(this.Position, this.Radius);
+    }
 
-        public override void Draw()
-        {
-            if (this.NavMeshId == null)
-            {
-                return;
-            }
+    public void Update()
+    {
+        //if (this.Caster.IsRotating)
+        //{
+        //    return;
+        //}
 
-            this.Drawer.DrawCircle(this.Position, this.Radius);
-        }
-
-        public void Update()
-        {
-            //if (this.Caster.IsRotating)
-            //{
-            //    return;
-            //}
-
-            this.Position = this.Caster.InFront(this.range);
-            this.Polygon = new Polygon.Circle(this.Position, this.Radius);
-            this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.Position, this.Radius);
-            this.NavMeshId = 1; // hack
-            this.IsUpdated = true;
-        }
+        this.Position = this.Caster.InFront(this.range);
+        this.Polygon = new Polygon.Circle(this.Position, this.Radius);
+        this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.Position, this.Radius);
+        this.NavMeshId = 1; // hack
+        this.IsUpdated = true;
     }
 }

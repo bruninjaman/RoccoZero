@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Medusa.StoneGaze
+﻿namespace O9K.Evader.Abilities.Heroes.Medusa.StoneGaze;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.medusa_stone_gaze)]
+internal class StoneGazeBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.medusa_stone_gaze)]
-    internal class StoneGazeBase : EvaderBaseAbility, IEvadable
+    public StoneGazeBase(Ability9 ability)
+        : base(ability)
     {
-        public StoneGazeBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new StoneGazeEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new StoneGazeEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

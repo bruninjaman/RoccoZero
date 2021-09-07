@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Windranger.FocusFire
+﻿namespace O9K.Evader.Abilities.Heroes.Windranger.FocusFire;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.windrunner_focusfire)]
+internal class FocusFireBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.windrunner_focusfire)]
-    internal class FocusFireBase : EvaderBaseAbility, IEvadable
+    public FocusFireBase(Ability9 ability)
+        : base(ability)
     {
-        public FocusFireBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new FocusFireEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new FocusFireEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

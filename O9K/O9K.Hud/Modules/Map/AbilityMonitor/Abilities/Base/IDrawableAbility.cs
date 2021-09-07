@@ -1,30 +1,29 @@
-﻿namespace O9K.Hud.Modules.Map.AbilityMonitor.Abilities.Base
+﻿namespace O9K.Hud.Modules.Map.AbilityMonitor.Abilities.Base;
+
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+internal interface IDrawableAbility
 {
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities.Components;
+    AbilityId AbilityId { get; set; }
 
-    using Helpers;
+    string AbilityTexture { get; }
 
-    internal interface IDrawableAbility
-    {
-        AbilityId AbilityId { get; set; }
+    bool Draw { get; }
 
-        string AbilityTexture { get; }
+    string HeroTexture { get; }
 
-        bool Draw { get; }
+    bool IsShowingRange { get; }
 
-        string HeroTexture { get; }
+    bool IsValid { get; }
 
-        bool IsShowingRange { get; }
+    Vector3 Position { get; set; }
 
-        bool IsValid { get; }
+    void DrawOnMap(IMinimap minimap);
 
-        Vector3 Position { get; set; }
+    void DrawOnMinimap(IMinimap minimap);
 
-        void DrawOnMap(IMinimap minimap);
-
-        void DrawOnMinimap(IMinimap minimap);
-
-        void RemoveRange();
-    }
+    void RemoveRange();
 }

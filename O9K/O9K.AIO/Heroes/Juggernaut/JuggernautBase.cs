@@ -1,39 +1,38 @@
-﻿namespace O9K.AIO.Heroes.Juggernaut
+﻿namespace O9K.AIO.Heroes.Juggernaut;
+
+using AIO.Modes.Permanent;
+
+using Base;
+
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Modes;
+
+[HeroId(HeroId.npc_dota_hero_juggernaut)]
+internal class JuggernautBase : BaseHero
 {
-    using AIO.Modes.Permanent;
+    private readonly ControlWardMode controlWardMode;
 
-    using Base;
-
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Modes;
-
-    [HeroId(HeroId.npc_dota_hero_juggernaut)]
-    internal class JuggernautBase : BaseHero
+    public JuggernautBase()
     {
-        private readonly ControlWardMode controlWardMode;
+        this.controlWardMode = new ControlWardMode(this, new PermanentModeMenu(this.Menu.RootMenu, "Healing ward control"));
+    }
 
-        public JuggernautBase()
-        {
-            this.controlWardMode = new ControlWardMode(this, new PermanentModeMenu(this.Menu.RootMenu, "Healing ward control"));
-        }
+    public override void Dispose()
+    {
+        base.Dispose();
+        this.controlWardMode.Dispose();
+    }
 
-        public override void Dispose()
-        {
-            base.Dispose();
-            this.controlWardMode.Dispose();
-        }
+    protected override void DisableCustomModes()
+    {
+        this.controlWardMode.Disable();
+    }
 
-        protected override void DisableCustomModes()
-        {
-            this.controlWardMode.Disable();
-        }
-
-        protected override void EnableCustomModes()
-        {
-            this.controlWardMode.Enable();
-        }
+    protected override void EnableCustomModes()
+    {
+        this.controlWardMode.Enable();
     }
 }

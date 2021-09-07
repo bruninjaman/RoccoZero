@@ -1,120 +1,119 @@
-﻿namespace O9K.Hud.Modules.Unique.MorphlingAbilities.Abilities
+﻿namespace O9K.Hud.Modules.Unique.MorphlingAbilities.Abilities;
+
+using System;
+using System.Linq;
+
+using Core.Entities.Abilities.Base;
+using Core.Logger;
+using Core.Managers.Renderer.Utils;
+using Divine.Game;
+using Divine.Numerics;
+using Divine.Renderer;
+using Divine.Entity.Entities.Abilities.Components;
+
+internal class MorphlingAbility : IMorphlingAbility
 {
-    using System;
-    using System.Linq;
+    private readonly Ability9 ability;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Logger;
-    using Core.Managers.Renderer.Utils;
-    using Divine.Game;
-    using Divine.Numerics;
-    using Divine.Renderer;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly bool isAbilityReplicated;
 
-    internal class MorphlingAbility : IMorphlingAbility
+    private readonly uint level;
+
+    private readonly string texture;
+
+    private float cooldown;
+
+    private float updateTime;
+
+    public MorphlingAbility(Ability9 ability)
     {
-        private readonly Ability9 ability;
+        this.ability = ability;
+        this.texture = ability.Name;
+        this.Handle = ability.Handle;
+        this.AbilitySlot = this.ability.AbilitySlot;
+        this.level = ability.Level;
+        this.isAbilityReplicated = ability.BaseAbility.IsReplicated;
+    }
 
-        private readonly bool isAbilityReplicated;
+    public AbilitySlot AbilitySlot { get; }
 
-        private readonly uint level;
+    public uint Handle { get; }
 
-        private readonly string texture;
-
-        private float cooldown;
-
-        private float updateTime;
-
-        public MorphlingAbility(Ability9 ability)
+    private float RemainingCooldown
+    {
+        get
         {
-            this.ability = ability;
-            this.texture = ability.Name;
-            this.Handle = ability.Handle;
-            this.AbilitySlot = this.ability.AbilitySlot;
-            this.level = ability.Level;
-            this.isAbilityReplicated = ability.BaseAbility.IsReplicated;
+            var cd = (this.updateTime + this.cooldown) - GameManager.RawGameTime;
+
+            if (cd <= 0)
+            {
+                this.cooldown = 0;
+            }
+
+            return cd;
         }
+    }
 
-        public AbilitySlot AbilitySlot { get; }
+    public bool Display(bool isMorphed)
+    {
+        return isMorphed != this.isAbilityReplicated;
+    }
 
-        public uint Handle { get; }
-
-        private float RemainingCooldown
+    public void Draw(Rectangle9 position, float textSize)
+    {
+        try
         {
-            get
+            RendererManager.DrawImage(this.texture, position);
+            RendererManager.DrawRectangle(position - 1, Color.Black);
+
+            if (this.level == 0)
             {
-                var cd = (this.updateTime + this.cooldown) - GameManager.RawGameTime;
-
-                if (cd <= 0)
-                {
-                    this.cooldown = 0;
-                }
-
-                return cd;
+                RendererManager.DrawImage("o9k.ability_0lvl_bg", position);
+                return;
             }
+
+            if (this.cooldown <= 0)
+            {
+                return;
+            }
+
+            RendererManager.DrawImage("o9k.ability_cd_bg", position);
+            RendererManager.DrawText(
+                Math.Ceiling(this.RemainingCooldown).ToString("N0"),
+                position,
+                Color.White,
+                FontFlags.Center | FontFlags.VerticalCenter,
+                textSize);
         }
-
-        public bool Display(bool isMorphed)
+        catch (Exception e)
         {
-            return isMorphed != this.isAbilityReplicated;
+            Logger.Error(e);
         }
+    }
 
-        public void Draw(Rectangle9 position, float textSize)
+    public bool Update(bool isMorphed)
+    {
+        if (isMorphed != this.isAbilityReplicated)
         {
-            try
-            {
-                RendererManager.DrawImage(this.texture, position);
-                RendererManager.DrawRectangle(position - 1, Color.Black);
-
-                if (this.level == 0)
-                {
-                    RendererManager.DrawImage("o9k.ability_0lvl_bg", position);
-                    return;
-                }
-
-                if (this.cooldown <= 0)
-                {
-                    return;
-                }
-
-                RendererManager.DrawImage("o9k.ability_cd_bg", position);
-                RendererManager.DrawText(
-                    Math.Ceiling(this.RemainingCooldown).ToString("N0"),
-                    position,
-                    Color.White,
-                    FontFlags.Center | FontFlags.VerticalCenter,
-                    textSize);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
-
-        public bool Update(bool isMorphed)
-        {
-            if (isMorphed != this.isAbilityReplicated)
-            {
-                return true;
-            }
-
-            if (!this.ability.IsValid)
-            {
-                return false;
-            }
-
-            if (this.ability.AbilitySlot < 0 && this.ability.Owner.BaseSpellbook.Spells.All(x => x.Handle != this.Handle))
-            {
-                return false;
-            }
-
-            if (this.level > 0)
-            {
-                this.updateTime = GameManager.RawGameTime;
-                this.cooldown = this.ability.BaseAbility.Cooldown;
-            }
-
             return true;
         }
+
+        if (!this.ability.IsValid)
+        {
+            return false;
+        }
+
+        if (this.ability.AbilitySlot < 0 && this.ability.Owner.BaseSpellbook.Spells.All(x => x.Handle != this.Handle))
+        {
+            return false;
+        }
+
+        if (this.level > 0)
+        {
+            this.updateTime = GameManager.RawGameTime;
+            this.cooldown = this.ability.BaseAbility.Cooldown;
+        }
+
+        return true;
     }
 }

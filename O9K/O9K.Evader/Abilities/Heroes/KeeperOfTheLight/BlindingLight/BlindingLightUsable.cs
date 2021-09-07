@@ -1,36 +1,35 @@
-﻿namespace O9K.Evader.Abilities.Heroes.KeeperOfTheLight.BlindingLight
+﻿namespace O9K.Evader.Abilities.Heroes.KeeperOfTheLight.BlindingLight;
+
+using Base.Usable.DisableAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+using Core.Extensions;
+
+using Divine.Numerics;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+
+internal class BlindingLightUsable : DisableAbility
 {
-    using Base.Usable.DisableAbility;
+    private Vector3 castPosition;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-    using Core.Extensions;
-
-    using Divine.Numerics;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-
-    internal class BlindingLightUsable : DisableAbility
+    public BlindingLightUsable(Ability9 ability, IMainMenu menu)
+        : base(ability, menu)
     {
-        private Vector3 castPosition;
+    }
 
-        public BlindingLightUsable(Ability9 ability, IMainMenu menu)
-            : base(ability, menu)
-        {
-        }
+    public override float GetRequiredTime(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        this.castPosition = enemy.Position.Extend2D(ally.Position, 250);
+        return this.ActiveAbility.GetHitTime(this.castPosition);
+    }
 
-        public override float GetRequiredTime(Unit9 ally, Unit9 enemy, IObstacle obstacle)
-        {
-            this.castPosition = enemy.Position.Extend2D(ally.Position, 250);
-            return this.ActiveAbility.GetHitTime(this.castPosition);
-        }
-
-        public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
-        {
-            this.MoveCamera(this.castPosition);
-            return this.ActiveAbility.UseAbility(this.castPosition, false, true);
-        }
+    public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        this.MoveCamera(this.castPosition);
+        return this.ActiveAbility.UseAbility(this.castPosition, false, true);
     }
 }

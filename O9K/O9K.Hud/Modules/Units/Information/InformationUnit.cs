@@ -1,87 +1,86 @@
-﻿namespace O9K.Hud.Modules.Units.Information
+﻿namespace O9K.Hud.Modules.Units.Information;
+
+using System;
+
+using Core.Entities.Heroes;
+using Core.Entities.Units;
+
+using Divine.Numerics;
+using Divine.Renderer;
+
+internal class InformationUnit
 {
-    using System;
-
-    using Core.Entities.Heroes;
-    using Core.Entities.Units;
-
-    using Divine.Numerics;
-    using Divine.Renderer;
-
-    internal class InformationUnit
+    public InformationUnit(Unit9 unit)
     {
-        public InformationUnit(Unit9 unit)
+        this.Unit = unit;
+    }
+
+    public int Hits { get; private set; }
+
+    public bool ShouldDraw
+    {
+        get
         {
-            this.Unit = unit;
+            return this.Unit.IsValid && this.Unit.IsVisible && this.Unit.IsAlive;
+        }
+    }
+
+    public Unit9 Unit { get; }
+
+    public void DrawInformation(float mySpeed, bool showDamage, bool showSpeed, Vector2 position, float size)
+    {
+        var hpBar = this.Unit.HealthBarPosition;
+        if (hpBar.IsZero)
+        {
+            return;
         }
 
-        public int Hits { get; private set; }
+        var hpSize = this.Unit.HealthBarSize;
+        var iconSize = size * 0.75f;
 
-        public bool ShouldDraw
+        var iconPosition = hpBar + position + new Vector2(hpSize.X, size - iconSize);
+        var textPosition = hpBar + position + new Vector2(hpSize.X + iconSize + 3, 0);
+
+        if (showDamage)
         {
-            get
-            {
-                return this.Unit.IsValid && this.Unit.IsVisible && this.Unit.IsAlive;
-            }
+            RendererManager.DrawImage("o9k.attack_minimalistic", new RectangleF(iconPosition.X, iconPosition.Y, iconSize, iconSize));
+            RendererManager.DrawText(this.Hits == 0 ? "?" : this.Hits.ToString(), textPosition, Color.White, size);
+
+            iconPosition += new Vector2(0, size);
+            textPosition += new Vector2(0, size);
         }
 
-        public Unit9 Unit { get; }
-
-        public void DrawInformation(float mySpeed, bool showDamage, bool showSpeed, Vector2 position, float size)
+        if (showSpeed)
         {
-            var hpBar = this.Unit.HealthBarPosition;
-            if (hpBar.IsZero)
+            RendererManager.DrawImage("o9k.speed_minimalistic", new RectangleF(iconPosition.X, iconPosition.Y, iconSize, iconSize));
+
+            var speed = (int)(mySpeed - this.Unit.Speed);
+            if (speed >= 0)
             {
-                return;
+                RendererManager.DrawText(speed.ToString(), textPosition, Color.White, size);
             }
-
-            var hpSize = this.Unit.HealthBarSize;
-            var iconSize = size * 0.75f;
-
-            var iconPosition = hpBar + position + new Vector2(hpSize.X, size - iconSize);
-            var textPosition = hpBar + position + new Vector2(hpSize.X + iconSize + 3, 0);
-
-            if (showDamage)
+            else
             {
-                RendererManager.DrawImage("o9k.attack_minimalistic", new RectangleF(iconPosition.X, iconPosition.Y, iconSize, iconSize));
-                RendererManager.DrawText(this.Hits == 0 ? "?" : this.Hits.ToString(), textPosition, Color.White, size);
-
-                iconPosition += new Vector2(0, size);
-                textPosition += new Vector2(0, size);
-            }
-
-            if (showSpeed)
-            {
-                RendererManager.DrawImage("o9k.speed_minimalistic", new RectangleF(iconPosition.X, iconPosition.Y, iconSize, iconSize));
-
-                var speed = (int)(mySpeed - this.Unit.Speed);
-                if (speed >= 0)
-                {
-                    RendererManager.DrawText(speed.ToString(), textPosition, Color.White, size);
-                }
-                else
-                {
-                    RendererManager.DrawText((speed * -1).ToString(), textPosition, Color.DarkOrange, size);
-                }
+                RendererManager.DrawText((speed * -1).ToString(), textPosition, Color.DarkOrange, size);
             }
         }
+    }
 
-        public void UpdateDamage(Hero9 myHero)
+    public void UpdateDamage(Hero9 myHero)
+    {
+        this.Hits = 0;
+
+        if (!this.Unit.IsAlive)
         {
-            this.Hits = 0;
+            return;
+        }
 
-            if (!this.Unit.IsAlive)
-            {
-                return;
-            }
+        var count = (int)Math.Ceiling(
+            this.Unit.Health / (myHero.GetAttackDamage(this.Unit) - (this.Unit.HealthRegeneration * myHero.SecondsPerAttack)));
 
-            var count = (int)Math.Ceiling(
-                this.Unit.Health / (myHero.GetAttackDamage(this.Unit) - (this.Unit.HealthRegeneration * myHero.SecondsPerAttack)));
-
-            if (count > 0)
-            {
-                this.Hits = count;
-            }
+        if (count > 0)
+        {
+            this.Hits = count;
         }
     }
 }

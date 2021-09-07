@@ -1,25 +1,24 @@
-﻿namespace O9K.Evader.Abilities.Items.IronBranch
+﻿namespace O9K.Evader.Abilities.Items.IronBranch;
+
+using Base;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.item_branches)]
+[AbilityId(AbilityId.item_ironwood_tree)]
+internal class IronBranchBase : EvaderBaseAbility, IUsable<CounterAbility>
 {
-    using Base;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.item_branches)]
-    [AbilityId(AbilityId.item_ironwood_tree)]
-    internal class IronBranchBase : EvaderBaseAbility, IUsable<CounterAbility>
+    public IronBranchBase(Ability9 ability)
+        : base(ability)
     {
-        public IronBranchBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public CounterAbility GetUsableAbility()
-        {
-            return new IronBranchUsable(this.Ability, this.Menu);
-        }
+    public CounterAbility GetUsableAbility()
+    {
+        return new IronBranchUsable(this.Ability, this.Menu);
     }
 }

@@ -1,73 +1,72 @@
-﻿namespace O9K.AutoUsage.Abilities.Nuke.Unique.Assassinate
+﻿namespace O9K.AutoUsage.Abilities.Nuke.Unique.Assassinate;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+using Core.Prediction.Data;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+using Settings;
+
+[AbilityId(AbilityId.sniper_assassinate)]
+internal class AssassinateAbility : NukeAbility
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly AssassinateSettings settings;
 
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-    using Core.Prediction.Data;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Settings;
-
-    [AbilityId(AbilityId.sniper_assassinate)]
-    internal class AssassinateAbility : NukeAbility
+    public AssassinateAbility(INuke nuke, GroupSettings settings)
+        : base(nuke)
     {
-        private readonly AssassinateSettings settings;
+        this.settings = new AssassinateSettings(settings.Menu, nuke);
+    }
 
-        public AssassinateAbility(INuke nuke, GroupSettings settings)
-            : base(nuke)
+    public override bool UseAbility(List<Unit9> heroes)
+    {
+        var enemies = heroes.Where(x => x.IsEnemy(this.Owner)).OrderByDescending(x => x.Health).ToList();
+
+        foreach (var enemy in enemies)
         {
-            this.settings = new AssassinateSettings(settings.Menu, nuke);
-        }
-
-        public override bool UseAbility(List<Unit9> heroes)
-        {
-            var enemies = heroes.Where(x => x.IsEnemy(this.Owner)).OrderByDescending(x => x.Health).ToList();
-
-            foreach (var enemy in enemies)
+            if (!this.settings.IsHeroEnabled(enemy.Name))
             {
-                if (!this.settings.IsHeroEnabled(enemy.Name))
-                {
-                    continue;
-                }
-
-                if (enemy.IsReflectingDamage)
-                {
-                    continue;
-                }
-
-                if (enemy.Distance(this.Owner) < this.settings.MinCastRange)
-                {
-                    continue;
-                }
-
-                if (enemy.IsInvulnerable)
-                {
-                    continue;
-                }
-
-                if (!this.Ability.CanHit(enemy))
-                {
-                    continue;
-                }
-
-                if (enemy.Health > this.Nuke.GetDamage(enemy))
-                {
-                    continue;
-                }
-
-                if (this.Ability.UnitTargetCast && enemy.IsBlockingAbilities)
-                {
-                    continue;
-                }
-
-                return this.Ability.UseAbility(enemy, enemies, HitChance.Medium);
+                continue;
             }
 
-            return false;
+            if (enemy.IsReflectingDamage)
+            {
+                continue;
+            }
+
+            if (enemy.Distance(this.Owner) < this.settings.MinCastRange)
+            {
+                continue;
+            }
+
+            if (enemy.IsInvulnerable)
+            {
+                continue;
+            }
+
+            if (!this.Ability.CanHit(enemy))
+            {
+                continue;
+            }
+
+            if (enemy.Health > this.Nuke.GetDamage(enemy))
+            {
+                continue;
+            }
+
+            if (this.Ability.UnitTargetCast && enemy.IsBlockingAbilities)
+            {
+                continue;
+            }
+
+            return this.Ability.UseAbility(enemy, enemies, HitChance.Medium);
         }
+
+        return false;
     }
 }

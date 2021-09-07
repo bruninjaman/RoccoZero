@@ -1,22 +1,21 @@
-﻿namespace O9K.AIO.Heroes.Dynamic.Abilities.Disables.Unique
+﻿namespace O9K.AIO.Heroes.Dynamic.Abilities.Disables.Unique;
+
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.pudge_dismember)]
+internal class DismemberDisable : OldDisableAbility
 {
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.pudge_dismember)]
-    internal class DismemberDisable : OldDisableAbility
+    public DismemberDisable(IDisable ability)
+        : base(ability)
     {
-        public DismemberDisable(IDisable ability)
-            : base(ability)
-        {
-        }
+    }
 
-        protected override bool ChainStun(Unit9 target)
-        {
-            return true;
-        }
+    protected override bool ChainStun(Unit9 target)
+    {
+        return true;
     }
 }

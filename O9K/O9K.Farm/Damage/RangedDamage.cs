@@ -1,99 +1,98 @@
-﻿namespace O9K.Farm.Damage
+﻿namespace O9K.Farm.Damage;
+
+using System;
+
+using Divine.Game;
+using Divine.Projectile.Projectiles;
+
+using Units.Base;
+
+internal class RangedDamage : UnitDamage
 {
-    using System;
+    private readonly float hitTime;
 
-    using Divine.Game;
-    using Divine.Projectile.Projectiles;
+    private readonly float includeTime;
 
-    using Units.Base;
-
-    internal class RangedDamage : UnitDamage
+    public RangedDamage(UnitDamage damage)
+        : base(damage)
     {
-        private readonly float hitTime;
+        this.hitTime = damage.HitTime + damage.Source.Unit.SecondsPerAttack;
+        this.includeTime = damage.IncludeTime + damage.Source.Unit.GetAttackBackswing();
+    }
 
-        private readonly float includeTime;
+    public RangedDamage(
+        FarmUnit source,
+        FarmUnit target,
+        float attackStartTime,
+        float additionalRange,
+        float additionalTime,
+        float additionalIncludeTime =  -0.07f)
+        : base(source, target)
+    {
+        var distance = Math.Max(source.Unit.Distance3D(target.Unit) - target.Unit.HullRadius - additionalRange, 20)
+                       / source.Unit.ProjectileSpeed;
+        this.hitTime = attackStartTime + source.Unit.GetAttackPoint(target.Unit) + distance + additionalTime;
+        this.includeTime = this.hitTime + additionalIncludeTime;
+    }
 
-        public RangedDamage(UnitDamage damage)
-            : base(damage)
+    public override float HitTime
+    {
+        get
         {
-            this.hitTime = damage.HitTime + damage.Source.Unit.SecondsPerAttack;
-            this.includeTime = damage.IncludeTime + damage.Source.Unit.GetAttackBackswing();
-        }
-
-        public RangedDamage(
-            FarmUnit source,
-            FarmUnit target,
-            float attackStartTime,
-            float additionalRange,
-            float additionalTime,
-            float additionalIncludeTime =  -0.07f)
-            : base(source, target)
-        {
-            var distance = Math.Max(source.Unit.Distance3D(target.Unit) - target.Unit.HullRadius - additionalRange, 20)
-                           / source.Unit.ProjectileSpeed;
-            this.hitTime = attackStartTime + source.Unit.GetAttackPoint(target.Unit) + distance + additionalTime;
-            this.includeTime = this.hitTime + additionalIncludeTime;
-        }
-
-        public override float HitTime
-        {
-            get
+            if (this.Projectile?.IsValid == true)
             {
-                if (this.Projectile?.IsValid == true)
-                {
-                    var distance = Math.Max(this.Target.Unit.Distance3D(this.Projectile.Position) - this.Target.Unit.HullRadius * 0.5f, 0);
+                var distance = Math.Max(this.Target.Unit.Distance3D(this.Projectile.Position) - this.Target.Unit.HullRadius * 0.5f, 0);
 
-                    if (this.Target.Unit.IsMoving)
+                if (this.Target.Unit.IsMoving)
+                {
+                    if (this.Target.Unit.GetAngle(this.Projectile.Position) < 1)
                     {
-                        if (this.Target.Unit.GetAngle(this.Projectile.Position) < 1)
-                        {
-                            distance -= 40;
-                        }
-                        else
-                        {
-                            distance += 40;
-                        }
+                        distance -= 40;
                     }
-                    
-
-                    return GameManager.RawGameTime + (distance / this.Source.Unit.ProjectileSpeed);
+                    else
+                    {
+                        distance += 40;
+                    }
                 }
+                
 
-                if (this.Projectile != null)
-                {
-                    this.Delete();
-                    this.Projectile = null;
-                }
-
-                return this.hitTime;
+                return GameManager.RawGameTime + (distance / this.Source.Unit.ProjectileSpeed);
             }
-        }
 
-        public override float IncludeTime
-        {
-            get
+            if (this.Projectile != null)
             {
-                if (this.Projectile?.IsValid == true)
-                {
-                    var distance = Math.Max(this.Target.Unit.Distance3D(this.Projectile.Position) - this.Target.Unit.HullRadius, 0);
-                    return (GameManager.RawGameTime + (distance / this.Source.Unit.ProjectileSpeed)) - 0.07f;
-                }
-
-                if (this.Projectile != null)
-                {
-                    this.Delete();
-                    this.Projectile = null;
-                }
-
-                return this.includeTime;
+                this.Delete();
+                this.Projectile = null;
             }
+
+            return this.hitTime;
         }
+    }
 
-        public TrackingProjectile Projectile { get; protected set; }
-
-        public void AddProjectile(TrackingProjectile projectile)
+    public override float IncludeTime
+    {
+        get
         {
-            this.Projectile = projectile;
+            if (this.Projectile?.IsValid == true)
+            {
+                var distance = Math.Max(this.Target.Unit.Distance3D(this.Projectile.Position) - this.Target.Unit.HullRadius, 0);
+                return (GameManager.RawGameTime + (distance / this.Source.Unit.ProjectileSpeed)) - 0.07f;
+            }
+
+            if (this.Projectile != null)
+            {
+                this.Delete();
+                this.Projectile = null;
+            }
+
+            return this.includeTime;
         }
+    }
+
+    public TrackingProjectile Projectile { get; protected set; }
+
+    public void AddProjectile(TrackingProjectile projectile)
+    {
+        this.Projectile = projectile;
     }
 }

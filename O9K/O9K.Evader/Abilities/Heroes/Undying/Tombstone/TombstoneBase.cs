@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Undying.Tombstone
+﻿namespace O9K.Evader.Abilities.Heroes.Undying.Tombstone;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.undying_tombstone)]
+internal class TombstoneBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.undying_tombstone)]
-    internal class TombstoneBase : EvaderBaseAbility, IEvadable
+    public TombstoneBase(Ability9 ability)
+        : base(ability)
     {
-        public TombstoneBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new TombstoneEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new TombstoneEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

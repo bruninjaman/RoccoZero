@@ -1,39 +1,38 @@
-﻿namespace O9K.AIO.Heroes.Oracle
+﻿namespace O9K.AIO.Heroes.Oracle;
+
+using AIO.Modes.KeyPress;
+
+using Base;
+
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Modes;
+
+[HeroId(HeroId.npc_dota_hero_oracle)]
+internal class OracleBase : BaseHero
 {
-    using AIO.Modes.KeyPress;
+    private readonly HealAllyMode healAllyMode;
 
-    using Base;
-
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Modes;
-
-    [HeroId(HeroId.npc_dota_hero_oracle)]
-    internal class OracleBase : BaseHero
+    public OracleBase()
     {
-        private readonly HealAllyMode healAllyMode;
+        this.healAllyMode = new HealAllyMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Heal ally"));
+    }
 
-        public OracleBase()
-        {
-            this.healAllyMode = new HealAllyMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Heal ally"));
-        }
+    public override void Dispose()
+    {
+        base.Dispose();
+        this.healAllyMode.Dispose();
+    }
 
-        public override void Dispose()
-        {
-            base.Dispose();
-            this.healAllyMode.Dispose();
-        }
+    protected override void DisableCustomModes()
+    {
+        this.healAllyMode.Disable();
+    }
 
-        protected override void DisableCustomModes()
-        {
-            this.healAllyMode.Disable();
-        }
-
-        protected override void EnableCustomModes()
-        {
-            this.healAllyMode.Enable();
-        }
+    protected override void EnableCustomModes()
+    {
+        this.healAllyMode.Enable();
     }
 }

@@ -1,75 +1,74 @@
-﻿namespace O9K.Evader.Abilities.Base.Usable.CounterAbility
+﻿namespace O9K.Evader.Abilities.Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Abilities.Heroes.Axe;
+using Core.Entities.Units;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+
+internal class CounterHealAbility : CounterAbility
 {
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Abilities.Heroes.Axe;
-    using Core.Entities.Units;
+    private readonly IHealthRestore healAbility;
 
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-
-    internal class CounterHealAbility : CounterAbility
+    public CounterHealAbility(Ability9 ability, IMainMenu menu)
+        : base(ability, menu)
     {
-        private readonly IHealthRestore healAbility;
+        this.healAbility = ability as IHealthRestore;
+    }
 
-        public CounterHealAbility(Ability9 ability, IMainMenu menu)
-            : base(ability, menu)
+    public override bool CanBeCasted(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        if (!base.CanBeCasted(ally, enemy, obstacle))
         {
-            this.healAbility = ability as IHealthRestore;
+            return false;
         }
 
-        public override bool CanBeCasted(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+        var health = ally.Health;
+        var damage = obstacle.GetDamage(ally);
+
+        if (obstacle.EvadableAbility.Ability.Id == AbilityId.axe_culling_blade)
         {
-            if (!base.CanBeCasted(ally, enemy, obstacle))
+            var ability = (CullingBlade)obstacle.EvadableAbility.Ability;
+            var threshold =  ability.KillThreshold;
+
+            if (threshold < health + this.healAbility.GetHealthRestore(ally))
             {
-                return false;
-            }
-
-            var health = ally.Health;
-            var damage = obstacle.GetDamage(ally);
-
-            if (obstacle.EvadableAbility.Ability.Id == AbilityId.axe_culling_blade)
-            {
-                var ability = (CullingBlade)obstacle.EvadableAbility.Ability;
-                var threshold =  ability.KillThreshold;
-
-                if (threshold < health + this.healAbility.GetHealthRestore(ally))
-                {
-                    return true;
-                }
-
-            }
-
-            if (damage < health)
-            {
-                return false;
-            }
-
-            if (this.healAbility == null)
-            {
-                //grave etc.
                 return true;
             }
 
-            if (!ally.CanBeHealed)
-            {
-                return false;
-            }
+        }
 
-            // if (ally.MaximumHealth - health < damage)
-            // {
-            //     return false;
-            // }
+        if (damage < health)
+        {
+            return false;
+        }
 
-            if (damage >= health + this.healAbility.GetHealthRestore(ally))
-            {
-                return false;
-            }
-
+        if (this.healAbility == null)
+        {
+            //grave etc.
             return true;
         }
+
+        if (!ally.CanBeHealed)
+        {
+            return false;
+        }
+
+        // if (ally.MaximumHealth - health < damage)
+        // {
+        //     return false;
+        // }
+
+        if (damage >= health + this.healAbility.GetHealthRestore(ally))
+        {
+            return false;
+        }
+
+        return true;
     }
 }

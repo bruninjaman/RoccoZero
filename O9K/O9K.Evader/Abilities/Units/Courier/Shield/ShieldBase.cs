@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Units.Courier.Shield
+﻿namespace O9K.Evader.Abilities.Units.Courier.Shield;
+
+using Base;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.courier_shield)]
+internal class ShieldBase : EvaderBaseAbility, IUsable<CounterAbility>
 {
-    using Base;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.courier_shield)]
-    internal class ShieldBase : EvaderBaseAbility, IUsable<CounterAbility>
+    public ShieldBase(Ability9 ability)
+        : base(ability)
     {
-        public ShieldBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public CounterAbility GetUsableAbility()
-        {
-            return new ShieldUsable(this.Ability, this.Menu);
-        }
+    public CounterAbility GetUsableAbility()
+    {
+        return new ShieldUsable(this.Ability, this.Menu);
     }
 }

@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.KineticField
+﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.KineticField;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.disruptor_kinetic_field)]
+internal class KineticFieldBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.disruptor_kinetic_field)]
-    internal class KineticFieldBase : EvaderBaseAbility, IEvadable
+    public KineticFieldBase(Ability9 ability)
+        : base(ability)
     {
-        public KineticFieldBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new KineticFieldEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new KineticFieldEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

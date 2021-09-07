@@ -1,346 +1,345 @@
-﻿namespace O9K.Farm.Core
+﻿namespace O9K.Farm.Core;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Damage;
+
+using Divine.Entity.Entities;
+using Divine.Order;
+using Divine.Order.EventArgs;
+using Divine.Order.Orders.Components;
+
+using Marker;
+
+using Menu;
+
+using Modes;
+
+using O9K.Core.Entities.Heroes;
+using O9K.Core.Entities.Units;
+using O9K.Core.Logger;
+using O9K.Core.Managers.Entity;
+using O9K.Core.Managers.Menu.EventArgs;
+
+using Units.Base;
+
+using Utils;
+
+internal class FarmManager : IDisposable
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly Dictionary<uint, ControlEffect> controlEffects = new Dictionary<uint, ControlEffect>();
 
-    using Damage;
+    private readonly DamageTracker damageTracker;
 
-    using Divine.Entity.Entities;
-    using Divine.Order;
-    using Divine.Order.EventArgs;
-    using Divine.Order.Orders.Components;
+    private static readonly List<BaseMode> farmModes = new();
 
-    using Marker;
+    private readonly LastHitMarker lastHitMarker;
 
-    using Menu;
+    private readonly BaseMode lastHitMode;
 
-    using Modes;
+    private readonly MenuManager menuManager;
 
-    using O9K.Core.Entities.Heroes;
-    using O9K.Core.Entities.Units;
-    using O9K.Core.Logger;
-    using O9K.Core.Managers.Entity;
-    using O9K.Core.Managers.Menu.EventArgs;
+    private readonly Owner owner;
 
-    using Units.Base;
+    private readonly BaseMode pushMode;
 
-    using Utils;
-
-    internal class FarmManager : IDisposable
+    private readonly HashSet<OrderType> stopFarmOrders = new HashSet<OrderType>
     {
-        private readonly Dictionary<uint, ControlEffect> controlEffects = new Dictionary<uint, ControlEffect>();
+        OrderType.Hold,
+        OrderType.Continue,
+        OrderType.Stop,
+        OrderType.MovePosition,
+        OrderType.MoveTarget,
+        OrderType.MoveToDirection,
+        OrderType.AttackPosition,
+        OrderType.AttackTarget,
+        OrderType.Cast,
+        OrderType.CastPosition,
+        OrderType.CastTarget,
+        OrderType.CastRune,
+        OrderType.CastTree,
+    };
 
-        private readonly DamageTracker damageTracker;
+    private readonly UnitManager unitManager;
 
-        private static readonly List<BaseMode> farmModes = new();
+    public static bool IsFarmActive()
+    {
+        return farmModes.Any(x => x.IsActive);
+    }
 
-        private readonly LastHitMarker lastHitMarker;
+    public FarmManager(MenuManager menuManager)
+    {
+        this.owner = EntityManager9.Owner;
+        this.menuManager = menuManager;
+        this.unitManager = new UnitManager(this.menuManager);
+        this.damageTracker = new DamageTracker(this.unitManager);
+        this.lastHitMarker = new LastHitMarker(this.unitManager, menuManager);
 
-        private readonly BaseMode lastHitMode;
+        farmModes.Add(this.lastHitMode = new LastHitMode(this.unitManager, menuManager));
+        farmModes.Add(this.pushMode = new PushMode(this.unitManager, menuManager));
 
-        private readonly MenuManager menuManager;
+        this.menuManager.LastHitMenu.HoldKey.ValueChange += this.LastHitHoldKeyOnValueChange;
+        this.menuManager.LastHitMenu.ToggleKey.ValueChange += this.LastHitToggleKeyOnValueChange;
 
-        private readonly Owner owner;
+        //  this.menuManager.PushMenu.HoldKey.ValueChange += this.PushHoldKeyOnValueChange;
+        //  this.menuManager.PushMenu.ToggleKey.ValueChange += this.PushToggleKeyOnValueChange;
 
-        private readonly BaseMode pushMode;
+        this.damageTracker.AttackCanceled += this.OnAttackCanceled;
+        EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
+        EntityManager9.UnitRemoved += this.OnUnitDied;
+        OrderManager.OrderAdding += this.OrderAdding;
+    }
 
-        private readonly HashSet<OrderType> stopFarmOrders = new HashSet<OrderType>
+    public void Dispose()
+    {
+        OrderManager.OrderAdding -= this.OrderAdding;
+        EntityManager9.UnitMonitor.UnitDied -= this.OnUnitDied;
+        EntityManager9.UnitRemoved -= this.OnUnitDied;
+        this.damageTracker.AttackCanceled -= this.OnAttackCanceled;
+
+        this.menuManager.LastHitMenu.HoldKey.ValueChange -= this.LastHitHoldKeyOnValueChange;
+        this.menuManager.LastHitMenu.ToggleKey.ValueChange -= this.LastHitToggleKeyOnValueChange;
+
+        //    this.menuManager.PushMenu.HoldKey.ValueChange -= this.PushHoldKeyOnValueChange;
+        //    this.menuManager.PushMenu.ToggleKey.ValueChange -= this.PushToggleKeyOnValueChange;
+
+        this.lastHitMode.Dispose();
+        this.damageTracker.Dispose();
+        this.lastHitMarker.Dispose();
+        this.unitManager.Dispose();
+    }
+
+    private void AddEffects(IEnumerable<FarmUnit> units)
+    {
+        foreach (var farmUnit in units)
         {
-            OrderType.Hold,
-            OrderType.Continue,
-            OrderType.Stop,
-            OrderType.MovePosition,
-            OrderType.MoveTarget,
-            OrderType.MoveToDirection,
-            OrderType.AttackPosition,
-            OrderType.AttackTarget,
-            OrderType.Cast,
-            OrderType.CastPosition,
-            OrderType.CastTarget,
-            OrderType.CastRune,
-            OrderType.CastTree,
-        };
-
-        private readonly UnitManager unitManager;
-
-        public static bool IsFarmActive()
-        {
-            return farmModes.Any(x => x.IsActive);
-        }
-
-        public FarmManager(MenuManager menuManager)
-        {
-            this.owner = EntityManager9.Owner;
-            this.menuManager = menuManager;
-            this.unitManager = new UnitManager(this.menuManager);
-            this.damageTracker = new DamageTracker(this.unitManager);
-            this.lastHitMarker = new LastHitMarker(this.unitManager, menuManager);
-
-            farmModes.Add(this.lastHitMode = new LastHitMode(this.unitManager, menuManager));
-            farmModes.Add(this.pushMode = new PushMode(this.unitManager, menuManager));
-
-            this.menuManager.LastHitMenu.HoldKey.ValueChange += this.LastHitHoldKeyOnValueChange;
-            this.menuManager.LastHitMenu.ToggleKey.ValueChange += this.LastHitToggleKeyOnValueChange;
-
-            //  this.menuManager.PushMenu.HoldKey.ValueChange += this.PushHoldKeyOnValueChange;
-            //  this.menuManager.PushMenu.ToggleKey.ValueChange += this.PushToggleKeyOnValueChange;
-
-            this.damageTracker.AttackCanceled += this.OnAttackCanceled;
-            EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
-            EntityManager9.UnitRemoved += this.OnUnitDied;
-            OrderManager.OrderAdding += this.OrderAdding;
-        }
-
-        public void Dispose()
-        {
-            OrderManager.OrderAdding -= this.OrderAdding;
-            EntityManager9.UnitMonitor.UnitDied -= this.OnUnitDied;
-            EntityManager9.UnitRemoved -= this.OnUnitDied;
-            this.damageTracker.AttackCanceled -= this.OnAttackCanceled;
-
-            this.menuManager.LastHitMenu.HoldKey.ValueChange -= this.LastHitHoldKeyOnValueChange;
-            this.menuManager.LastHitMenu.ToggleKey.ValueChange -= this.LastHitToggleKeyOnValueChange;
-
-            //    this.menuManager.PushMenu.HoldKey.ValueChange -= this.PushHoldKeyOnValueChange;
-            //    this.menuManager.PushMenu.ToggleKey.ValueChange -= this.PushToggleKeyOnValueChange;
-
-            this.lastHitMode.Dispose();
-            this.damageTracker.Dispose();
-            this.lastHitMarker.Dispose();
-            this.unitManager.Dispose();
-        }
-
-        private void AddEffects(IEnumerable<FarmUnit> units)
-        {
-            foreach (var farmUnit in units)
+            if (this.controlEffects.ContainsKey(farmUnit.Unit.Handle))
             {
-                if (this.controlEffects.ContainsKey(farmUnit.Unit.Handle))
-                {
-                    continue;
-                }
-
-                this.controlEffects[farmUnit.Unit.Handle] = new ControlEffect(farmUnit);
+                continue;
             }
+
+            this.controlEffects[farmUnit.Unit.Handle] = new ControlEffect(farmUnit);
         }
+    }
 
-        private void LastHitHoldKeyOnValueChange(object sender, KeyEventArgs e)
+    private void LastHitHoldKeyOnValueChange(object sender, KeyEventArgs e)
+    {
+        try
         {
-            try
+            if (e.NewValue)
             {
-                if (e.NewValue)
-                {
-                    var units = this.owner.SelectedUnits.Select(x => this.unitManager.GetControllableUnit(x))
-                        .Where(x => x != null)
-                        .ToList();
-
-                    foreach (var farmMode in farmModes)
-                    {
-                        farmMode.RemoveUnits(units);
-                    }
-
-                    this.AddEffects(units);
-                    this.lastHitMode.AddUnits(units);
-                }
-                else
-                {
-                    this.RemoveEffects(this.lastHitMode.LastAddedUnits);
-                    this.lastHitMode.RemoveLastAddedUnits();
-                }
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-            }
-        }
-
-        private void LastHitToggleKeyOnValueChange(object sender, KeyEventArgs e)
-        {
-            try
-            {
-                if (!e.NewValue)
-                {
-                    return;
-                }
-
-                var units = this.owner.SelectedUnits.Select(x => this.unitManager.GetControllableUnit(x)).Where(x => x != null).ToList();
-
-                var disable = this.lastHitMode.ContainsAllUnits(units);
+                var units = this.owner.SelectedUnits.Select(x => this.unitManager.GetControllableUnit(x))
+                    .Where(x => x != null)
+                    .ToList();
 
                 foreach (var farmMode in farmModes)
                 {
                     farmMode.RemoveUnits(units);
                 }
 
-                if (disable)
-                {
-                    this.RemoveEffects(this.lastHitMode.LastAddedUnits);
-                    this.lastHitMode.RemoveLastAddedUnits();
-                }
-                else
-                {
-                    this.AddEffects(units);
-                    this.lastHitMode.AddUnits(units);
-                }
+                this.AddEffects(units);
+                this.lastHitMode.AddUnits(units);
             }
-            catch (Exception exception)
+            else
             {
-                Logger.Error(exception);
+                this.RemoveEffects(this.lastHitMode.LastAddedUnits);
+                this.lastHitMode.RemoveLastAddedUnits();
             }
         }
-
-        private void OnAttackCanceled(object sender, UnitDamage damage)
+        catch (Exception exception)
         {
-            if (!IsFarmActive())
+            Logger.Error(exception);
+        }
+    }
+
+    private void LastHitToggleKeyOnValueChange(object sender, KeyEventArgs e)
+    {
+        try
+        {
+            if (!e.NewValue)
             {
                 return;
             }
+
+            var units = this.owner.SelectedUnits.Select(x => this.unitManager.GetControllableUnit(x)).Where(x => x != null).ToList();
+
+            var disable = this.lastHitMode.ContainsAllUnits(units);
 
             foreach (var farmMode in farmModes)
             {
-                farmMode.AttackCanceled(damage.Target);
+                farmMode.RemoveUnits(units);
+            }
+
+            if (disable)
+            {
+                this.RemoveEffects(this.lastHitMode.LastAddedUnits);
+                this.lastHitMode.RemoveLastAddedUnits();
+            }
+            else
+            {
+                this.AddEffects(units);
+                this.lastHitMode.AddUnits(units);
             }
         }
-
-        private void OrderAdding(OrderAddingEventArgs e)
+        catch (Exception exception)
         {
-            if (this.menuManager.LastHitMenu.HoldKey)
-            {
-                return;
-            }
+            Logger.Error(exception);
+        }
+    }
 
-            var order = e.Order;
-            if (!e.Process || order.IsQueued || e.IsCustom || !this.stopFarmOrders.Contains(order.Type))
-            {
-                return;
-            }
+    private void OnAttackCanceled(object sender, UnitDamage damage)
+    {
+        if (!IsFarmActive())
+        {
+            return;
+        }
 
+        foreach (var farmMode in farmModes)
+        {
+            farmMode.AttackCanceled(damage.Target);
+        }
+    }
+
+    private void OrderAdding(OrderAddingEventArgs e)
+    {
+        if (this.menuManager.LastHitMenu.HoldKey)
+        {
+            return;
+        }
+
+        var order = e.Order;
+        if (!e.Process || order.IsQueued || e.IsCustom || !this.stopFarmOrders.Contains(order.Type))
+        {
+            return;
+        }
+
+        foreach (var farmMode in farmModes)
+        {
+            this.RemoveEffects(order.Units);
+            farmMode.RemoveUnits(order.Units);
+        }
+    }
+
+    private void OnUnitDied(Unit9 unit)
+    {
+        try
+        {
             foreach (var farmMode in farmModes)
             {
-                this.RemoveEffects(order.Units);
-                farmMode.RemoveUnits(order.Units);
+                farmMode.RemoveUnit(unit);
             }
+
+            if (this.controlEffects.TryGetValue(unit.Handle, out var effect))
+            {
+                effect.Dispose();
+                this.controlEffects.Remove(unit.Handle);
+            }
+
+            if (farmModes.Any(x => x.IsActive))
+            {
+                return;
+            }
+
+            //todo disable all shit
         }
-
-        private void OnUnitDied(Unit9 unit)
+        catch (Exception e)
         {
-            try
-            {
-                foreach (var farmMode in farmModes)
-                {
-                    farmMode.RemoveUnit(unit);
-                }
-
-                if (this.controlEffects.TryGetValue(unit.Handle, out var effect))
-                {
-                    effect.Dispose();
-                    this.controlEffects.Remove(unit.Handle);
-                }
-
-                if (farmModes.Any(x => x.IsActive))
-                {
-                    return;
-                }
-
-                //todo disable all shit
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            Logger.Error(e);
         }
+    }
 
-        private void PushHoldKeyOnValueChange(object sender, KeyEventArgs e)
+    private void PushHoldKeyOnValueChange(object sender, KeyEventArgs e)
+    {
+        try
         {
-            try
+            if (e.NewValue)
             {
-                if (e.NewValue)
-                {
-                    var units = this.owner.SelectedUnits.Select(x => this.unitManager.GetControllableUnit(x))
-                        .Where(x => x != null)
-                        .ToList();
-
-                    foreach (var farmMode in farmModes)
-                    {
-                        farmMode.RemoveUnits(units);
-                    }
-
-                    this.AddEffects(units);
-                    this.pushMode.AddUnits(units);
-                }
-                else
-                {
-                    this.RemoveEffects(this.pushMode.LastAddedUnits);
-                    this.pushMode.RemoveLastAddedUnits();
-                }
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-            }
-        }
-
-        private void PushToggleKeyOnValueChange(object sender, KeyEventArgs e)
-        {
-            try
-            {
-                if (!e.NewValue)
-                {
-                    return;
-                }
-
-                var units = this.owner.SelectedUnits.Select(x => this.unitManager.GetControllableUnit(x)).Where(x => x != null).ToList();
-
-                var disable = this.pushMode.ContainsAllUnits(units);
+                var units = this.owner.SelectedUnits.Select(x => this.unitManager.GetControllableUnit(x))
+                    .Where(x => x != null)
+                    .ToList();
 
                 foreach (var farmMode in farmModes)
                 {
                     farmMode.RemoveUnits(units);
                 }
 
-                if (disable)
-                {
-                    this.RemoveEffects(this.pushMode.LastAddedUnits);
-                    this.pushMode.RemoveLastAddedUnits();
-                }
-                else
-                {
-                    this.AddEffects(units);
-                    this.pushMode.AddUnits(units);
-                }
+                this.AddEffects(units);
+                this.pushMode.AddUnits(units);
             }
-            catch (Exception exception)
+            else
             {
-                Logger.Error(exception);
+                this.RemoveEffects(this.pushMode.LastAddedUnits);
+                this.pushMode.RemoveLastAddedUnits();
             }
         }
-
-        private void RemoveEffects(IEnumerable<Entity> entities)
+        catch (Exception exception)
         {
-            foreach (var farmUnit in entities)
-            {
-                if (!this.controlEffects.TryGetValue(farmUnit.Handle, out var effect))
-                {
-                    continue;
-                }
+            Logger.Error(exception);
+        }
+    }
 
-                effect.Dispose();
-                this.controlEffects.Remove(farmUnit.Handle);
+    private void PushToggleKeyOnValueChange(object sender, KeyEventArgs e)
+    {
+        try
+        {
+            if (!e.NewValue)
+            {
+                return;
+            }
+
+            var units = this.owner.SelectedUnits.Select(x => this.unitManager.GetControllableUnit(x)).Where(x => x != null).ToList();
+
+            var disable = this.pushMode.ContainsAllUnits(units);
+
+            foreach (var farmMode in farmModes)
+            {
+                farmMode.RemoveUnits(units);
+            }
+
+            if (disable)
+            {
+                this.RemoveEffects(this.pushMode.LastAddedUnits);
+                this.pushMode.RemoveLastAddedUnits();
+            }
+            else
+            {
+                this.AddEffects(units);
+                this.pushMode.AddUnits(units);
             }
         }
-
-        private void RemoveEffects(IEnumerable<FarmUnit> units)
+        catch (Exception exception)
         {
-            foreach (var farmUnit in units)
-            {
-                if (!this.controlEffects.TryGetValue(farmUnit.Unit.Handle, out var effect))
-                {
-                    continue;
-                }
+            Logger.Error(exception);
+        }
+    }
 
-                effect.Dispose();
-                this.controlEffects.Remove(farmUnit.Unit.Handle);
+    private void RemoveEffects(IEnumerable<Entity> entities)
+    {
+        foreach (var farmUnit in entities)
+        {
+            if (!this.controlEffects.TryGetValue(farmUnit.Handle, out var effect))
+            {
+                continue;
             }
+
+            effect.Dispose();
+            this.controlEffects.Remove(farmUnit.Handle);
+        }
+    }
+
+    private void RemoveEffects(IEnumerable<FarmUnit> units)
+    {
+        foreach (var farmUnit in units)
+        {
+            if (!this.controlEffects.TryGetValue(farmUnit.Unit.Handle, out var effect))
+            {
+                continue;
+            }
+
+            effect.Dispose();
+            this.controlEffects.Remove(farmUnit.Unit.Handle);
         }
     }
 }

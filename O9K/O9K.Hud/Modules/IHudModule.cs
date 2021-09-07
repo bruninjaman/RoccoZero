@@ -1,9 +1,8 @@
-﻿namespace O9K.Hud.Modules
-{
-    using System;
+﻿namespace O9K.Hud.Modules;
 
-    internal interface IHudModule : IDisposable
-    {
-        void Activate();
-    }
+using System;
+
+internal interface IHudModule : IDisposable
+{
+    void Activate();
 }

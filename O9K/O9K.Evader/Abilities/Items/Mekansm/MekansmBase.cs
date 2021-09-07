@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Items.Mekansm
+﻿namespace O9K.Evader.Abilities.Items.Mekansm;
+
+using Base;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.item_mekansm)]
+internal class MekansmBase : EvaderBaseAbility, IUsable<CounterAbility>
 {
-    using Base;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.item_mekansm)]
-    internal class MekansmBase : EvaderBaseAbility, IUsable<CounterAbility>
+    public MekansmBase(Ability9 ability)
+        : base(ability)
     {
-        public MekansmBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public CounterAbility GetUsableAbility()
-        {
-            return new CounterHealAbility(this.Ability, this.Menu);
-        }
+    public CounterAbility GetUsableAbility()
+    {
+        return new CounterHealAbility(this.Ability, this.Menu);
     }
 }

@@ -1,13 +1,12 @@
-﻿namespace O9K.Evader.Metadata
+﻿namespace O9K.Evader.Metadata;
+
+using System.Collections.Generic;
+
+using Evader.EvadeModes.Modes;
+
+using Pathfinder.Obstacles;
+
+internal interface IEvadeModeManager
 {
-    using System.Collections.Generic;
-
-    using Evader.EvadeModes.Modes;
-
-    using Pathfinder.Obstacles;
-
-    internal interface IEvadeModeManager
-    {
-        IEnumerable<EvadeBaseMode> GetEvadeModes(IObstacle obstacle);
-    }
+    IEnumerable<EvadeBaseMode> GetEvadeModes(IObstacle obstacle);
 }

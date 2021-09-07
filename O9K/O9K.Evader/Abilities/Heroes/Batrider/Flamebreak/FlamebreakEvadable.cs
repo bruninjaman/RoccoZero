@@ -1,69 +1,68 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Batrider.Flamebreak
+﻿namespace O9K.Evader.Abilities.Heroes.Batrider.Flamebreak;
+
+using System;
+
+using Base.Evadable;
+using Base.Evadable.Components;
+
+using Core.Entities.Abilities.Base;
+using Core.Logger;
+using Divine.Extensions;
+using Divine.Game;
+using Divine.Update;
+using Divine.Particle.Particles;
+
+using Metadata;
+
+using Pathfinder.Obstacles.Abilities.AreaOfEffect;
+
+internal sealed class FlamebreakEvadable : AreaOfEffectEvadable, IParticle
 {
-    using System;
-
-    using Base.Evadable;
-    using Base.Evadable.Components;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Logger;
-    using Divine.Extensions;
-    using Divine.Game;
-    using Divine.Update;
-    using Divine.Particle.Particles;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    internal sealed class FlamebreakEvadable : AreaOfEffectEvadable, IParticle
+    public FlamebreakEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
+        : base(ability, pathfinder, menu)
     {
-        public FlamebreakEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
-            : base(ability, pathfinder, menu)
-        {
-            this.Counters.Add(Abilities.SleightOfFist);
-            this.Counters.Add(Abilities.BallLightning);
-            this.Counters.UnionWith(Abilities.Shield);
-            this.Counters.UnionWith(Abilities.MagicShield);
-        }
+        this.Counters.Add(Abilities.SleightOfFist);
+        this.Counters.Add(Abilities.BallLightning);
+        this.Counters.UnionWith(Abilities.Shield);
+        this.Counters.UnionWith(Abilities.MagicShield);
+    }
 
-        public void AddParticle(Particle particle, string name)
-        {
-            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
+    public void AddParticle(Particle particle, string name)
+    {
+        var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
-            UpdateManager.BeginInvoke(
-                () =>
+        UpdateManager.BeginInvoke(
+            () =>
+                {
+                    try
                     {
-                        try
+                        if (!particle.IsValid)
                         {
-                            if (!particle.IsValid)
-                            {
-                                return;
-                            }
-
-                            var startPosition = particle.GetControlPoint(0);
-                            var endPosition = particle.GetControlPoint(5);
-
-                            var obstacle = new AreaOfEffectObstacle(this, endPosition)
-                            {
-                                EndObstacleTime = time + (startPosition.Distance2D(endPosition) / this.ActiveAbility.Speed)
-                            };
-
-                            this.Pathfinder.AddObstacle(obstacle);
+                            return;
                         }
-                        catch (Exception e)
+
+                        var startPosition = particle.GetControlPoint(0);
+                        var endPosition = particle.GetControlPoint(5);
+
+                        var obstacle = new AreaOfEffectObstacle(this, endPosition)
                         {
-                            Logger.Error(e);
-                        }
-                    });
-        }
+                            EndObstacleTime = time + (startPosition.Distance2D(endPosition) / this.ActiveAbility.Speed)
+                        };
 
-        public override void PhaseCancel()
-        {
-        }
+                        this.Pathfinder.AddObstacle(obstacle);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+                });
+    }
 
-        public override void PhaseStart()
-        {
-        }
+    public override void PhaseCancel()
+    {
+    }
+
+    public override void PhaseStart()
+    {
     }
 }

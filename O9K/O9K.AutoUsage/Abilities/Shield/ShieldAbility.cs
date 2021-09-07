@@ -1,120 +1,119 @@
-﻿namespace O9K.AutoUsage.Abilities.Shield
+﻿namespace O9K.AutoUsage.Abilities.Shield;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Abilities.Base.Components;
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Units;
+using Core.Prediction.Data;
+
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+using Divine.Extensions;
+
+using Settings;
+
+internal class ShieldAbility : UsableAbility
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly ShieldSettings settings;
 
-    using Core.Entities.Abilities.Base.Components;
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Units;
-    using Core.Prediction.Data;
-
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-    using Divine.Extensions;
-
-    using Settings;
-
-    internal class ShieldAbility : UsableAbility
+    public ShieldAbility(IShield shield, GroupSettings settings)
+        : base(shield)
     {
-        private readonly ShieldSettings settings;
+        this.Shield = shield;
+        this.settings = new ShieldSettings(settings.Menu, shield);
+    }
 
-        public ShieldAbility(IShield shield, GroupSettings settings)
-            : base(shield)
+    public ShieldAbility(IShield shield)
+        : base(shield)
+    {
+        this.Shield = shield;
+    }
+
+    protected IShield Shield { get; }
+
+    public override bool UseAbility(List<Unit9> heroes)
+    {
+        var lowMp = this.Owner.ManaPercentage < this.settings.MpThreshold;
+
+        var allies = heroes.Where(x => !x.IsInvulnerable && x.IsAlly(this.Owner)).OrderBy(x => x.Health).ToList();
+
+        var enemies = heroes.Where(x => !x.IsInvulnerable && x.IsEnemy(this.Owner) && this.settings.IsEnemyHeroEnabled(x.Name))
+            .ToList();
+
+        if (this.Owner.IsIllusion && this.Shield.ShieldsOwner)
         {
-            this.Shield = shield;
-            this.settings = new ShieldSettings(settings.Menu, shield);
+            allies.Add(this.Owner);
         }
 
-        public ShieldAbility(IShield shield)
-            : base(shield)
+        foreach (var ally in allies)
         {
-            this.Shield = shield;
-        }
-
-        protected IShield Shield { get; }
-
-        public override bool UseAbility(List<Unit9> heroes)
-        {
-            var lowMp = this.Owner.ManaPercentage < this.settings.MpThreshold;
-
-            var allies = heroes.Where(x => !x.IsInvulnerable && x.IsAlly(this.Owner)).OrderBy(x => x.Health).ToList();
-
-            var enemies = heroes.Where(x => !x.IsInvulnerable && x.IsEnemy(this.Owner) && this.settings.IsEnemyHeroEnabled(x.Name))
-                .ToList();
-
-            if (this.Owner.IsIllusion && this.Shield.ShieldsOwner)
+            if (!this.settings.SelfOnly && !this.settings.IsAllyHeroEnabled(ally.Name))
             {
-                allies.Add(this.Owner);
+                continue;
             }
 
-            foreach (var ally in allies)
+            if (this.settings.OnChannel && ally.IsChanneling)
             {
-                if (!this.settings.SelfOnly && !this.settings.IsAllyHeroEnabled(ally.Name))
+                var ability = ally.Abilities.FirstOrDefault(x => x.IsChanneling);
+
+                if (ability == null || ability.Id == AbilityId.lion_mana_drain || ability.Id == AbilityId.windrunner_powershot
+                    || ability.Id == AbilityId.oracle_fortunes_end)
                 {
                     continue;
                 }
+            }
+            else
+            {
+                var healthPercentage = ally.HealthPercentage;
 
-                if (this.settings.OnChannel && ally.IsChanneling)
-                {
-                    var ability = ally.Abilities.FirstOrDefault(x => x.IsChanneling);
-
-                    if (ability == null || ability.Id == AbilityId.lion_mana_drain || ability.Id == AbilityId.windrunner_powershot
-                        || ability.Id == AbilityId.oracle_fortunes_end)
-                    {
-                        continue;
-                    }
-                }
-                else
-                {
-                    var healthPercentage = ally.HealthPercentage;
-
-                    if (healthPercentage > this.settings.HpThreshold || (lowMp && healthPercentage > this.settings.CriticalHpThreshold))
-                    {
-                        continue;
-                    }
-                }
-
-                var selfTarget = ally.Equals(this.Owner);
-
-                if (selfTarget && !this.Shield.ShieldsOwner)
+                if (healthPercentage > this.settings.HpThreshold || (lowMp && healthPercentage > this.settings.CriticalHpThreshold))
                 {
                     continue;
                 }
-
-                if (!selfTarget && (!this.Shield.ShieldsAlly || this.settings.SelfOnly))
-                {
-                    continue;
-                }
-
-                if (!this.Ability.CanHit(ally, allies, this.settings.AlliesCount))
-                {
-                    continue;
-                }
-
-                if (ally.BaseUnit.HasModifier(this.Shield.ShieldModifierName))
-                {
-                    continue;
-                }
-
-                if (ally.IsChanneling && this.Ability is IAppliesImmobility)
-                {
-                    continue;
-                }
-
-                if (ally.IsChanneling && this.Ability is IShield shield && (shield.AppliesUnitState & UnitState.Stunned) != 0)
-                {
-                    continue;
-                }
-
-                if (enemies.Count(x => x.Distance(ally) < this.settings.Distance) < this.settings.EnemiesCount)
-                {
-                    continue;
-                }
-
-                return this.Ability.UseAbility(ally, allies, HitChance.Medium, this.settings.AlliesCount);
             }
 
-            return false;
+            var selfTarget = ally.Equals(this.Owner);
+
+            if (selfTarget && !this.Shield.ShieldsOwner)
+            {
+                continue;
+            }
+
+            if (!selfTarget && (!this.Shield.ShieldsAlly || this.settings.SelfOnly))
+            {
+                continue;
+            }
+
+            if (!this.Ability.CanHit(ally, allies, this.settings.AlliesCount))
+            {
+                continue;
+            }
+
+            if (ally.BaseUnit.HasModifier(this.Shield.ShieldModifierName))
+            {
+                continue;
+            }
+
+            if (ally.IsChanneling && this.Ability is IAppliesImmobility)
+            {
+                continue;
+            }
+
+            if (ally.IsChanneling && this.Ability is IShield shield && (shield.AppliesUnitState & UnitState.Stunned) != 0)
+            {
+                continue;
+            }
+
+            if (enemies.Count(x => x.Distance(ally) < this.settings.Distance) < this.settings.EnemiesCount)
+            {
+                continue;
+            }
+
+            return this.Ability.UseAbility(ally, allies, HitChance.Medium, this.settings.AlliesCount);
         }
+
+        return false;
     }
 }

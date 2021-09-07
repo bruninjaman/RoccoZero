@@ -1,118 +1,117 @@
-﻿namespace O9K.Farm.Core.Modes
+﻿namespace O9K.Farm.Core.Modes;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Damage;
+
+using Menu;
+
+using Units.Base;
+
+internal class PushMode : LastHitMode
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Damage;
-
-    using Menu;
-
-    using Units.Base;
-
-    internal class PushMode : LastHitMode
+    public PushMode(UnitManager unitManager, MenuManager menuManager)
+        : base(unitManager, menuManager)
     {
-        public PushMode(UnitManager unitManager, MenuManager menuManager)
-            : base(unitManager, menuManager)
+    }
+
+    protected override void OnUpdate(IReadOnlyList<FarmUnit> units, IReadOnlyList<FarmUnit> myUnits)
+    {
+        var allies = units.Where(x => x.IsAlly).ToList();
+        var enemies = units.Where(x => !x.IsAlly).ToList();
+
+        if (this.LastHit(enemies, allies, myUnits.Where(x => x.IsLastHitEnabled).ToList()))
         {
+            return;
         }
 
-        protected override void OnUpdate(IReadOnlyList<FarmUnit> units, IReadOnlyList<FarmUnit> myUnits)
+        var availableUnits = this.GetAvailableUnitsForDeny(enemies, allies, myUnits);
+
+        if (this.Deny(enemies, allies, availableUnits.Where(x => x.IsDenyEnabled).ToList()))
         {
-            var allies = units.Where(x => x.IsAlly).ToList();
-            var enemies = units.Where(x => !x.IsAlly).ToList();
-
-            if (this.LastHit(enemies, allies, myUnits.Where(x => x.IsLastHitEnabled).ToList()))
-            {
-                return;
-            }
-
-            var availableUnits = this.GetAvailableUnitsForDeny(enemies, allies, myUnits);
-
-            if (this.Deny(enemies, allies, availableUnits.Where(x => x.IsDenyEnabled).ToList()))
-            {
-                return;
-            }
-
-            availableUnits = this.GetAvailableUnitsForPush(enemies, allies, availableUnits);
-
-            if (this.Push(enemies, allies, availableUnits))
-            {
-                return;
-            }
-
-            this.MoveToMouse(myUnits);
+            return;
         }
 
-        private IReadOnlyList<FarmUnit> GetAvailableUnitsForPush(
-            List<FarmUnit> enemies,
-            List<FarmUnit> allies,
-            IReadOnlyList<FarmUnit> myUnits)
+        availableUnits = this.GetAvailableUnitsForPush(enemies, allies, availableUnits);
+
+        if (this.Push(enemies, allies, availableUnits))
         {
-            var list = new List<FarmUnit>(myUnits.Count);
+            return;
+        }
 
-            foreach (var unit in myUnits)
+        this.MoveToMouse(myUnits);
+    }
+
+    private IReadOnlyList<FarmUnit> GetAvailableUnitsForPush(
+        List<FarmUnit> enemies,
+        List<FarmUnit> allies,
+        IReadOnlyList<FarmUnit> myUnits)
+    {
+        var list = new List<FarmUnit>(myUnits.Count);
+
+        foreach (var unit in myUnits)
+        {
+            var available = true;
+
+            foreach (var enemy in allies.Where(x => x.CanBeKilled))
             {
-                var available = true;
-
-                foreach (var enemy in allies.Where(x => x.CanBeKilled))
+                var damageInfo = new DamageInfo(unit, enemy);
+                if (!damageInfo.IsValid || !damageInfo.IsInAttackRange)
                 {
-                    var damageInfo = new DamageInfo(unit, enemy);
-                    if (!damageInfo.IsValid || !damageInfo.IsInAttackRange)
-                    {
-                        continue;
-                    }
-
-                    if (damageInfo.PredictedHealth > damageInfo.MinDamage * 2
-                        && enemy.GetPredictedHealth(unit, unit.Unit.SecondsPerAttack + 1) > damageInfo.MinDamage)
-                    {
-                        continue;
-                    }
-
-                    available = false;
-                    break;
+                    continue;
                 }
 
-                if (available)
+                if (damageInfo.PredictedHealth > damageInfo.MinDamage * 2
+                    && enemy.GetPredictedHealth(unit, unit.Unit.SecondsPerAttack + 1) > damageInfo.MinDamage)
                 {
-                    list.Add(unit);
+                    continue;
                 }
+
+                available = false;
+                break;
             }
 
-            return list;
-        }
-
-        private bool Push(List<FarmUnit> enemies, List<FarmUnit> allies, IReadOnlyList<FarmUnit> myUnits)
-        {
-            foreach (var unit in myUnits)
+            if (available)
             {
-                foreach (var enemy in enemies.Where(x => !x.IsHero).OrderBy(x => x.Unit.Distance(unit.Unit)))
+                list.Add(unit);
+            }
+        }
+
+        return list;
+    }
+
+    private bool Push(List<FarmUnit> enemies, List<FarmUnit> allies, IReadOnlyList<FarmUnit> myUnits)
+    {
+        foreach (var unit in myUnits)
+        {
+            foreach (var enemy in enemies.Where(x => !x.IsHero).OrderBy(x => x.Unit.Distance(unit.Unit)))
+            {
+                if (!unit.CanAttack(enemy))
                 {
-                    if (!unit.CanAttack(enemy))
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    var damage = unit.GetAverageDamage(enemy);
-                    var health = enemy.GetPredictedHealth(unit, unit.GetAttackDelay(enemy));
+                var damage = unit.GetAverageDamage(enemy);
+                var health = enemy.GetPredictedHealth(unit, unit.GetAttackDelay(enemy));
 
-                    if (health - damage < damage && enemies.Any(x => x.Target?.Equals(enemy) == true))
-                    {
-                        continue;
-                    }
+                if (health - damage < damage && enemies.Any(x => x.Target?.Equals(enemy) == true))
+                {
+                    continue;
+                }
 
-                    if (enemy.GetPredictedHealth(unit, unit.Unit.SecondsPerAttack + 1) < damage)
-                    {
-                        continue;
-                    }
+                if (enemy.GetPredictedHealth(unit, unit.Unit.SecondsPerAttack + 1) < damage)
+                {
+                    continue;
+                }
 
-                    if (unit.Harass(enemy))
-                    {
-                        return true;
-                    }
+                if (unit.Harass(enemy))
+                {
+                    return true;
                 }
             }
-
-            return false;
         }
+
+        return false;
     }
 }

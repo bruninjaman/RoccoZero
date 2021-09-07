@@ -1,41 +1,40 @@
-﻿namespace O9K.AIO.Heroes.SpiritBreaker
+﻿namespace O9K.AIO.Heroes.SpiritBreaker;
+
+using AIO.Modes.KeyPress;
+
+using Base;
+
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Modes;
+
+[HeroId(HeroId.npc_dota_hero_spirit_breaker)]
+internal class SpiritBreakerBase : BaseHero
 {
-    using AIO.Modes.KeyPress;
+    private readonly ChargeAwayMode chargeAwayMode;
 
-    using Base;
-
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Modes;
-
-    [HeroId(HeroId.npc_dota_hero_spirit_breaker)]
-    internal class SpiritBreakerBase : BaseHero
+    public SpiritBreakerBase()
     {
-        private readonly ChargeAwayMode chargeAwayMode;
+        this.chargeAwayMode = new ChargeAwayMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Charge away"));
+    }
 
-        public SpiritBreakerBase()
-        {
-            this.chargeAwayMode = new ChargeAwayMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Charge away"));
-        }
+    public override void Dispose()
+    {
+        base.Dispose();
 
-        public override void Dispose()
-        {
-            base.Dispose();
+        this.chargeAwayMode.Dispose();
+    }
 
-            this.chargeAwayMode.Dispose();
-        }
+    protected override void DisableCustomModes()
 
-        protected override void DisableCustomModes()
+    {
+        this.chargeAwayMode.Disable();
+    }
 
-        {
-            this.chargeAwayMode.Disable();
-        }
-
-        protected override void EnableCustomModes()
-        {
-            this.chargeAwayMode.Enable();
-        }
+    protected override void EnableCustomModes()
+    {
+        this.chargeAwayMode.Enable();
     }
 }

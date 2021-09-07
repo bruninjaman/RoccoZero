@@ -1,38 +1,37 @@
-﻿namespace O9K.AIO.Heroes.Pudge.Abilities
+﻿namespace O9K.AIO.Heroes.Pudge.Abilities;
+
+using System.Collections.Generic;
+
+using AIO.Abilities;
+using AIO.Modes.Combo;
+
+using Core.Entities.Abilities.Base;
+using Core.Helpers;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+using TargetManager;
+
+internal class BlinkDaggerPudge : BlinkAbility
 {
-    using System.Collections.Generic;
-
-    using AIO.Abilities;
-    using AIO.Modes.Combo;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Helpers;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using TargetManager;
-
-    internal class BlinkDaggerPudge : BlinkAbility
+    public BlinkDaggerPudge(ActiveAbility ability)
+        : base(ability)
     {
-        public BlinkDaggerPudge(ActiveAbility ability)
-            : base(ability)
+    }
+
+    public override bool ShouldConditionCast(TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
+    {
+        var dismember = usableAbilities.Find(x => x.Ability.Id == AbilityId.pudge_dismember);
+        if (dismember == null)
         {
+            return false;
         }
 
-        public override bool ShouldConditionCast(TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
-        {
-            var dismember = usableAbilities.Find(x => x.Ability.Id == AbilityId.pudge_dismember);
-            if (dismember == null)
-            {
-                return false;
-            }
+        return true;
+    }
 
-            return true;
-        }
-
-        public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
-        {
-            return this.UseAbility(targetManager, comboSleeper, 100, 25);
-        }
+    public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
+    {
+        return this.UseAbility(targetManager, comboSleeper, 100, 25);
     }
 }

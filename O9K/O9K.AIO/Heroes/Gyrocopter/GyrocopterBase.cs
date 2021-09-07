@@ -1,16 +1,15 @@
-﻿namespace O9K.AIO.Heroes.Gyrocopter
+﻿namespace O9K.AIO.Heroes.Gyrocopter;
+
+using Base;
+
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+[HeroId(HeroId.npc_dota_hero_gyrocopter)]
+internal class GyrocopterBase : BaseHero
 {
-    using Base;
-
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    [HeroId(HeroId.npc_dota_hero_gyrocopter)]
-    internal class GyrocopterBase : BaseHero
+    public GyrocopterBase()
     {
-        public GyrocopterBase()
-        {
-        }
     }
 }

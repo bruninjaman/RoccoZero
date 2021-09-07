@@ -1,48 +1,47 @@
-﻿namespace O9K.AIO.Heroes.StormSpirit
+﻿namespace O9K.AIO.Heroes.StormSpirit;
+
+using Base;
+
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Modes;
+
+[HeroId(HeroId.npc_dota_hero_storm_spirit)]
+internal class StormSpiritBase : BaseHero
 {
-    using Base;
+    private readonly ManaCalculatorMode manaCalculatorMode;
 
-    using Core.Entities.Metadata;
+    private readonly OverloadChargeMode overloadChargeMode;
 
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Modes;
-
-    [HeroId(HeroId.npc_dota_hero_storm_spirit)]
-    internal class StormSpiritBase : BaseHero
+    public StormSpiritBase()
     {
-        private readonly ManaCalculatorMode manaCalculatorMode;
+        this.manaCalculatorMode = new ManaCalculatorMode(
+            this,
+            new ManaCalculatorModeMenu(this.Menu.RootMenu, "Mana calculator"));
 
-        private readonly OverloadChargeMode overloadChargeMode;
+        this.overloadChargeMode = new OverloadChargeMode(
+            this,
+            new OverloadChargeModeMenu(this.Menu.RootMenu, "Overload charge", "Use ball lighting to charge overload"));
+    }
 
-        public StormSpiritBase()
-        {
-            this.manaCalculatorMode = new ManaCalculatorMode(
-                this,
-                new ManaCalculatorModeMenu(this.Menu.RootMenu, "Mana calculator"));
+    public override void Dispose()
+    {
+        base.Dispose();
+        this.manaCalculatorMode.Dispose();
+        this.overloadChargeMode.Dispose();
+    }
 
-            this.overloadChargeMode = new OverloadChargeMode(
-                this,
-                new OverloadChargeModeMenu(this.Menu.RootMenu, "Overload charge", "Use ball lighting to charge overload"));
-        }
+    protected override void DisableCustomModes()
+    {
+        this.manaCalculatorMode.Disable();
+        this.overloadChargeMode.Disable();
+    }
 
-        public override void Dispose()
-        {
-            base.Dispose();
-            this.manaCalculatorMode.Dispose();
-            this.overloadChargeMode.Dispose();
-        }
-
-        protected override void DisableCustomModes()
-        {
-            this.manaCalculatorMode.Disable();
-            this.overloadChargeMode.Disable();
-        }
-
-        protected override void EnableCustomModes()
-        {
-            this.manaCalculatorMode.Enable();
-            this.overloadChargeMode.Enable();
-        }
+    protected override void EnableCustomModes()
+    {
+        this.manaCalculatorMode.Enable();
+        this.overloadChargeMode.Enable();
     }
 }

@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Bristleback.ViscousNasalGoo
+﻿namespace O9K.Evader.Abilities.Heroes.Bristleback.ViscousNasalGoo;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.bristleback_viscous_nasal_goo)]
+internal class ViscousNasalGooBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.bristleback_viscous_nasal_goo)]
-    internal class ViscousNasalGooBase : EvaderBaseAbility, IEvadable
+    public ViscousNasalGooBase(Ability9 ability)
+        : base(ability)
     {
-        public ViscousNasalGooBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new ViscousNasalGooEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new ViscousNasalGooEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

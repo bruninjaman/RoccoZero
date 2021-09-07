@@ -1,97 +1,96 @@
-﻿namespace O9K.Hud.Modules.Units.Modifiers
+﻿namespace O9K.Hud.Modules.Units.Modifiers;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Units;
+using Divine.Numerics;
+using Divine.Modifier.Modifiers;
+
+internal class ModifierUnit
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly bool isMyHero;
 
-    using Core.Entities.Units;
-    using Divine.Numerics;
-    using Divine.Modifier.Modifiers;
+    private readonly List<DrawableModifier> modifiers = new List<DrawableModifier>();
 
-    internal class ModifierUnit
+    public ModifierUnit(Unit9 unit)
     {
-        private readonly bool isMyHero;
+        this.Unit = unit;
+        this.IsAlly = unit.IsAlly();
+        this.isMyHero = unit.IsMyHero;
+    }
 
-        private readonly List<DrawableModifier> modifiers = new List<DrawableModifier>();
-
-        public ModifierUnit(Unit9 unit)
+    public Vector2 HealthBarPosition
+    {
+        get
         {
-            this.Unit = unit;
-            this.IsAlly = unit.IsAlly();
-            this.isMyHero = unit.IsMyHero;
+            return this.Unit.HealthBarPosition;
         }
+    }
 
-        public Vector2 HealthBarPosition
+    public bool IsAlly { get; }
+
+    public IEnumerable<DrawableModifier> Modifiers
+    {
+        get
         {
-            get
+            var distinct = new HashSet<string>();
+            foreach (var modifier in this.modifiers.OrderByDescending(x => x.CreateTime))
             {
-                return this.Unit.HealthBarPosition;
-            }
-        }
-
-        public bool IsAlly { get; }
-
-        public IEnumerable<DrawableModifier> Modifiers
-        {
-            get
-            {
-                var distinct = new HashSet<string>();
-                foreach (var modifier in this.modifiers.OrderByDescending(x => x.CreateTime))
+                if (modifier.ShouldDraw && distinct.Add(modifier.TextureName))
                 {
-                    if (modifier.ShouldDraw && distinct.Add(modifier.TextureName))
-                    {
-                        yield return modifier;
-                    }
+                    yield return modifier;
                 }
             }
         }
+    }
 
-        public Unit9 Unit { get; }
+    public Unit9 Unit { get; }
 
-        public void AddModifier(DrawableModifier modifier)
+    public void AddModifier(DrawableModifier modifier)
+    {
+        if (this.isMyHero && !modifier.IsHiddenAura)
         {
-            if (this.isMyHero && !modifier.IsHiddenAura)
-            {
-                return;
-            }
-
-            this.modifiers.Add(modifier);
+            return;
         }
 
-        public void CheckModifiers()
+        this.modifiers.Add(modifier);
+    }
+
+    public void CheckModifiers()
+    {
+        for (var i = this.modifiers.Count - 1; i > -1; i--)
         {
-            for (var i = this.modifiers.Count - 1; i > -1; i--)
+            var modifier = this.modifiers[i];
+
+            if (!modifier.Modifier.IsValid)
             {
-                var modifier = this.modifiers[i];
-
-                if (!modifier.Modifier.IsValid)
-                {
-                    this.modifiers.RemoveAt(i);
-                    continue;
-                }
-
-                modifier.UpdateTimings();
-            }
-        }
-
-        public bool IsValid(bool showAlly)
-        {
-            if (this.IsAlly)
-            {
-                return (showAlly || this.isMyHero) && this.Unit.IsValid && this.Unit.IsAlive;
+                this.modifiers.RemoveAt(i);
+                continue;
             }
 
-            return this.Unit.IsValid && this.Unit.IsVisible && this.Unit.IsAlive;
+            modifier.UpdateTimings();
         }
+    }
 
-        public void RemoveModifier(Modifier modifier)
+    public bool IsValid(bool showAlly)
+    {
+        if (this.IsAlly)
         {
-            var find = this.modifiers.Find(x => x.Index == modifier.Index);
-            if (find == null)
-            {
-                return;
-            }
-
-            this.modifiers.Remove(find);
+            return (showAlly || this.isMyHero) && this.Unit.IsValid && this.Unit.IsAlive;
         }
+
+        return this.Unit.IsValid && this.Unit.IsVisible && this.Unit.IsAlive;
+    }
+
+    public void RemoveModifier(Modifier modifier)
+    {
+        var find = this.modifiers.Find(x => x.Index == modifier.Index);
+        if (find == null)
+        {
+            return;
+        }
+
+        this.modifiers.Remove(find);
     }
 }

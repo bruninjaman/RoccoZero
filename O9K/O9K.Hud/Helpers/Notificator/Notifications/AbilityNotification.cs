@@ -1,74 +1,73 @@
-﻿namespace O9K.Hud.Helpers.Notificator.Notifications
+﻿namespace O9K.Hud.Helpers.Notificator.Notifications;
+
+using Divine.Numerics;
+using Divine.Renderer;
+
+internal sealed class AbilityNotification : Notification
 {
-    using Divine.Numerics;
-    using Divine.Renderer;
+    private readonly string abilityName;
 
-    internal sealed class AbilityNotification : Notification
+    private readonly string heroName;
+
+    public AbilityNotification(string heroName, string abilityName)
     {
-        private readonly string abilityName;
+        this.heroName = heroName;
+        this.abilityName = abilityName;
+        this.TimeToShow = 3;
+    }
 
-        private readonly string heroName;
+    public override void Draw(RectangleF position, IMinimap minimap)
+    {
+        var heroPosition = GetHeroPosition(position);
+        var abilityPosition = GetAbilityPosition(position, heroPosition);
+        var arrowPosition = GetArrowPosition(position, heroPosition, abilityPosition);
+        var opacity = this.GetOpacity();
 
-        public AbilityNotification(string heroName, string abilityName)
+        if (this.heroName == null)
         {
-            this.heroName = heroName;
-            this.abilityName = abilityName;
-            this.TimeToShow = 3;
+            position.X += heroPosition.Width;
+            RendererManager.DrawImage("o9k.notification_bg", position, opacity);
+        }
+        else
+        {
+            RendererManager.DrawImage("o9k.notification_bg", position, opacity);
+            RendererManager.DrawImage(this.heroName, heroPosition, ImageType.Unit, opacity);
         }
 
-        public override void Draw(RectangleF position, IMinimap minimap)
-        {
-            var heroPosition = GetHeroPosition(position);
-            var abilityPosition = GetAbilityPosition(position, heroPosition);
-            var arrowPosition = GetArrowPosition(position, heroPosition, abilityPosition);
-            var opacity = this.GetOpacity();
+        RendererManager.DrawImage("o9k.ping", arrowPosition, opacity);
+        RendererManager.DrawImage(this.abilityName, abilityPosition, ImageType.Ability, opacity);
+    }
 
-            if (this.heroName == null)
-            {
-                position.X += heroPosition.Width;
-                RendererManager.DrawImage("o9k.notification_bg", position, opacity);
-            }
-            else
-            {
-                RendererManager.DrawImage("o9k.notification_bg", position, opacity);
-                RendererManager.DrawImage(this.heroName, heroPosition, ImageType.Unit, opacity);
-            }
+    private static RectangleF GetAbilityPosition(RectangleF position, RectangleF heroPosition)
+    {
+        var rec = heroPosition;
+        rec.Width *= 0.75f;
+        rec.X = position.Right - (position.Width * 0.05f) - rec.Width;
 
-            RendererManager.DrawImage("o9k.ping", arrowPosition, opacity);
-            RendererManager.DrawImage(this.abilityName, abilityPosition, ImageType.Ability, opacity);
-        }
+        return rec;
+    }
 
-        private static RectangleF GetAbilityPosition(RectangleF position, RectangleF heroPosition)
-        {
-            var rec = heroPosition;
-            rec.Width *= 0.75f;
-            rec.X = position.Right - (position.Width * 0.05f) - rec.Width;
+    private static RectangleF GetArrowPosition(RectangleF position, RectangleF heroPosition, RectangleF itemPosition)
+    {
+        var rec = new RectangleF();
 
-            return rec;
-        }
+        rec.Width = position.Width * 0.18f;
+        rec.Height = position.Height * 0.6f;
+        rec.X = ((heroPosition.Right + itemPosition.Left) / 2f) - (rec.Width / 2f);
+        rec.Y = (position.Y + (position.Height / 2f)) - (rec.Height / 2);
 
-        private static RectangleF GetArrowPosition(RectangleF position, RectangleF heroPosition, RectangleF itemPosition)
-        {
-            var rec = new RectangleF();
+        return rec;
+    }
 
-            rec.Width = position.Width * 0.18f;
-            rec.Height = position.Height * 0.6f;
-            rec.X = ((heroPosition.Right + itemPosition.Left) / 2f) - (rec.Width / 2f);
-            rec.Y = (position.Y + (position.Height / 2f)) - (rec.Height / 2);
+    private static RectangleF GetHeroPosition(RectangleF position)
+    {
+        var rec = position;
 
-            return rec;
-        }
+        rec.X += position.Width * 0.05f;
+        rec.Y += position.Height * 0.15f;
+        rec.Width = position.Width * 0.3f;
+        rec.Height = position.Height * 0.7f;
 
-        private static RectangleF GetHeroPosition(RectangleF position)
-        {
-            var rec = position;
-
-            rec.X += position.Width * 0.05f;
-            rec.Y += position.Height * 0.15f;
-            rec.Width = position.Width * 0.3f;
-            rec.Height = position.Height * 0.7f;
-
-            return rec;
-        }
+        return rec;
     }
 }

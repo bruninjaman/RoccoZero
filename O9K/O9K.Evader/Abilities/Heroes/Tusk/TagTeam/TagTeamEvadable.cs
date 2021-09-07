@@ -1,30 +1,29 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Tusk.TagTeam
+﻿namespace O9K.Evader.Abilities.Heroes.Tusk.TagTeam;
+
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+
+using Divine.Modifier.Modifiers;
+
+using Metadata;
+
+using Pathfinder.Obstacles.Modifiers;
+
+internal sealed class TagTeamEvadable : ModifierCounterEvadable
 {
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-
-    using Divine.Modifier.Modifiers;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles.Modifiers;
-
-    internal sealed class TagTeamEvadable : ModifierCounterEvadable
+    public TagTeamEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
+        : base(ability, pathfinder, menu)
     {
-        public TagTeamEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
-            : base(ability, pathfinder, menu)
-        {
-            this.ModifierCounters.UnionWith(Abilities.PhysShield);
-        }
+        this.ModifierCounters.UnionWith(Abilities.PhysShield);
+    }
 
-        public override bool ModifierEnemyCounter { get; } = true;
+    public override bool ModifierEnemyCounter { get; } = true;
 
-        public override void AddModifier(Modifier modifier, Unit9 modifierOwner)
-        {
-            var obstacle = new ModifierEnemyObstacle(this, modifier, modifierOwner, 400);
-            this.Pathfinder.AddObstacle(obstacle);
-        }
+    public override void AddModifier(Modifier modifier, Unit9 modifierOwner)
+    {
+        var obstacle = new ModifierEnemyObstacle(this, modifier, modifierOwner, 400);
+        this.Pathfinder.AddObstacle(obstacle);
     }
 }

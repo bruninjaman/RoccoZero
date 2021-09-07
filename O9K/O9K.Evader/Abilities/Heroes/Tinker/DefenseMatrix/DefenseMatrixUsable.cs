@@ -1,78 +1,77 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Tinker.DefenseMatrix
+﻿namespace O9K.Evader.Abilities.Heroes.Tinker.DefenseMatrix;
+
+using System;
+
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Abilities.Heroes.Tinker;
+using Core.Entities.Units;
+using Core.Extensions;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+
+internal class DefenseMatrixUsable : CounterAbility
 {
-    using System;
+    private readonly IActionManager actionManager;
 
-    using Base.Usable.CounterAbility;
+    private readonly DefenseMatrix defenseMatrix;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Abilities.Heroes.Tinker;
-    using Core.Entities.Units;
-    using Core.Extensions;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-
-    internal class DefenseMatrixUsable : CounterAbility
+    public DefenseMatrixUsable(Ability9 ability, IActionManager actionManager, IMainMenu menu)
+        : base(ability, menu)
     {
-        private readonly IActionManager actionManager;
+        this.defenseMatrix = (DefenseMatrix)ability;
+        this.actionManager = actionManager;
+    }
 
-        private readonly DefenseMatrix defenseMatrix;
-
-        public DefenseMatrixUsable(Ability9 ability, IActionManager actionManager, IMainMenu menu)
-            : base(ability, menu)
+    public override bool CanBeCasted(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        if (!base.CanBeCasted(ally, enemy, obstacle))
         {
-            this.defenseMatrix = (DefenseMatrix)ability;
-            this.actionManager = actionManager;
+            return false;
         }
 
-        public override bool CanBeCasted(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+        if (this.defenseMatrix.IsCasting)
         {
-            if (!base.CanBeCasted(ally, enemy, obstacle))
-            {
-                return false;
-            }
+            return false;
+        }
 
-            if (this.defenseMatrix.IsCasting)
-            {
-                return false;
-            }
-
-            if (obstacle.IsModifierObstacle)
-            {
-                return true;
-            }
-
-            var damage = obstacle.GetDamage(ally);
-
-            if (damage >= ally.Health + this.defenseMatrix.BlockValue(ally))
-            {
-                return false;
-            }
-
+        if (obstacle.IsModifierObstacle)
+        {
             return true;
         }
 
-        public override float GetRequiredTime(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+        var damage = obstacle.GetDamage(ally);
+
+        if (damage >= ally.Health + this.defenseMatrix.BlockValue(ally))
         {
-            var requiredTime = base.GetRequiredTime(ally, enemy, obstacle);
-            var ability = obstacle.EvadableAbility.Ability;
+            return false;
+        }
 
-            if (obstacle.IsModifierObstacle || obstacle.GetDamage(ally) > ally.Health)
-            {
-                return requiredTime;
-            }
+        return true;
+    }
 
-            if (ability.IsDisable() && !this.Owner.Equals(ally))
-            {
-                var remainingTime = obstacle.GetEvadeTime(ally, false);
-                // todo check if ignores modifier even when not used
-                this.actionManager.IgnoreModifierObstacle(ability.Handle, ally, remainingTime + 0.5f);
+    public override float GetRequiredTime(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        var requiredTime = base.GetRequiredTime(ally, enemy, obstacle);
+        var ability = obstacle.EvadableAbility.Ability;
 
-                return Math.Min(requiredTime - 0.15f, remainingTime - 0.03f);
-            }
-
+        if (obstacle.IsModifierObstacle || obstacle.GetDamage(ally) > ally.Health)
+        {
             return requiredTime;
         }
+
+        if (ability.IsDisable() && !this.Owner.Equals(ally))
+        {
+            var remainingTime = obstacle.GetEvadeTime(ally, false);
+            // todo check if ignores modifier even when not used
+            this.actionManager.IgnoreModifierObstacle(ability.Handle, ally, remainingTime + 0.5f);
+
+            return Math.Min(requiredTime - 0.15f, remainingTime - 0.03f);
+        }
+
+        return requiredTime;
     }
 }

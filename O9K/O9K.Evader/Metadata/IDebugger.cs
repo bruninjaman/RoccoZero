@@ -1,9 +1,8 @@
-﻿namespace O9K.Evader.Metadata
-{
-    using Evader.EvadeModes;
+﻿namespace O9K.Evader.Metadata;
 
-    internal interface IDebugger
-    {
-        void AddEvadeResult(EvadeResult evadeResult);
-    }
+using Evader.EvadeModes;
+
+internal interface IDebugger
+{
+    void AddEvadeResult(EvadeResult evadeResult);
 }

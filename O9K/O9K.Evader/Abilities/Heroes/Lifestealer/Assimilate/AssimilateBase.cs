@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Lifestealer.Assimilate
+﻿namespace O9K.Evader.Abilities.Heroes.Lifestealer.Assimilate;
+
+using Base;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.life_stealer_assimilate)]
+internal class AssimilateBase : EvaderBaseAbility, IUsable<CounterAbility>
 {
-    using Base;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.life_stealer_assimilate)]
-    internal class AssimilateBase : EvaderBaseAbility, IUsable<CounterAbility>
+    public AssimilateBase(Ability9 ability)
+        : base(ability)
     {
-        public AssimilateBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public CounterAbility GetUsableAbility()
-        {
-            return new CounterAbility(this.Ability, this.Menu);
-        }
+    public CounterAbility GetUsableAbility()
+    {
+        return new CounterAbility(this.Ability, this.Menu);
     }
 }

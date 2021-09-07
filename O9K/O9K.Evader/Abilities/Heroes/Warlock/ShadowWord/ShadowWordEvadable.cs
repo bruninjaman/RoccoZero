@@ -1,63 +1,62 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Warlock.ShadowWord
+﻿namespace O9K.Evader.Abilities.Heroes.Warlock.ShadowWord;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+using Divine.Modifier.Modifiers;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+using Pathfinder.Obstacles.Modifiers;
+
+internal sealed class ShadowWordEvadable : TargetableEvadable, IModifierCounter
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-    using Divine.Modifier.Modifiers;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles.Modifiers;
-
-    internal sealed class ShadowWordEvadable : TargetableEvadable, IModifierCounter
+    public ShadowWordEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
+        : base(ability, pathfinder, menu)
     {
-        public ShadowWordEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
-            : base(ability, pathfinder, menu)
+        this.Counters.Add(Abilities.Counterspell);
+
+        this.ModifierCounters.UnionWith(Abilities.AllyPurge);
+
+        this.ModifierDisables.UnionWith(Abilities.EnemyPurge);
+    }
+
+    public bool ModifierAllyCounter { get; } = true;
+
+    public bool ModifierEnemyCounter { get; } = true;
+
+    public void AddModifier(Modifier modifier, Unit9 modifierOwner)
+    {
+        if (modifier.IsDebuff)
         {
-            this.Counters.Add(Abilities.Counterspell);
+            if (!modifierOwner.IsAlly())
+            {
+                return;
+            }
 
-            this.ModifierCounters.UnionWith(Abilities.AllyPurge);
+            var obstacle = new ModifierAllyObstacle(this, modifier, modifierOwner)
+            {
+                Disables = new AbilityId[0]
+            };
 
-            this.ModifierDisables.UnionWith(Abilities.EnemyPurge);
+            this.Pathfinder.AddObstacle(obstacle);
         }
-
-        public bool ModifierAllyCounter { get; } = true;
-
-        public bool ModifierEnemyCounter { get; } = true;
-
-        public void AddModifier(Modifier modifier, Unit9 modifierOwner)
+        else
         {
-            if (modifier.IsDebuff)
+            if (modifierOwner.IsAlly())
             {
-                if (!modifierOwner.IsAlly())
-                {
-                    return;
-                }
-
-                var obstacle = new ModifierAllyObstacle(this, modifier, modifierOwner)
-                {
-                    Disables = new AbilityId[0]
-                };
-
-                this.Pathfinder.AddObstacle(obstacle);
+                return;
             }
-            else
+
+            var obstacle = new ModifierEnemyObstacle(this, modifier, modifierOwner, 800)
             {
-                if (modifierOwner.IsAlly())
-                {
-                    return;
-                }
+                Counters = new AbilityId[0]
+            };
 
-                var obstacle = new ModifierEnemyObstacle(this, modifier, modifierOwner, 800)
-                {
-                    Counters = new AbilityId[0]
-                };
-
-                this.Pathfinder.AddObstacle(obstacle);
-            }
+            this.Pathfinder.AddObstacle(obstacle);
         }
     }
 }

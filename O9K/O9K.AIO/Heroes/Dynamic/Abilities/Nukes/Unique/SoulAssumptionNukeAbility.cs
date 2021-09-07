@@ -1,36 +1,35 @@
-﻿namespace O9K.AIO.Heroes.Dynamic.Abilities.Nukes.Unique
+﻿namespace O9K.AIO.Heroes.Dynamic.Abilities.Nukes.Unique;
+
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Abilities.Heroes.Visage;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.visage_soul_assumption)]
+internal class SoulAssumptionNukeAbility : OldNukeAbility
 {
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Abilities.Heroes.Visage;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
+    private readonly SoulAssumption soulAssumption;
 
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.visage_soul_assumption)]
-    internal class SoulAssumptionNukeAbility : OldNukeAbility
+    public SoulAssumptionNukeAbility(INuke ability)
+        : base(ability)
     {
-        private readonly SoulAssumption soulAssumption;
+        this.soulAssumption = (SoulAssumption)ability;
+    }
 
-        public SoulAssumptionNukeAbility(INuke ability)
-            : base(ability)
+    public override bool ShouldCast(Unit9 target)
+    {
+        if (!base.ShouldCast(target))
         {
-            this.soulAssumption = (SoulAssumption)ability;
+            return false;
         }
 
-        public override bool ShouldCast(Unit9 target)
+        if (!this.soulAssumption.MaxCharges && this.soulAssumption.GetDamage(target) < target.Health)
         {
-            if (!base.ShouldCast(target))
-            {
-                return false;
-            }
-
-            if (!this.soulAssumption.MaxCharges && this.soulAssumption.GetDamage(target) < target.Health)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
+
+        return true;
     }
 }

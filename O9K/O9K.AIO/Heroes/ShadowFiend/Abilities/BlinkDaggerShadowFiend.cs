@@ -1,20 +1,19 @@
-﻿namespace O9K.AIO.Heroes.ShadowFiend.Abilities
+﻿namespace O9K.AIO.Heroes.ShadowFiend.Abilities;
+
+using AIO.Abilities;
+using AIO.Abilities.Menus;
+
+using Core.Entities.Abilities.Base;
+
+internal class BlinkDaggerShadowFiend : BlinkAbility
 {
-    using AIO.Abilities;
-    using AIO.Abilities.Menus;
-
-    using Core.Entities.Abilities.Base;
-
-    internal class BlinkDaggerShadowFiend : BlinkAbility
+    public BlinkDaggerShadowFiend(ActiveAbility ability)
+        : base(ability)
     {
-        public BlinkDaggerShadowFiend(ActiveAbility ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public override UsableAbilityMenu GetAbilityMenu(string simplifiedName)
-        {
-            return new BlinkDaggerShadowFiendMenu(this.Ability, "Dont use eul in combo");
-        }
+    public override UsableAbilityMenu GetAbilityMenu(string simplifiedName)
+    {
+        return new BlinkDaggerShadowFiendMenu(this.Ability, "Dont use eul in combo");
     }
 }

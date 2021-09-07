@@ -1,214 +1,213 @@
-﻿namespace O9K.AIO.Heroes.ArcWarden.Modes
+﻿namespace O9K.AIO.Heroes.ArcWarden.Modes;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using AIO.Modes.Combo;
+
+using Base;
+
+using Core.Logger;
+using Core.Managers.Menu.EventArgs;
+using Core.Managers.Menu.Items;
+
+using CustomUnitManager;
+
+using Divine.Game;
+using Divine.Order;
+using Divine.Update;
+
+using Draw;
+
+internal class ArcWardenComboMode : ComboMode
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly ArcWardenUnitManager arcUnitManager;
 
-    using AIO.Modes.Combo;
-
-    using Base;
-
-    using Core.Logger;
-    using Core.Managers.Menu.EventArgs;
-    using Core.Managers.Menu.Items;
-
-    using CustomUnitManager;
-
-    using Divine.Game;
-    using Divine.Order;
-    using Divine.Update;
-
-    using Draw;
-
-    internal class ArcWardenComboMode : ComboMode
+    public ArcWardenComboMode(BaseHero baseHero, IEnumerable<ComboModeMenu> comboMenus)
+        : base(baseHero, comboMenus)
     {
-        private readonly ArcWardenUnitManager arcUnitManager;
+        this.arcUnitManager = this.UnitManager as ArcWardenUnitManager;
+    }
 
-        public ArcWardenComboMode(BaseHero baseHero, IEnumerable<ComboModeMenu> comboMenus)
-            : base(baseHero, comboMenus)
+    public override void Disable()
+    {
+        this.UpdateHandler.IsEnabled = false;
+        OrderManager.OrderAdding -= OnOrderAdding;
+
+        this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange -= ToggleKeyOnValueChanged;
+
+        foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
         {
-            this.arcUnitManager = this.UnitManager as ArcWardenUnitManager;
+            comboMenu.Key.ValueChange -= KeyOnValueChanged;
+        }
+    }
+
+    public override void Dispose()
+    {
+        UpdateManager.DestroyIngameUpdate(this.UpdateHandler);
+        OrderManager.OrderAdding -= OnOrderAdding;
+
+        this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange -= ToggleKeyOnValueChanged;
+
+        foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
+        {
+            comboMenu.Key.ValueChange -= KeyOnValueChanged;
+        }
+    }
+
+    public override void Enable()
+    {
+        OrderManager.OrderAdding += OnOrderAdding;
+
+        this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange += ToggleKeyOnValueChanged;
+
+        foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
+        {
+            comboMenu.Key.ValueChange += KeyOnValueChanged;
+        }
+    }
+
+    protected override void OnUpdate()
+    {
+        if (GameManager.IsPaused)
+        {
+            return;
         }
 
-        public override void Disable()
+        try
         {
-            this.UpdateHandler.IsEnabled = false;
-            OrderManager.OrderAdding -= OnOrderAdding;
-
-            this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange -= ToggleKeyOnValueChanged;
-
-            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
+            if (this.ComboModeMenu.SimplifiedName == "clonecombo")
             {
-                comboMenu.Key.ValueChange -= KeyOnValueChanged;
-            }
-        }
-
-        public override void Dispose()
-        {
-            UpdateManager.DestroyIngameUpdate(this.UpdateHandler);
-            OrderManager.OrderAdding -= OnOrderAdding;
-
-            this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange -= ToggleKeyOnValueChanged;
-
-            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
-            {
-                comboMenu.Key.ValueChange -= KeyOnValueChanged;
-            }
-        }
-
-        public override void Enable()
-        {
-            OrderManager.OrderAdding += OnOrderAdding;
-
-            this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange += ToggleKeyOnValueChanged;
-
-            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
-            {
-                comboMenu.Key.ValueChange += KeyOnValueChanged;
-            }
-        }
-
-        protected override void OnUpdate()
-        {
-            if (GameManager.IsPaused)
-            {
-                return;
+                if (!this.arcUnitManager.CloneControllableUnits.Any(x => x.IsValid))
+                {
+                    TurnOffCombo();
+                }
             }
 
-            try
+            if (this.TargetManager.HasValidTarget)
             {
                 if (this.ComboModeMenu.SimplifiedName == "clonecombo")
                 {
-                    if (!this.arcUnitManager.CloneControllableUnits.Any(x => x.IsValid))
-                    {
-                        TurnOffCombo();
-                    }
-                }
-
-                if (this.TargetManager.HasValidTarget)
-                {
-                    if (this.ComboModeMenu.SimplifiedName == "clonecombo")
-                    {
-                        this.arcUnitManager.ExecuteCloneCombo(this.ComboModeMenu);
-                    }
-                    else
-                    {
-                        this.arcUnitManager.ExecuteCombo(this.ComboModeMenu);
-                    }
+                    this.arcUnitManager.ExecuteCloneCombo(this.ComboModeMenu);
                 }
                 else
                 {
-                    if (this.ComboModeMenu.SimplifiedName == "clonecombo")
-                    {
-
-                        var cloneUnit = this.arcUnitManager.GetClone?.Owner;
-
-                        var closestEnemyToClone = this.TargetManager.EnemyHeroes.OrderBy(x => cloneUnit?.Distance(x))
-                                                      .FirstOrDefault();
-
-                        var closestEnemyToMain = this.TargetManager.EnemyHeroes.OrderBy(x => this.Owner.Hero.Distance(x))
-                                                     .FirstOrDefault();
-
-                        if (closestEnemyToClone != null || closestEnemyToMain != null)
-                        {
-                            this.arcUnitManager.SetTargetForClone(cloneUnit?.Distance(closestEnemyToMain) > 1500 ? closestEnemyToClone : closestEnemyToMain);
-                        }
-                    }
+                    this.arcUnitManager.ExecuteCombo(this.ComboModeMenu);
                 }
-
+            }
+            else
+            {
                 if (this.ComboModeMenu.SimplifiedName == "clonecombo")
                 {
 
-                    this.arcUnitManager.CloneOrbwalk(this.ComboModeMenu);
-                }
-                else
-                {
-                    this.arcUnitManager.Orbwalk(this.ComboModeMenu);
+                    var cloneUnit = this.arcUnitManager.GetClone?.Owner;
+
+                    var closestEnemyToClone = this.TargetManager.EnemyHeroes.OrderBy(x => cloneUnit?.Distance(x))
+                                                  .FirstOrDefault();
+
+                    var closestEnemyToMain = this.TargetManager.EnemyHeroes.OrderBy(x => this.Owner.Hero.Distance(x))
+                                                 .FirstOrDefault();
+
+                    if (closestEnemyToClone != null || closestEnemyToMain != null)
+                    {
+                        this.arcUnitManager.SetTargetForClone(cloneUnit?.Distance(closestEnemyToMain) > 1500 ? closestEnemyToClone : closestEnemyToMain);
+                    }
                 }
             }
-            catch (Exception e)
+
+            if (this.ComboModeMenu.SimplifiedName == "clonecombo")
             {
-                Logger.Error(e);
-            }
 
-        }
-
-        protected override void KeyOnValueChanged(object sender, KeyEventArgs e)
-        {
-            if (e.NewValue)
-            {
-                if (this.UpdateHandler.IsEnabled)
-                {
-                    this.IgnoreComboEnd = true;
-                }
-
-                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
-                this.TargetManager.TargetLocked = true;
-                this.UpdateHandler.IsEnabled = true;
-
-                this.TargetManager.ForceSetTarget(this.TargetManager.ClosestEnemyHeroToMouse());
-                ArcWardenPanel.cloneTarget = this.TargetManager.ClosestEnemyHeroToMouse();
-                PushMode.Instance.TurnOffAutoPush();
+                this.arcUnitManager.CloneOrbwalk(this.ComboModeMenu);
             }
             else
             {
-                TurnOffCombo();
+                this.arcUnitManager.Orbwalk(this.ComboModeMenu);
             }
         }
-
-        private void ToggleKeyOnValueChanged(object sender, KeyEventArgs e)
+        catch (Exception e)
         {
-            if (!e.NewValue)
-            {
-                return;
-            }
-
-            if (this.TargetManager.TargetLocked != true)
-            {
-                if (this.UpdateHandler.IsEnabled)
-                {
-                    this.IgnoreComboEnd = true;
-                }
-
-                this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
-                this.TargetManager.TargetLocked = true;
-                this.UpdateHandler.IsEnabled = true;
-                PushMode.Instance.TurnOffAutoPush();
-            }
-            else
-            {
-                TurnOffCombo();
-            }
+            Logger.Error(e);
         }
 
-        private bool IsCloneAlive
+    }
+
+    protected override void KeyOnValueChanged(object sender, KeyEventArgs e)
+    {
+        if (e.NewValue)
         {
-            get
+            if (this.UpdateHandler.IsEnabled)
             {
-                return ((ArcWardenUnitManager)this.UnitManager).CloneControllableUnits.Any();
+                this.IgnoreComboEnd = true;
             }
-        }
 
-        private void TurnOffCombo()
+            this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
+            this.TargetManager.TargetLocked = true;
+            this.UpdateHandler.IsEnabled = true;
+
+            this.TargetManager.ForceSetTarget(this.TargetManager.ClosestEnemyHeroToMouse());
+            ArcWardenPanel.cloneTarget = this.TargetManager.ClosestEnemyHeroToMouse();
+            PushMode.Instance.TurnOffAutoPush();
+        }
+        else
         {
-            if (this.IsCloneAlive && this.ComboModeMenu.SimplifiedName != "clonecombo")
-            {
-                this.ComboModeMenu = this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Value;
-
-                return;
-            }
-
-            if (this.IgnoreComboEnd)
-            {
-                this.IgnoreComboEnd = false;
-
-                return;
-            }
-
-            this.UpdateHandler.IsEnabled = false;
-            this.TargetManager.TargetLocked = false;
-
-            ComboEnd();
+            TurnOffCombo();
         }
+    }
+
+    private void ToggleKeyOnValueChanged(object sender, KeyEventArgs e)
+    {
+        if (!e.NewValue)
+        {
+            return;
+        }
+
+        if (this.TargetManager.TargetLocked != true)
+        {
+            if (this.UpdateHandler.IsEnabled)
+            {
+                this.IgnoreComboEnd = true;
+            }
+
+            this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
+            this.TargetManager.TargetLocked = true;
+            this.UpdateHandler.IsEnabled = true;
+            PushMode.Instance.TurnOffAutoPush();
+        }
+        else
+        {
+            TurnOffCombo();
+        }
+    }
+
+    private bool IsCloneAlive
+    {
+        get
+        {
+            return ((ArcWardenUnitManager)this.UnitManager).CloneControllableUnits.Any();
+        }
+    }
+
+    private void TurnOffCombo()
+    {
+        if (this.IsCloneAlive && this.ComboModeMenu.SimplifiedName != "clonecombo")
+        {
+            this.ComboModeMenu = this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Value;
+
+            return;
+        }
+
+        if (this.IgnoreComboEnd)
+        {
+            this.IgnoreComboEnd = false;
+
+            return;
+        }
+
+        this.UpdateHandler.IsEnabled = false;
+        this.TargetManager.TargetLocked = false;
+
+        ComboEnd();
     }
 }

@@ -1,62 +1,61 @@
-﻿namespace O9K.Hud.Modules.Particles.Abilities
+﻿namespace O9K.Hud.Modules.Particles.Abilities;
+
+using System;
+
+using Core.Entities.Metadata;
+using Core.Helpers;
+using Core.Logger;
+using Core.Managers.Context;
+using Core.Managers.Particle;
+using Divine.Numerics;
+using Divine.Particle;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers.Notificator;
+
+using MainMenu;
+
+[AbilityId(AbilityId.gyrocopter_call_down)]
+internal class CallDown : AbilityModule
 {
-    using System;
+    private readonly Vector3 radius;
 
-    using Core.Entities.Metadata;
-    using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Context;
-    using Core.Managers.Particle;
-    using Divine.Numerics;
-    using Divine.Particle;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers.Notificator;
-
-    using MainMenu;
-
-    [AbilityId(AbilityId.gyrocopter_call_down)]
-    internal class CallDown : AbilityModule
+    public CallDown(INotificator notificator, IHudMenu hudMenu)
+        : base(notificator, hudMenu)
     {
-        private readonly Vector3 radius;
+        var radiusData = new SpecialData(AbilityId.gyrocopter_call_down, "radius").GetValue(1);
+        this.radius = new Vector3(radiusData, -radiusData, -radiusData);
+    }
 
-        public CallDown(INotificator notificator, IHudMenu hudMenu)
-            : base(notificator, hudMenu)
-        {
-            var radiusData = new SpecialData(AbilityId.gyrocopter_call_down, "radius").GetValue(1);
-            this.radius = new Vector3(radiusData, -radiusData, -radiusData);
-        }
+    protected override void Disable()
+    {
+        Context9.ParticleManger.ParticleAdded -= this.OnParticleAdded;
+    }
 
-        protected override void Disable()
-        {
-            Context9.ParticleManger.ParticleAdded -= this.OnParticleAdded;
-        }
+    protected override void Enable()
+    {
+        Context9.ParticleManger.ParticleAdded += this.OnParticleAdded;
+    }
 
-        protected override void Enable()
+    private void OnParticleAdded(Particle9 particle)
+    {
+        try
         {
-            Context9.ParticleManger.ParticleAdded += this.OnParticleAdded;
-        }
-
-        private void OnParticleAdded(Particle9 particle)
-        {
-            try
+            if (/*!particle.Released || */particle.Name != "particles/units/heroes/hero_gyrocopter/gyro_calldown_first.vpcf")
             {
-                if (/*!particle.Released || */particle.Name != "particles/units/heroes/hero_gyrocopter/gyro_calldown_first.vpcf")
-                {
-                    return;
-                }
-
-                var effect = ParticleManager.CreateParticle(
-                    "particles/units/heroes/hero_gyrocopter/gyro_calldown_marker.vpcf",
-                    particle.GetControlPoint(1));
-                effect.SetControlPoint(1, this.radius);
-
-                effect.Release();
+                return;
             }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+
+            var effect = ParticleManager.CreateParticle(
+                "particles/units/heroes/hero_gyrocopter/gyro_calldown_marker.vpcf",
+                particle.GetControlPoint(1));
+            effect.SetControlPoint(1, this.radius);
+
+            effect.Release();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

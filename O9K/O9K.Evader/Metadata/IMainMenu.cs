@@ -1,19 +1,18 @@
-﻿namespace O9K.Evader.Metadata
+﻿namespace O9K.Evader.Metadata;
+
+using Settings;
+
+internal interface IMainMenu
 {
-    using Settings;
+    UsableAbilitiesMenu AbilitySettings { get; }
 
-    internal interface IMainMenu
-    {
-        UsableAbilitiesMenu AbilitySettings { get; }
+    AlliesSettingsMenu AllySettings { get; }
 
-        AlliesSettingsMenu AllySettings { get; }
+    DebugMenu Debug { get; }
 
-        DebugMenu Debug { get; }
+    EnemiesSettingsMenu EnemySettings { get; }
 
-        EnemiesSettingsMenu EnemySettings { get; }
+    HotkeysMenu Hotkeys { get; }
 
-        HotkeysMenu Hotkeys { get; }
-
-        SettingsMenu Settings { get; }
-    }
+    SettingsMenu Settings { get; }
 }

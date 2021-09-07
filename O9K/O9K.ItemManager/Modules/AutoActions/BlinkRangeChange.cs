@@ -1,110 +1,109 @@
-﻿namespace O9K.ItemManager.Modules.AutoActions
+﻿namespace O9K.ItemManager.Modules.AutoActions;
+
+using System;
+
+using Core.Entities.Abilities.Base;
+using Core.Extensions;
+using Core.Helpers;
+using Core.Logger;
+using Core.Managers.Entity;
+using Core.Managers.Menu;
+using Core.Managers.Menu.EventArgs;
+using Core.Managers.Menu.Items;
+
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Extensions;
+using Divine.Helpers;
+using Divine.Order;
+using Divine.Order.EventArgs;
+using Divine.Order.Orders.Components;
+
+using Metadata;
+
+internal class BlinkRangeChange : IModule
 {
-    using System;
+    private readonly MenuSwitcher enabled;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Extensions;
-    using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Entity;
-    using Core.Managers.Menu;
-    using Core.Managers.Menu.EventArgs;
-    using Core.Managers.Menu.Items;
-
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Extensions;
-    using Divine.Helpers;
-    using Divine.Order;
-    using Divine.Order.EventArgs;
-    using Divine.Order.Orders.Components;
-
-    using Metadata;
-
-    internal class BlinkRangeChange : IModule
+    public BlinkRangeChange(IMainMenu mainMenu)
     {
-        private readonly MenuSwitcher enabled;
+        var menu = mainMenu.AutoActionsMenu.Add(new Menu(LocalizationHelper.LocalizeName(AbilityId.item_blink), "BlinkDagger"));
 
-        public BlinkRangeChange(IMainMenu mainMenu)
+        this.enabled = menu.Add(new MenuSwitcher("Maximize blink range"));
+        this.enabled.AddTranslation(Lang.Ru, "Максимизировать дальность блинка");
+        this.enabled.AddTranslation(Lang.Cn, "最大化眨眼范围");
+    }
+
+    public void Activate()
+    {
+        this.enabled.ValueChange += this.OnValueChange;
+    }
+
+    public void Dispose()
+    {
+        this.enabled.ValueChange -= this.OnValueChange;
+        OrderManager.OrderAdding -= this.OnOrderAdding;
+    }
+
+    private void OnOrderAdding(OrderAddingEventArgs e)
+    {
+        try
         {
-            var menu = mainMenu.AutoActionsMenu.Add(new Menu(LocalizationHelper.LocalizeName(AbilityId.item_blink), "BlinkDagger"));
+            if (e.IsCustom || !e.Process)
+            {
+                return;
+            }
 
-            this.enabled = menu.Add(new MenuSwitcher("Maximize blink range"));
-            this.enabled.AddTranslation(Lang.Ru, "Максимизировать дальность блинка");
-            this.enabled.AddTranslation(Lang.Cn, "最大化眨眼范围");
+            var order = e.Order;
+            if (order.IsQueued)
+            {
+                return;
+            }
+
+            if (order.Type != OrderType.CastPosition || order.Ability.Id != AbilityId.item_blink)
+            {
+                return;
+            }
+
+            var blink = (ActiveAbility)EntityManager9.GetAbility(order.Ability.Handle);
+            var hero = blink.Owner;
+
+            // if (hero.IsChanneling)
+            // {
+            //     return;
+            // }
+
+            var blinkRange = blink.Range;
+            var blinkPosition = order.Position;
+            var heroPosition = hero.Position;
+            if (heroPosition.Distance2D(blinkPosition) < blinkRange)
+            {
+                return;
+            }
+
+            var newBlinkPosition = heroPosition.Extend2D(blinkPosition, blinkRange - 50);
+            if (!Hud.IsPositionOnScreen(newBlinkPosition))
+            {
+                return;
+            }
+
+            blink.UseAbility(newBlinkPosition);
+            e.Process = false;
         }
-
-        public void Activate()
+        catch (Exception ex)
         {
-            this.enabled.ValueChange += this.OnValueChange;
+            Logger.Error(ex);
         }
+    }
 
-        public void Dispose()
+    private void OnValueChange(object sender, SwitcherEventArgs e)
+    {
+        if (e.NewValue)
         {
-            this.enabled.ValueChange -= this.OnValueChange;
+            OrderManager.OrderAdding += this.OnOrderAdding;
+        }
+        else
+        {
             OrderManager.OrderAdding -= this.OnOrderAdding;
-        }
-
-        private void OnOrderAdding(OrderAddingEventArgs e)
-        {
-            try
-            {
-                if (e.IsCustom || !e.Process)
-                {
-                    return;
-                }
-
-                var order = e.Order;
-                if (order.IsQueued)
-                {
-                    return;
-                }
-
-                if (order.Type != OrderType.CastPosition || order.Ability.Id != AbilityId.item_blink)
-                {
-                    return;
-                }
-
-                var blink = (ActiveAbility)EntityManager9.GetAbility(order.Ability.Handle);
-                var hero = blink.Owner;
-
-                // if (hero.IsChanneling)
-                // {
-                //     return;
-                // }
-
-                var blinkRange = blink.Range;
-                var blinkPosition = order.Position;
-                var heroPosition = hero.Position;
-                if (heroPosition.Distance2D(blinkPosition) < blinkRange)
-                {
-                    return;
-                }
-
-                var newBlinkPosition = heroPosition.Extend2D(blinkPosition, blinkRange - 50);
-                if (!Hud.IsPositionOnScreen(newBlinkPosition))
-                {
-                    return;
-                }
-
-                blink.UseAbility(newBlinkPosition);
-                e.Process = false;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
-        }
-
-        private void OnValueChange(object sender, SwitcherEventArgs e)
-        {
-            if (e.NewValue)
-            {
-                OrderManager.OrderAdding += this.OnOrderAdding;
-            }
-            else
-            {
-                OrderManager.OrderAdding -= this.OnOrderAdding;
-            }
         }
     }
 }

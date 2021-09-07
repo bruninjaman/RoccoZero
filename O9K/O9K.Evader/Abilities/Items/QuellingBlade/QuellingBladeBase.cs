@@ -1,26 +1,25 @@
-﻿namespace O9K.Evader.Abilities.Items.QuellingBlade
+﻿namespace O9K.Evader.Abilities.Items.QuellingBlade;
+
+using Base;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.item_quelling_blade)]
+[AbilityId(AbilityId.item_bfury)]
+[AbilityId(AbilityId.item_iron_talon)]
+internal class QuellingBladeBase : EvaderBaseAbility, IUsable<CounterAbility>
 {
-    using Base;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.item_quelling_blade)]
-    [AbilityId(AbilityId.item_bfury)]
-    [AbilityId(AbilityId.item_iron_talon)]
-    internal class QuellingBladeBase : EvaderBaseAbility, IUsable<CounterAbility>
+    public QuellingBladeBase(Ability9 ability)
+        : base(ability)
     {
-        public QuellingBladeBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public CounterAbility GetUsableAbility()
-        {
-            return new QuellingBladeUsable(this.Ability, this.Menu);
-        }
+    public CounterAbility GetUsableAbility()
+    {
+        return new QuellingBladeUsable(this.Ability, this.Menu);
     }
 }

@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Units.SatyrTormenter.Shockwave
+﻿namespace O9K.Evader.Abilities.Units.SatyrTormenter.Shockwave;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.satyr_hellcaller_shockwave)]
+internal class ShockwaveBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.satyr_hellcaller_shockwave)]
-    internal class ShockwaveBase : EvaderBaseAbility, IEvadable
+    public ShockwaveBase(Ability9 ability)
+        : base(ability)
     {
-        public ShockwaveBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new ShockwaveEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new ShockwaveEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

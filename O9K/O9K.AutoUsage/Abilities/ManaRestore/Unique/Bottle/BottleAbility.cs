@@ -1,78 +1,77 @@
-﻿namespace O9K.AutoUsage.Abilities.ManaRestore.Unique.Bottle
+﻿namespace O9K.AutoUsage.Abilities.ManaRestore.Unique.Bottle;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+using Core.Helpers;
+using Core.Prediction.Data;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+using Settings;
+
+[AbilityId(AbilityId.item_bottle)]
+internal class BottleManaAbility : ManaRestoreAbility
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly Sleeper bottleRefillingSleeper = new Sleeper();
 
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-    using Core.Helpers;
-    using Core.Prediction.Data;
+    private readonly ManaRestoreSettings settings;
 
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Settings;
-
-    [AbilityId(AbilityId.item_bottle)]
-    internal class BottleManaAbility : ManaRestoreAbility
+    public BottleManaAbility(IManaRestore manaRestore, GroupSettings settings)
+        : base(manaRestore)
     {
-        private readonly Sleeper bottleRefillingSleeper = new Sleeper();
+        this.settings = new ManaRestoreSettings(settings.Menu, manaRestore);
+    }
 
-        private readonly ManaRestoreSettings settings;
+    public override bool UseAbility(List<Unit9> heroes)
+    {
+        var allies = heroes.Where(x => !x.IsInvulnerable && x.IsAlly(this.Owner)).OrderBy(x => x.Mana).ToList();
 
-        public BottleManaAbility(IManaRestore manaRestore, GroupSettings settings)
-            : base(manaRestore)
+        foreach (var ally in allies)
         {
-            this.settings = new ManaRestoreSettings(settings.Menu, manaRestore);
-        }
-
-        public override bool UseAbility(List<Unit9> heroes)
-        {
-            var allies = heroes.Where(x => !x.IsInvulnerable && x.IsAlly(this.Owner)).OrderBy(x => x.Mana).ToList();
-
-            foreach (var ally in allies)
+            if (!this.settings.IsHeroEnabled(ally.Name) && !this.settings.SelfOnly)
             {
-                if (!this.settings.IsHeroEnabled(ally.Name) && !this.settings.SelfOnly)
-                {
-                    continue;
-                }
-
-                var selfTarget = ally.Equals(this.Owner);
-
-                if (selfTarget && !this.ManaRestore.RestoresOwner)
-                {
-                    continue;
-                }
-
-                if (!selfTarget && (!this.ManaRestore.RestoresAlly || this.settings.SelfOnly))
-                {
-                    continue;
-                }
-
-                if (!this.Ability.CanHit(ally, allies, this.settings.AlliesCount))
-                {
-                    continue;
-                }
-
-                if (ally.ManaPercentage > this.settings.MpThreshold)
-                {
-                    continue;
-                }
-
-                if (this.Owner.HealthPercentage < this.settings.HpThreshold)
-                {
-                    continue;
-                }
-
-                if (ally.HasModifier("modifier_bottle_regeneration"))
-                {
-                    continue;
-                }
-
-                return this.Ability.UseAbility(ally, allies, HitChance.Medium, this.settings.AlliesCount);
+                continue;
             }
 
-            return false;
+            var selfTarget = ally.Equals(this.Owner);
+
+            if (selfTarget && !this.ManaRestore.RestoresOwner)
+            {
+                continue;
+            }
+
+            if (!selfTarget && (!this.ManaRestore.RestoresAlly || this.settings.SelfOnly))
+            {
+                continue;
+            }
+
+            if (!this.Ability.CanHit(ally, allies, this.settings.AlliesCount))
+            {
+                continue;
+            }
+
+            if (ally.ManaPercentage > this.settings.MpThreshold)
+            {
+                continue;
+            }
+
+            if (this.Owner.HealthPercentage < this.settings.HpThreshold)
+            {
+                continue;
+            }
+
+            if (ally.HasModifier("modifier_bottle_regeneration"))
+            {
+                continue;
+            }
+
+            return this.Ability.UseAbility(ally, allies, HitChance.Medium, this.settings.AlliesCount);
         }
+
+        return false;
     }
 }

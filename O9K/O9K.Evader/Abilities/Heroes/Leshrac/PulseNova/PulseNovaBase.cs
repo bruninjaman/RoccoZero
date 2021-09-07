@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Leshrac.PulseNova
+﻿namespace O9K.Evader.Abilities.Heroes.Leshrac.PulseNova;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.leshrac_pulse_nova)]
+internal class PulseNovaBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.leshrac_pulse_nova)]
-    internal class PulseNovaBase : EvaderBaseAbility, IEvadable
+    public PulseNovaBase(Ability9 ability)
+        : base(ability)
     {
-        public PulseNovaBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new PulseNovaEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new PulseNovaEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

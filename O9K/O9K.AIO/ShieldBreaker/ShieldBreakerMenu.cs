@@ -1,48 +1,47 @@
-﻿namespace O9K.AIO.ShieldBreaker
+﻿namespace O9K.AIO.ShieldBreaker;
+
+using Core.Entities.Abilities.Base;
+using Core.Managers.Menu;
+using Core.Managers.Menu.Items;
+
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Helpers;
+
+internal class ShieldBreakerMenu
 {
-    using Core.Entities.Abilities.Base;
-    using Core.Managers.Menu;
-    using Core.Managers.Menu.Items;
+    private readonly MenuAbilityToggler linkensAbilityToggler;
 
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Helpers;
+    private readonly MenuAbilityToggler spellShieldAbilityToggler;
 
-    internal class ShieldBreakerMenu
+    public ShieldBreakerMenu(Menu rootMenu)
     {
-        private readonly MenuAbilityToggler linkensAbilityToggler;
+        var menu = new Menu("Linken's breaker", "Shield breaker");
+        menu.AddTranslation(Lang.Ru, "Сбивание линки");
+        menu.AddTranslation(Lang.Cn, "破坏" + LocalizationHelper.LocalizeName(AbilityId.item_sphere));
 
-        private readonly MenuAbilityToggler spellShieldAbilityToggler;
+        this.linkensAbilityToggler = menu.Add(new MenuAbilityToggler("Abilities", "linkensAbilities", null, false, true));
+        this.linkensAbilityToggler.AddTranslation(Lang.Ru, "Способности");
+        this.linkensAbilityToggler.AddTranslation(Lang.Cn, "技能");
 
-        public ShieldBreakerMenu(Menu rootMenu)
-        {
-            var menu = new Menu("Linken's breaker", "Shield breaker");
-            menu.AddTranslation(Lang.Ru, "Сбивание линки");
-            menu.AddTranslation(Lang.Cn, "破坏" + LocalizationHelper.LocalizeName(AbilityId.item_sphere));
+        this.spellShieldAbilityToggler = new MenuAbilityToggler("dummyToggler");
+        this.spellShieldAbilityToggler =  menu.Add(new MenuAbilityToggler("Spell shield", "spellShieldAbilities", null, false, true));
 
-            this.linkensAbilityToggler = menu.Add(new MenuAbilityToggler("Abilities", "linkensAbilities", null, false, true));
-            this.linkensAbilityToggler.AddTranslation(Lang.Ru, "Способности");
-            this.linkensAbilityToggler.AddTranslation(Lang.Cn, "技能");
+        rootMenu.Add(menu);
+    }
 
-            this.spellShieldAbilityToggler = new MenuAbilityToggler("dummyToggler");
-            this.spellShieldAbilityToggler =  menu.Add(new MenuAbilityToggler("Spell shield", "spellShieldAbilities", null, false, true));
+    public void AddBreakerAbility(Ability9 ability)
+    {
+        this.linkensAbilityToggler.AddAbility(ability.Name);
+        this.spellShieldAbilityToggler.AddAbility(ability.Name);
+    }
 
-            rootMenu.Add(menu);
-        }
+    public bool IsLinkensBreakerEnabled(string abilityName)
+    {
+        return this.linkensAbilityToggler.IsEnabled(abilityName);
+    }
 
-        public void AddBreakerAbility(Ability9 ability)
-        {
-            this.linkensAbilityToggler.AddAbility(ability.Name);
-            this.spellShieldAbilityToggler.AddAbility(ability.Name);
-        }
-
-        public bool IsLinkensBreakerEnabled(string abilityName)
-        {
-            return this.linkensAbilityToggler.IsEnabled(abilityName);
-        }
-
-        public bool IsSpellShieldBreakerEnabled(string abilityName)
-        {
-            return this.spellShieldAbilityToggler.IsEnabled(abilityName);
-        }
+    public bool IsSpellShieldBreakerEnabled(string abilityName)
+    {
+        return this.spellShieldAbilityToggler.IsEnabled(abilityName);
     }
 }

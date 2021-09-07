@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.TemplarAssassin.Refraction
+﻿namespace O9K.Evader.Abilities.Heroes.TemplarAssassin.Refraction;
+
+using Base;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.templar_assassin_refraction)]
+internal class RefractionBase : EvaderBaseAbility, IUsable<CounterAbility>
 {
-    using Base;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.templar_assassin_refraction)]
-    internal class RefractionBase : EvaderBaseAbility, IUsable<CounterAbility>
+    public RefractionBase(Ability9 ability)
+        : base(ability)
     {
-        public RefractionBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public CounterAbility GetUsableAbility()
-        {
-            return new CounterAbility(this.Ability, this.Menu);
-        }
+    public CounterAbility GetUsableAbility()
+    {
+        return new CounterAbility(this.Ability, this.Menu);
     }
 }

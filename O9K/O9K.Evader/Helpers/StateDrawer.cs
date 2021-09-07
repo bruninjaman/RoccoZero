@@ -1,139 +1,138 @@
-﻿namespace O9K.Evader.Helpers
+﻿namespace O9K.Evader.Helpers;
+
+using System;
+
+using Core.Helpers;
+using Core.Logger;
+using Core.Managers.Renderer.Utils;
+
+
+using Divine.Numerics;
+using Divine.Renderer;
+
+using Metadata;
+
+using Pathfinder;
+
+using Settings;
+
+internal class StateDrawer : IEvaderService
 {
-    using System;
+    private readonly HotkeysMenu hotkeysMenu;
 
-    using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Renderer.Utils;
+    private readonly RectangleF startPosition;
 
+    private readonly Sleeper stateSleeper = new Sleeper(10);
 
-    using Divine.Numerics;
-    using Divine.Renderer;
+    private readonly float textSize;
 
-    using Metadata;
+    private Pathfinder.EvadeMode pathfinderMode;
 
-    using Pathfinder;
+    private bool showBkb;
 
-    using Settings;
+    private bool showProactive;
 
-    internal class StateDrawer : IEvaderService
+    public StateDrawer(IMainMenu menu)
     {
-        private readonly HotkeysMenu hotkeysMenu;
+        this.hotkeysMenu = menu.Hotkeys;
 
-        private readonly RectangleF startPosition;
+        this.textSize = 22 * Hud.Info.ScreenRatio;
+        this.startPosition = new Rectangle9(0, Hud.Info.ScreenSize.Y * 0.05f, Hud.Info.ScreenSize.X * 0.995f, this.textSize);
+    }
 
-        private readonly Sleeper stateSleeper = new Sleeper(10);
+    public LoadOrder LoadOrder { get; } = LoadOrder.StateDrawer;
 
-        private readonly float textSize;
+    public void Activate()
+    {
+        this.hotkeysMenu.BkbEnabled.ValueChange += this.BkbEnabledOnValueChanged;
+        this.hotkeysMenu.PathfinderMode.ValueChange += this.PathfinderModeOnValueChanged;
+        this.hotkeysMenu.ProactiveEvade.ValueChange += this.ProactiveEvadeOnValueChange;
 
-        private Pathfinder.EvadeMode pathfinderMode;
+        RendererManager.Draw += this.RendererOnDraw;
+    }
 
-        private bool showBkb;
+    public void Dispose()
+    {
+        this.hotkeysMenu.BkbEnabled.ValueChange -= this.BkbEnabledOnValueChanged;
+        this.hotkeysMenu.PathfinderMode.ValueChange -= this.PathfinderModeOnValueChanged;
+        this.hotkeysMenu.ProactiveEvade.ValueChange -= this.ProactiveEvadeOnValueChange;
 
-        private bool showProactive;
+        RendererManager.Draw -= this.RendererOnDraw;
+    }
 
-        public StateDrawer(IMainMenu menu)
+    private void BkbEnabledOnValueChanged(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
+    {
+        this.stateSleeper.Sleep(5);
+        this.showBkb = e.NewValue;
+    }
+
+    private void PathfinderModeOnValueChanged(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
+    {
+        this.stateSleeper.Sleep(5);
+
+        if (!e.NewValue)
         {
-            this.hotkeysMenu = menu.Hotkeys;
-
-            this.textSize = 22 * Hud.Info.ScreenRatio;
-            this.startPosition = new Rectangle9(0, Hud.Info.ScreenSize.Y * 0.05f, Hud.Info.ScreenSize.X * 0.995f, this.textSize);
+            return;
         }
 
-        public LoadOrder LoadOrder { get; } = LoadOrder.StateDrawer;
-
-        public void Activate()
+        if ((int)this.pathfinderMode >= Enum.GetNames(typeof(Pathfinder.EvadeMode)).Length - 1)
         {
-            this.hotkeysMenu.BkbEnabled.ValueChange += this.BkbEnabledOnValueChanged;
-            this.hotkeysMenu.PathfinderMode.ValueChange += this.PathfinderModeOnValueChanged;
-            this.hotkeysMenu.ProactiveEvade.ValueChange += this.ProactiveEvadeOnValueChange;
-
-            RendererManager.Draw += this.RendererOnDraw;
+            this.pathfinderMode = 0;
         }
-
-        public void Dispose()
+        else
         {
-            this.hotkeysMenu.BkbEnabled.ValueChange -= this.BkbEnabledOnValueChanged;
-            this.hotkeysMenu.PathfinderMode.ValueChange -= this.PathfinderModeOnValueChanged;
-            this.hotkeysMenu.ProactiveEvade.ValueChange -= this.ProactiveEvadeOnValueChange;
-
-            RendererManager.Draw -= this.RendererOnDraw;
+            this.pathfinderMode++;
         }
+    }
 
-        private void BkbEnabledOnValueChanged(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
+    private void ProactiveEvadeOnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
+    {
+        this.stateSleeper.Sleep(5);
+        this.showProactive = e.NewValue;
+    }
+
+    private void RendererOnDraw()
+    {
+        try
         {
-            this.stateSleeper.Sleep(5);
-            this.showBkb = e.NewValue;
-        }
-
-        private void PathfinderModeOnValueChanged(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
-        {
-            this.stateSleeper.Sleep(5);
-
-            if (!e.NewValue)
+            if (!this.hotkeysMenu.DrawState && !this.stateSleeper.IsSleeping)
             {
                 return;
             }
 
-            if ((int)this.pathfinderMode >= Enum.GetNames(typeof(Pathfinder.EvadeMode)).Length - 1)
+            var position = this.startPosition;
+
+            if (this.showProactive)
             {
-                this.pathfinderMode = 0;
+                RendererManager.DrawText("Evader (Proactive)", position, Color.OrangeRed, FontFlags.Right, this.textSize);
             }
             else
             {
-                this.pathfinderMode++;
+                RendererManager.DrawText("Evader", position, Color.LawnGreen, FontFlags.Right, this.textSize);
             }
-        }
 
-        private void ProactiveEvadeOnValueChange(object sender, Core.Managers.Menu.EventArgs.KeyEventArgs e)
-        {
-            this.stateSleeper.Sleep(5);
-            this.showProactive = e.NewValue;
-        }
+            position.Y += this.textSize;
 
-        private void RendererOnDraw()
-        {
-            try
+            switch (this.pathfinderMode)
             {
-                if (!this.hotkeysMenu.DrawState && !this.stateSleeper.IsSleeping)
-                {
-                    return;
-                }
-
-                var position = this.startPosition;
-
-                if (this.showProactive)
-                {
-                    RendererManager.DrawText("Evader (Proactive)", position, Color.OrangeRed, FontFlags.Right, this.textSize);
-                }
-                else
-                {
-                    RendererManager.DrawText("Evader", position, Color.LawnGreen, FontFlags.Right, this.textSize);
-                }
-
-                position.Y += this.textSize;
-
-                switch (this.pathfinderMode)
-                {
-                    case Pathfinder.EvadeMode.All:
-                        RendererManager.DrawText("Dodge", position, Color.LawnGreen, FontFlags.Right, this.textSize);
-                        break;
-                    case Pathfinder.EvadeMode.Disables:
-                        RendererManager.DrawText("Dodge (Disables)", position, Color.OrangeRed, FontFlags.Right, this.textSize);
-                        break;
-                    case Pathfinder.EvadeMode.None:
-                        RendererManager.DrawText("Dodge (None)", position, Color.Red, FontFlags.Right, this.textSize);
-                        break;
-                }
-
-                position.Y += this.textSize;
-
-                RendererManager.DrawText("BKB", position, this.showBkb ? Color.LawnGreen : Color.Red, FontFlags.Right, this.textSize);
+                case Pathfinder.EvadeMode.All:
+                    RendererManager.DrawText("Dodge", position, Color.LawnGreen, FontFlags.Right, this.textSize);
+                    break;
+                case Pathfinder.EvadeMode.Disables:
+                    RendererManager.DrawText("Dodge (Disables)", position, Color.OrangeRed, FontFlags.Right, this.textSize);
+                    break;
+                case Pathfinder.EvadeMode.None:
+                    RendererManager.DrawText("Dodge (None)", position, Color.Red, FontFlags.Right, this.textSize);
+                    break;
             }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+
+            position.Y += this.textSize;
+
+            RendererManager.DrawText("BKB", position, this.showBkb ? Color.LawnGreen : Color.Red, FontFlags.Right, this.textSize);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

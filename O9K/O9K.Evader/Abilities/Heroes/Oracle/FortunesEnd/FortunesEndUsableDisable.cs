@@ -1,35 +1,34 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Oracle.FortunesEnd
+﻿namespace O9K.Evader.Abilities.Heroes.Oracle.FortunesEnd;
+
+using Base.Usable.DisableAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+
+internal class FortunesEndUsableDisable : DisableAbility
 {
-    using Base.Usable.DisableAbility;
+    private readonly IActionManager actionManager;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-
-    internal class FortunesEndUsableDisable : DisableAbility
+    public FortunesEndUsableDisable(Ability9 ability, IActionManager actionManager, IMainMenu menu)
+        : base(ability, menu)
     {
-        private readonly IActionManager actionManager;
+        this.actionManager = actionManager;
+    }
 
-        public FortunesEndUsableDisable(Ability9 ability, IActionManager actionManager, IMainMenu menu)
-            : base(ability, menu)
+    public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        this.MoveCamera(enemy.Position);
+        var use = this.ActiveAbility.UseAbility(enemy, false, true);
+        if (!use)
         {
-            this.actionManager = actionManager;
+            return false;
         }
 
-        public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
-        {
-            this.MoveCamera(enemy.Position);
-            var use = this.ActiveAbility.UseAbility(enemy, false, true);
-            if (!use)
-            {
-                return false;
-            }
-
-            this.actionManager.CancelChanneling(this.ActiveAbility);
-            return true;
-        }
+        this.actionManager.CancelChanneling(this.ActiveAbility);
+        return true;
     }
 }

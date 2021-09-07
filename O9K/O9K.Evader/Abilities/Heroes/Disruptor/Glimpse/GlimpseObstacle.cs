@@ -1,40 +1,39 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.Glimpse
+﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.Glimpse;
+
+using Base.Evadable;
+
+using Core.Entities.Units;
+
+using Divine.Game;
+
+using Pathfinder.Obstacles.Abilities;
+
+internal class GlimpseObstacle : AbilityObstacle
 {
-    using Base.Evadable;
+    private readonly Unit9 glimpseTarget;
 
-    using Core.Entities.Units;
-
-    using Divine.Game;
-
-    using Pathfinder.Obstacles.Abilities;
-
-    internal class GlimpseObstacle : AbilityObstacle
+    public GlimpseObstacle(EvadableAbility ability, Unit9 target)
+        : base(ability)
     {
-        private readonly Unit9 glimpseTarget;
+        this.glimpseTarget = target;
+    }
 
-        public GlimpseObstacle(EvadableAbility ability, Unit9 target)
-            : base(ability)
-        {
-            this.glimpseTarget = target;
-        }
+    public override void Draw()
+    {
+    }
 
-        public override void Draw()
-        {
-        }
+    public override float GetDisableTime(Unit9 enemy)
+    {
+        return 0;
+    }
 
-        public override float GetDisableTime(Unit9 enemy)
-        {
-            return 0;
-        }
+    public override float GetEvadeTime(Unit9 ally, bool blink)
+    {
+        return this.EndObstacleTime - GameManager.RawGameTime;
+    }
 
-        public override float GetEvadeTime(Unit9 ally, bool blink)
-        {
-            return this.EndObstacleTime - GameManager.RawGameTime;
-        }
-
-        public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
-        {
-            return unit.Equals(this.glimpseTarget);
-        }
+    public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
+    {
+        return unit.Equals(this.glimpseTarget);
     }
 }

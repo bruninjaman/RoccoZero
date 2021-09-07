@@ -1,17 +1,16 @@
-﻿namespace O9K.AIO.Heroes.Morphling.Abilities
+﻿namespace O9K.AIO.Heroes.Morphling.Abilities;
+
+using AIO.Abilities;
+
+using Core.Entities.Abilities.Base;
+
+internal class Replicate : TargetableAbility
 {
-    using AIO.Abilities;
+    private Core.Entities.Abilities.Heroes.Morphling.Morph baseReplicate;
 
-    using Core.Entities.Abilities.Base;
-
-    internal class Replicate : TargetableAbility
+    public Replicate(ActiveAbility ability)
+        : base(ability)
     {
-        private Core.Entities.Abilities.Heroes.Morphling.Morph baseReplicate;
-
-        public Replicate(ActiveAbility ability)
-            : base(ability)
-        {
-            this.baseReplicate = (Core.Entities.Abilities.Heroes.Morphling.Morph)ability;
-        }
+        this.baseReplicate = (Core.Entities.Abilities.Heroes.Morphling.Morph)ability;
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace O9K.Hud.Helpers.Notificator
-{
-    using Notifications;
+﻿namespace O9K.Hud.Helpers.Notificator;
 
-    internal interface INotificator
-    {
-        void PushNotification(Notification notification);
-    }
+using Notifications;
+
+internal interface INotificator
+{
+    void PushNotification(Notification notification);
 }

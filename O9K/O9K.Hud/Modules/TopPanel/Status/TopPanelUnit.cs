@@ -1,182 +1,162 @@
-﻿namespace O9K.Hud.Modules.TopPanel.Status
+﻿namespace O9K.Hud.Modules.TopPanel.Status;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Heroes;
+using Core.Entities.Units;
+using Core.Helpers;
+using Core.Managers.Renderer.Utils;
+
+using Divine.Game;
+using Divine.Modifier.Modifiers;
+using Divine.Numerics;
+using Divine.Renderer;
+
+internal class TopPanelUnit
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly Hero9 hero;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Heroes;
-    using Core.Entities.Units;
-    using Core.Helpers;
-    using Core.Managers.Renderer.Utils;
+    private readonly List<Ability9> items = new List<Ability9>();
 
-    using Divine.Game;
-    using Divine.Modifier.Modifiers;
-    using Divine.Numerics;
-    using Divine.Renderer;
+    private readonly Dictionary<string, Modifier> modifiers = new Dictionary<string, Modifier>();
 
-    internal class TopPanelUnit
+    private readonly Dictionary<string, float> modifiersTime = new Dictionary<string, float>();
+
+    private Ability9 ultimate;
+
+    public TopPanelUnit(Unit9 hero)
     {
-        private readonly Hero9 hero;
+        this.hero = (Hero9)hero;
+        this.Handle = hero.Handle;
+        this.IsAlly = hero.IsAlly();
+    }
 
-        private readonly List<Ability9> items = new List<Ability9>();
+    public Sleeper BuybackSleeper { get; } = new Sleeper();
 
-        private readonly Dictionary<string, Modifier> modifiers = new Dictionary<string, Modifier>();
+    public uint Handle { get; }
 
-        private readonly Dictionary<string, float> modifiersTime = new Dictionary<string, float>();
+    public bool IsAlly { get; }
 
-        private Ability9 ultimate;
-
-        public TopPanelUnit(Unit9 hero)
+    public bool IsValid
+    {
+        get
         {
-            this.hero = (Hero9)hero;
-            this.Handle = hero.Handle;
-            this.IsAlly = hero.IsAlly();
+            return this.hero.IsValid;
+        }
+    }
+
+    public void AddItem(Ability9 ability)
+    {
+        this.items.Add(ability);
+    }
+
+    public void AddModifier(Modifier modifier)
+    {
+        this.modifiers[modifier.TextureName] = modifier;
+        this.modifiersTime[modifier.TextureName] = GameManager.RawGameTime + modifier.RemainingTime;
+    }
+
+    public void DrawAllyHealth(bool dim, RectangleF position)
+    {
+        if (!this.hero.IsAlive)
+        {
+            return;
         }
 
-        public Sleeper BuybackSleeper { get; } = new Sleeper();
+        RendererManager.DrawImage("o9k.health_ally_bg", position);
+        position.Width *= this.hero.HealthPercentageBase;
+        RendererManager.DrawImage(!dim || this.hero.IsVisibleToEnemies ? "o9k.health_ally_visible" : "o9k.health_ally", position);
+    }
 
-        public uint Handle { get; }
-
-        public bool IsAlly { get; }
-
-        public bool IsValid
+    public void DrawAllyMana(bool dim, RectangleF position)
+    {
+        if (!this.hero.IsAlive)
         {
-            get
+            return;
+        }
+
+        RendererManager.DrawImage("o9k.mana_bg", position);
+        position.Width *= this.hero.ManaPercentageBase;
+        RendererManager.DrawImage(!dim || this.hero.IsVisibleToEnemies ? "o9k.mana" : "o9k.mana_invis", position);
+    }
+
+    public void DrawBuyback(RectangleF position)
+    {
+        if (this.BuybackSleeper.IsSleeping || this.hero.IsAlive)
+        {
+            return;
+        }
+
+        RendererManager.DrawImage("o9k.buyback", position);
+    }
+
+    public void DrawEnemyHealth(bool dim, RectangleF position)
+    {
+        if (!this.hero.IsAlive)
+        {
+            return;
+        }
+
+        RendererManager.DrawImage("o9k.health_enemy_bg", position);
+        position.Width *= this.hero.HealthPercentageBase;
+        RendererManager.DrawImage(!dim || this.hero.IsVisible ? "o9k.health_enemy" : "o9k.health_enemy_invis", position);
+    }
+
+    public void DrawEnemyMana(bool dim, RectangleF position)
+    {
+        if (!this.hero.IsAlive)
+        {
+            return;
+        }
+
+        RendererManager.DrawImage("o9k.mana_bg", position);
+        position.Width *= this.hero.ManaPercentageBase;
+        RendererManager.DrawImage(!dim || this.hero.IsVisible ? "o9k.mana" : "o9k.mana_invis", position);
+    }
+
+    public void DrawItems(RectangleF position)
+    {
+        if (this.items.Count == 0 || !this.hero.IsAlive)
+        {
+            return;
+        }
+
+        var start = new Vector2(position.X, position.Y);
+        var size = position.Width * 0.3f;
+
+        foreach (var item in this.items)
+        {
+            if (!item.IsValid)
             {
-                return this.hero.IsValid;
-            }
-        }
-
-        public void AddItem(Ability9 ability)
-        {
-            this.items.Add(ability);
-        }
-
-        public void AddModifier(Modifier modifier)
-        {
-            this.modifiers[modifier.TextureName] = modifier;
-            this.modifiersTime[modifier.TextureName] = GameManager.RawGameTime + modifier.RemainingTime;
-        }
-
-        public void DrawAllyHealth(bool dim, RectangleF position)
-        {
-            if (!this.hero.IsAlive)
-            {
-                return;
-            }
-
-            RendererManager.DrawImage("o9k.health_ally_bg", position);
-            position.Width *= this.hero.HealthPercentageBase;
-            RendererManager.DrawImage(!dim || this.hero.IsVisibleToEnemies ? "o9k.health_ally_visible" : "o9k.health_ally", position);
-        }
-
-        public void DrawAllyMana(bool dim, RectangleF position)
-        {
-            if (!this.hero.IsAlive)
-            {
-                return;
-            }
-
-            RendererManager.DrawImage("o9k.mana_bg", position);
-            position.Width *= this.hero.ManaPercentageBase;
-            RendererManager.DrawImage(!dim || this.hero.IsVisibleToEnemies ? "o9k.mana" : "o9k.mana_invis", position);
-        }
-
-        public void DrawBuyback(RectangleF position)
-        {
-            if (this.BuybackSleeper.IsSleeping || this.hero.IsAlive)
-            {
-                return;
-            }
-
-            RendererManager.DrawImage("o9k.buyback", position);
-        }
-
-        public void DrawEnemyHealth(bool dim, RectangleF position)
-        {
-            if (!this.hero.IsAlive)
-            {
-                return;
-            }
-
-            RendererManager.DrawImage("o9k.health_enemy_bg", position);
-            position.Width *= this.hero.HealthPercentageBase;
-            RendererManager.DrawImage(!dim || this.hero.IsVisible ? "o9k.health_enemy" : "o9k.health_enemy_invis", position);
-        }
-
-        public void DrawEnemyMana(bool dim, RectangleF position)
-        {
-            if (!this.hero.IsAlive)
-            {
-                return;
-            }
-
-            RendererManager.DrawImage("o9k.mana_bg", position);
-            position.Width *= this.hero.ManaPercentageBase;
-            RendererManager.DrawImage(!dim || this.hero.IsVisible ? "o9k.mana" : "o9k.mana_invis", position);
-        }
-
-        public void DrawItems(RectangleF position)
-        {
-            if (this.items.Count == 0 || !this.hero.IsAlive)
-            {
-                return;
+                continue;
             }
 
-            var start = new Vector2(position.X, position.Y);
-            var size = position.Width * 0.3f;
+            RendererManager.DrawImage(item.Id, new RectangleF(start.X, start.Y, size, size), AbilityImageType.Round);
+            start += new Vector2(size + 2, 0);
 
-            foreach (var item in this.items)
+            if (start.X + size > position.Right)
             {
-                if (!item.IsValid)
-                {
-                    continue;
-                }
-
-                RendererManager.DrawImage(item.Id, new RectangleF(start.X, start.Y, size, size), AbilityImageType.Round);
-                start += new Vector2(size + 2, 0);
-
-                if (start.X + size > position.Right)
-                {
-                    start = new Vector2(position.X, position.Y + size + 2);
-                }
+                start = new Vector2(position.X, position.Y + size + 2);
             }
         }
+    }
 
-        public void DrawRunes(RectangleF position)
+    public void DrawRunes(RectangleF position)
+    {
+        var size = position.Width * 0.35f;
+        var start = new Vector2(position.X, position.Y - size);
+
+        if (!this.hero.IsVisible)
         {
-            var size = position.Width * 0.35f;
-            var start = new Vector2(position.X, position.Y - size);
-
-            if (!this.hero.IsVisible)
-            {
-                foreach (var pair in this.modifiersTime.ToList())
-                {
-                    var name = pair.Key;
-                    var endTime = pair.Value;
-
-                    if (GameManager.RawGameTime > endTime)
-                    {
-                        this.modifiers.Remove(name);
-                        this.modifiersTime.Remove(name);
-                        continue;
-                    }
-
-                    RendererManager.DrawImage(name, new RectangleF(start.X, start.Y, size, size), ImageType.RoundAbility);
-                    RendererManager.DrawImage("o9k.outline", new RectangleF(start.X, start.Y, size, size));
-                    start += new Vector2(size + 2, 0);
-                }
-
-                return;
-            }
-
-            foreach (var pair in this.modifiers.ToList())
+            foreach (var pair in this.modifiersTime.ToList())
             {
                 var name = pair.Key;
-                var modifier = pair.Value;
+                var endTime = pair.Value;
 
-                if (!modifier.IsValid)
+                if (GameManager.RawGameTime > endTime)
                 {
                     this.modifiers.Remove(name);
                     this.modifiersTime.Remove(name);
@@ -187,119 +167,138 @@
                 RendererManager.DrawImage("o9k.outline", new RectangleF(start.X, start.Y, size, size));
                 start += new Vector2(size + 2, 0);
             }
+
+            return;
         }
 
-        public bool DrawUltimate(RectangleF position, Rectangle9 cdPosition, bool cdTime)
+        foreach (var pair in this.modifiers.ToList())
         {
-            if (this.ultimate?.IsValid != true)
+            var name = pair.Key;
+            var modifier = pair.Value;
+
+            if (!modifier.IsValid)
             {
-                return false;
+                this.modifiers.Remove(name);
+                this.modifiersTime.Remove(name);
+                continue;
             }
 
-            var cooldown = this.ultimate.RemainingCooldown;
-            if (cooldown > 0)
-            {
-                RendererManager.DrawImage("o9k.ult_cd", position);
+            RendererManager.DrawImage(name, new RectangleF(start.X, start.Y, size, size), ImageType.RoundAbility);
+            RendererManager.DrawImage("o9k.outline", new RectangleF(start.X, start.Y, size, size));
+            start += new Vector2(size + 2, 0);
+        }
+    }
 
-                if (!cdPosition.IsZero)
-                {
-                    if (!this.hero.IsAlive)
-                    {
-                        return false;
-                    }
-
-                    var pct = (int)(100 - ((cooldown / this.ultimate.Cooldown) * 100));
-                    var outlinePosition = cdPosition * 1.1f;
-
-                    RendererManager.DrawImage(this.ultimate.Name, cdPosition, ImageType.RoundAbility);
-                    RendererManager.DrawImage("o9k.outline_black100", outlinePosition);
-                    RendererManager.DrawImage("o9k.outline_green_pct" + pct, outlinePosition);
-
-                    if (cdTime)
-                    {
-                        RendererManager.DrawImage("o9k.top_ult_cd_bg", cdPosition);
-                        RendererManager.DrawText(
-                            cooldown.ToString("N0"),
-                            cdPosition,
-                            Color.White,
-                            FontFlags.Center | FontFlags.VerticalCenter,
-                            20 * Hud.Info.ScreenRatio);
-                    }
-
-                    return true;
-                }
-            }
-            else if (this.ultimate.ManaCost > this.hero.Mana)
-            {
-                RendererManager.DrawImage("o9k.ult_mp", position);
-
-                if (!cdPosition.IsZero)
-                {
-                    if (!this.hero.IsAlive)
-                    {
-                        return false;
-                    }
-
-                    var pct = (int)((this.hero.Mana / this.ultimate.ManaCost) * 100);
-                    var outlinePosition = cdPosition * 1.1f;
-
-                    RendererManager.DrawImage(this.ultimate.Id, cdPosition, AbilityImageType.Round);
-                    RendererManager.DrawImage("o9k.outline_black100", outlinePosition);
-                    RendererManager.DrawImage("o9k.outline_blue_pct" + pct, outlinePosition);
-
-                    if (cdTime)
-                    {
-                        var mpCd = Math.Ceiling((this.ultimate.ManaCost - this.hero.Mana) / this.hero.ManaRegeneration).ToString("N0");
-                        RendererManager.DrawImage("o9k.top_ult_cd_bg", cdPosition);
-                        RendererManager.DrawText(mpCd, cdPosition, Color.White, FontFlags.Center | FontFlags.VerticalCenter, 20);
-                    }
-
-                    return true;
-                }
-            }
-            else if (this.ultimate.IsUsable && this.ultimate.Level > 0)
-            {
-                RendererManager.DrawImage("o9k.ult_rdy", position);
-            }
-
+    public bool DrawUltimate(RectangleF position, Rectangle9 cdPosition, bool cdTime)
+    {
+        if (this.ultimate?.IsValid != true)
+        {
             return false;
         }
 
-        public void ForceDrawBuyback(Rectangle9 position, Rectangle9 deadPosition)
+        var cooldown = this.ultimate.RemainingCooldown;
+        if (cooldown > 0)
         {
-            if (this.BuybackSleeper.IsSleeping)
-            {
-                return;
-            }
+            RendererManager.DrawImage("o9k.ult_cd", position);
 
-            if (this.hero.IsAlive)
+            if (!cdPosition.IsZero)
             {
-                RendererManager.DrawImage("o9k.buyback_alive", position);
-            }
-            else
-            {
-                RendererManager.DrawImage("o9k.buyback", deadPosition);
+                if (!this.hero.IsAlive)
+                {
+                    return false;
+                }
+
+                var pct = (int)(100 - ((cooldown / this.ultimate.Cooldown) * 100));
+                var outlinePosition = cdPosition * 1.1f;
+
+                RendererManager.DrawImage(this.ultimate.Name, cdPosition, ImageType.RoundAbility);
+                RendererManager.DrawImage("o9k.outline_black100", outlinePosition);
+                RendererManager.DrawImage("o9k.outline_green_pct" + pct, outlinePosition);
+
+                if (cdTime)
+                {
+                    RendererManager.DrawImage("o9k.top_ult_cd_bg", cdPosition);
+                    RendererManager.DrawText(
+                        cooldown.ToString("N0"),
+                        cdPosition,
+                        Color.White,
+                        FontFlags.Center | FontFlags.VerticalCenter,
+                        20 * Hud.Info.ScreenRatio);
+                }
+
+                return true;
             }
         }
-
-        public void RemoveItem(Ability9 ability)
+        else if (this.ultimate.ManaCost > this.hero.Mana)
         {
-            this.items.Remove(ability);
+            RendererManager.DrawImage("o9k.ult_mp", position);
+
+            if (!cdPosition.IsZero)
+            {
+                if (!this.hero.IsAlive)
+                {
+                    return false;
+                }
+
+                var pct = (int)((this.hero.Mana / this.ultimate.ManaCost) * 100);
+                var outlinePosition = cdPosition * 1.1f;
+
+                RendererManager.DrawImage(this.ultimate.Id, cdPosition, AbilityImageType.Round);
+                RendererManager.DrawImage("o9k.outline_black100", outlinePosition);
+                RendererManager.DrawImage("o9k.outline_blue_pct" + pct, outlinePosition);
+
+                if (cdTime)
+                {
+                    var mpCd = Math.Ceiling((this.ultimate.ManaCost - this.hero.Mana) / this.hero.ManaRegeneration).ToString("N0");
+                    RendererManager.DrawImage("o9k.top_ult_cd_bg", cdPosition);
+                    RendererManager.DrawText(mpCd, cdPosition, Color.White, FontFlags.Center | FontFlags.VerticalCenter, 20);
+                }
+
+                return true;
+            }
+        }
+        else if (this.ultimate.IsUsable && this.ultimate.Level > 0)
+        {
+            RendererManager.DrawImage("o9k.ult_rdy", position);
         }
 
-        public void SetUltimate(Ability9 ability)
+        return false;
+    }
+
+    public void ForceDrawBuyback(Rectangle9 position, Rectangle9 deadPosition)
+    {
+        if (this.BuybackSleeper.IsSleeping)
         {
-            if (this.ultimate?.IsValid == true)
-            {
-                return;
-            }
-
-            if (!this.hero.Equals(ability.Owner))
-            {
-                return;
-            }
-
-            this.ultimate = ability;
+            return;
         }
+
+        if (this.hero.IsAlive)
+        {
+            RendererManager.DrawImage("o9k.buyback_alive", position);
+        }
+        else
+        {
+            RendererManager.DrawImage("o9k.buyback", deadPosition);
+        }
+    }
+
+    public void RemoveItem(Ability9 ability)
+    {
+        this.items.Remove(ability);
+    }
+
+    public void SetUltimate(Ability9 ability)
+    {
+        if (this.ultimate?.IsValid == true)
+        {
+            return;
+        }
+
+        if (!this.hero.Equals(ability.Owner))
+        {
+            return;
+        }
+
+        this.ultimate = ability;
     }
 }

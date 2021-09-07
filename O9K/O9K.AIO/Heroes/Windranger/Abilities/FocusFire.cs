@@ -1,66 +1,65 @@
-﻿namespace O9K.AIO.Heroes.Windranger.Abilities
+﻿namespace O9K.AIO.Heroes.Windranger.Abilities;
+
+using System.Collections.Generic;
+
+using AIO.Abilities;
+
+using Core.Entities.Abilities.Base;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+using Modes.Combo;
+
+using TargetManager;
+
+internal class FocusFire : TargetableAbility
 {
-    using System.Collections.Generic;
-
-    using AIO.Abilities;
-
-    using Core.Entities.Abilities.Base;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Modes.Combo;
-
-    using TargetManager;
-
-    internal class FocusFire : TargetableAbility
+    public FocusFire(ActiveAbility ability)
+        : base(ability)
     {
-        public FocusFire(ActiveAbility ability)
-            : base(ability)
+    }
+
+    public override bool ShouldCast(TargetManager targetManager)
+    {
+        if (!base.ShouldCast(targetManager))
         {
+            return false;
         }
 
-        public override bool ShouldCast(TargetManager targetManager)
+        var target = targetManager.Target;
+
+        if (target.IsEthereal)
         {
-            if (!base.ShouldCast(targetManager))
-            {
-                return false;
-            }
+            return false;
+        }
 
-            var target = targetManager.Target;
-
-            if (target.IsEthereal)
-            {
-                return false;
-            }
-
-            if (target.Distance(this.Owner) < 300 && target.HealthPercentage < 50)
-            {
-                return true;
-            }
-
-            if (!target.IsStunned && !target.IsRooted && !target.IsHexed)
-            {
-                return false;
-            }
-
+        if (target.Distance(this.Owner) < 300 && target.HealthPercentage < 50)
+        {
             return true;
         }
 
-        public override bool ShouldConditionCast(TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
+        if (!target.IsStunned && !target.IsRooted && !target.IsHexed)
         {
-            var target = targetManager.Target;
-            var powershot = usableAbilities.Find(x => x.Ability.Id == AbilityId.windrunner_powershot);
-            if (powershot == null)
-            {
-                return true;
-            }
+            return false;
+        }
 
-            if (powershot.Ability.GetDamage(target) > target.Health)
-            {
-                return false;
-            }
+        return true;
+    }
 
+    public override bool ShouldConditionCast(TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
+    {
+        var target = targetManager.Target;
+        var powershot = usableAbilities.Find(x => x.Ability.Id == AbilityId.windrunner_powershot);
+        if (powershot == null)
+        {
             return true;
         }
+
+        if (powershot.Ability.GetDamage(target) > target.Health)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

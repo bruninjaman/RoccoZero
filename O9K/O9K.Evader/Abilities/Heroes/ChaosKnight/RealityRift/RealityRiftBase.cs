@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.ChaosKnight.RealityRift
+﻿namespace O9K.Evader.Abilities.Heroes.ChaosKnight.RealityRift;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.chaos_knight_reality_rift)]
+internal class RealityRiftBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.chaos_knight_reality_rift)]
-    internal class RealityRiftBase : EvaderBaseAbility, IEvadable
+    public RealityRiftBase(Ability9 ability)
+        : base(ability)
     {
-        public RealityRiftBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new RealityRiftEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new RealityRiftEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

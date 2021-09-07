@@ -1,39 +1,38 @@
-﻿namespace O9K.AIO.Heroes.Disruptor
+﻿namespace O9K.AIO.Heroes.Disruptor;
+
+using AIO.Modes.Permanent;
+
+using Base;
+
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Modes;
+
+[HeroId(HeroId.npc_dota_hero_disruptor)]
+internal class DisruptorBase : BaseHero
 {
-    using AIO.Modes.Permanent;
+    private readonly GlimpseTrackerMode glimpseTrackerMode;
 
-    using Base;
-
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Modes;
-
-    [HeroId(HeroId.npc_dota_hero_disruptor)]
-    internal class DisruptorBase : BaseHero
+    public DisruptorBase()
     {
-        private readonly GlimpseTrackerMode glimpseTrackerMode;
+        this.glimpseTrackerMode = new GlimpseTrackerMode(this, new PermanentModeMenu(this.Menu.RootMenu, "Glimpse tracker"));
+    }
 
-        public DisruptorBase()
-        {
-            this.glimpseTrackerMode = new GlimpseTrackerMode(this, new PermanentModeMenu(this.Menu.RootMenu, "Glimpse tracker"));
-        }
+    public override void Dispose()
+    {
+        base.Dispose();
+        this.glimpseTrackerMode.Dispose();
+    }
 
-        public override void Dispose()
-        {
-            base.Dispose();
-            this.glimpseTrackerMode.Dispose();
-        }
+    protected override void DisableCustomModes()
+    {
+        this.glimpseTrackerMode.Disable();
+    }
 
-        protected override void DisableCustomModes()
-        {
-            this.glimpseTrackerMode.Disable();
-        }
-
-        protected override void EnableCustomModes()
-        {
-            this.glimpseTrackerMode.Enable();
-        }
+    protected override void EnableCustomModes()
+    {
+        this.glimpseTrackerMode.Enable();
     }
 }

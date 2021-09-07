@@ -1,80 +1,79 @@
-﻿namespace O9K.Evader.AbilityManager.Monitors
+﻿namespace O9K.Evader.AbilityManager.Monitors;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Abilities.Base.Evadable;
+using Abilities.Base.Evadable.Components;
+
+using Core.Entities.Heroes;
+using Core.Entities.Units;
+using Core.Logger;
+using Core.Managers.Entity;
+
+using Divine.Entity.Entities.Components;
+
+internal class AttackMonitor : IDisposable
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly List<EvadableAbility> evadableAbilities;
 
-    using Abilities.Base.Evadable;
-    using Abilities.Base.Evadable.Components;
+    private readonly Team myTeam;
 
-    using Core.Entities.Heroes;
-    using Core.Entities.Units;
-    using Core.Logger;
-    using Core.Managers.Entity;
-
-    using Divine.Entity.Entities.Components;
-
-    internal class AttackMonitor : IDisposable
+    public AttackMonitor(List<EvadableAbility> evadableAbilities)
     {
-        private readonly List<EvadableAbility> evadableAbilities;
+        this.myTeam = EntityManager9.Owner.Team;
+        this.evadableAbilities = evadableAbilities;
 
-        private readonly Team myTeam;
+        EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
+        EntityManager9.UnitMonitor.AttackEnd += this.OnAttackEnd;
+    }
 
-        public AttackMonitor(List<EvadableAbility> evadableAbilities)
+    public void Dispose()
+    {
+        EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
+        EntityManager9.UnitMonitor.AttackEnd -= this.OnAttackEnd;
+    }
+
+    private void OnAttackEnd(Unit9 unit)
+    {
+        try
         {
-            this.myTeam = EntityManager9.Owner.Team;
-            this.evadableAbilities = evadableAbilities;
-
-            EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
-            EntityManager9.UnitMonitor.AttackEnd += this.OnAttackEnd;
-        }
-
-        public void Dispose()
-        {
-            EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
-            EntityManager9.UnitMonitor.AttackEnd -= this.OnAttackEnd;
-        }
-
-        private void OnAttackEnd(Unit9 unit)
-        {
-            try
+            var hero = unit as Hero9;
+            if (hero == null || hero.Team == this.myTeam)
             {
-                var hero = unit as Hero9;
-                if (hero == null || hero.Team == this.myTeam)
-                {
-                    return;
-                }
-
-                foreach (var ability in this.evadableAbilities.Where(x => x.Owner.Equals(hero)).OfType<IAutoAttack>())
-                {
-                    ability.AttackEnd();
-                }
+                return;
             }
-            catch (Exception e)
+
+            foreach (var ability in this.evadableAbilities.Where(x => x.Owner.Equals(hero)).OfType<IAutoAttack>())
             {
-                Logger.Error(e);
+                ability.AttackEnd();
             }
         }
-
-        private void OnAttackStart(Unit9 unit)
+        catch (Exception e)
         {
-            try
-            {
-                var hero = unit as Hero9;
-                if (hero == null || hero.Team == this.myTeam)
-                {
-                    return;
-                }
+            Logger.Error(e);
+        }
+    }
 
-                foreach (var ability in this.evadableAbilities.Where(x => x.Owner.Equals(hero)).OfType<IAutoAttack>())
-                {
-                    ability.AttackStart();
-                }
-            }
-            catch (Exception e)
+    private void OnAttackStart(Unit9 unit)
+    {
+        try
+        {
+            var hero = unit as Hero9;
+            if (hero == null || hero.Team == this.myTeam)
             {
-                Logger.Error(e);
+                return;
             }
+
+            foreach (var ability in this.evadableAbilities.Where(x => x.Owner.Equals(hero)).OfType<IAutoAttack>())
+            {
+                ability.AttackStart();
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

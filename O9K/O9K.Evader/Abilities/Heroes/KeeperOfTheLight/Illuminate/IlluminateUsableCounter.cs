@@ -1,36 +1,35 @@
-﻿namespace O9K.Evader.Abilities.Heroes.KeeperOfTheLight.Illuminate
+﻿namespace O9K.Evader.Abilities.Heroes.KeeperOfTheLight.Illuminate;
+
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+using Core.Prediction.Data;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+
+internal class IlluminateUsableCounter : CounterEnemyAbility
 {
-    using Base.Usable.CounterAbility;
+    private readonly IActionManager actionManager;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-    using Core.Prediction.Data;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-
-    internal class IlluminateUsableCounter : CounterEnemyAbility
+    public IlluminateUsableCounter(Ability9 ability, IActionManager actionManager, IMainMenu menu)
+        : base(ability, menu)
     {
-        private readonly IActionManager actionManager;
+        this.actionManager = actionManager;
+    }
 
-        public IlluminateUsableCounter(Ability9 ability, IActionManager actionManager, IMainMenu menu)
-            : base(ability, menu)
+    public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        this.MoveCamera(enemy.Position);
+        var use = this.ActiveAbility.UseAbility(enemy, HitChance.Medium, false, true);
+        if (!use)
         {
-            this.actionManager = actionManager;
+            return false;
         }
 
-        public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
-        {
-            this.MoveCamera(enemy.Position);
-            var use = this.ActiveAbility.UseAbility(enemy, HitChance.Medium, false, true);
-            if (!use)
-            {
-                return false;
-            }
-
-            this.actionManager.CancelChanneling(this.ActiveAbility);
-            return true;
-        }
+        this.actionManager.CancelChanneling(this.ActiveAbility);
+        return true;
     }
 }

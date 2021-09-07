@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.LoneDruid.EntanglingClaws
+﻿namespace O9K.Evader.Abilities.Heroes.LoneDruid.EntanglingClaws;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.lone_druid_spirit_bear_entangle)]
+internal class EntanglingClawsBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.lone_druid_spirit_bear_entangle)]
-    internal class EntanglingClawsBase : EvaderBaseAbility, IEvadable
+    public EntanglingClawsBase(Ability9 ability)
+        : base(ability)
     {
-        public EntanglingClawsBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new EntanglingClawsEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new EntanglingClawsEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

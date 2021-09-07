@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Brewmaster.PrimalSplit
+﻿namespace O9K.Evader.Abilities.Heroes.Brewmaster.PrimalSplit;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.brewmaster_primal_split)]
+internal class PrimalSplitBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.brewmaster_primal_split)]
-    internal class PrimalSplitBase : EvaderBaseAbility, IEvadable
+    public PrimalSplitBase(Ability9 ability)
+        : base(ability)
     {
-        public PrimalSplitBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new PrimalSplitEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new PrimalSplitEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

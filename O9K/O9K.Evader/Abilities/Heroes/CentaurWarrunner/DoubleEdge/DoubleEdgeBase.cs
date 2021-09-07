@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.CentaurWarrunner.DoubleEdge
+﻿namespace O9K.Evader.Abilities.Heroes.CentaurWarrunner.DoubleEdge;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.centaur_double_edge)]
+internal class DoubleEdgeBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.centaur_double_edge)]
-    internal class DoubleEdgeBase : EvaderBaseAbility, IEvadable
+    public DoubleEdgeBase(Ability9 ability)
+        : base(ability)
     {
-        public DoubleEdgeBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new DoubleEdgeEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new DoubleEdgeEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

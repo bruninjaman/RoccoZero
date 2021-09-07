@@ -1,39 +1,38 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.StaticStorm
+﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.StaticStorm;
+
+using Base.Evadable;
+
+using Core.Entities.Units;
+using Divine.Numerics;
+using Divine.Modifier.Modifiers;
+
+using Pathfinder.Obstacles.Abilities.AreaOfEffect;
+
+internal class StaticStormFormationObstacle : AreaOfEffectModifierObstacle
 {
-    using Base.Evadable;
+    private readonly float activationTime;
 
-    using Core.Entities.Units;
-    using Divine.Numerics;
-    using Divine.Modifier.Modifiers;
-
-    using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    internal class StaticStormFormationObstacle : AreaOfEffectModifierObstacle
+    public StaticStormFormationObstacle(EvadableAbility ability, Vector3 position, Modifier modifier, float activationTime)
+        : base(ability, position, modifier)
     {
-        private readonly float activationTime;
+        this.activationTime = activationTime;
+    }
 
-        public StaticStormFormationObstacle(EvadableAbility ability, Vector3 position, Modifier modifier, float activationTime)
-            : base(ability, position, modifier)
+    public override bool IsExpired
+    {
+        get
         {
-            this.activationTime = activationTime;
+            return !this.Modifier.IsValid || this.activationTime - this.Modifier.ElapsedTime <= 0;
+        }
+    }
+
+    public override float GetEvadeTime(Unit9 ally, bool blink)
+    {
+        if (!this.Modifier.IsValid)
+        {
+            return 0;
         }
 
-        public override bool IsExpired
-        {
-            get
-            {
-                return !this.Modifier.IsValid || this.activationTime - this.Modifier.ElapsedTime <= 0;
-            }
-        }
-
-        public override float GetEvadeTime(Unit9 ally, bool blink)
-        {
-            if (!this.Modifier.IsValid)
-            {
-                return 0;
-            }
-
-            return this.activationTime - this.Modifier.ElapsedTime;
-        }
+        return this.activationTime - this.Modifier.ElapsedTime;
     }
 }

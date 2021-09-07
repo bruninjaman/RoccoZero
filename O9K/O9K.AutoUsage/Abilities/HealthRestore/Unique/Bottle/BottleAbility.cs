@@ -1,117 +1,116 @@
-﻿namespace O9K.AutoUsage.Abilities.HealthRestore.Unique.Bottle
+﻿namespace O9K.AutoUsage.Abilities.HealthRestore.Unique.Bottle;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+using Core.Helpers;
+using Core.Logger;
+using Core.Managers.Entity;
+using Divine.Update;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Settings;
+
+[AbilityId(AbilityId.item_bottle)]
+internal class BottleAbility : HealthRestoreAbility, IDisposable
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly Sleeper bottleRefillingSleeper = new Sleeper();
 
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-    using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Entity;
-    using Divine.Update;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly BottleSettings settings;
 
-    using Settings;
-
-    [AbilityId(AbilityId.item_bottle)]
-    internal class BottleAbility : HealthRestoreAbility, IDisposable
+    public BottleAbility(IHealthRestore healthRestore, GroupSettings settings)
+        : base(healthRestore)
     {
-        private readonly Sleeper bottleRefillingSleeper = new Sleeper();
+        this.settings = new BottleSettings(settings.Menu, healthRestore);
+    }
 
-        private readonly BottleSettings settings;
+    public void Dispose()
+    {
+        UpdateManager.DestroyIngameUpdate(this.OnUpdate);
+    }
 
-        public BottleAbility(IHealthRestore healthRestore, GroupSettings settings)
-            : base(healthRestore)
+    public override void Enabled(bool enabled)
+    {
+        base.Enabled(enabled);
+
+        if (enabled)
         {
-            this.settings = new BottleSettings(settings.Menu, healthRestore);
+            UpdateManager.CreateIngameUpdate(500, this.OnUpdate);
         }
-
-        public void Dispose()
+        else
         {
             UpdateManager.DestroyIngameUpdate(this.OnUpdate);
         }
+    }
 
-        public override void Enabled(bool enabled)
+    public override bool UseAbility(List<Unit9> heroes)
+    {
+        if (!this.bottleRefillingSleeper)
         {
-            base.Enabled(enabled);
-
-            if (enabled)
-            {
-                UpdateManager.CreateIngameUpdate(500, this.OnUpdate);
-            }
-            else
-            {
-                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
-            }
-        }
-
-        public override bool UseAbility(List<Unit9> heroes)
-        {
-            if (!this.bottleRefillingSleeper)
-            {
-                return false;
-            }
-
-            var allies = heroes.Where(x => !x.IsInvulnerable && x.IsAlly(this.Owner))
-                .OrderBy(x => x.GetModifier(this.HealthRestore.RestoreModifierName)?.RemainingTime)
-                .ToList();
-
-            foreach (var ally in allies)
-            {
-                if (!this.settings.IsHeroEnabled(ally.Name) && !this.settings.SelfOnly)
-                {
-                    continue;
-                }
-
-                if (!ally.CanBeHealed)
-                {
-                    continue;
-                }
-
-                if (ally.HealthPercentage > 99 && ally.ManaPercentage > 99)
-                {
-                    continue;
-                }
-
-                var selfTarget = ally.Equals(this.Owner);
-                if (!selfTarget && this.settings.SelfOnly)
-                {
-                    continue;
-                }
-
-                if (!this.Ability.CanHit(ally))
-                {
-                    continue;
-                }
-
-                if (selfTarget)
-                {
-                    return this.Ability.UseAbility();
-                }
-
-                return this.Ability.UseAbility(ally);
-            }
-
             return false;
         }
 
-        private void OnUpdate()
-        {
-            try
-            {
-                if (this.Owner.Distance(EntityManager9.AllyFountain) > 1300)
-                {
-                    return;
-                }
+        var allies = heroes.Where(x => !x.IsInvulnerable && x.IsAlly(this.Owner))
+            .OrderBy(x => x.GetModifier(this.HealthRestore.RestoreModifierName)?.RemainingTime)
+            .ToList();
 
-                this.bottleRefillingSleeper.Sleep(2);
-            }
-            catch (Exception e)
+        foreach (var ally in allies)
+        {
+            if (!this.settings.IsHeroEnabled(ally.Name) && !this.settings.SelfOnly)
             {
-                Logger.Error(e);
+                continue;
             }
+
+            if (!ally.CanBeHealed)
+            {
+                continue;
+            }
+
+            if (ally.HealthPercentage > 99 && ally.ManaPercentage > 99)
+            {
+                continue;
+            }
+
+            var selfTarget = ally.Equals(this.Owner);
+            if (!selfTarget && this.settings.SelfOnly)
+            {
+                continue;
+            }
+
+            if (!this.Ability.CanHit(ally))
+            {
+                continue;
+            }
+
+            if (selfTarget)
+            {
+                return this.Ability.UseAbility();
+            }
+
+            return this.Ability.UseAbility(ally);
+        }
+
+        return false;
+    }
+
+    private void OnUpdate()
+    {
+        try
+        {
+            if (this.Owner.Distance(EntityManager9.AllyFountain) > 1300)
+            {
+                return;
+            }
+
+            this.bottleRefillingSleeper.Sleep(2);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

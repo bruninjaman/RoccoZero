@@ -1,89 +1,88 @@
-﻿namespace O9K.Evader.Pathfinder.Obstacles.Abilities.Cone
+﻿namespace O9K.Evader.Pathfinder.Obstacles.Abilities.Cone;
+
+using System.Collections.Generic;
+
+using Core.Entities.Units;
+
+using Divine.Game;
+using Divine.Numerics;
+
+using O9K.Core.Geometry;
+using O9K.Evader.Abilities.Base.Evadable;
+
+using Types;
+
+internal class ConeObstacle : AbilityObstacle, IUpdatable
 {
-    using System.Collections.Generic;
-
-    using Core.Entities.Units;
-
-    using Divine.Game;
-    using Divine.Numerics;
-
-    using O9K.Core.Geometry;
-    using O9K.Evader.Abilities.Base.Evadable;
-
-    using Types;
-
-    internal class ConeObstacle : AbilityObstacle, IUpdatable
+    public ConeObstacle(ConeEvadable ability, Vector3 startPosition)
+        : base(ability)
     {
-        public ConeObstacle(ConeEvadable ability, Vector3 startPosition)
-            : base(ability)
+        //todo improve navmesh size ?
+
+        const int RadiusIncrease = 75;
+        const int EndRadiusIncrease = 150;
+        const int RangeIncrease = 75;
+
+        this.Position = startPosition;
+        this.Radius = ability.ConeAbility.Radius + RadiusIncrease;
+        this.EndRadius = ability.ConeAbility.EndRadius + EndRadiusIncrease;
+        this.Range = ability.ConeAbility.Range + RangeIncrease;
+        this.IsUpdated = false;
+    }
+
+    public bool IsUpdated { get; protected set; }
+
+    protected Vector3 EndPosition { get; set; }
+
+    protected float EndRadius { get; }
+
+    protected Dictionary<uint, Vector3> NavMeshObstacles { get; set; }
+
+    protected float Radius { get; }
+
+    protected float Range { get; }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        if (this.NavMeshId != null)
         {
-            //todo improve navmesh size ?
+            this.Pathfinder.RemoveNavMeshObstacle(this.NavMeshObstacles);
+        }
+    }
 
-            const int RadiusIncrease = 75;
-            const int EndRadiusIncrease = 150;
-            const int RangeIncrease = 75;
-
-            this.Position = startPosition;
-            this.Radius = ability.ConeAbility.Radius + RadiusIncrease;
-            this.EndRadius = ability.ConeAbility.EndRadius + EndRadiusIncrease;
-            this.Range = ability.ConeAbility.Range + RangeIncrease;
-            this.IsUpdated = false;
+    public override void Draw()
+    {
+        if (this.NavMeshId == null)
+        {
+            return;
         }
 
-        public bool IsUpdated { get; protected set; }
+        this.Drawer.DrawArcRectangle(this.Position, this.EndPosition, this.Radius, this.EndRadius);
+    }
 
-        protected Vector3 EndPosition { get; set; }
+    public override float GetDisableTime(Unit9 enemy)
+    {
+        return this.EndCastTime - GameManager.RawGameTime;
+    }
 
-        protected float EndRadius { get; }
+    public override float GetEvadeTime(Unit9 ally, bool blink)
+    {
+        return this.EndObstacleTime - GameManager.RawGameTime;
+    }
 
-        protected Dictionary<uint, Vector3> NavMeshObstacles { get; set; }
+    public void Update()
+    {
+        //if (this.Caster.IsRotating)
+        //{
+        //    return;
+        //}
 
-        protected float Radius { get; }
+        this.EndPosition = this.Caster.InFront(this.Range);
+        this.Polygon = new Polygon.Trapezoid(this.Position, this.EndPosition, this.Radius, this.EndRadius);
+        this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.Position, this.EndPosition, this.Radius, this.EndRadius);
+        this.NavMeshId = 1; // hack
 
-        protected float Range { get; }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-            if (this.NavMeshId != null)
-            {
-                this.Pathfinder.RemoveNavMeshObstacle(this.NavMeshObstacles);
-            }
-        }
-
-        public override void Draw()
-        {
-            if (this.NavMeshId == null)
-            {
-                return;
-            }
-
-            this.Drawer.DrawArcRectangle(this.Position, this.EndPosition, this.Radius, this.EndRadius);
-        }
-
-        public override float GetDisableTime(Unit9 enemy)
-        {
-            return this.EndCastTime - GameManager.RawGameTime;
-        }
-
-        public override float GetEvadeTime(Unit9 ally, bool blink)
-        {
-            return this.EndObstacleTime - GameManager.RawGameTime;
-        }
-
-        public void Update()
-        {
-            //if (this.Caster.IsRotating)
-            //{
-            //    return;
-            //}
-
-            this.EndPosition = this.Caster.InFront(this.Range);
-            this.Polygon = new Polygon.Trapezoid(this.Position, this.EndPosition, this.Radius, this.EndRadius);
-            this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.Position, this.EndPosition, this.Radius, this.EndRadius);
-            this.NavMeshId = 1; // hack
-
-            this.IsUpdated = true;
-        }
+        this.IsUpdated = true;
     }
 }

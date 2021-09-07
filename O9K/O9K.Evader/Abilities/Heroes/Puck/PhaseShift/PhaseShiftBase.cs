@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Puck.PhaseShift
+﻿namespace O9K.Evader.Abilities.Heroes.Puck.PhaseShift;
+
+using Base;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.puck_phase_shift)]
+internal class PhaseShiftBase : EvaderBaseAbility, IUsable<CounterAbility>
 {
-    using Base;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.puck_phase_shift)]
-    internal class PhaseShiftBase : EvaderBaseAbility, IUsable<CounterAbility>
+    public PhaseShiftBase(Ability9 ability)
+        : base(ability)
     {
-        public PhaseShiftBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public CounterAbility GetUsableAbility()
-        {
-            return new PhaseShiftUsable(this.Ability, this.ActionManager, this.Menu);
-        }
+    public CounterAbility GetUsableAbility()
+    {
+        return new PhaseShiftUsable(this.Ability, this.ActionManager, this.Menu);
     }
 }

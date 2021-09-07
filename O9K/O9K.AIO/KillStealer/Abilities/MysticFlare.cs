@@ -1,34 +1,33 @@
-﻿namespace O9K.AIO.KillStealer.Abilities
+﻿namespace O9K.AIO.KillStealer.Abilities;
+
+using Base;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.skywrath_mage_mystic_flare)]
+internal class MysticFlare : KillStealAbility
 {
-    using Base;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.skywrath_mage_mystic_flare)]
-    internal class MysticFlare : KillStealAbility
+    public MysticFlare(ActiveAbility ability)
+        : base(ability)
     {
-        public MysticFlare(ActiveAbility ability)
-            : base(ability)
+    }
+
+    public override bool ShouldCast(Unit9 target)
+    {
+        if (!base.ShouldCast(target))
         {
+            return false;
         }
 
-        public override bool ShouldCast(Unit9 target)
+        if (target.GetImmobilityDuration() < 1f)
         {
-            if (!base.ShouldCast(target))
-            {
-                return false;
-            }
-
-            if (target.GetImmobilityDuration() < 1f)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
+
+        return true;
     }
 }

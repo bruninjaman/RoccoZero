@@ -1,44 +1,43 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Oracle.FortunesEnd
+﻿namespace O9K.Evader.Abilities.Heroes.Oracle.FortunesEnd;
+
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+
+internal class FortunesEndUsableCounter : CounterAbility
 {
-    using Base.Usable.CounterAbility;
+    private readonly IActionManager actionManager;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-
-    internal class FortunesEndUsableCounter : CounterAbility
+    public FortunesEndUsableCounter(Ability9 ability, IActionManager actionManager, IMainMenu menu)
+        : base(ability, menu)
     {
-        private readonly IActionManager actionManager;
+        this.actionManager = actionManager;
 
-        public FortunesEndUsableCounter(Ability9 ability, IActionManager actionManager, IMainMenu menu)
-            : base(ability, menu)
+        this.CanBeCastedOnAlly = true;
+        this.CanBeCastedOnSelf = true;
+    }
+
+    public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        this.MoveCamera(ally.Position);
+        var use = this.ActiveAbility.UseAbility(ally, false, true);
+        if (!use)
         {
-            this.actionManager = actionManager;
-
-            this.CanBeCastedOnAlly = true;
-            this.CanBeCastedOnSelf = true;
+            return false;
         }
 
-        public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+        if (obstacle.IsModifierObstacle || obstacle.EvadableAbility.Ability.Id != AbilityId.silencer_global_silence)
         {
-            this.MoveCamera(ally.Position);
-            var use = this.ActiveAbility.UseAbility(ally, false, true);
-            if (!use)
-            {
-                return false;
-            }
-
-            if (obstacle.IsModifierObstacle || obstacle.EvadableAbility.Ability.Id != AbilityId.silencer_global_silence)
-            {
-                this.actionManager.CancelChanneling(this.ActiveAbility);
-            }
-
-            return true;
+            this.actionManager.CancelChanneling(this.ActiveAbility);
         }
+
+        return true;
     }
 }

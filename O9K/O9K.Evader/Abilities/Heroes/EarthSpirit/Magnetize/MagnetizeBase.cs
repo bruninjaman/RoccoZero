@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.EarthSpirit.Magnetize
+﻿namespace O9K.Evader.Abilities.Heroes.EarthSpirit.Magnetize;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.earth_spirit_magnetize)]
+internal class MagnetizeBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.earth_spirit_magnetize)]
-    internal class MagnetizeBase : EvaderBaseAbility, IEvadable
+    public MagnetizeBase(Ability9 ability)
+        : base(ability)
     {
-        public MagnetizeBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new MagnetizeEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new MagnetizeEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

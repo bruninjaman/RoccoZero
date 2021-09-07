@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Tinker.Rearm
+﻿namespace O9K.Evader.Abilities.Heroes.Tinker.Rearm;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.tinker_rearm)]
+internal class RearmBase : EvaderBaseAbility //, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.tinker_rearm)]
-    internal class RearmBase : EvaderBaseAbility //, IEvadable
+    public RearmBase(Ability9 ability)
+        : base(ability)
     {
-        public RearmBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new RearmEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new RearmEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

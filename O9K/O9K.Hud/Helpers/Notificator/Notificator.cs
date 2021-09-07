@@ -1,253 +1,252 @@
-﻿namespace O9K.Hud.Helpers.Notificator
+﻿namespace O9K.Hud.Helpers.Notificator;
+
+using System;
+using System.Collections.Generic;
+
+using Core.Helpers;
+using Core.Logger;
+using Core.Managers.Menu;
+using Core.Managers.Menu.EventArgs;
+using Core.Managers.Menu.Items;
+using Core.Managers.Renderer.Utils;
+
+using Divine.Game;
+using Divine.Input;
+using Divine.Input.EventArgs;
+using Divine.Numerics;
+using Divine.Renderer;
+using Divine.Update;
+
+using MainMenu;
+
+using Modules;
+
+using Notifications;
+
+internal class Notificator : IHudModule, INotificator
 {
-    using System;
-    using System.Collections.Generic;
+    private const int MaxNotifications = 3;
 
-    using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Menu;
-    using Core.Managers.Menu.EventArgs;
-    using Core.Managers.Menu.Items;
-    using Core.Managers.Renderer.Utils;
+    private readonly MenuSwitcher debug;
 
-    using Divine.Game;
-    using Divine.Input;
-    using Divine.Input.EventArgs;
-    using Divine.Numerics;
-    using Divine.Renderer;
-    using Divine.Update;
+    private readonly IMinimap minimap;
 
-    using MainMenu;
+    private readonly List<Notification> notifications = new List<Notification>();
 
-    using Modules;
+    private readonly MenuSlider position;
 
-    using Notifications;
+    private readonly Queue<Notification> queue = new Queue<Notification>();
 
-    internal class Notificator : IHudModule, INotificator
+    private readonly MenuSlider size;
+
+    private Rectangle9 panel;
+
+    private UpdateHandler updateHandler;
+
+    private readonly IHudMenu hudMenu;
+
+    public Notificator(IMinimap minimap, IHudMenu hudMenu)
     {
-        private const int MaxNotifications = 3;
+        this.minimap = minimap;
+        this.hudMenu = hudMenu;
 
-        private readonly MenuSwitcher debug;
+        var settings = hudMenu.NotificationsSettingsMenu;
+        this.debug = settings.Add(new MenuSwitcher("Debug", false));
+        this.debug.SetTooltip("Use this to adjust side notification messages");
+        this.debug.AddTranslation(Lang.Ru, "Проверка");
+        this.debug.AddTooltipTranslation(Lang.Ru, "Использовать для настройки");
+        this.debug.AddTranslation(Lang.Cn, "调试");
+        this.debug.AddTooltipTranslation(Lang.Cn, "使用它来调整侧面通知消息");
+        this.debug.DisableSave();
 
-        private readonly IMinimap minimap;
+        this.size = settings.Add(new MenuSlider("Size", "size", 65, 50, 100));
+        this.size.AddTranslation(Lang.Ru, "Размер");
+        this.size.AddTranslation(Lang.Cn, "大小");
 
-        private readonly List<Notification> notifications = new List<Notification>();
+        this.position = settings.Add(
+            new MenuSlider("Position", "position", (int)(Hud.Info.ScreenSize.Y * 0.7f), 0, (int)Hud.Info.ScreenSize.Y));
 
-        private readonly MenuSlider position;
+        this.position.AddTranslation(Lang.Ru, "Позиция");
+        this.position.AddTranslation(Lang.Cn, "位置");
+    }
 
-        private readonly Queue<Notification> queue = new Queue<Notification>();
+    public void Activate()
+    {
+        this.LoadTextures();
 
-        private readonly MenuSlider size;
+        this.updateHandler = UpdateManager.CreateIngameUpdate(300, false, this.OnUpdate);
 
-        private Rectangle9 panel;
+        this.debug.ValueChange += this.DebugOnValueChange;
+        this.size.ValueChange += this.SizeOnValueChange;
+        this.position.ValueChange += this.PositionOnValueChange;
+    }
 
-        private UpdateHandler updateHandler;
+    public void Dispose()
+    {
+        this.debug.ValueChange -= this.DebugOnValueChange;
+        RendererManager.Draw -= this.OnDrawDebug;
+        RendererManager.Draw -= this.OnDraw;
+        InputManager.MouseKeyDown -= this.OnMouseKeyDown;
+        this.size.ValueChange -= this.SizeOnValueChange;
+        this.position.ValueChange -= this.PositionOnValueChange;
+        this.updateHandler.IsEnabled = false;
+        this.queue.Clear();
+    }
 
-        private readonly IHudMenu hudMenu;
+    public void PushNotification(Notification notification)
+    {
+        this.queue.Enqueue(notification);
 
-        public Notificator(IMinimap minimap, IHudMenu hudMenu)
+        if (!this.updateHandler.IsEnabled)
         {
-            this.minimap = minimap;
-            this.hudMenu = hudMenu;
-
-            var settings = hudMenu.NotificationsSettingsMenu;
-            this.debug = settings.Add(new MenuSwitcher("Debug", false));
-            this.debug.SetTooltip("Use this to adjust side notification messages");
-            this.debug.AddTranslation(Lang.Ru, "Проверка");
-            this.debug.AddTooltipTranslation(Lang.Ru, "Использовать для настройки");
-            this.debug.AddTranslation(Lang.Cn, "调试");
-            this.debug.AddTooltipTranslation(Lang.Cn, "使用它来调整侧面通知消息");
-            this.debug.DisableSave();
-
-            this.size = settings.Add(new MenuSlider("Size", "size", 65, 50, 100));
-            this.size.AddTranslation(Lang.Ru, "Размер");
-            this.size.AddTranslation(Lang.Cn, "大小");
-
-            this.position = settings.Add(
-                new MenuSlider("Position", "position", (int)(Hud.Info.ScreenSize.Y * 0.7f), 0, (int)Hud.Info.ScreenSize.Y));
-
-            this.position.AddTranslation(Lang.Ru, "Позиция");
-            this.position.AddTranslation(Lang.Cn, "位置");
+            this.updateHandler.IsEnabled = true;
+            RendererManager.Draw += this.OnDraw;
+            InputManager.MouseKeyDown += this.OnMouseKeyDown;
         }
+    }
 
-        public void Activate()
+    private void DebugOnValueChange(object sender, SwitcherEventArgs e)
+    {
+        if (e.NewValue)
         {
-            this.LoadTextures();
-
-            this.updateHandler = UpdateManager.CreateIngameUpdate(300, false, this.OnUpdate);
-
-            this.debug.ValueChange += this.DebugOnValueChange;
-            this.size.ValueChange += this.SizeOnValueChange;
-            this.position.ValueChange += this.PositionOnValueChange;
+            RendererManager.Draw += this.OnDrawDebug;
         }
-
-        public void Dispose()
+        else
         {
-            this.debug.ValueChange -= this.DebugOnValueChange;
             RendererManager.Draw -= this.OnDrawDebug;
-            RendererManager.Draw -= this.OnDraw;
-            InputManager.MouseKeyDown -= this.OnMouseKeyDown;
-            this.size.ValueChange -= this.SizeOnValueChange;
-            this.position.ValueChange -= this.PositionOnValueChange;
-            this.updateHandler.IsEnabled = false;
-            this.queue.Clear();
+        }
+    }
+
+    private void LoadTextures()
+    {
+        RendererManager.LoadImage(
+            "o9k.notification_bg",
+            @"panorama\images\hud\reborn\bg_deathsummary_psd.vtex_c",
+            new ImageProperties
+            {
+                Brightness = 10
+            });
+
+        RendererManager.LoadImage("o9k.gold", @"panorama\images\hud\reborn\gold_large_png.vtex_c");
+        RendererManager.LoadImage("o9k.ping", @"panorama\images\hud\reborn\ping_icon_default_psd.vtex_c");
+        RendererManager.LoadImage("o9k.outpost", @"panorama\images\hud\icon_outpost_psd.vtex_c");
+        RendererManager.LoadImageFromAssembly("o9k.rune_regen", "rune_regen.png");
+        RendererManager.LoadImageFromAssembly("o9k.rune_bounty", "rune_bounty.png");
+    }
+
+    private void OnDraw()
+    {
+        if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+        {
+            return;
         }
 
-        public void PushNotification(Notification notification)
+        try
         {
-            this.queue.Enqueue(notification);
+            var drawPosition = this.panel;
 
-            if (!this.updateHandler.IsEnabled)
+            foreach (var notification in this.notifications)
             {
-                this.updateHandler.IsEnabled = true;
-                RendererManager.Draw += this.OnDraw;
-                InputManager.MouseKeyDown += this.OnMouseKeyDown;
+                notification.Draw(drawPosition, this.minimap);
+                drawPosition += new Vector2(0, -(drawPosition.Height + 20));
             }
         }
-
-        private void DebugOnValueChange(object sender, SwitcherEventArgs e)
+        catch (InvalidOperationException)
         {
-            if (e.NewValue)
+            //ignore
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void OnDrawDebug()
+    {
+        try
+        {
+            var drawPosition = this.panel;
+
+            for (var i = 0; i < MaxNotifications; i++)
             {
-                RendererManager.Draw += this.OnDrawDebug;
-            }
-            else
-            {
-                RendererManager.Draw -= this.OnDrawDebug;
+                RendererManager.DrawRectangle(drawPosition, Color.White);
+                drawPosition += new Vector2(0, -(drawPosition.Height + 20));
             }
         }
-
-        private void LoadTextures()
+        catch
         {
-            RendererManager.LoadImage(
-                "o9k.notification_bg",
-                @"panorama\images\hud\reborn\bg_deathsummary_psd.vtex_c",
-                new ImageProperties
-                {
-                    Brightness = 10
-                });
-
-            RendererManager.LoadImage("o9k.gold", @"panorama\images\hud\reborn\gold_large_png.vtex_c");
-            RendererManager.LoadImage("o9k.ping", @"panorama\images\hud\reborn\ping_icon_default_psd.vtex_c");
-            RendererManager.LoadImage("o9k.outpost", @"panorama\images\hud\icon_outpost_psd.vtex_c");
-            RendererManager.LoadImageFromAssembly("o9k.rune_regen", "rune_regen.png");
-            RendererManager.LoadImageFromAssembly("o9k.rune_bounty", "rune_bounty.png");
+            //ignore
         }
+    }
 
-        private void OnDraw()
+    private void OnMouseKeyDown(MouseEventArgs e)
+    {
+        try
         {
-            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            if (e.MouseKey != MouseKey.Left)
             {
                 return;
             }
 
-            try
-            {
-                var drawPosition = this.panel;
+            var drawPosition = this.panel;
 
-                foreach (var notification in this.notifications)
+            foreach (var notification in this.notifications)
+            {
+                if (drawPosition.Contains(e.Position))
                 {
-                    notification.Draw(drawPosition, this.minimap);
-                    drawPosition += new Vector2(0, -(drawPosition.Height + 20));
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                //ignore
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
+                    if (notification.OnClick())
+                    {
+                        e.Process = false;
+                    }
 
-        private void OnDrawDebug()
-        {
-            try
-            {
-                var drawPosition = this.panel;
-
-                for (var i = 0; i < MaxNotifications; i++)
-                {
-                    RendererManager.DrawRectangle(drawPosition, Color.White);
-                    drawPosition += new Vector2(0, -(drawPosition.Height + 20));
-                }
-            }
-            catch
-            {
-                //ignore
-            }
-        }
-
-        private void OnMouseKeyDown(MouseEventArgs e)
-        {
-            try
-            {
-                if (e.MouseKey != MouseKey.Left)
-                {
                     return;
                 }
 
-                var drawPosition = this.panel;
-
-                foreach (var notification in this.notifications)
-                {
-                    if (drawPosition.Contains(e.Position))
-                    {
-                        if (notification.OnClick())
-                        {
-                            e.Process = false;
-                        }
-
-                        return;
-                    }
-
-                    drawPosition += new Vector2(0, -(drawPosition.Height + 20));
-                }
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
+                drawPosition += new Vector2(0, -(drawPosition.Height + 20));
             }
         }
-
-        private void OnUpdate()
+        catch (Exception exception)
         {
-            try
-            {
-                this.notifications.RemoveAll(x => x.IsExpired);
-
-                var count = Math.Min(this.queue.Count, MaxNotifications - this.notifications.Count);
-
-                for (var i = 0; i < count; i++)
-                {
-                    var notification = this.queue.Dequeue();
-                    notification.Pushed();
-                    this.notifications.Insert(0, notification);
-                }
-
-                if (this.notifications.Count == 0)
-                {
-                    this.updateHandler.IsEnabled = false;
-                    RendererManager.Draw -= this.OnDraw;
-                    InputManager.MouseKeyDown -= this.OnMouseKeyDown;
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            Logger.Error(exception);
         }
+    }
 
-        private void PositionOnValueChange(object sender, SliderEventArgs e)
+    private void OnUpdate()
+    {
+        try
         {
-            this.panel.Location = new Vector2(Hud.Info.ScreenSize.X - this.panel.Width, e.NewValue);
-        }
+            this.notifications.RemoveAll(x => x.IsExpired);
 
-        private void SizeOnValueChange(object sender, SliderEventArgs e)
-        {
-            this.panel.Size = new Size2F(e.NewValue * 3.5f, e.NewValue);
-            this.panel.X = Hud.Info.ScreenSize.X - this.panel.Width;
+            var count = Math.Min(this.queue.Count, MaxNotifications - this.notifications.Count);
+
+            for (var i = 0; i < count; i++)
+            {
+                var notification = this.queue.Dequeue();
+                notification.Pushed();
+                this.notifications.Insert(0, notification);
+            }
+
+            if (this.notifications.Count == 0)
+            {
+                this.updateHandler.IsEnabled = false;
+                RendererManager.Draw -= this.OnDraw;
+                InputManager.MouseKeyDown -= this.OnMouseKeyDown;
+            }
         }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void PositionOnValueChange(object sender, SliderEventArgs e)
+    {
+        this.panel.Location = new Vector2(Hud.Info.ScreenSize.X - this.panel.Width, e.NewValue);
+    }
+
+    private void SizeOnValueChange(object sender, SliderEventArgs e)
+    {
+        this.panel.Size = new Size2F(e.NewValue * 3.5f, e.NewValue);
+        this.panel.X = Hud.Info.ScreenSize.X - this.panel.Width;
     }
 }

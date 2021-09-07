@@ -1,45 +1,44 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.StaticStorm
+﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.StaticStorm;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Base.Evadable;
+
+using Core.Entities.Units;
+using Divine.Numerics;
+using Divine.Modifier.Modifiers;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Pathfinder.Obstacles.Abilities.AreaOfEffect;
+
+internal class StaticStormObstacle : AreaOfEffectModifierObstacle
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly float activationTime;
 
-    using Base.Evadable;
-
-    using Core.Entities.Units;
-    using Divine.Numerics;
-    using Divine.Modifier.Modifiers;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    internal class StaticStormObstacle : AreaOfEffectModifierObstacle
+    public StaticStormObstacle(EvadableAbility ability, Vector3 position, Modifier modifier, float activationTime)
+        : base(ability, position, modifier)
     {
-        private readonly float activationTime;
+        this.activationTime = activationTime;
+    }
 
-        public StaticStormObstacle(EvadableAbility ability, Vector3 position, Modifier modifier, float activationTime)
-            : base(ability, position, modifier)
+    public override IEnumerable<AbilityId> GetBlinks(Unit9 ally)
+    {
+        return Enumerable.Empty<AbilityId>();
+    }
+
+    public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
+    {
+        if (!this.Modifier.IsValid)
         {
-            this.activationTime = activationTime;
+            return false;
         }
 
-        public override IEnumerable<AbilityId> GetBlinks(Unit9 ally)
+        if (this.Modifier.ElapsedTime < this.activationTime)
         {
-            return Enumerable.Empty<AbilityId>();
+            return false;
         }
 
-        public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
-        {
-            if (!this.Modifier.IsValid)
-            {
-                return false;
-            }
-
-            if (this.Modifier.ElapsedTime < this.activationTime)
-            {
-                return false;
-            }
-
-            return base.IsIntersecting(unit, checkPrediction);
-        }
+        return base.IsIntersecting(unit, checkPrediction);
     }
 }

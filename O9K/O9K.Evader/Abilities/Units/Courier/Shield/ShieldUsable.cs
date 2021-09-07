@@ -1,104 +1,103 @@
-﻿namespace O9K.Evader.Abilities.Units.Courier.Shield
+﻿namespace O9K.Evader.Abilities.Units.Courier.Shield;
+
+using System;
+
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+using Core.Logger;
+using Core.Managers.Entity;
+
+using Divine.Projectile;
+using Divine.Projectile.EventArgs;
+
+using Metadata;
+
+internal class ShieldUsable : CounterAbility, IDisposable
 {
-    using System;
-
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-    using Core.Logger;
-    using Core.Managers.Entity;
-
-    using Divine.Projectile;
-    using Divine.Projectile.EventArgs;
-
-    using Metadata;
-
-    internal class ShieldUsable : CounterAbility, IDisposable
+    public ShieldUsable(Ability9 ability, IMainMenu menu)
+        : base(ability, menu)
     {
-        public ShieldUsable(Ability9 ability, IMainMenu menu)
-            : base(ability, menu)
+        EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
+        ProjectileManager.TrackingProjectileAdded += this.OnAddTrackingProjectile;
+    }
+
+    public void Dispose()
+    {
+        EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
+        ProjectileManager.TrackingProjectileAdded -= this.OnAddTrackingProjectile;
+    }
+
+    private void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs args)
+    {
+        if (args.IsCollection)
         {
-            EntityManager9.UnitMonitor.AttackStart += this.OnAttackStart;
-            ProjectileManager.TrackingProjectileAdded += this.OnAddTrackingProjectile;
+            return;
         }
 
-        public void Dispose()
+        try
         {
-            EntityManager9.UnitMonitor.AttackStart -= this.OnAttackStart;
-            ProjectileManager.TrackingProjectileAdded -= this.OnAddTrackingProjectile;
-        }
-
-        private void OnAddTrackingProjectile(TrackingProjectileAddedEventArgs args)
-        {
-            if (args.IsCollection)
+            if (!this.Menu.AbilitySettings.IsCounterEnabled(this.Ability.Name))
             {
                 return;
             }
 
-            try
+            var projectile = args.Projectile;
+            if (projectile == null || projectile.Source == null)
             {
-                if (!this.Menu.AbilitySettings.IsCounterEnabled(this.Ability.Name))
-                {
-                    return;
-                }
-
-                var projectile = args.Projectile;
-                if (projectile == null || projectile.Source == null)
-                {
-                    return;
-                }
-
-                if (projectile.Target?.Handle != this.Ability.Owner.Handle)
-                {
-                    return;
-                }
-
-                var unit = EntityManager9.GetUnit(projectile.Source.Handle);
-                if (unit == null || unit.Team == this.Ability.Owner.Team)
-                {
-                    return;
-                }
-
-                if (this.Ability.CanBeCasted())
-                {
-                    this.ActiveAbility.UseAbility(false, true);
-                }
+                return;
             }
-            catch (Exception e)
+
+            if (projectile.Target?.Handle != this.Ability.Owner.Handle)
             {
-                Logger.Error(e);
+                return;
+            }
+
+            var unit = EntityManager9.GetUnit(projectile.Source.Handle);
+            if (unit == null || unit.Team == this.Ability.Owner.Team)
+            {
+                return;
+            }
+
+            if (this.Ability.CanBeCasted())
+            {
+                this.ActiveAbility.UseAbility(false, true);
             }
         }
-
-        private void OnAttackStart(Unit9 unit)
+        catch (Exception e)
         {
-            try
+            Logger.Error(e);
+        }
+    }
+
+    private void OnAttackStart(Unit9 unit)
+    {
+        try
+        {
+            if (!this.Menu.AbilitySettings.IsCounterEnabled(this.Ability.Name))
             {
-                if (!this.Menu.AbilitySettings.IsCounterEnabled(this.Ability.Name))
-                {
-                    return;
-                }
-
-                if (!unit.IsHero || unit.IsRanged || unit.Team == this.Owner.Team)
-                {
-                    return;
-                }
-
-                if (unit.Target?.Handle != this.Ability.Owner.Handle)
-                {
-                    return;
-                }
-
-                if (this.Ability.CanBeCasted())
-                {
-                    this.ActiveAbility.UseAbility(false, true);
-                }
+                return;
             }
-            catch (Exception e)
+
+            if (!unit.IsHero || unit.IsRanged || unit.Team == this.Owner.Team)
             {
-                Logger.Error(e);
+                return;
             }
+
+            if (unit.Target?.Handle != this.Ability.Owner.Handle)
+            {
+                return;
+            }
+
+            if (this.Ability.CanBeCasted())
+            {
+                this.ActiveAbility.UseAbility(false, true);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

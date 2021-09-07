@@ -1,19 +1,18 @@
-﻿namespace O9K.Hud.Modules.Units.Ranges.Abilities
+﻿namespace O9K.Hud.Modules.Units.Ranges.Abilities;
+
+using System;
+
+using Core.Managers.Menu.Items;
+
+internal interface IRange : IDisposable
 {
-    using System;
+    uint Handle { get; }
 
-    using Core.Managers.Menu.Items;
+    bool IsEnabled { get; }
 
-    internal interface IRange : IDisposable
-    {
-        uint Handle { get; }
+    string Name { get; }
 
-        bool IsEnabled { get; }
+    void Enable(Menu heroMenu);
 
-        string Name { get; }
-
-        void Enable(Menu heroMenu);
-
-        void UpdateRange();
-    }
+    void UpdateRange();
 }

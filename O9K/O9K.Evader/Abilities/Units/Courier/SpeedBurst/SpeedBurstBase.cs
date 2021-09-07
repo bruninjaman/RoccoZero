@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Units.Courier.SpeedBurst
+﻿namespace O9K.Evader.Abilities.Units.Courier.SpeedBurst;
+
+using Base;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.courier_burst)]
+internal class SpeedBurstBase : EvaderBaseAbility, IUsable<CounterAbility>
 {
-    using Base;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.courier_burst)]
-    internal class SpeedBurstBase : EvaderBaseAbility, IUsable<CounterAbility>
+    public SpeedBurstBase(Ability9 ability)
+        : base(ability)
     {
-        public SpeedBurstBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public CounterAbility GetUsableAbility()
-        {
-            return new SpeedBurstUsable(this.Ability, this.Menu);
-        }
+    public CounterAbility GetUsableAbility()
+    {
+        return new SpeedBurstUsable(this.Ability, this.Menu);
     }
 }

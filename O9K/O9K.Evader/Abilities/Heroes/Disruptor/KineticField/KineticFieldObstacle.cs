@@ -1,37 +1,36 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.KineticField
+﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.KineticField;
+
+using Base.Evadable;
+
+using Core.Entities.Units;
+using Divine.Numerics;
+using Divine.Modifier.Modifiers;
+
+using Pathfinder.Obstacles.Abilities.AreaOfEffect;
+
+internal class KineticFieldObstacle : AreaOfEffectModifierObstacle
 {
-    using Base.Evadable;
+    private readonly float activationTime;
 
-    using Core.Entities.Units;
-    using Divine.Numerics;
-    using Divine.Modifier.Modifiers;
-
-    using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    internal class KineticFieldObstacle : AreaOfEffectModifierObstacle
+    public KineticFieldObstacle(EvadableAbility ability, Vector3 position, Modifier modifier, float activationTime)
+        : base(ability, position, modifier)
     {
-        private readonly float activationTime;
+        this.activationTime = activationTime;
+        this.CanBeDodged = false;
+    }
 
-        public KineticFieldObstacle(EvadableAbility ability, Vector3 position, Modifier modifier, float activationTime)
-            : base(ability, position, modifier)
+    public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
+    {
+        if (!this.Modifier.IsValid)
         {
-            this.activationTime = activationTime;
-            this.CanBeDodged = false;
+            return false;
         }
 
-        public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
+        if (this.Modifier.ElapsedTime < this.activationTime)
         {
-            if (!this.Modifier.IsValid)
-            {
-                return false;
-            }
-
-            if (this.Modifier.ElapsedTime < this.activationTime)
-            {
-                return false;
-            }
-
-            return base.IsIntersecting(unit, checkPrediction);
+            return false;
         }
+
+        return base.IsIntersecting(unit, checkPrediction);
     }
 }

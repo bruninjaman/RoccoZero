@@ -1,30 +1,29 @@
-﻿namespace O9K.Evader.Abilities.Base.Evadable
+﻿namespace O9K.Evader.Abilities.Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+
+using Metadata;
+
+using Pathfinder.Obstacles.Abilities.LinearAreaOfEffect;
+
+internal abstract class LinearAreaOfEffectEvadable : EvadableAbility
 {
-    using Core.Entities.Abilities.Base;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles.Abilities.LinearAreaOfEffect;
-
-    internal abstract class LinearAreaOfEffectEvadable : EvadableAbility
+    protected LinearAreaOfEffectEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
+        : base(ability, pathfinder, menu)
     {
-        protected LinearAreaOfEffectEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
-            : base(ability, pathfinder, menu)
+        this.RangedAbility = (RangedAbility)ability;
+    }
+
+    public RangedAbility RangedAbility { get; }
+
+    protected override void AddObstacle()
+    {
+        var obstacle = new LinearAreaOfEffectObstacle(this, this.Owner.Position)
         {
-            this.RangedAbility = (RangedAbility)ability;
-        }
+            EndCastTime = this.EndCastTime,
+            EndObstacleTime = this.EndCastTime + this.Ability.ActivationDelay,
+        };
 
-        public RangedAbility RangedAbility { get; }
-
-        protected override void AddObstacle()
-        {
-            var obstacle = new LinearAreaOfEffectObstacle(this, this.Owner.Position)
-            {
-                EndCastTime = this.EndCastTime,
-                EndObstacleTime = this.EndCastTime + this.Ability.ActivationDelay,
-            };
-
-            this.Pathfinder.AddObstacle(obstacle);
-        }
+        this.Pathfinder.AddObstacle(obstacle);
     }
 }

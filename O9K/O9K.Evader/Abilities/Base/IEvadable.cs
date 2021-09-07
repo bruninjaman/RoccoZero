@@ -1,9 +1,8 @@
-﻿namespace O9K.Evader.Abilities.Base
-{
-    using Evadable;
+﻿namespace O9K.Evader.Abilities.Base;
 
-    internal interface IEvadable
-    {
-        EvadableAbility GetEvadableAbility();
-    }
+using Evadable;
+
+internal interface IEvadable
+{
+    EvadableAbility GetEvadableAbility();
 }

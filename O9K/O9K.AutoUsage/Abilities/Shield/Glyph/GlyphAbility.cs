@@ -1,68 +1,67 @@
-﻿namespace O9K.AutoUsage.Abilities.Shield.Glyph
+﻿namespace O9K.AutoUsage.Abilities.Shield.Glyph;
+
+using System;
+using System.Linq;
+
+using Core.Data;
+using Core.Entities.Units;
+using Core.Helpers;
+using Core.Logger;
+using Core.Managers.Entity;
+using Divine.Game;
+using Divine.Entity.Entities.Components;
+using Divine.Entity.Entities.Players;
+
+internal class GlyphAbility
 {
-    using System;
-    using System.Linq;
+    private readonly Sleeper sleeper = new Sleeper();
 
-    using Core.Data;
-    using Core.Entities.Units;
-    using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Entity;
-    using Divine.Game;
-    using Divine.Entity.Entities.Components;
-    using Divine.Entity.Entities.Players;
+    private Team team;
 
-    internal class GlyphAbility
+    private float GlyphCooldown
     {
-        private readonly Sleeper sleeper = new Sleeper();
-
-        private Team team;
-
-        private float GlyphCooldown
+        get
         {
-            get
-            {
-                return this.team == Team.Radiant ? GameManager.GlyphCooldownRadiant : GameManager.GlyphCooldownDire;
-            }
+            return this.team == Team.Radiant ? GameManager.GlyphCooldownRadiant : GameManager.GlyphCooldownDire;
         }
+    }
 
-        public void Activate()
-        {
-            this.team = EntityManager9.Owner.Team;
-            EntityManager9.UnitMonitor.UnitHealthChange += this.OnUnitHealthChange;
-        }
+    public void Activate()
+    {
+        this.team = EntityManager9.Owner.Team;
+        EntityManager9.UnitMonitor.UnitHealthChange += this.OnUnitHealthChange;
+    }
 
-        public void Deactivate()
-        {
-            EntityManager9.UnitMonitor.UnitHealthChange += this.OnUnitHealthChange;
-        }
+    public void Deactivate()
+    {
+        EntityManager9.UnitMonitor.UnitHealthChange += this.OnUnitHealthChange;
+    }
 
-        private void OnUnitHealthChange(Unit9 unit, float health)
+    private void OnUnitHealthChange(Unit9 unit, float health)
+    {
+        try
         {
-            try
+            if (!unit.IsTower || unit.Team != this.team || health > 100 || !unit.Name.Contains("tower1"))
             {
-                if (!unit.IsTower || unit.Team != this.team || health > 100 || !unit.Name.Contains("tower1"))
-                {
-                    return;
-                }
-
-                if (this.GlyphCooldown > 0 || this.sleeper)
-                {
-                    return;
-                }
-
-                if (!EntityManager9.Units.Any(x => x.IsUnit && x.Team != this.team && x.IsVisible && x.IsAlive && x.Distance(unit) < 1000))
-                {
-                    return;
-                }
-
-                Player.Glyph();
-                this.sleeper.Sleep(GameData.GlyphDuration);
+                return;
             }
-            catch (Exception e)
+
+            if (this.GlyphCooldown > 0 || this.sleeper)
             {
-                Logger.Error(e);
+                return;
             }
+
+            if (!EntityManager9.Units.Any(x => x.IsUnit && x.Team != this.team && x.IsVisible && x.IsAlive && x.Distance(unit) < 1000))
+            {
+                return;
+            }
+
+            Player.Glyph();
+            this.sleeper.Sleep(GameData.GlyphDuration);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

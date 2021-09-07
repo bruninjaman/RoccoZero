@@ -1,9 +1,8 @@
-﻿namespace O9K.ItemManager.Modules.AbilityLeveling.AbilityBuild
-{
-    internal enum BuildType
-    {
-        PickRate,
+﻿namespace O9K.ItemManager.Modules.AbilityLeveling.AbilityBuild;
 
-        WinRate
-    }
+internal enum BuildType
+{
+    PickRate,
+
+    WinRate
 }

@@ -1,59 +1,58 @@
-﻿namespace O9K.AutoUsage.Abilities.Shield
+﻿namespace O9K.AutoUsage.Abilities.Shield;
+
+using Core.Entities.Abilities.Base.Components.Base;
+using Core.Helpers;
+
+using Glyph;
+
+using O9K.Core.Managers.Menu.EventArgs;
+
+using Settings;
+
+internal class ShieldGroup<TType, TAbility> : AutoUsageGroup<TType, TAbility>
+    where TType : class, IActiveAbility where TAbility : ShieldAbility
 {
-    using Core.Entities.Abilities.Base.Components.Base;
-    using Core.Helpers;
+    private readonly GlyphAbility glyphAbility = new GlyphAbility();
 
-    using Glyph;
-
-    using O9K.Core.Managers.Menu.EventArgs;
-
-    using Settings;
-
-    internal class ShieldGroup<TType, TAbility> : AutoUsageGroup<TType, TAbility>
-        where TType : class, IActiveAbility where TAbility : ShieldAbility
+    public ShieldGroup(MultiSleeper sleeper, GroupSettings settings)
+        : base(sleeper, settings)
     {
-        private readonly GlyphAbility glyphAbility = new GlyphAbility();
+        settings.AddSettingsMenu();
+        settings.AbilityToggler.AddAbility("o9k.glyph");
 
-        public ShieldGroup(MultiSleeper sleeper, GroupSettings settings)
-            : base(sleeper, settings)
+        if (settings.GroupEnabled && settings.AbilityToggler.IsEnabled("o9k.glyph"))
         {
-            settings.AddSettingsMenu();
-            settings.AbilityToggler.AddAbility("o9k.glyph");
-
-            if (settings.GroupEnabled && settings.AbilityToggler.IsEnabled("o9k.glyph"))
-            {
-                this.Glyph(true);
-            }
+            this.Glyph(true);
         }
+    }
 
-        protected override void AbilityTogglerOnValueChange(object sender, AbilityEventArgs e)
+    protected override void AbilityTogglerOnValueChange(object sender, AbilityEventArgs e)
+    {
+        if (e.Ability == "o9k.glyph")
         {
-            if (e.Ability == "o9k.glyph")
-            {
-                this.Glyph(e.NewValue && this.Settings.GroupEnabled);
-            }
-            else
-            {
-                base.AbilityTogglerOnValueChange(sender, e);
-            }
+            this.Glyph(e.NewValue && this.Settings.GroupEnabled);
         }
-
-        protected override void EnabledOnValueChange(object sender, SwitcherEventArgs e)
+        else
         {
-            base.EnabledOnValueChange(sender, e);
-            this.Glyph(e.NewValue && this.Settings.AbilityToggler.IsEnabled("o9k.glyph"));
+            base.AbilityTogglerOnValueChange(sender, e);
         }
+    }
 
-        private void Glyph(bool enable)
+    protected override void EnabledOnValueChange(object sender, SwitcherEventArgs e)
+    {
+        base.EnabledOnValueChange(sender, e);
+        this.Glyph(e.NewValue && this.Settings.AbilityToggler.IsEnabled("o9k.glyph"));
+    }
+
+    private void Glyph(bool enable)
+    {
+        if (enable)
         {
-            if (enable)
-            {
-                this.glyphAbility.Activate();
-            }
-            else
-            {
-                this.glyphAbility.Deactivate();
-            }
+            this.glyphAbility.Activate();
+        }
+        else
+        {
+            this.glyphAbility.Deactivate();
         }
     }
 }

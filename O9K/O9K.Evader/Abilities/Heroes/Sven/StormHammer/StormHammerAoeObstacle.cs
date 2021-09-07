@@ -1,173 +1,172 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Sven.StormHammer
+﻿namespace O9K.Evader.Abilities.Heroes.Sven.StormHammer;
+
+using System;
+
+using Core.Entities.Units;
+using Core.Extensions;
+
+using Divine.Extensions;
+using Divine.Game;
+using Divine.Numerics;
+using Divine.Projectile.Projectiles;
+
+using Helpers;
+
+using O9K.Core.Geometry;
+
+using Pathfinder.Obstacles.Abilities;
+using Pathfinder.Obstacles.Types;
+
+internal class StormHammerAoeObstacle : AbilityObstacle, IUpdatable
 {
-    using System;
+    protected TrackingProjectile Projectile;
 
-    using Core.Entities.Units;
-    using Core.Extensions;
+    protected Unit9 Target;
 
-    using Divine.Extensions;
-    using Divine.Game;
-    using Divine.Numerics;
-    using Divine.Projectile.Projectiles;
-
-    using Helpers;
-
-    using O9K.Core.Geometry;
-
-    using Pathfinder.Obstacles.Abilities;
-    using Pathfinder.Obstacles.Types;
-
-    internal class StormHammerAoeObstacle : AbilityObstacle, IUpdatable
+    public StormHammerAoeObstacle(StormHammerEvadable ability)
+        : base(ability)
     {
-        protected TrackingProjectile Projectile;
+        const int RadiusIncrease = 50;
+        const int RangeIncrease = 100;
 
-        protected Unit9 Target;
+        this.Position = this.Caster.Position;
+        this.Speed = ability.RangedAbility.Speed;
+        this.Radius = ability.RangedAbility.Radius + RadiusIncrease;
+        this.Range = ability.RangedAbility.Range + RangeIncrease;
+        this.EndPosition = this.Caster.InFront(this.Range);
+        this.Polygon = new Polygon.Rectangle(this.Position, this.EndPosition, this.Radius);
+        this.IsUpdated = false;
+    }
 
-        public StormHammerAoeObstacle(StormHammerEvadable ability)
-            : base(ability)
+    public StormHammerAoeObstacle(StormHammerEvadable ability, TrackingProjectile projectile, Unit9 target)
+        : this(ability)
+    {
+        const int RadiusIncrease = 50;
+        const int RangeIncrease = 100;
+
+        this.Speed = ability.RangedAbility.Speed;
+        this.Radius = ability.RangedAbility.Radius + RadiusIncrease;
+        this.Range = ability.RangedAbility.Range + RangeIncrease;
+        this.EndObstacleTime = GameManager.RawGameTime + (this.Range / this.Speed);
+
+        this.AddProjectile(projectile, target);
+    }
+
+    public override bool IsExpired
+    {
+        get
         {
-            const int RadiusIncrease = 50;
-            const int RangeIncrease = 100;
-
-            this.Position = this.Caster.Position;
-            this.Speed = ability.RangedAbility.Speed;
-            this.Radius = ability.RangedAbility.Radius + RadiusIncrease;
-            this.Range = ability.RangedAbility.Range + RangeIncrease;
-            this.EndPosition = this.Caster.InFront(this.Range);
-            this.Polygon = new Polygon.Rectangle(this.Position, this.EndPosition, this.Radius);
-            this.IsUpdated = false;
-        }
-
-        public StormHammerAoeObstacle(StormHammerEvadable ability, TrackingProjectile projectile, Unit9 target)
-            : this(ability)
-        {
-            const int RadiusIncrease = 50;
-            const int RangeIncrease = 100;
-
-            this.Speed = ability.RangedAbility.Speed;
-            this.Radius = ability.RangedAbility.Radius + RadiusIncrease;
-            this.Range = ability.RangedAbility.Range + RangeIncrease;
-            this.EndObstacleTime = GameManager.RawGameTime + (this.Range / this.Speed);
-
-            this.AddProjectile(projectile, target);
-        }
-
-        public override bool IsExpired
-        {
-            get
+            if (this.Projectile?.IsValid == false)
             {
-                if (this.Projectile?.IsValid == false)
+                return true;
+            }
+
+            return base.IsExpired;
+        }
+    }
+
+    public bool IsUpdated { get; protected set; }
+
+    protected Vector3 EndPosition { get; set; }
+
+    protected float Radius { get; }
+
+    protected float Range { get; }
+
+    protected float Speed { get; }
+
+    public void AddProjectile(TrackingProjectile projectile, Unit9 target)
+    {
+        this.Drawer.Dispose(AbilityObstacleDrawer.Type.Rectangle);
+        this.Projectile = projectile;
+        this.Target = target;
+        this.IsUpdated = true;
+    }
+
+    public override void Draw()
+    {
+        if (this.Projectile != null)
+        {
+            this.Drawer.DrawCircle(this.Target.Position, this.Radius);
+            this.Drawer.UpdateCirclePosition(this.Target.Position);
+            return;
+        }
+
+        this.Drawer.DrawArcRectangle(this.Position, this.EndPosition, this.Radius);
+        this.Drawer.UpdateRectanglePosition(this.Position, this.EndPosition, this.Radius);
+
+        var time = (GameManager.RawGameTime - this.EndCastTime - this.ActivationDelay) + (this.Radius / 2 / this.Speed);
+        if (time < 0)
+        {
+            return;
+        }
+
+        this.Drawer.DrawCircle(this.Position, this.Radius);
+        this.Drawer.UpdateCirclePosition(this.Position.Extend2D(this.EndPosition, time * this.Speed));
+    }
+
+    public override float GetDisableTime(Unit9 enemy)
+    {
+        return this.EndCastTime - GameManager.RawGameTime;
+    }
+
+    public override float GetEvadeTime(Unit9 ally, bool blink)
+    {
+        if (this.Projectile == null)
+        {
+            var range = 100;
+            if (ally.IsMoving)
+            {
+                if (ally.GetAngle(this.Position) < 1)
                 {
-                    return true;
+                    range += 25;
                 }
-
-                return base.IsExpired;
-            }
-        }
-
-        public bool IsUpdated { get; protected set; }
-
-        protected Vector3 EndPosition { get; set; }
-
-        protected float Radius { get; }
-
-        protected float Range { get; }
-
-        protected float Speed { get; }
-
-        public void AddProjectile(TrackingProjectile projectile, Unit9 target)
-        {
-            this.Drawer.Dispose(AbilityObstacleDrawer.Type.Rectangle);
-            this.Projectile = projectile;
-            this.Target = target;
-            this.IsUpdated = true;
-        }
-
-        public override void Draw()
-        {
-            if (this.Projectile != null)
-            {
-                this.Drawer.DrawCircle(this.Target.Position, this.Radius);
-                this.Drawer.UpdateCirclePosition(this.Target.Position);
-                return;
-            }
-
-            this.Drawer.DrawArcRectangle(this.Position, this.EndPosition, this.Radius);
-            this.Drawer.UpdateRectanglePosition(this.Position, this.EndPosition, this.Radius);
-
-            var time = (GameManager.RawGameTime - this.EndCastTime - this.ActivationDelay) + (this.Radius / 2 / this.Speed);
-            if (time < 0)
-            {
-                return;
-            }
-
-            this.Drawer.DrawCircle(this.Position, this.Radius);
-            this.Drawer.UpdateCirclePosition(this.Position.Extend2D(this.EndPosition, time * this.Speed));
-        }
-
-        public override float GetDisableTime(Unit9 enemy)
-        {
-            return this.EndCastTime - GameManager.RawGameTime;
-        }
-
-        public override float GetEvadeTime(Unit9 ally, bool blink)
-        {
-            if (this.Projectile == null)
-            {
-                var range = 100;
-                if (ally.IsMoving)
+                else
                 {
-                    if (ally.GetAngle(this.Position) < 1)
-                    {
-                        range += 25;
-                    }
-                    else
-                    {
-                        range -= 25;
-                    }
+                    range -= 25;
                 }
-
-                var distance = Math.Max(ally.Distance(this.Position) - ((GameManager.Ping / 1000) * this.Speed) - range, 0);
-                return (this.EndCastTime + (distance / this.Speed)) - GameManager.RawGameTime;
             }
 
-            if (this.Projectile.IsValid)
+            var distance = Math.Max(ally.Distance(this.Position) - ((GameManager.Ping / 1000) * this.Speed) - range, 0);
+            return (this.EndCastTime + (distance / this.Speed)) - GameManager.RawGameTime;
+        }
+
+        if (this.Projectile.IsValid)
+        {
+            var range = 50;
+            if (this.Target.IsMoving)
             {
-                var range = 50;
-                if (this.Target.IsMoving)
+                if (this.Target.GetAngle(this.Projectile.Position) < 1)
                 {
-                    if (this.Target.GetAngle(this.Projectile.Position) < 1)
-                    {
-                        range += 25;
-                    }
-                    else
-                    {
-                        range -= 25;
-                    }
+                    range += 25;
                 }
-
-                return Math.Max(this.Target.Distance(this.Projectile.Position) - ((GameManager.Ping / 1000) * this.Speed) - range, 0) / this.Speed;
+                else
+                {
+                    range -= 25;
+                }
             }
 
-            return 0;
+            return Math.Max(this.Target.Distance(this.Projectile.Position) - ((GameManager.Ping / 1000) * this.Speed) - range, 0) / this.Speed;
         }
 
-        public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
+        return 0;
+    }
+
+    public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
+    {
+        if (this.Projectile != null)
         {
-            if (this.Projectile != null)
-            {
-                return unit.Distance(this.Target) < this.Radius + 50;
-            }
-
-            return base.IsIntersecting(unit, checkPrediction);
+            return unit.Distance(this.Target) < this.Radius + 50;
         }
 
-        public virtual void Update()
-        {
-            var rectangle = (Polygon.Rectangle)this.Polygon;
-            this.EndPosition = this.Caster.InFront(this.Range);
-            rectangle.End = this.EndPosition.ToVector2();
-            rectangle.UpdatePolygon();
-        }
+        return base.IsIntersecting(unit, checkPrediction);
+    }
+
+    public virtual void Update()
+    {
+        var rectangle = (Polygon.Rectangle)this.Polygon;
+        this.EndPosition = this.Caster.InFront(this.Range);
+        rectangle.End = this.EndPosition.ToVector2();
+        rectangle.UpdatePolygon();
     }
 }

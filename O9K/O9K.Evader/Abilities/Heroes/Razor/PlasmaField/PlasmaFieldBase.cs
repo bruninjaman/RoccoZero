@@ -1,31 +1,30 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Razor.PlasmaField
+﻿namespace O9K.Evader.Abilities.Heroes.Razor.PlasmaField;
+
+using Base;
+using Base.Evadable;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.razor_plasma_field)]
+internal class PlasmaFieldBase : EvaderBaseAbility /*,IEvadable*/, IUsable<CounterEnemyAbility>
 {
-    using Base;
-    using Base.Evadable;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.razor_plasma_field)]
-    internal class PlasmaFieldBase : EvaderBaseAbility /*,IEvadable*/, IUsable<CounterEnemyAbility>
+    public PlasmaFieldBase(Ability9 ability)
+        : base(ability)
     {
-        public PlasmaFieldBase(Ability9 ability)
-            : base(ability)
-        {
-            //todo fix evadable
-        }
+        //todo fix evadable
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new PlasmaFieldEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new PlasmaFieldEvadable(this.Ability, this.Pathfinder, this.Menu);
+    }
 
-        public CounterEnemyAbility GetUsableAbility()
-        {
-            return new CounterEnemyAbility(this.Ability, this.Menu);
-        }
+    public CounterEnemyAbility GetUsableAbility()
+    {
+        return new CounterEnemyAbility(this.Ability, this.Menu);
     }
 }

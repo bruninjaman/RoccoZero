@@ -1,30 +1,29 @@
-﻿namespace O9K.Evader.Abilities.Items.HurricanePike
+﻿namespace O9K.Evader.Abilities.Items.HurricanePike;
+
+using Base;
+using Base.Usable.BlinkAbility;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.item_hurricane_pike)]
+internal class HurricanePikeBase : EvaderBaseAbility, IUsable<BlinkAbility>, IUsable<CounterAbility>
 {
-    using Base;
-    using Base.Usable.BlinkAbility;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.item_hurricane_pike)]
-    internal class HurricanePikeBase : EvaderBaseAbility, IUsable<BlinkAbility>, IUsable<CounterAbility>
+    public HurricanePikeBase(Ability9 ability)
+        : base(ability)
     {
-        public HurricanePikeBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public BlinkAbility GetUsableAbility()
-        {
-            return new BlinkLeapAbility(this.Ability, this.Pathfinder, this.ActionManager, this.Menu);
-        }
+    public BlinkAbility GetUsableAbility()
+    {
+        return new BlinkLeapAbility(this.Ability, this.Pathfinder, this.ActionManager, this.Menu);
+    }
 
-        CounterAbility IUsable<CounterAbility>.GetUsableAbility()
-        {
-            return new HurricanePikeUsable(this.Ability, this.Menu);
-        }
+    CounterAbility IUsable<CounterAbility>.GetUsableAbility()
+    {
+        return new HurricanePikeUsable(this.Ability, this.Menu);
     }
 }

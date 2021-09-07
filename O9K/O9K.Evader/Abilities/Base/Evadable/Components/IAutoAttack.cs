@@ -1,9 +1,8 @@
-﻿namespace O9K.Evader.Abilities.Base.Evadable.Components
-{
-    internal interface IAutoAttack
-    {
-        void AttackEnd();
+﻿namespace O9K.Evader.Abilities.Base.Evadable.Components;
 
-        void AttackStart();
-    }
+internal interface IAutoAttack
+{
+    void AttackEnd();
+
+    void AttackStart();
 }

@@ -1,51 +1,50 @@
-﻿namespace O9K.AIO.Heroes.Magnus.Modes
+﻿namespace O9K.AIO.Heroes.Magnus.Modes;
+
+using System.Linq;
+
+using AIO.Modes.KeyPress;
+
+using Base;
+
+using Units;
+
+internal class BlinkSkewerMode : KeyPressMode
 {
-    using System.Linq;
+    private readonly BlinkSkewerModeMenu menu;
 
-    using AIO.Modes.KeyPress;
+    private Magnus hero;
 
-    using Base;
-
-    using Units;
-
-    internal class BlinkSkewerMode : KeyPressMode
+    public BlinkSkewerMode(BaseHero baseHero, BlinkSkewerModeMenu menu)
+        : base(baseHero, menu)
     {
-        private readonly BlinkSkewerModeMenu menu;
+        this.menu = menu;
+    }
 
-        private Magnus hero;
-
-        public BlinkSkewerMode(BaseHero baseHero, BlinkSkewerModeMenu menu)
-            : base(baseHero, menu)
+    private Magnus Hero
+    {
+        get
         {
-            this.menu = menu;
-        }
-
-        private Magnus Hero
-        {
-            get
+            if (this.hero == null)
             {
-                if (this.hero == null)
-                {
-                    this.hero = this.UnitManager.ControllableUnits.FirstOrDefault(x => this.Owner.Hero.Handle == x.Handle) as Magnus;
-                }
-
-                return this.hero;
-            }
-        }
-
-        protected override void ExecuteCombo()
-        {
-            if (this.Hero == null)
-            {
-                return;
+                this.hero = this.UnitManager.ControllableUnits.FirstOrDefault(x => this.Owner.Hero.Handle == x.Handle) as Magnus;
             }
 
-            if (this.TargetManager.HasValidTarget)
-            {
-                this.hero.BlinkSkewerCombo(this.TargetManager, this.menu);
-            }
-
-            this.UnitManager.Orbwalk(this.hero, false, true);
+            return this.hero;
         }
+    }
+
+    protected override void ExecuteCombo()
+    {
+        if (this.Hero == null)
+        {
+            return;
+        }
+
+        if (this.TargetManager.HasValidTarget)
+        {
+            this.hero.BlinkSkewerCombo(this.TargetManager, this.menu);
+        }
+
+        this.UnitManager.Orbwalk(this.hero, false, true);
     }
 }

@@ -1,28 +1,27 @@
-﻿namespace O9K.Evader.Abilities.Heroes.FacelessVoid.Chronosphere
+﻿namespace O9K.Evader.Abilities.Heroes.FacelessVoid.Chronosphere;
+
+using Base.Evadable;
+
+using Core.Entities.Units;
+
+using Divine.Numerics;
+
+using Pathfinder.Obstacles.Abilities.LinearAreaOfEffect;
+
+internal class ChronosphereLinearAllyObstacle : LinearAreaOfEffectObstacle
 {
-    using Base.Evadable;
-
-    using Core.Entities.Units;
-
-    using Divine.Numerics;
-
-    using Pathfinder.Obstacles.Abilities.LinearAreaOfEffect;
-
-    internal class ChronosphereLinearAllyObstacle : LinearAreaOfEffectObstacle
+    public ChronosphereLinearAllyObstacle(LinearAreaOfEffectEvadable ability, Vector3 startPosition)
+        : base(ability, startPosition)
     {
-        public ChronosphereLinearAllyObstacle(LinearAreaOfEffectEvadable ability, Vector3 startPosition)
-            : base(ability, startPosition)
+    }
+
+    public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
+    {
+        if (this.Caster.Equals(unit))
         {
+            return false;
         }
 
-        public override bool IsIntersecting(Unit9 unit, bool checkPrediction)
-        {
-            if (this.Caster.Equals(unit))
-            {
-                return false;
-            }
-
-            return base.IsIntersecting(unit, checkPrediction);
-        }
+        return base.IsIntersecting(unit, checkPrediction);
     }
 }

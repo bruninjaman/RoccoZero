@@ -1,43 +1,42 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Puck.PhaseShift
+﻿namespace O9K.Evader.Abilities.Heroes.Puck.PhaseShift;
+
+using System;
+
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Abilities.Base.Components;
+using Core.Entities.Units;
+
+using Divine.Entity.Entities.Units.Components;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+
+internal class PhaseShiftUsable : CounterAbility
 {
-    using System;
+    private readonly IActionManager actionManager;
 
-    using Base.Usable.CounterAbility;
+    private readonly IChanneled channeled;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Abilities.Base.Components;
-    using Core.Entities.Units;
-
-    using Divine.Entity.Entities.Units.Components;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-
-    internal class PhaseShiftUsable : CounterAbility
+    public PhaseShiftUsable(Ability9 ability, IActionManager actionManager, IMainMenu menu)
+        : base(ability, menu)
     {
-        private readonly IActionManager actionManager;
+        this.channeled = (IChanneled)ability;
+        this.actionManager = actionManager;
+    }
 
-        private readonly IChanneled channeled;
-
-        public PhaseShiftUsable(Ability9 ability, IActionManager actionManager, IMainMenu menu)
-            : base(ability, menu)
+    public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        if (!base.Use(ally, enemy, obstacle))
         {
-            this.channeled = (IChanneled)ability;
-            this.actionManager = actionManager;
+            return false;
         }
 
-        public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
-        {
-            if (!base.Use(ally, enemy, obstacle))
-            {
-                return false;
-            }
+        this.Owner.SetExpectedUnitState(UnitState.Invulnerable);
+        this.actionManager.BlockInput(this.Owner, Math.Min(this.channeled.ChannelTime, 1));
 
-            this.Owner.SetExpectedUnitState(UnitState.Invulnerable);
-            this.actionManager.BlockInput(this.Owner, Math.Min(this.channeled.ChannelTime, 1));
-
-            return true;
-        }
+        return true;
     }
 }

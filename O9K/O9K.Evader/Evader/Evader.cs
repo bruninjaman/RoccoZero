@@ -1,305 +1,304 @@
-﻿namespace O9K.Evader.Evader
+﻿namespace O9K.Evader.Evader;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Heroes;
+using Core.Entities.Units;
+using Core.Extensions;
+using Core.Logger;
+using Core.Managers.Assembly;
+using Core.Managers.Context;
+using Core.Managers.Entity;
+using Core.Prediction.Collision;
+using Divine.Extensions;
+using Divine.Game;
+using Divine.Update;
+using Divine.Entity.Entities.Units.Components;
+
+using EvadeModes;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+using Pathfinder.Obstacles.Abilities.LinearProjectile;
+
+using Vector2Extensions = Divine.Extensions.Vector2Extensions;
+
+internal class Evader : IEvaderService
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly IActionManager actionManager;
 
-    using Core.Entities.Heroes;
-    using Core.Entities.Units;
-    using Core.Extensions;
-    using Core.Logger;
-    using Core.Managers.Assembly;
-    using Core.Managers.Context;
-    using Core.Managers.Entity;
-    using Core.Prediction.Collision;
-    using Divine.Extensions;
-    using Divine.Game;
-    using Divine.Update;
-    using Divine.Entity.Entities.Units.Components;
+    private readonly List<Unit9> allyUnits = new List<Unit9>();
 
-    using EvadeModes;
+    private readonly IAssemblyEventManager9 assemblyEventManager;
 
-    using Metadata;
+    private readonly IDebugger debugger;
 
-    using Pathfinder.Obstacles;
-    using Pathfinder.Obstacles.Abilities.LinearProjectile;
+    private readonly IEvadeModeManager evadeModeManager;
 
-    using Vector2Extensions = Divine.Extensions.Vector2Extensions;
+    private readonly IMainMenu menu;
 
-    internal class Evader : IEvaderService
+    private readonly IPathfinder pathfinder;
+
+    private Owner owner;
+
+    private UpdateHandler updateHandler;
+
+    public Evader(
+        IEvadeModeManager evadeModeManager,
+        IPathfinder pathfinder,
+        IActionManager actionManager,
+        IMainMenu menu,
+        IDebugger debugger)
     {
-        private readonly IActionManager actionManager;
+        this.assemblyEventManager = Context9.AssemblyEventManager;
+        this.evadeModeManager = evadeModeManager;
+        this.pathfinder = pathfinder;
+        this.actionManager = actionManager;
+        this.menu = menu;
+        this.debugger = debugger;
+    }
 
-        private readonly List<Unit9> allyUnits = new List<Unit9>();
+    public LoadOrder LoadOrder { get; } = LoadOrder.Evader;
 
-        private readonly IAssemblyEventManager9 assemblyEventManager;
+    public void Activate()
+    {
+        this.owner = EntityManager9.Owner;
 
-        private readonly IDebugger debugger;
+        EntityManager9.UnitAdded += this.OnUnitAdded;
+        EntityManager9.UnitRemoved += this.OnUnitRemoved;
+        this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
+        this.pathfinder.AbilityCanceled += this.OnAbilityCanceled;
+        this.pathfinder.ObstacleAdded += this.OnObstacleAdded;
+    }
 
-        private readonly IEvadeModeManager evadeModeManager;
+    public void Dispose()
+    {
+        UpdateManager.DestroyIngameUpdate(this.updateHandler);
+        EntityManager9.UnitAdded -= this.OnUnitAdded;
+        EntityManager9.UnitRemoved -= this.OnUnitRemoved;
+        this.pathfinder.ObstacleAdded -= this.OnObstacleAdded;
+        this.pathfinder.AbilityCanceled -= this.OnAbilityCanceled;
+    }
 
-        private readonly IMainMenu menu;
-
-        private readonly IPathfinder pathfinder;
-
-        private Owner owner;
-
-        private UpdateHandler updateHandler;
-
-        public Evader(
-            IEvadeModeManager evadeModeManager,
-            IPathfinder pathfinder,
-            IActionManager actionManager,
-            IMainMenu menu,
-            IDebugger debugger)
+    private List<Unit9> GetUnits()
+    {
+        var units = new List<Unit9>(this.allyUnits.Count)
         {
-            this.assemblyEventManager = Context9.AssemblyEventManager;
-            this.evadeModeManager = evadeModeManager;
-            this.pathfinder = pathfinder;
-            this.actionManager = actionManager;
-            this.menu = menu;
-            this.debugger = debugger;
-        }
+            this.owner
+        };
 
-        public LoadOrder LoadOrder { get; } = LoadOrder.Evader;
-
-        public void Activate()
+        foreach (var ally in this.allyUnits /*.OrderBy(x => x.Health)*/)
         {
-            this.owner = EntityManager9.Owner;
-
-            EntityManager9.UnitAdded += this.OnUnitAdded;
-            EntityManager9.UnitRemoved += this.OnUnitRemoved;
-            this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
-            this.pathfinder.AbilityCanceled += this.OnAbilityCanceled;
-            this.pathfinder.ObstacleAdded += this.OnObstacleAdded;
-        }
-
-        public void Dispose()
-        {
-            UpdateManager.DestroyIngameUpdate(this.updateHandler);
-            EntityManager9.UnitAdded -= this.OnUnitAdded;
-            EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-            this.pathfinder.ObstacleAdded -= this.OnObstacleAdded;
-            this.pathfinder.AbilityCanceled -= this.OnAbilityCanceled;
-        }
-
-        private List<Unit9> GetUnits()
-        {
-            var units = new List<Unit9>(this.allyUnits.Count)
+            if (!ally.IsValid || !ally.IsAlive || ally.IsMyHero)
             {
-                this.owner
-            };
-
-            foreach (var ally in this.allyUnits /*.OrderBy(x => x.Health)*/)
-            {
-                if (!ally.IsValid || !ally.IsAlive || ally.IsMyHero)
-                {
-                    continue;
-                }
-
-                if ((this.menu.Settings.MultiUnitControl && ally.IsControllable)
-                    || (this.menu.AllySettings.HelpAllies && ally.IsImportant && this.menu.AllySettings.IsEnabled(ally.Name)))
-                {
-                    units.Add(ally);
-                }
+                continue;
             }
 
-            return units.OrderBy(x => this.menu.AllySettings.GetOrder(x)).ToList();
-        }
-
-        private void OnAbilityCanceled(object sender, IObstacle obstacle)
-        {
-            try
+            if ((this.menu.Settings.MultiUnitControl && ally.IsControllable)
+                || (this.menu.AllySettings.HelpAllies && ally.IsImportant && this.menu.AllySettings.IsEnabled(ally.Name)))
             {
-                this.actionManager.UnblockInput(obstacle);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
+                units.Add(ally);
             }
         }
 
-        private void OnObstacleAdded(object sender, bool added)
+        return units.OrderBy(x => this.menu.AllySettings.GetOrder(x)).ToList();
+    }
+
+    private void OnAbilityCanceled(object sender, IObstacle obstacle)
+    {
+        try
         {
-            this.updateHandler.IsEnabled = added;
+            this.actionManager.UnblockInput(obstacle);
         }
-
-        private void OnUnitAdded(Unit9 unit)
+        catch (Exception e)
         {
-            try
-            {
-                if ((!unit.IsUnit && !unit.IsCourier) || (!unit.IsControllable && !unit.IsImportant) || !unit.IsAlly(this.owner.Team))
-                {
-                    return;
-                }
-
-                this.allyUnits.Add(unit);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            Logger.Error(e);
         }
+    }
 
-        private void OnUnitRemoved(Unit9 unit)
+    private void OnObstacleAdded(object sender, bool added)
+    {
+        this.updateHandler.IsEnabled = added;
+    }
+
+    private void OnUnitAdded(Unit9 unit)
+    {
+        try
         {
-            try
-            {
-                if (!unit.IsUnit || !unit.IsAlly(this.owner.Team))
-                {
-                    return;
-                }
-
-                this.allyUnits.Remove(unit);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
-
-        private void OnUpdate()
-        {
-            if (GameManager.IsPaused)
+            if ((!unit.IsUnit && !unit.IsCourier) || (!unit.IsControllable && !unit.IsImportant) || !unit.IsAlly(this.owner.Team))
             {
                 return;
             }
 
-            try
+            this.allyUnits.Add(unit);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void OnUnitRemoved(Unit9 unit)
+    {
+        try
+        {
+            if (!unit.IsUnit || !unit.IsAlly(this.owner.Team))
             {
-                var units = this.GetUnits();
-
-                foreach (var unit in units)
-                {
-                    foreach (var obstacle in this.pathfinder.GetIntersectingObstacles(unit))
-                    {
-                        if (!obstacle.EvadableAbility.Enabled)
-                        {
-                            continue;
-                        }
-
-                        if (this.actionManager.IsObstacleIgnored(unit, obstacle)
-                            || obstacle.EvadableAbility.IsObstacleIgnored(unit, obstacle))
-                        {
-                            continue;
-                        }
-
-                        EvadeResult evadeResult = null;
-
-                        foreach (var mode in this.evadeModeManager.GetEvadeModes(obstacle))
-                        {
-                            evadeResult = mode.Evade(unit, obstacle);
-
-                            if (evadeResult.State == EvadeResult.EvadeState.Successful
-                                || evadeResult.State == EvadeResult.EvadeState.TooEarly)
-                            {
-                                break;
-                            }
-                        }
-
-                        if (this.TryToBlock(unit, units, obstacle, evadeResult))
-                        {
-                            // ReSharper disable once PossibleNullReferenceException
-                            evadeResult.Mode = EvadeMode.Dodge;
-                            evadeResult.State = EvadeResult.EvadeState.Successful;
-                        }
-
-                        if (this.TryToSpendGold(unit, obstacle, evadeResult))
-                        {
-                            // ReSharper disable once PossibleNullReferenceException
-                            evadeResult.Mode = EvadeMode.GoldSpend;
-                            evadeResult.State = EvadeResult.EvadeState.Successful;
-                        }
-
-                        this.debugger.AddEvadeResult(evadeResult);
-                    }
-                }
+                return;
             }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+
+            this.allyUnits.Remove(unit);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void OnUpdate()
+    {
+        if (GameManager.IsPaused)
+        {
+            return;
         }
 
-        private bool TryToBlock(Unit9 unit, IEnumerable<Unit9> units, IObstacle obstacle, EvadeResult evadeResult)
+        try
         {
-            if (evadeResult?.State != EvadeResult.EvadeState.Failed)
-            {
-                return false;
-            }
+            var units = this.GetUnits();
 
-            if (!(obstacle is LinearProjectileObstacle linearObstacle))
+            foreach (var unit in units)
             {
-                return false;
-            }
-
-            if ((obstacle.EvadableAbility.ActiveAbility.CollisionTypes & CollisionTypes.EnemyUnits) == 0)
-            {
-                return false;
-            }
-
-            foreach (var otherUnit in units.Where(x => !x.Equals(unit) && x.IsUnit && !x.IsImportant && !x.IsInvulnerable && x.CanMove()))
-            {
-                if ((otherUnit.UnitState & UnitState.NoCollision) != 0)
+                foreach (var obstacle in this.pathfinder.GetIntersectingObstacles(unit))
                 {
-                    continue;
-                }
+                    if (!obstacle.EvadableAbility.Enabled)
+                    {
+                        continue;
+                    }
 
-                var otherUnitPosition = otherUnit.Position.ToVector2();
-                var enemyPosition = linearObstacle.Position.Extend2D(unit.Position, 75).ToVector2();
-                var unitPosition = unit.Position.Extend2D(linearObstacle.Position, 75).ToVector2();
+                    if (this.actionManager.IsObstacleIgnored(unit, obstacle)
+                        || obstacle.EvadableAbility.IsObstacleIgnored(unit, obstacle))
+                    {
+                        continue;
+                    }
 
-                var projection = Vector2Extensions.ProjectOn(otherUnitPosition, enemyPosition, unitPosition);
+                    EvadeResult evadeResult = null;
 
-                var movePosition = projection.IsOnSegment
-                                       ? projection.LinePoint.ToVector3()
-                                           .Extend2D(otherUnit.Position, obstacle.EvadableAbility.ActiveAbility.Radius * 0.75f)
-                                       : projection.SegmentPoint.ToVector3();
+                    foreach (var mode in this.evadeModeManager.GetEvadeModes(obstacle))
+                    {
+                        evadeResult = mode.Evade(unit, obstacle);
 
-                var requiredTime = otherUnit.GetTurnTime(movePosition) + (otherUnit.Distance(movePosition) / otherUnit.Speed);
+                        if (evadeResult.State == EvadeResult.EvadeState.Successful
+                            || evadeResult.State == EvadeResult.EvadeState.TooEarly)
+                        {
+                            break;
+                        }
+                    }
 
-                if (linearObstacle.GetEvadeTime(movePosition) < requiredTime)
-                {
-                    continue;
-                }
+                    if (this.TryToBlock(unit, units, obstacle, evadeResult))
+                    {
+                        // ReSharper disable once PossibleNullReferenceException
+                        evadeResult.Mode = EvadeMode.Dodge;
+                        evadeResult.State = EvadeResult.EvadeState.Successful;
+                    }
 
-                if (otherUnit.BaseUnit.Move(movePosition, false, true))
-                {
-                    this.actionManager.BlockInput(otherUnit, obstacle, requiredTime);
-                    this.actionManager.IgnoreObstacle(unit, obstacle, obstacle.GetEvadeTime(unit, false));
+                    if (this.TryToSpendGold(unit, obstacle, evadeResult))
+                    {
+                        // ReSharper disable once PossibleNullReferenceException
+                        evadeResult.Mode = EvadeMode.GoldSpend;
+                        evadeResult.State = EvadeResult.EvadeState.Successful;
+                    }
 
-                    return true;
+                    this.debugger.AddEvadeResult(evadeResult);
                 }
             }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
 
+    private bool TryToBlock(Unit9 unit, IEnumerable<Unit9> units, IObstacle obstacle, EvadeResult evadeResult)
+    {
+        if (evadeResult?.State != EvadeResult.EvadeState.Failed)
+        {
             return false;
         }
 
-        private bool TryToSpendGold(Unit9 unit, IObstacle obstacle, EvadeResult evadeResult)
+        if (!(obstacle is LinearProjectileObstacle linearObstacle))
         {
-            if (evadeResult?.State != EvadeResult.EvadeState.Failed)
-            {
-                return false;
-            }
-
-            if (!this.menu.AbilitySettings.IsGoldSpenderEnabled())
-            {
-                return false;
-            }
-
-            if (!unit.IsMyHero || obstacle.IsModifierObstacle)
-            {
-                return false;
-            }
-
-            var damage = obstacle.GetDamage(unit);
-            if (damage < unit.Health)
-            {
-                return false;
-            }
-
-            this.assemblyEventManager.InvokeEvaderPredictedDeath();
-            return true;
+            return false;
         }
+
+        if ((obstacle.EvadableAbility.ActiveAbility.CollisionTypes & CollisionTypes.EnemyUnits) == 0)
+        {
+            return false;
+        }
+
+        foreach (var otherUnit in units.Where(x => !x.Equals(unit) && x.IsUnit && !x.IsImportant && !x.IsInvulnerable && x.CanMove()))
+        {
+            if ((otherUnit.UnitState & UnitState.NoCollision) != 0)
+            {
+                continue;
+            }
+
+            var otherUnitPosition = otherUnit.Position.ToVector2();
+            var enemyPosition = linearObstacle.Position.Extend2D(unit.Position, 75).ToVector2();
+            var unitPosition = unit.Position.Extend2D(linearObstacle.Position, 75).ToVector2();
+
+            var projection = Vector2Extensions.ProjectOn(otherUnitPosition, enemyPosition, unitPosition);
+
+            var movePosition = projection.IsOnSegment
+                                   ? projection.LinePoint.ToVector3()
+                                       .Extend2D(otherUnit.Position, obstacle.EvadableAbility.ActiveAbility.Radius * 0.75f)
+                                   : projection.SegmentPoint.ToVector3();
+
+            var requiredTime = otherUnit.GetTurnTime(movePosition) + (otherUnit.Distance(movePosition) / otherUnit.Speed);
+
+            if (linearObstacle.GetEvadeTime(movePosition) < requiredTime)
+            {
+                continue;
+            }
+
+            if (otherUnit.BaseUnit.Move(movePosition, false, true))
+            {
+                this.actionManager.BlockInput(otherUnit, obstacle, requiredTime);
+                this.actionManager.IgnoreObstacle(unit, obstacle, obstacle.GetEvadeTime(unit, false));
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool TryToSpendGold(Unit9 unit, IObstacle obstacle, EvadeResult evadeResult)
+    {
+        if (evadeResult?.State != EvadeResult.EvadeState.Failed)
+        {
+            return false;
+        }
+
+        if (!this.menu.AbilitySettings.IsGoldSpenderEnabled())
+        {
+            return false;
+        }
+
+        if (!unit.IsMyHero || obstacle.IsModifierObstacle)
+        {
+            return false;
+        }
+
+        var damage = obstacle.GetDamage(unit);
+        if (damage < unit.Health)
+        {
+            return false;
+        }
+
+        this.assemblyEventManager.InvokeEvaderPredictedDeath();
+        return true;
     }
 }

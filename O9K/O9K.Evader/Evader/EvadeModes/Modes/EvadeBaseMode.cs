@@ -1,84 +1,83 @@
-﻿namespace O9K.Evader.Evader.EvadeModes.Modes
+﻿namespace O9K.Evader.Evader.EvadeModes.Modes;
+
+using Abilities.Base.Usable;
+
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Units;
+using Core.Extensions;
+
+using Divine.Game;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+
+internal abstract class EvadeBaseMode
 {
-    using Abilities.Base.Usable;
+    protected const float EvadeTiming = 0.1f;
 
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Units;
-    using Core.Extensions;
+    protected readonly IActionManager ActionManager;
 
-    using Divine.Game;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-
-    internal abstract class EvadeBaseMode
+    protected EvadeBaseMode(IActionManager actionManager)
     {
-        protected const float EvadeTiming = 0.1f;
+        this.ActionManager = actionManager;
+    }
 
-        protected readonly IActionManager ActionManager;
+    public abstract EvadeResult Evade(Unit9 ally, IObstacle obstacle);
 
-        protected EvadeBaseMode(IActionManager actionManager)
+    protected bool ChannelCanceled(Unit9 ally, IObstacle obstacle, float remainingTime, UsableAbility usableAbility)
+    {
+        if (!ally.IsChanneling || !ally.IsControllable)
         {
-            this.ActionManager = actionManager;
-        }
-
-        public abstract EvadeResult Evade(Unit9 ally, IObstacle obstacle);
-
-        protected bool ChannelCanceled(Unit9 ally, IObstacle obstacle, float remainingTime, UsableAbility usableAbility)
-        {
-            if (!ally.IsChanneling || !ally.IsControllable)
-            {
-                return true;
-            }
-
-            if (usableAbility?.Owner?.Equals(ally) == false)
-            {
-                return true;
-            }
-
-            if (usableAbility?.ActiveAbility?.CanBeCastedWhileChanneling == true)
-            {
-                return true;
-            }
-
-            var isStun = obstacle.EvadableAbility.Ability is IDisable disable && disable.IsStun();
-
-            if (!isStun)
-            {
-                return false;
-            }
-
-            if (ally.IsTeleporting && ally.ChannelEndTime < GameManager.RawGameTime + remainingTime)
-            {
-                return false;
-            }
-
-            ally.BaseUnit.Stop(false, true);
             return true;
         }
 
-        protected bool PhaseCanceled(Unit9 ally, IObstacle obstacle, UsableAbility usableAbility)
+        if (usableAbility?.Owner?.Equals(ally) == false)
         {
-            if (!ally.IsCasting || !ally.IsControllable)
-            {
-                return true;
-            }
-
-            if (usableAbility?.Owner?.Equals(ally) == false)
-            {
-                return true;
-            }
-
-            var isDisable = obstacle.EvadableAbility.Ability is IDisable disable && (disable.IsStun() || disable.IsSilence());
-
-            if (!isDisable)
-            {
-                return false;
-            }
-
-            ally.BaseUnit.Stop(false, true);
             return true;
         }
+
+        if (usableAbility?.ActiveAbility?.CanBeCastedWhileChanneling == true)
+        {
+            return true;
+        }
+
+        var isStun = obstacle.EvadableAbility.Ability is IDisable disable && disable.IsStun();
+
+        if (!isStun)
+        {
+            return false;
+        }
+
+        if (ally.IsTeleporting && ally.ChannelEndTime < GameManager.RawGameTime + remainingTime)
+        {
+            return false;
+        }
+
+        ally.BaseUnit.Stop(false, true);
+        return true;
+    }
+
+    protected bool PhaseCanceled(Unit9 ally, IObstacle obstacle, UsableAbility usableAbility)
+    {
+        if (!ally.IsCasting || !ally.IsControllable)
+        {
+            return true;
+        }
+
+        if (usableAbility?.Owner?.Equals(ally) == false)
+        {
+            return true;
+        }
+
+        var isDisable = obstacle.EvadableAbility.Ability is IDisable disable && (disable.IsStun() || disable.IsSilence());
+
+        if (!isDisable)
+        {
+            return false;
+        }
+
+        ally.BaseUnit.Stop(false, true);
+        return true;
     }
 }

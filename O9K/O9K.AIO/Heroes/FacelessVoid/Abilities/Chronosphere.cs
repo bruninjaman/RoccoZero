@@ -1,146 +1,145 @@
-﻿namespace O9K.AIO.Heroes.FacelessVoid.Abilities
+﻿namespace O9K.AIO.Heroes.FacelessVoid.Abilities;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using AIO.Abilities;
+using AIO.Abilities.Menus;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+using Core.Helpers;
+using Core.Prediction.Data;
+
+using Divine.Extensions;
+
+using Modes.Combo;
+
+using Divine.Numerics;
+
+using TargetManager;
+
+internal class Chronosphere : DisableAbility
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using AIO.Abilities;
-    using AIO.Abilities.Menus;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-    using Core.Helpers;
-    using Core.Prediction.Data;
-
-    using Divine.Extensions;
-
-    using Modes.Combo;
-
-    using Divine.Numerics;
-
-    using TargetManager;
-
-    internal class Chronosphere : DisableAbility
+    public Chronosphere(ActiveAbility ability)
+        : base(ability)
     {
-        public Chronosphere(ActiveAbility ability)
-            : base(ability)
+    }
+
+    public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)
+    {
+        if (!base.CanHit(targetManager, comboMenu))
         {
+            return false;
         }
 
-        public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)
+        if (!this.Ability.CanHit(targetManager.Target, targetManager.EnemyHeroes, this.TargetsToHit(comboMenu)))
         {
-            if (!base.CanHit(targetManager, comboMenu))
-            {
-                return false;
-            }
-
-            if (!this.Ability.CanHit(targetManager.Target, targetManager.EnemyHeroes, this.TargetsToHit(comboMenu)))
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
-        public override UsableAbilityMenu GetAbilityMenu(string simplifiedName)
+        return true;
+    }
+
+    public override UsableAbilityMenu GetAbilityMenu(string simplifiedName)
+    {
+        return new UsableAbilityHitCountMenu(this.Ability, simplifiedName);
+    }
+
+    public override bool ShouldCast(TargetManager targetManager)
+    {
+        if (!base.ShouldCast(targetManager))
         {
-            return new UsableAbilityHitCountMenu(this.Ability, simplifiedName);
+            return false;
         }
 
-        public override bool ShouldCast(TargetManager targetManager)
+        if (this.Owner.HasModifier("modifier_faceless_void_time_walk"))
         {
-            if (!base.ShouldCast(targetManager))
-            {
-                return false;
-            }
-
-            if (this.Owner.HasModifier("modifier_faceless_void_time_walk"))
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
-        public int TargetsToHit(IComboModeMenu comboMenu)
+        return true;
+    }
+
+    public int TargetsToHit(IComboModeMenu comboMenu)
+    {
+        var menu = comboMenu.GetAbilitySettingsMenu<UsableAbilityHitCountMenu>(this);
+        return menu.HitCount;
+    }
+
+    public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
+    {
+        var target = targetManager.Target;
+        var input = this.Ability.GetPredictionInput(target, targetManager.EnemyHeroes);
+        var inputDelay = input.Delay;
+        var output = this.Ability.GetPredictionOutput(input);
+        var radius = this.Ability.Radius + 25;
+
+        if (output.HitChance < HitChance.Low)
         {
-            var menu = comboMenu.GetAbilitySettingsMenu<UsableAbilityHitCountMenu>(this);
-            return menu.HitCount;
+            return false;
         }
 
-        public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
+        var castPosition = output.CastPosition;
+        var allies = targetManager.AllyHeroes.Where(x => !x.Equals(this.Owner)).ToList();
+        var allyPositions = allies.Select(x => x.GetPredictedPosition(inputDelay)).ToList();
+        var castPositions = new Dictionary<Vector3, int>
         {
-            var target = targetManager.Target;
-            var input = this.Ability.GetPredictionInput(target, targetManager.EnemyHeroes);
-            var inputDelay = input.Delay;
-            var output = this.Ability.GetPredictionOutput(input);
-            var radius = this.Ability.Radius + 25;
+            { castPosition, allyPositions.Count(x => x.Distance2D(castPosition) < radius) }
+        };
 
-            if (output.HitChance < HitChance.Low)
+        if (castPositions[castPosition] > 0)
+        {
+            // yolo -50fps
+
+            var ownerPosition = this.Owner.Position;
+            var lineCount = (int)Math.Ceiling(radius / 50);
+
+            for (var i = 0; i < lineCount; i++)
             {
-                return false;
-            }
+                var alpha = (Math.PI / lineCount) * i;
+                var polar = new Vector3((float)Math.Cos(alpha), (float)Math.Sin(alpha), 0);
 
-            var castPosition = output.CastPosition;
-            var allies = targetManager.AllyHeroes.Where(x => !x.Equals(this.Owner)).ToList();
-            var allyPositions = allies.Select(x => x.GetPredictedPosition(inputDelay)).ToList();
-            var castPositions = new Dictionary<Vector3, int>
-            {
-                { castPosition, allyPositions.Count(x => x.Distance2D(castPosition) < radius) }
-            };
-
-            if (castPositions[castPosition] > 0)
-            {
-                // yolo -50fps
-
-                var ownerPosition = this.Owner.Position;
-                var lineCount = (int)Math.Ceiling(radius / 50);
-
-                for (var i = 0; i < lineCount; i++)
+                for (var j = 0.25f; j <= 1; j += 0.25f)
                 {
-                    var alpha = (Math.PI / lineCount) * i;
-                    var polar = new Vector3((float)Math.Cos(alpha), (float)Math.Sin(alpha), 0);
+                    var range = polar * (input.CastRange * j);
+                    var start = ownerPosition - range;
+                    var end = ownerPosition + range;
 
-                    for (var j = 0.25f; j <= 1; j += 0.25f)
+                    if (output.AoeTargetsHit.All(x => x.TargetPosition.Distance2D(start) < this.Ability.Radius))
                     {
-                        var range = polar * (input.CastRange * j);
-                        var start = ownerPosition - range;
-                        var end = ownerPosition + range;
+                        castPositions[start] = allyPositions.Count(x => x.Distance2D(start) < radius);
+                    }
 
-                        if (output.AoeTargetsHit.All(x => x.TargetPosition.Distance2D(start) < this.Ability.Radius))
-                        {
-                            castPositions[start] = allyPositions.Count(x => x.Distance2D(start) < radius);
-                        }
-
-                        if (output.AoeTargetsHit.All(x => x.TargetPosition.Distance2D(end) < this.Ability.Radius))
-                        {
-                            castPositions[end] = allyPositions.Count(x => x.Distance2D(end) < radius);
-                        }
+                    if (output.AoeTargetsHit.All(x => x.TargetPosition.Distance2D(end) < this.Ability.Radius))
+                    {
+                        castPositions[end] = allyPositions.Count(x => x.Distance2D(end) < radius);
                     }
                 }
-
-                castPosition = castPositions.OrderBy(x => x.Value).ThenBy(x => x.Key.Distance2D(castPosition)).Select(x => x.Key).First();
             }
 
-            if (!this.Ability.UseAbility(castPosition))
-            {
-                return false;
-            }
-
-            var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
-            var delay = this.Ability.GetCastDelay(targetManager.Target);
-
-            targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
-            comboSleeper.Sleep(delay);
-            this.OrbwalkSleeper.Sleep(delay);
-            this.Sleeper.Sleep(hitTime);
-
-            return true;
+            castPosition = castPositions.OrderBy(x => x.Value).ThenBy(x => x.Key.Distance2D(castPosition)).Select(x => x.Key).First();
         }
 
-        protected override bool ChainStun(Unit9 target, bool invulnerability)
+        if (!this.Ability.UseAbility(castPosition))
         {
-            return true;
+            return false;
         }
+
+        var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
+        var delay = this.Ability.GetCastDelay(targetManager.Target);
+
+        targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
+        comboSleeper.Sleep(delay);
+        this.OrbwalkSleeper.Sleep(delay);
+        this.Sleeper.Sleep(hitTime);
+
+        return true;
+    }
+
+    protected override bool ChainStun(Unit9 target, bool invulnerability)
+    {
+        return true;
     }
 }

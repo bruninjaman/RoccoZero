@@ -1,86 +1,85 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Pugna.NetherWard
+﻿namespace O9K.Evader.Abilities.Heroes.Pugna.NetherWard;
+
+using System;
+
+using Base;
+
+using Core.Entities.Abilities.Heroes.Pugna;
+using Core.Entities.Units;
+using Core.Logger;
+using Core.Managers.Entity;
+using Divine.Order;
+using Divine.Modifier.Modifiers;
+using Divine.Order.EventArgs;
+using Divine.Order.Orders.Components;
+
+using Pathfinder.Obstacles.Modifiers;
+
+internal class NetherWardModifierObstacle : ModifierAllyObstacle, IDisposable
 {
-    using System;
+    private readonly NetherWard netherWard;
 
-    using Base;
-
-    using Core.Entities.Abilities.Heroes.Pugna;
-    using Core.Entities.Units;
-    using Core.Logger;
-    using Core.Managers.Entity;
-    using Divine.Order;
-    using Divine.Modifier.Modifiers;
-    using Divine.Order.EventArgs;
-    using Divine.Order.Orders.Components;
-
-    using Pathfinder.Obstacles.Modifiers;
-
-    internal class NetherWardModifierObstacle : ModifierAllyObstacle, IDisposable
+    public NetherWardModifierObstacle(IModifierCounter ability, Modifier modifier, Unit9 modifierOwner)
+        : base(ability, modifier, modifierOwner)
     {
-        private readonly NetherWard netherWard;
-
-        public NetherWardModifierObstacle(IModifierCounter ability, Modifier modifier, Unit9 modifierOwner)
-            : base(ability, modifier, modifierOwner)
+        if (!modifierOwner.IsControllable)
         {
-            if (!modifierOwner.IsControllable)
+            return;
+        }
+
+        this.netherWard = (NetherWard)this.EvadableAbility.Ability;
+
+        OrderManager.OrderAdding += this.OnOrderAdding;
+    }
+
+    public void Dispose()
+    {
+        OrderManager.OrderAdding -= this.OnOrderAdding;
+    }
+
+    private void OnOrderAdding(OrderAddingEventArgs e)
+    {
+        try
+        {
+            if (!e.Process)
             {
                 return;
             }
 
-            this.netherWard = (NetherWard)this.EvadableAbility.Ability;
+            var order = e.Order;
+            var orderType = order.Type;
+            if (orderType != OrderType.Cast && orderType != OrderType.CastPosition && orderType != OrderType.CastTarget)
+            {
+                return;
+            }
 
-            OrderManager.OrderAdding += this.OnOrderAdding;
+            var ability = EntityManager9.GetAbility(order.Ability.Handle);
+            if (ability == null)
+            {
+                return;
+            }
+
+            var owner = ability.Owner;
+            if (!owner.Equals(this.ModifierOwner))
+            {
+                return;
+            }
+
+            var damage = this.netherWard.GetDamage(owner, ability.ManaCost);
+            if (damage <= 0)
+            {
+                return;
+            }
+
+            if (damage > 300 || owner.Health - damage <= 0)
+            {
+                e.Process = false;
+            }
         }
-
-        public void Dispose()
+        catch (Exception ex)
         {
             OrderManager.OrderAdding -= this.OnOrderAdding;
-        }
-
-        private void OnOrderAdding(OrderAddingEventArgs e)
-        {
-            try
-            {
-                if (!e.Process)
-                {
-                    return;
-                }
-
-                var order = e.Order;
-                var orderType = order.Type;
-                if (orderType != OrderType.Cast && orderType != OrderType.CastPosition && orderType != OrderType.CastTarget)
-                {
-                    return;
-                }
-
-                var ability = EntityManager9.GetAbility(order.Ability.Handle);
-                if (ability == null)
-                {
-                    return;
-                }
-
-                var owner = ability.Owner;
-                if (!owner.Equals(this.ModifierOwner))
-                {
-                    return;
-                }
-
-                var damage = this.netherWard.GetDamage(owner, ability.ManaCost);
-                if (damage <= 0)
-                {
-                    return;
-                }
-
-                if (damage > 300 || owner.Health - damage <= 0)
-                {
-                    e.Process = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                OrderManager.OrderAdding -= this.OnOrderAdding;
-                Logger.Error(ex);
-            }
+            Logger.Error(ex);
         }
     }
 }

@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Units.AncientThunderhide.Slam
+﻿namespace O9K.Evader.Abilities.Units.AncientThunderhide.Slam;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.big_thunder_lizard_slam)]
+internal class SlamBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.big_thunder_lizard_slam)]
-    internal class SlamBase : EvaderBaseAbility, IEvadable
+    public SlamBase(Ability9 ability)
+        : base(ability)
     {
-        public SlamBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new SlamEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new SlamEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Meepo.Poof
+﻿namespace O9K.Evader.Abilities.Heroes.Meepo.Poof;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.meepo_poof)]
+internal class PoofBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.meepo_poof)]
-    internal class PoofBase : EvaderBaseAbility, IEvadable
+    public PoofBase(Ability9 ability)
+        : base(ability)
     {
-        public PoofBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new PoofEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new PoofEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

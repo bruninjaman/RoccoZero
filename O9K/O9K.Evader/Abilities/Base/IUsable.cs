@@ -1,10 +1,9 @@
-﻿namespace O9K.Evader.Abilities.Base
-{
-    using Usable;
+﻿namespace O9K.Evader.Abilities.Base;
 
-    internal interface IUsable<out T>
-        where T : UsableAbility
-    {
-        T GetUsableAbility();
-    }
+using Usable;
+
+internal interface IUsable<out T>
+    where T : UsableAbility
+{
+    T GetUsableAbility();
 }

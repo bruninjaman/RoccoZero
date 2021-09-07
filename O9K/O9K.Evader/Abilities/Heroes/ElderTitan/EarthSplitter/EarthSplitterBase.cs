@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.ElderTitan.EarthSplitter
+﻿namespace O9K.Evader.Abilities.Heroes.ElderTitan.EarthSplitter;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.elder_titan_earth_splitter)]
+internal class EarthSplitterBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.elder_titan_earth_splitter)]
-    internal class EarthSplitterBase : EvaderBaseAbility, IEvadable
+    public EarthSplitterBase(Ability9 ability)
+        : base(ability)
     {
-        public EarthSplitterBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new EarthSplitterEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new EarthSplitterEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

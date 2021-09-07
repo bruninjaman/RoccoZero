@@ -1,12 +1,11 @@
-﻿namespace O9K.AIO.Heroes.Dynamic.Abilities.Specials
-{
-    using Core.Entities.Abilities.Base.Components.Base;
+﻿namespace O9K.AIO.Heroes.Dynamic.Abilities.Specials;
 
-    internal abstract class OldSpecialAbility : OldUsableAbility
+using Core.Entities.Abilities.Base.Components.Base;
+
+internal abstract class OldSpecialAbility : OldUsableAbility
+{
+    protected OldSpecialAbility(IActiveAbility ability)
+        : base(ability)
     {
-        protected OldSpecialAbility(IActiveAbility ability)
-            : base(ability)
-        {
-        }
     }
 }

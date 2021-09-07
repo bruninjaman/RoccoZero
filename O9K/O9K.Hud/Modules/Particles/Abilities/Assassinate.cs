@@ -1,100 +1,99 @@
-﻿namespace O9K.Hud.Modules.Particles.Abilities
+﻿namespace O9K.Hud.Modules.Particles.Abilities;
+
+using System;
+using System.Collections.Generic;
+
+using Core.Entities.Metadata;
+using Core.Logger;
+using Divine.Modifier;
+using Divine.Particle;
+using Divine.Modifier.EventArgs;
+using Divine.Particle.Components;
+using Divine.Particle.Particles;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers.Notificator;
+
+using MainMenu;
+
+[AbilityId(AbilityId.sniper_assassinate)]
+internal class Assassinate : AbilityModule
 {
-    using System;
-    using System.Collections.Generic;
+    private readonly Dictionary<uint, Particle> effects = new Dictionary<uint, Particle>();
 
-    using Core.Entities.Metadata;
-    using Core.Logger;
-    using Divine.Modifier;
-    using Divine.Particle;
-    using Divine.Modifier.EventArgs;
-    using Divine.Particle.Components;
-    using Divine.Particle.Particles;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers.Notificator;
-
-    using MainMenu;
-
-    [AbilityId(AbilityId.sniper_assassinate)]
-    internal class Assassinate : AbilityModule
+    public Assassinate(INotificator notificator, IHudMenu hudMenu)
+        : base(notificator, hudMenu)
     {
-        private readonly Dictionary<uint, Particle> effects = new Dictionary<uint, Particle>();
+    }
 
-        public Assassinate(INotificator notificator, IHudMenu hudMenu)
-            : base(notificator, hudMenu)
-        {
-        }
+    protected override void Disable()
+    {
+        ModifierManager.ModifierAdded -= this.OnModifierAdded;
+        ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
+    }
 
-        protected override void Disable()
-        {
-            ModifierManager.ModifierAdded -= this.OnModifierAdded;
-            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
-        }
+    protected override void Enable()
+    {
+        ModifierManager.ModifierAdded += this.OnModifierAdded;
+        ModifierManager.ModifierRemoved += this.OnModifierRemoved;
+    }
 
-        protected override void Enable()
+    private void OnModifierAdded(ModifierAddedEventArgs e)
+    {
+        try
         {
-            ModifierManager.ModifierAdded += this.OnModifierAdded;
-            ModifierManager.ModifierRemoved += this.OnModifierRemoved;
-        }
-
-        private void OnModifierAdded(ModifierAddedEventArgs e)
-        {
-            try
+            var modifier = e.Modifier;
+            var sender = modifier.Owner;
+            if (sender.Team != this.OwnerTeam)
             {
-                var modifier = e.Modifier;
-                var sender = modifier.Owner;
-                if (sender.Team != this.OwnerTeam)
-                {
-                    return;
-                }
-
-                if (modifier.Name != "modifier_sniper_assassinate")
-                {
-                    return;
-                }
-
-                var effect = ParticleManager.CreateParticle(
-                    "particles/units/heroes/hero_sniper/sniper_crosshair.vpcf",
-                    ParticleAttachment.OverheadFollow,
-                    sender);
-
-                this.effects.Add(sender.Handle, effect);
+                return;
             }
-            catch (Exception ex)
+
+            if (modifier.Name != "modifier_sniper_assassinate")
             {
-                Logger.Error(ex);
+                return;
             }
+
+            var effect = ParticleManager.CreateParticle(
+                "particles/units/heroes/hero_sniper/sniper_crosshair.vpcf",
+                ParticleAttachment.OverheadFollow,
+                sender);
+
+            this.effects.Add(sender.Handle, effect);
         }
-
-        private void OnModifierRemoved(ModifierRemovedEventArgs e)
+        catch (Exception ex)
         {
-            try
+            Logger.Error(ex);
+        }
+    }
+
+    private void OnModifierRemoved(ModifierRemovedEventArgs e)
+    {
+        try
+        {
+            var modifier = e.Modifier;
+            var sender = modifier.Owner;
+            if (sender.Team != this.OwnerTeam)
             {
-                var modifier = e.Modifier;
-                var sender = modifier.Owner;
-                if (sender.Team != this.OwnerTeam)
-                {
-                    return;
-                }
-
-                if (modifier.Name != "modifier_sniper_assassinate")
-                {
-                    return;
-                }
-
-                if (!this.effects.TryGetValue(sender.Handle, out var effect))
-                {
-                    return;
-                }
-
-                effect.Dispose();
-                this.effects.Remove(sender.Handle);
+                return;
             }
-            catch (Exception ex)
+
+            if (modifier.Name != "modifier_sniper_assassinate")
             {
-                Logger.Error(ex);
+                return;
             }
+
+            if (!this.effects.TryGetValue(sender.Handle, out var effect))
+            {
+                return;
+            }
+
+            effect.Dispose();
+            this.effects.Remove(sender.Handle);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
         }
     }
 }

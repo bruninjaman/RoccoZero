@@ -1,7 +1,6 @@
-﻿namespace O9K.Evader.Pathfinder.Obstacles.Types
+﻿namespace O9K.Evader.Pathfinder.Obstacles.Types;
+
+internal interface IExpirable
 {
-    internal interface IExpirable
-    {
-        bool IsExpired { get; }
-    }
+    bool IsExpired { get; }
 }

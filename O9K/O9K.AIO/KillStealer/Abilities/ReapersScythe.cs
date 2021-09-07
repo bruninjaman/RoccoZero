@@ -1,34 +1,33 @@
-﻿namespace O9K.AIO.KillStealer.Abilities
+﻿namespace O9K.AIO.KillStealer.Abilities;
+
+using Base;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.necrolyte_reapers_scythe)]
+internal class ReapersScythe : KillStealAbility
 {
-    using Base;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.necrolyte_reapers_scythe)]
-    internal class ReapersScythe : KillStealAbility
+    public ReapersScythe(ActiveAbility ability)
+        : base(ability)
     {
-        public ReapersScythe(ActiveAbility ability)
-            : base(ability)
+    }
+
+    public override bool ShouldCast(Unit9 target)
+    {
+        if (!base.ShouldCast(target))
         {
+            return false;
         }
 
-        public override bool ShouldCast(Unit9 target)
+        if (target.CanReincarnate)
         {
-            if (!base.ShouldCast(target))
-            {
-                return false;
-            }
-
-            if (target.CanReincarnate)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
+
+        return true;
     }
 }

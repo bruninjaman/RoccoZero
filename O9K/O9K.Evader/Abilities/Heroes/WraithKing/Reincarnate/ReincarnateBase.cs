@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.WraithKing.Reincarnate
+﻿namespace O9K.Evader.Abilities.Heroes.WraithKing.Reincarnate;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.skeleton_king_reincarnation)]
+internal class ReincarnateBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.skeleton_king_reincarnation)]
-    internal class ReincarnateBase : EvaderBaseAbility, IEvadable
+    public ReincarnateBase(Ability9 ability)
+        : base(ability)
     {
-        public ReincarnateBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new ReincarnateEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new ReincarnateEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

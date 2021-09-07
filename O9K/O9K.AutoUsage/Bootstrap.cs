@@ -1,49 +1,48 @@
-﻿namespace O9K.AutoUsage
+﻿namespace O9K.AutoUsage;
+
+using System;
+
+using Core.Logger;
+
+using Divine.Renderer;
+using Divine.Service;
+
+using O9K.Core.Managers.Context;
+
+using Settings;
+
+//[ExportPlugin("O9K // Auto usage", priority: int.MaxValue)]
+internal class Bootstrap : Bootstrapper
 {
-    using System;
+    private AutoUsage autoUsage;
 
-    using Core.Logger;
+    private MainSettings settings;
 
-    using Divine.Renderer;
-    using Divine.Service;
-
-    using O9K.Core.Managers.Context;
-
-    using Settings;
-
-    //[ExportPlugin("O9K // Auto usage", priority: int.MaxValue)]
-    internal class Bootstrap : Bootstrapper
+    protected override void OnActivate()
     {
-        private AutoUsage autoUsage;
-
-        private MainSettings settings;
-
-        protected override void OnActivate()
+        try
         {
-            try
-            {
-                RendererManager.LoadImage("o9k.glyph", @"panorama\images\hud\reborn\icon_glyph_on_psd.vtex_c");
+            RendererManager.LoadImage("o9k.glyph", @"panorama\images\hud\reborn\icon_glyph_on_psd.vtex_c");
 
-                this.settings = new MainSettings(Context9.MenuManager);
-                this.autoUsage = new AutoUsage(this.settings);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            this.settings = new MainSettings(Context9.MenuManager);
+            this.autoUsage = new AutoUsage(this.settings);
         }
-
-        protected override void OnDeactivate()
+        catch (Exception e)
         {
-            try
-            {
-                this.autoUsage.Dispose();
-                this.settings.Dispose();
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            Logger.Error(e);
+        }
+    }
+
+    protected override void OnDeactivate()
+    {
+        try
+        {
+            this.autoUsage.Dispose();
+            this.settings.Dispose();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

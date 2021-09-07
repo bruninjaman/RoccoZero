@@ -1,77 +1,76 @@
-﻿namespace O9K.AutoUsage.Abilities.Special.Unique.SpeedBurst
+﻿namespace O9K.AutoUsage.Abilities.Special.Unique.SpeedBurst;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Metadata;
+using Core.Logger;
+
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units;
+using Divine.GameConsole;
+using Divine.Order;
+using Divine.Order.EventArgs;
+using Divine.Order.Orders.Components;
+using Divine.Update;
+
+[AbilityId(AbilityId.courier_burst)]
+internal class SpeedBurstAbility
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Core.Entities.Metadata;
-    using Core.Logger;
-
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units;
-    using Divine.GameConsole;
-    using Divine.Order;
-    using Divine.Order.EventArgs;
-    using Divine.Order.Orders.Components;
-    using Divine.Update;
-
-    [AbilityId(AbilityId.courier_burst)]
-    internal class SpeedBurstAbility
+    private readonly HashSet<AbilityId> ids = new HashSet<AbilityId>
     {
-        private readonly HashSet<AbilityId> ids = new HashSet<AbilityId>
-        {
-            AbilityId.courier_transfer_items,
-            AbilityId.courier_take_stash_and_transfer_items,
-            AbilityId.courier_go_to_secretshop,
-        };
+        AbilityId.courier_transfer_items,
+        AbilityId.courier_take_stash_and_transfer_items,
+        AbilityId.courier_go_to_secretshop,
+    };
 
-        public void Activate()
-        {
-            OrderManager.OrderAdding += this.OnOrderAdding;
-        }
+    public void Activate()
+    {
+        OrderManager.OrderAdding += this.OnOrderAdding;
+    }
 
-        public void Deactivate()
-        {
-            OrderManager.OrderAdding -= this.OnOrderAdding;
-        }
+    public void Deactivate()
+    {
+        OrderManager.OrderAdding -= this.OnOrderAdding;
+    }
 
-        private void OnOrderAdding(OrderAddingEventArgs e)
+    private void OnOrderAdding(OrderAddingEventArgs e)
+    {
+        try
         {
-            try
+            if (!e.Process)
             {
-                if (!e.Process)
-                {
-                    return;
-                }
-
-                var order = e.Order;
-                if (order.Type != OrderType.Cast)
-                {
-                    return;
-                }
-
-                if (!this.ids.Contains(order.Ability.Id))
-                {
-                    return;
-                }
-
-                if (!(order.Units.FirstOrDefault() is Courier courier))
-                {
-                    return;
-                }
-
-                var burst = courier.Spellbook.Spells.FirstOrDefault(x => x.Id == AbilityId.courier_burst);
-                if (burst == null || burst.Level == 0 || burst.Cooldown > 0)
-                {
-                    return;
-                }
-
-                UpdateManager.BeginInvoke(200, () => GameConsoleManager.ExecuteCommand("dota_courier_burst"));
+                return;
             }
-            catch (Exception ex)
+
+            var order = e.Order;
+            if (order.Type != OrderType.Cast)
             {
-                Logger.Error(ex);
+                return;
             }
+
+            if (!this.ids.Contains(order.Ability.Id))
+            {
+                return;
+            }
+
+            if (!(order.Units.FirstOrDefault() is Courier courier))
+            {
+                return;
+            }
+
+            var burst = courier.Spellbook.Spells.FirstOrDefault(x => x.Id == AbilityId.courier_burst);
+            if (burst == null || burst.Level == 0 || burst.Cooldown > 0)
+            {
+                return;
+            }
+
+            UpdateManager.BeginInvoke(200, () => GameConsoleManager.ExecuteCommand("dota_courier_burst"));
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
         }
     }
 }

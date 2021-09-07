@@ -1,25 +1,24 @@
-﻿namespace O9K.Evader.Abilities.Heroes.AncientApparition.IceBlast
+﻿namespace O9K.Evader.Abilities.Heroes.AncientApparition.IceBlast;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.ancient_apparition_ice_blast)]
+internal class IceBlastBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.ancient_apparition_ice_blast)]
-    internal class IceBlastBase : EvaderBaseAbility, IEvadable
+    public IceBlastBase(Ability9 ability)
+        : base(ability)
     {
-        public IceBlastBase(Ability9 ability)
-            : base(ability)
-        {
-            //todo dmg calc
-        }
+        //todo dmg calc
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new IceBlastEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new IceBlastEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

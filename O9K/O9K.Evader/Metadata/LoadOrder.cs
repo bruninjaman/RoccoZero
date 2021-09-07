@@ -1,21 +1,20 @@
-﻿namespace O9K.Evader.Metadata
+﻿namespace O9K.Evader.Metadata;
+
+internal enum LoadOrder
 {
-    internal enum LoadOrder
-    {
-        Settings,
+    Settings,
 
-        AbilityManager,
+    AbilityManager,
 
-        Pathfinder,
+    Pathfinder,
 
-        ActionManager,
+    ActionManager,
 
-        EvadeModeManager,
+    EvadeModeManager,
 
-        StateDrawer,
+    StateDrawer,
 
-        Evader,
+    Evader,
 
-        Debugger
-    }
+    Debugger
 }

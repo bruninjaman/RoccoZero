@@ -1,40 +1,39 @@
-﻿namespace O9K.Evader.Abilities.Heroes.ShadowDemon.ShadowPoison
+﻿namespace O9K.Evader.Abilities.Heroes.ShadowDemon.ShadowPoison;
+
+using Base.Evadable;
+using Base.Evadable.Components;
+
+using Core.Entities.Abilities.Base;
+using Divine.Game;
+using Divine.Entity.Entities.Units;
+
+using Metadata;
+
+using Pathfinder.Obstacles.Abilities.LinearProjectile;
+
+internal sealed class ShadowPoisonEvadable : LinearProjectileEvadable, IUnit
 {
-    using Base.Evadable;
-    using Base.Evadable.Components;
-
-    using Core.Entities.Abilities.Base;
-    using Divine.Game;
-    using Divine.Entity.Entities.Units;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles.Abilities.LinearProjectile;
-
-    internal sealed class ShadowPoisonEvadable : LinearProjectileEvadable, IUnit
+    public ShadowPoisonEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
+        : base(ability, pathfinder, menu)
     {
-        public ShadowPoisonEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
-            : base(ability, pathfinder, menu)
+        this.Counters.Add(Abilities.PhaseShift);
+    }
+
+    public void AddUnit(Unit unit)
+    {
+        if (this.Owner.IsVisible)
         {
-            this.Counters.Add(Abilities.PhaseShift);
+            return;
         }
 
-        public void AddUnit(Unit unit)
+        var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
+
+        var obstacle = new LinearProjectileUnitObstacle(this, unit)
         {
-            if (this.Owner.IsVisible)
-            {
-                return;
-            }
+            EndCastTime = time,
+            EndObstacleTime = time + (this.RangedAbility.Range / this.RangedAbility.Speed)
+        };
 
-            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
-
-            var obstacle = new LinearProjectileUnitObstacle(this, unit)
-            {
-                EndCastTime = time,
-                EndObstacleTime = time + (this.RangedAbility.Range / this.RangedAbility.Speed)
-            };
-
-            this.Pathfinder.AddObstacle(obstacle);
-        }
+        this.Pathfinder.AddObstacle(obstacle);
     }
 }

@@ -1,87 +1,86 @@
-﻿namespace O9K.AutoUsage.Abilities.HealthRestore.Unique.SoulRip
+﻿namespace O9K.AutoUsage.Abilities.HealthRestore.Unique.SoulRip;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+using Core.Managers.Entity;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+using Settings;
+
+[AbilityId(AbilityId.undying_soul_rip)]
+internal class SoulRipAbility : HealthRestoreAbility
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly SoulRipSettings settings;
 
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-    using Core.Managers.Entity;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Settings;
-
-    [AbilityId(AbilityId.undying_soul_rip)]
-    internal class SoulRipAbility : HealthRestoreAbility
+    public SoulRipAbility(IHealthRestore healthRestore, GroupSettings settings)
+        : base(healthRestore)
     {
-        private readonly SoulRipSettings settings;
+        this.settings = new SoulRipSettings(settings.Menu, healthRestore);
+    }
 
-        public SoulRipAbility(IHealthRestore healthRestore, GroupSettings settings)
-            : base(healthRestore)
+    public override bool UseAbility(List<Unit9> heroes)
+    {
+        var lowMp = this.Owner.ManaPercentage < this.settings.MpThreshold;
+
+        var allies = heroes.Where(x => !x.IsInvulnerable && x.IsAlly(this.Owner)).OrderBy(x => x.Health).ToList();
+        var enemies = heroes.Where(x => !x.IsInvulnerable && x.IsEnemy(this.Owner)).ToList();
+
+        if (this.settings.UseOnTombstone)
         {
-            this.settings = new SoulRipSettings(settings.Menu, healthRestore);
+            allies.AddRange(
+                EntityManager9.Units.Where(
+                    x => x.BaseUnit.NetworkName == "CDOTA_Unit_Undying_Tombstone" && x.IsAlive && x.IsAlly(this.Owner)));
         }
 
-        public override bool UseAbility(List<Unit9> heroes)
+        foreach (var ally in allies)
         {
-            var lowMp = this.Owner.ManaPercentage < this.settings.MpThreshold;
-
-            var allies = heroes.Where(x => !x.IsInvulnerable && x.IsAlly(this.Owner)).OrderBy(x => x.Health).ToList();
-            var enemies = heroes.Where(x => !x.IsInvulnerable && x.IsEnemy(this.Owner)).ToList();
-
-            if (this.settings.UseOnTombstone)
+            if (!this.settings.IsHeroEnabled(ally.Name) && ally.IsHero && !this.settings.SelfOnly)
             {
-                allies.AddRange(
-                    EntityManager9.Units.Where(
-                        x => x.BaseUnit.NetworkName == "CDOTA_Unit_Undying_Tombstone" && x.IsAlive && x.IsAlly(this.Owner)));
+                continue;
             }
 
-            foreach (var ally in allies)
+            if (!ally.CanBeHealed)
             {
-                if (!this.settings.IsHeroEnabled(ally.Name) && ally.IsHero && !this.settings.SelfOnly)
-                {
-                    continue;
-                }
-
-                if (!ally.CanBeHealed)
-                {
-                    continue;
-                }
-
-                var healthPercentage = ally.HealthPercentage;
-
-                if (healthPercentage > this.settings.HpThreshold || (lowMp && healthPercentage > this.settings.CriticalHpThreshold))
-                {
-                    continue;
-                }
-
-                var selfTarget = ally.Equals(this.Owner);
-
-                if (selfTarget && !this.HealthRestore.RestoresOwner)
-                {
-                    continue;
-                }
-
-                if (!selfTarget && (!this.HealthRestore.RestoresAlly || this.settings.SelfOnly))
-                {
-                    continue;
-                }
-
-                if (this.Owner.Distance(ally) > this.Ability.CastRange)
-                {
-                    continue;
-                }
-
-                if (ally.IsHero && enemies.Count(x => x.Distance(ally) < this.settings.Distance) < this.settings.EnemiesCount)
-                {
-                    continue;
-                }
-
-                return this.Ability.UseAbility(ally);
+                continue;
             }
 
-            return false;
+            var healthPercentage = ally.HealthPercentage;
+
+            if (healthPercentage > this.settings.HpThreshold || (lowMp && healthPercentage > this.settings.CriticalHpThreshold))
+            {
+                continue;
+            }
+
+            var selfTarget = ally.Equals(this.Owner);
+
+            if (selfTarget && !this.HealthRestore.RestoresOwner)
+            {
+                continue;
+            }
+
+            if (!selfTarget && (!this.HealthRestore.RestoresAlly || this.settings.SelfOnly))
+            {
+                continue;
+            }
+
+            if (this.Owner.Distance(ally) > this.Ability.CastRange)
+            {
+                continue;
+            }
+
+            if (ally.IsHero && enemies.Count(x => x.Distance(ally) < this.settings.Distance) < this.settings.EnemiesCount)
+            {
+                continue;
+            }
+
+            return this.Ability.UseAbility(ally);
         }
+
+        return false;
     }
 }

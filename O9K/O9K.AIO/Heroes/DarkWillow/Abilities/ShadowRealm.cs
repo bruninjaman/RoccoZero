@@ -1,84 +1,83 @@
-﻿namespace O9K.AIO.Heroes.DarkWillow.Abilities
+﻿namespace O9K.AIO.Heroes.DarkWillow.Abilities;
+
+using AIO.Abilities;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+
+using Modes.Combo;
+
+using TargetManager;
+
+using BaseShadowRealm = Core.Entities.Abilities.Heroes.DarkWillow.ShadowRealm;
+
+internal class ShadowRealm : NukeAbility
 {
-    using AIO.Abilities;
+    private readonly BaseShadowRealm realm;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-
-    using Modes.Combo;
-
-    using TargetManager;
-
-    using BaseShadowRealm = Core.Entities.Abilities.Heroes.DarkWillow.ShadowRealm;
-
-    internal class ShadowRealm : NukeAbility
+    public ShadowRealm(ActiveAbility ability)
+        : base(ability)
     {
-        private readonly BaseShadowRealm realm;
+        this.realm = (BaseShadowRealm)ability;
+    }
 
-        public ShadowRealm(ActiveAbility ability)
-            : base(ability)
+    public bool Casted
+    {
+        get
         {
-            this.realm = (BaseShadowRealm)ability;
+            return this.realm.Casted;
+        }
+    }
+
+    public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)
+    {
+        if (this.Owner.Distance(targetManager.Target) > 900)
+        {
+            return false;
         }
 
-        public bool Casted
+        return true;
+    }
+
+    public bool ShouldAttack(Unit9 target)
+    {
+        if (this.Owner.IsReflectingDamage && this.Owner.HealthPercentage < 50)
         {
-            get
-            {
-                return this.realm.Casted;
-            }
+            return false;
         }
 
-        public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)
+        if (this.Owner.IsMagicImmune && !this.Ability.PiercesMagicImmunity(target))
         {
-            if (this.Owner.Distance(targetManager.Target) > 900)
-            {
-                return false;
-            }
+            return false;
+        }
 
+        if (this.realm.GetDamage(target) > target.Health)
+        {
             return true;
         }
 
-        public bool ShouldAttack(Unit9 target)
+        if (this.Owner.Distance(target) < 700 || target.IsStunned || target.IsRooted || target.IsHexed)
         {
-            if (this.Owner.IsReflectingDamage && this.Owner.HealthPercentage < 50)
-            {
-                return false;
-            }
-
-            if (this.Owner.IsMagicImmune && !this.Ability.PiercesMagicImmunity(target))
-            {
-                return false;
-            }
-
-            if (this.realm.GetDamage(target) > target.Health)
-            {
-                return true;
-            }
-
-            if (this.Owner.Distance(target) < 700 || target.IsStunned || target.IsRooted || target.IsHexed)
-            {
-                return this.realm.DamageMaxed;
-            }
-
-            if (this.realm.RealmTime < 1)
-            {
-                return false;
-            }
-
-            return true;
+            return this.realm.DamageMaxed;
         }
 
-        public override bool ShouldCast(TargetManager targetManager)
+        if (this.realm.RealmTime < 1)
         {
-            var target = targetManager.Target;
-
-            if (!target.IsVisible)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
+
+        return true;
+    }
+
+    public override bool ShouldCast(TargetManager targetManager)
+    {
+        var target = targetManager.Target;
+
+        if (!target.IsVisible)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

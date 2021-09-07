@@ -1,23 +1,22 @@
-﻿namespace O9K.ItemManager.Metadata
+﻿namespace O9K.ItemManager.Metadata;
+
+using Core.Managers.Menu.Items;
+
+internal interface IMainMenu
 {
-    using Core.Managers.Menu.Items;
+    Menu AbilityLevelingMenu { get; }
 
-    internal interface IMainMenu
-    {
-        Menu AbilityLevelingMenu { get; }
+    Menu AbyssalAbuseMenu { get; }
 
-        Menu AbyssalAbuseMenu { get; }
+    Menu AutoActionsMenu { get; }
 
-        Menu AutoActionsMenu { get; }
+    Menu GoldSpenderMenu { get; }
 
-        Menu GoldSpenderMenu { get; }
+    Menu Hotkeys { get; }
 
-        Menu Hotkeys { get; }
+    Menu RecoveryAbuseMenu { get; }
 
-        Menu RecoveryAbuseMenu { get; }
+    Menu RootMenu { get; }
 
-        Menu RootMenu { get; }
-
-        Menu SnatcherMenu { get; }
-    }
+    Menu SnatcherMenu { get; }
 }

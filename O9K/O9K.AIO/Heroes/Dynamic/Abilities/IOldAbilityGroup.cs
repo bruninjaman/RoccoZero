@@ -1,11 +1,10 @@
-﻿namespace O9K.AIO.Heroes.Dynamic.Abilities
+﻿namespace O9K.AIO.Heroes.Dynamic.Abilities;
+
+using Core.Entities.Abilities.Base;
+
+internal interface IOldAbilityGroup
 {
-    using Core.Entities.Abilities.Base;
+    bool AddAbility(Ability9 ability);
 
-    internal interface IOldAbilityGroup
-    {
-        bool AddAbility(Ability9 ability);
-
-        void RemoveAbility(Ability9 ability);
-    }
+    void RemoveAbility(Ability9 ability);
 }

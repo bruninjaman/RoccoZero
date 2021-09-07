@@ -1,61 +1,60 @@
-﻿namespace O9K.ItemManager.Modules.AbilityLeveling.Names
+﻿namespace O9K.ItemManager.Modules.AbilityLeveling.Names;
+
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using Core.Entities.Heroes;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+internal class NameManager
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    public readonly Dictionary<string, string> MyAbilityNames = new Dictionary<string, string>();
 
-    using Core.Entities.Heroes;
+    private readonly Owner owner;
 
-    using Divine.Entity.Entities.Abilities.Components;
-
-    internal class NameManager
+    public NameManager(Owner owner)
     {
-        public readonly Dictionary<string, string> MyAbilityNames = new Dictionary<string, string>();
+        this.owner = owner;
 
-        private readonly Owner owner;
+        this.GetHeroName();
+        this.GetAbilityNames();
+    }
 
-        public NameManager(Owner owner)
+    public string HeroDotaBuffName { get; private set; }
+
+    public string HeroName { get; private set; }
+
+    private void GetAbilityNames()
+    {
+        var abilities = new Abilities();
+
+        foreach (var abilityName in this.owner.Hero.BaseSpellbook.Spells
+            .Where(x => (x.AbilityBehavior & (AbilityBehavior.NotLearnable | AbilityBehavior.Hidden)) == 0)
+            .Select(x => x.Name))
         {
-            this.owner = owner;
-
-            this.GetHeroName();
-            this.GetAbilityNames();
+            this.MyAbilityNames.Add(abilityName, abilities.GetAbilityName(abilityName));
         }
+    }
 
-        public string HeroDotaBuffName { get; private set; }
+    private void GetHeroName()
+    {
+        var heroes = new Heroes();
+        var name = heroes.GetHeroName(this.owner.Hero.Name);
+        var dotaBuffName = new StringBuilder(name.Length);
 
-        public string HeroName { get; private set; }
-
-        private void GetAbilityNames()
+        foreach (var ch in name)
         {
-            var abilities = new Abilities();
-
-            foreach (var abilityName in this.owner.Hero.BaseSpellbook.Spells
-                .Where(x => (x.AbilityBehavior & (AbilityBehavior.NotLearnable | AbilityBehavior.Hidden)) == 0)
-                .Select(x => x.Name))
+            if (ch == '\'')
             {
-                this.MyAbilityNames.Add(abilityName, abilities.GetAbilityName(abilityName));
-            }
-        }
-
-        private void GetHeroName()
-        {
-            var heroes = new Heroes();
-            var name = heroes.GetHeroName(this.owner.Hero.Name);
-            var dotaBuffName = new StringBuilder(name.Length);
-
-            foreach (var ch in name)
-            {
-                if (ch == '\'')
-                {
-                    continue;
-                }
-
-                dotaBuffName.Append(char.IsWhiteSpace(ch) ? '-' : char.ToLower(ch));
+                continue;
             }
 
-            this.HeroName = name;
-            this.HeroDotaBuffName = dotaBuffName.ToString();
+            dotaBuffName.Append(char.IsWhiteSpace(ch) ? '-' : char.ToLower(ch));
         }
+
+        this.HeroName = name;
+        this.HeroDotaBuffName = dotaBuffName.ToString();
     }
 }

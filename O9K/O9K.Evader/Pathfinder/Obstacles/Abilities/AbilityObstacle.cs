@@ -1,135 +1,134 @@
-﻿namespace O9K.Evader.Pathfinder.Obstacles.Abilities
+﻿namespace O9K.Evader.Pathfinder.Obstacles.Abilities;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Units;
+using Divine.Extensions;
+using Divine.Game;
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+using O9K.Core.Geometry;
+using O9K.Evader.Abilities.Base.Evadable;
+
+using Types;
+
+internal abstract class AbilityObstacle : IObstacle, IDrawable, IExpirable
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    protected readonly AbilityObstacleDrawer Drawer = new AbilityObstacleDrawer();
 
-    using Core.Entities.Units;
-    using Divine.Extensions;
-    using Divine.Game;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly Dictionary<Unit9, int> damages = new Dictionary<Unit9, int>();
 
-    using Helpers;
-
-    using Metadata;
-
-    using O9K.Core.Geometry;
-    using O9K.Evader.Abilities.Base.Evadable;
-
-    using Types;
-
-    internal abstract class AbilityObstacle : IObstacle, IDrawable, IExpirable
+    protected AbilityObstacle(EvadableAbility ability)
     {
-        protected readonly AbilityObstacleDrawer Drawer = new AbilityObstacleDrawer();
+        this.EvadableAbility = ability;
+        this.Pathfinder = ability.Pathfinder;
+        this.Caster = ability.Owner;
+        this.Blinks = ability.Blinks.ToArray();
+        this.Counters = ability.Counters.ToArray();
+        this.Disables = ability.Disables.ToArray();
+        this.ActivationDelay = ability.Ability.ActivationDelay;
+        this.CanBeDodged = ability.CanBeDodged;
+    }
 
-        private readonly Dictionary<Unit9, int> damages = new Dictionary<Unit9, int>();
+    public float ActivationDelay { get; set; }
 
-        protected AbilityObstacle(EvadableAbility ability)
+    public AbilityId[] Blinks { get; set; }
+
+    public bool CanBeDodged { get; protected set; }
+
+    public Unit9 Caster { get; }
+
+    public AbilityId[] Counters { get; set; }
+
+    public AbilityId[] Disables { get; set; }
+
+    public float EndCastTime { get; set; }
+
+    public float EndObstacleTime { get; set; }
+
+    public EvadableAbility EvadableAbility { get; }
+
+    public uint Id { get; set; }
+
+    public virtual bool IsExpired
+    {
+        get
         {
-            this.EvadableAbility = ability;
-            this.Pathfinder = ability.Pathfinder;
-            this.Caster = ability.Owner;
-            this.Blinks = ability.Blinks.ToArray();
-            this.Counters = ability.Counters.ToArray();
-            this.Disables = ability.Disables.ToArray();
-            this.ActivationDelay = ability.Ability.ActivationDelay;
-            this.CanBeDodged = ability.CanBeDodged;
+            return GameManager.RawGameTime >= this.EndObstacleTime;
+        }
+    }
+
+    public bool IsModifierObstacle { get; } = false;
+
+    public bool IsProactiveObstacle { get; } = false;
+
+    public uint? NavMeshId { get; set; }
+
+    public Polygon Polygon { get; protected set; }
+
+    public Vector3 Position { get; protected set; }
+
+    protected IPathfinder Pathfinder { get; }
+
+    public virtual void Dispose()
+    {
+        this.Drawer.Dispose();
+    }
+
+    public abstract void Draw();
+
+    public virtual IEnumerable<AbilityId> GetBlinks(Unit9 ally)
+    {
+        return this.Blinks;
+    }
+
+    public virtual IEnumerable<AbilityId> GetCounters(Unit9 ally)
+    {
+        return this.Counters;
+    }
+
+    public int GetDamage(Unit9 ally)
+    {
+        if (!this.damages.TryGetValue(ally, out var damage))
+        {
+            this.damages[ally] = damage = this.EvadableAbility.Ability.GetDamage(ally);
         }
 
-        public float ActivationDelay { get; set; }
+        return damage;
+    }
 
-        public AbilityId[] Blinks { get; set; }
+    public virtual IEnumerable<AbilityId> GetDisables(Unit9 ally)
+    {
+        return this.Disables;
+    }
 
-        public bool CanBeDodged { get; protected set; }
+    public abstract float GetDisableTime(Unit9 enemy);
 
-        public Unit9 Caster { get; }
+    public abstract float GetEvadeTime(Unit9 ally, bool blink);
 
-        public AbilityId[] Counters { get; set; }
-
-        public AbilityId[] Disables { get; set; }
-
-        public float EndCastTime { get; set; }
-
-        public float EndObstacleTime { get; set; }
-
-        public EvadableAbility EvadableAbility { get; }
-
-        public uint Id { get; set; }
-
-        public virtual bool IsExpired
+    public virtual bool IsIntersecting(Unit9 unit, bool checkPrediction)
+    {
+        if (this.Polygon == null)
         {
-            get
-            {
-                return GameManager.RawGameTime >= this.EndObstacleTime;
-            }
+            return false;
         }
 
-        public bool IsModifierObstacle { get; } = false;
-
-        public bool IsProactiveObstacle { get; } = false;
-
-        public uint? NavMeshId { get; set; }
-
-        public Polygon Polygon { get; protected set; }
-
-        public Vector3 Position { get; protected set; }
-
-        protected IPathfinder Pathfinder { get; }
-
-        public virtual void Dispose()
+        if (!this.Polygon.IsOutside(unit.Position.ToVector2()))
         {
-            this.Drawer.Dispose();
+            return true;
         }
 
-        public abstract void Draw();
-
-        public virtual IEnumerable<AbilityId> GetBlinks(Unit9 ally)
+        if (!checkPrediction || this.NavMeshId == null || (!unit.IsMoving && !unit.IsRotating))
         {
-            return this.Blinks;
+            return false;
         }
 
-        public virtual IEnumerable<AbilityId> GetCounters(Unit9 ally)
-        {
-            return this.Counters;
-        }
-
-        public int GetDamage(Unit9 ally)
-        {
-            if (!this.damages.TryGetValue(ally, out var damage))
-            {
-                this.damages[ally] = damage = this.EvadableAbility.Ability.GetDamage(ally);
-            }
-
-            return damage;
-        }
-
-        public virtual IEnumerable<AbilityId> GetDisables(Unit9 ally)
-        {
-            return this.Disables;
-        }
-
-        public abstract float GetDisableTime(Unit9 enemy);
-
-        public abstract float GetEvadeTime(Unit9 ally, bool blink);
-
-        public virtual bool IsIntersecting(Unit9 unit, bool checkPrediction)
-        {
-            if (this.Polygon == null)
-            {
-                return false;
-            }
-
-            if (!this.Polygon.IsOutside(unit.Position.ToVector2()))
-            {
-                return true;
-            }
-
-            if (!checkPrediction || this.NavMeshId == null || (!unit.IsMoving && !unit.IsRotating))
-            {
-                return false;
-            }
-
-            return !this.Polygon.IsOutside(unit.InFront(100).ToVector2());
-        }
+        return !this.Polygon.IsOutside(unit.InFront(100).ToVector2());
     }
 }

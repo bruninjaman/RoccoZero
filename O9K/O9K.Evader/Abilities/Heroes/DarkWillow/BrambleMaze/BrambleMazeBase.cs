@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.DarkWillow.BrambleMaze
+﻿namespace O9K.Evader.Abilities.Heroes.DarkWillow.BrambleMaze;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.dark_willow_bramble_maze)]
+internal class BrambleMazeBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.dark_willow_bramble_maze)]
-    internal class BrambleMazeBase : EvaderBaseAbility, IEvadable
+    public BrambleMazeBase(Ability9 ability)
+        : base(ability)
     {
-        public BrambleMazeBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new BrambleMazeEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new BrambleMazeEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

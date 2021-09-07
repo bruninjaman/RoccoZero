@@ -1,202 +1,201 @@
-﻿namespace O9K.Farm.Core.Modes
+﻿namespace O9K.Farm.Core.Modes;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Divine.Entity.Entities;
+using Divine.Entity.Entities.Players;
+using Divine.Extensions;
+using Divine.Game;
+using Divine.Update;
+
+using O9K.Core.Entities.Units;
+using O9K.Core.Helpers;
+using O9K.Core.Logger;
+
+using Units.Base;
+
+internal abstract class BaseMode : IDisposable
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly Sleeper actionSleeper = new();
 
-    using Divine.Entity.Entities;
-    using Divine.Entity.Entities.Players;
-    using Divine.Extensions;
-    using Divine.Game;
-    using Divine.Update;
+    private readonly UpdateHandler handler;
 
-    using O9K.Core.Entities.Units;
-    using O9K.Core.Helpers;
-    using O9K.Core.Logger;
+    private readonly List<FarmUnit> units = new();
 
-    using Units.Base;
-
-    internal abstract class BaseMode : IDisposable
+    protected BaseMode(UnitManager unitManager)
     {
-        private readonly Sleeper actionSleeper = new();
+        this.UnitManager = unitManager;
+        this.handler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
+    }
 
-        private readonly UpdateHandler handler;
-
-        private readonly List<FarmUnit> units = new();
-
-        protected BaseMode(UnitManager unitManager)
+    public bool IsActive
+    {
+        get
         {
-            this.UnitManager = unitManager;
-            this.handler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
+            return this.handler.IsEnabled;
         }
+    }
+    
+    public List<FarmUnit> LastAddedUnits { get; protected set; } = new();
 
-        public bool IsActive
+    protected UnitManager UnitManager { get; }
+
+    public void Dispose()
+    {
+        UpdateManager.DestroyIngameUpdate(this.handler);
+    }
+
+    public void AddUnits(IEnumerable<FarmUnit> farmUnits)
+    {
+        this.LastAddedUnits = farmUnits.ToList();
+        this.units.AddRange(this.LastAddedUnits.Except(this.units));
+        this.handler.IsEnabled = true;
+    }
+
+    public void AttackCanceled(FarmUnit target)
+    {
+        if (!FarmManager.IsFarmActive())
         {
-            get
-            {
-                return this.handler.IsEnabled;
-            }
+            return;
         }
         
-        public List<FarmUnit> LastAddedUnits { get; protected set; } = new();
+        IEnumerable<FarmUnit> myFarmUnits;
+        myFarmUnits = this.units.Where(x => x.IsControllable);
 
-        protected UnitManager UnitManager { get; }
+        List<FarmUnit> myFarmUnitToStop = new();
+        float damages = 0;
+        float delay = 0;
 
-        public void Dispose()
+        foreach (var unit in myFarmUnits)
         {
-            UpdateManager.DestroyIngameUpdate(this.handler);
+            if (unit.Target?.Equals(target) != true)
+            {
+                continue;
+            }
+
+            if (!unit.AttackSleeper.IsSleeping)
+            {
+                continue;
+            }
+
+            var newDelay = unit.AttackStartTime + unit.GetAttackDelay(target) - GameManager.RawGameTime;
+            delay = delay > newDelay ? delay : newDelay;
+            damages += unit.GetDamage(target);
+            myFarmUnitToStop.Add(unit);
         }
 
-        public void AddUnits(IEnumerable<FarmUnit> farmUnits)
+        if (target.GetPredictedHealth(delay) > damages)
         {
-            this.LastAddedUnits = farmUnits.ToList();
-            this.units.AddRange(this.LastAddedUnits.Except(this.units));
-            this.handler.IsEnabled = true;
+            Player.Stop(myFarmUnitToStop.Select(x => x.Unit.BaseUnit));
+            myFarmUnitToStop.ForEach(x => x.ResetSleepers());
+        }
+    }
+
+    public bool ContainsAllUnits(IEnumerable<FarmUnit> myUnits)
+    {
+        return myUnits.All(x => this.units.Contains(x));
+    }
+
+    public void RemoveLastAddedUnits()
+    {
+        this.RemoveUnits(this.LastAddedUnits);
+    }
+
+    public void RemoveUnit(Unit9 unit)
+    {
+        if (!this.handler.IsEnabled)
+        {
+            return;
         }
 
-        public void AttackCanceled(FarmUnit target)
+        var farmUnit = this.units.Find(x => x.Unit == unit);
+
+        if (farmUnit == null)
         {
-            if (!FarmManager.IsFarmActive())
-            {
-                return;
-            }
-            
-            IEnumerable<FarmUnit> myFarmUnits;
-            myFarmUnits = this.units.Where(x => x.IsControllable);
-
-            List<FarmUnit> myFarmUnitToStop = new();
-            float damages = 0;
-            float delay = 0;
-
-            foreach (var unit in myFarmUnits)
-            {
-                if (unit.Target?.Equals(target) != true)
-                {
-                    continue;
-                }
-
-                if (!unit.AttackSleeper.IsSleeping)
-                {
-                    continue;
-                }
-
-                var newDelay = unit.AttackStartTime + unit.GetAttackDelay(target) - GameManager.RawGameTime;
-                delay = delay > newDelay ? delay : newDelay;
-                damages += unit.GetDamage(target);
-                myFarmUnitToStop.Add(unit);
-            }
-
-            if (target.GetPredictedHealth(delay) > damages)
-            {
-                Player.Stop(myFarmUnitToStop.Select(x => x.Unit.BaseUnit));
-                myFarmUnitToStop.ForEach(x => x.ResetSleepers());
-            }
+            return;
         }
 
-        public bool ContainsAllUnits(IEnumerable<FarmUnit> myUnits)
+        this.units.Remove(farmUnit);
+
+        if (this.units.Any(x => x.Unit.IsValid && x.Unit.IsAlive))
         {
-            return myUnits.All(x => this.units.Contains(x));
+            return;
         }
 
-        public void RemoveLastAddedUnits()
+        this.units.Clear();
+        this.handler.IsEnabled = false;
+    }
+
+    public void RemoveUnits(IEnumerable<Entity> entities)
+    {
+        if (!this.handler.IsEnabled)
         {
-            this.RemoveUnits(this.LastAddedUnits);
+            return;
         }
 
-        public void RemoveUnit(Unit9 unit)
+        this.RemoveUnits(this.units.Where(x => entities.Contains(x.Unit.BaseUnit)));
+    }
+
+    public void RemoveUnits(IEnumerable<FarmUnit> farmUnits)
+    {
+        this.units.RemoveAll(farmUnits.Contains);
+
+        if (this.units.Any(x => x.Unit.IsValid && x.Unit.IsAlive))
         {
-            if (!this.handler.IsEnabled)
-            {
-                return;
-            }
-
-            var farmUnit = this.units.Find(x => x.Unit == unit);
-
-            if (farmUnit == null)
-            {
-                return;
-            }
-
-            this.units.Remove(farmUnit);
-
-            if (this.units.Any(x => x.Unit.IsValid && x.Unit.IsAlive))
-            {
-                return;
-            }
-
-            this.units.Clear();
-            this.handler.IsEnabled = false;
+            return;
         }
 
-        public void RemoveUnits(IEnumerable<Entity> entities)
-        {
-            if (!this.handler.IsEnabled)
-            {
-                return;
-            }
+        this.units.Clear();
+        this.handler.IsEnabled = false;
+    }
 
-            this.RemoveUnits(this.units.Where(x => entities.Contains(x.Unit.BaseUnit)));
+    protected void MoveToMouse(IEnumerable<FarmUnit> myUnits)
+    {
+        if (this.actionSleeper.IsSleeping)
+        {
+            return;
         }
 
-        public void RemoveUnits(IEnumerable<FarmUnit> farmUnits)
+        var mousePosition = GameManager.MousePosition;
+        var control = myUnits.Where(x => x.CanMoveToMouse() && x.LastMovePosition.Distance2D(mousePosition) > 50).ToList();
+
+        if (control.Count == 0)
         {
-            this.units.RemoveAll(farmUnits.Contains);
-
-            if (this.units.Any(x => x.Unit.IsValid && x.Unit.IsAlive))
-            {
-                return;
-            }
-
-            this.units.Clear();
-            this.handler.IsEnabled = false;
+            return;
         }
 
-        protected void MoveToMouse(IEnumerable<FarmUnit> myUnits)
+        if (!Player.Move(control.Select(x => x.Unit.BaseUnit), mousePosition))
         {
-            if (this.actionSleeper.IsSleeping)
-            {
-                return;
-            }
-
-            var mousePosition = GameManager.MousePosition;
-            var control = myUnits.Where(x => x.CanMoveToMouse() && x.LastMovePosition.Distance2D(mousePosition) > 50).ToList();
-
-            if (control.Count == 0)
-            {
-                return;
-            }
-
-            if (!Player.Move(control.Select(x => x.Unit.BaseUnit), mousePosition))
-            {
-                return;
-            }
-
-            foreach (var unit in control)
-            {
-                unit.LastMovePosition = mousePosition;
-                unit.Target = null;
-            }
-
-            this.actionSleeper.Sleep(0.2f);
+            return;
         }
 
-        protected abstract void OnUpdate(IReadOnlyList<FarmUnit> units, IReadOnlyList<FarmUnit> myUnits);
-
-        private void OnUpdate()
+        foreach (var unit in control)
         {
-            if (GameManager.IsPaused)
-            {
-                return;
-            }
+            unit.LastMovePosition = mousePosition;
+            unit.Target = null;
+        }
 
-            try
-            {
-                this.OnUpdate(this.UnitManager.Units.ToList(), this.units.Where(x => x.IsValid).ToList());
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+        this.actionSleeper.Sleep(0.2f);
+    }
+
+    protected abstract void OnUpdate(IReadOnlyList<FarmUnit> units, IReadOnlyList<FarmUnit> myUnits);
+
+    private void OnUpdate()
+    {
+        if (GameManager.IsPaused)
+        {
+            return;
+        }
+
+        try
+        {
+            this.OnUpdate(this.UnitManager.Units.ToList(), this.units.Where(x => x.IsValid).ToList());
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

@@ -1,40 +1,39 @@
-﻿namespace O9K.ItemManager.Modules.RecoveryAbuse.Abilities
+﻿namespace O9K.ItemManager.Modules.RecoveryAbuse.Abilities;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Runes.Components;
+
+[AbilityId(AbilityId.item_bottle)]
+internal class Bottle : RecoveryAbility
 {
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
+    private readonly Core.Entities.Abilities.Items.Bottle bottle;
 
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Runes.Components;
-
-    [AbilityId(AbilityId.item_bottle)]
-    internal class Bottle : RecoveryAbility
+    public Bottle(Ability9 ability)
+        : base(ability)
     {
-        private readonly Core.Entities.Abilities.Items.Bottle bottle;
+        this.bottle = (Core.Entities.Abilities.Items.Bottle)ability;
+    }
 
-        public Bottle(Ability9 ability)
-            : base(ability)
+    public override bool CanBeCasted()
+    {
+        return base.CanBeCasted() && this.bottle.StoredRune == RuneType.None;
+    }
+
+    public override bool CanPickUpItems()
+    {
+        if (!base.CanPickUpItems())
         {
-            this.bottle = (Core.Entities.Abilities.Items.Bottle)ability;
+            return false;
         }
 
-        public override bool CanBeCasted()
+        if (this.bottle.IsUsable && (this.RestoresHealth || this.RestoresMana) && this.bottle.BaseItem.CurrentCharges > 0)
         {
-            return base.CanBeCasted() && this.bottle.StoredRune == RuneType.None;
+            return false;
         }
 
-        public override bool CanPickUpItems()
-        {
-            if (!base.CanPickUpItems())
-            {
-                return false;
-            }
-
-            if (this.bottle.IsUsable && (this.RestoresHealth || this.RestoresMana) && this.bottle.BaseItem.CurrentCharges > 0)
-            {
-                return false;
-            }
-
-            return true;
-        }
+        return true;
     }
 }

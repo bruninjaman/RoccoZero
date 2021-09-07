@@ -1,34 +1,33 @@
-﻿namespace O9K.AIO.Heroes.Dynamic.Abilities.Nukes.Unique
+﻿namespace O9K.AIO.Heroes.Dynamic.Abilities.Nukes.Unique;
+
+using AIO.Modes.Combo;
+
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.nyx_assassin_mana_burn)]
+internal class ManaBurnNuke : OldNukeAbility
 {
-    using AIO.Modes.Combo;
-
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.nyx_assassin_mana_burn)]
-    internal class ManaBurnNuke : OldNukeAbility
+    public ManaBurnNuke(INuke ability)
+        : base(ability)
     {
-        public ManaBurnNuke(INuke ability)
-            : base(ability)
+    }
+
+    public override bool CanBeCasted(Unit9 target, ComboModeMenu menu, bool canHitCheck = true)
+    {
+        if (!base.CanBeCasted(target, menu, canHitCheck))
         {
+            return false;
         }
 
-        public override bool CanBeCasted(Unit9 target, ComboModeMenu menu, bool canHitCheck = true)
+        if (target.Mana < 100)
         {
-            if (!base.CanBeCasted(target, menu, canHitCheck))
-            {
-                return false;
-            }
-
-            if (target.Mana < 100)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
+
+        return true;
     }
 }

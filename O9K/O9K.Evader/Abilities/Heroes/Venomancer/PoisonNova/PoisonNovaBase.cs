@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Venomancer.PoisonNova
+﻿namespace O9K.Evader.Abilities.Heroes.Venomancer.PoisonNova;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.venomancer_poison_nova)]
+internal class PoisonNovaBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.venomancer_poison_nova)]
-    internal class PoisonNovaBase : EvaderBaseAbility, IEvadable
+    public PoisonNovaBase(Ability9 ability)
+        : base(ability)
     {
-        public PoisonNovaBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new PoisonNovaEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new PoisonNovaEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

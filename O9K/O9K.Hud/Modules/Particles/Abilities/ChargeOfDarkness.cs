@@ -1,111 +1,110 @@
-﻿namespace O9K.Hud.Modules.Particles.Abilities
+﻿namespace O9K.Hud.Modules.Particles.Abilities;
+
+using System;
+
+using Core.Entities.Metadata;
+using Core.Logger;
+using Core.Managers.Menu.Items;
+using Divine.Modifier;
+using Divine.Particle;
+using Divine.Modifier.EventArgs;
+using Divine.Particle.Components;
+using Divine.Particle.Particles;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Helpers.Notificator;
+using Helpers.Notificator.Notifications;
+
+using MainMenu;
+
+[AbilityId(AbilityId.spirit_breaker_charge_of_darkness)]
+internal class ChargeOfDarkness : AbilityModule
 {
-    using System;
+    private readonly MenuSwitcher notificationsEnabled;
 
-    using Core.Entities.Metadata;
-    using Core.Logger;
-    using Core.Managers.Menu.Items;
-    using Divine.Modifier;
-    using Divine.Particle;
-    using Divine.Modifier.EventArgs;
-    using Divine.Particle.Components;
-    using Divine.Particle.Particles;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Heroes;
-    using Divine.Entity.Entities.Units.Heroes.Components;
+    private Particle effect;
 
-    using Helpers.Notificator;
-    using Helpers.Notificator.Notifications;
-
-    using MainMenu;
-
-    [AbilityId(AbilityId.spirit_breaker_charge_of_darkness)]
-    internal class ChargeOfDarkness : AbilityModule
+    public ChargeOfDarkness(INotificator notificator, IHudMenu hudMenu)
+        : base(notificator, hudMenu)
     {
-        private readonly MenuSwitcher notificationsEnabled;
+        this.notificationsEnabled = hudMenu.NotificationsMenu.GetOrAdd(new Menu("Abilities"))
+            .GetOrAdd(new Menu("Used"))
+            .GetOrAdd(new MenuSwitcher("Enabled"));
+    }
 
-        private Particle effect;
+    protected override void Disable()
+    {
+        ModifierManager.ModifierAdded -= this.OnModifierAdded;
+        ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
+    }
 
-        public ChargeOfDarkness(INotificator notificator, IHudMenu hudMenu)
-            : base(notificator, hudMenu)
+    protected override void Enable()
+    {
+        ModifierManager.ModifierAdded += this.OnModifierAdded;
+    }
+
+    private void OnModifierAdded(ModifierAddedEventArgs e)
+    {
+        try
         {
-            this.notificationsEnabled = hudMenu.NotificationsMenu.GetOrAdd(new Menu("Abilities"))
-                .GetOrAdd(new Menu("Used"))
-                .GetOrAdd(new MenuSwitcher("Enabled"));
+            var modifier = e.Modifier;
+            var sender = modifier.Owner;
+            if (sender.Team != this.OwnerTeam)
+            {
+                return;
+            }
+
+            if (modifier.Name != "modifier_spirit_breaker_charge_of_darkness_vision")
+            {
+                return;
+            }
+
+            this.effect = ParticleManager.CreateParticle(
+                "particles/units/heroes/hero_spirit_breaker/spirit_breaker_charge_target.vpcf",
+                ParticleAttachment.OverheadFollow,
+                sender);
+
+            if (this.notificationsEnabled && sender is Hero)
+            {
+                this.Notificator.PushNotification(
+                    new AbilityHeroNotification(
+                        nameof(HeroId.npc_dota_hero_spirit_breaker),
+                        nameof(AbilityId.spirit_breaker_charge_of_darkness),
+                        sender.Name));
+            }
+
+            ModifierManager.ModifierRemoved += this.OnModifierRemoved;
         }
-
-        protected override void Disable()
+        catch (Exception ex)
         {
-            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            Logger.Error(ex);
+        }
+    }
+
+    private void OnModifierRemoved(ModifierRemovedEventArgs e)
+    {
+        try
+        {
+            var modifier = e.Modifier;
+            var sender = modifier.Owner;
+            if (sender.Team != this.OwnerTeam)
+            {
+                return;
+            }
+
+            if (modifier.Name != "modifier_spirit_breaker_charge_of_darkness_vision")
+            {
+                return;
+            }
+
+            this.effect.Dispose();
             ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
         }
-
-        protected override void Enable()
+        catch (Exception ex)
         {
-            ModifierManager.ModifierAdded += this.OnModifierAdded;
-        }
-
-        private void OnModifierAdded(ModifierAddedEventArgs e)
-        {
-            try
-            {
-                var modifier = e.Modifier;
-                var sender = modifier.Owner;
-                if (sender.Team != this.OwnerTeam)
-                {
-                    return;
-                }
-
-                if (modifier.Name != "modifier_spirit_breaker_charge_of_darkness_vision")
-                {
-                    return;
-                }
-
-                this.effect = ParticleManager.CreateParticle(
-                    "particles/units/heroes/hero_spirit_breaker/spirit_breaker_charge_target.vpcf",
-                    ParticleAttachment.OverheadFollow,
-                    sender);
-
-                if (this.notificationsEnabled && sender is Hero)
-                {
-                    this.Notificator.PushNotification(
-                        new AbilityHeroNotification(
-                            nameof(HeroId.npc_dota_hero_spirit_breaker),
-                            nameof(AbilityId.spirit_breaker_charge_of_darkness),
-                            sender.Name));
-                }
-
-                ModifierManager.ModifierRemoved += this.OnModifierRemoved;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
-        }
-
-        private void OnModifierRemoved(ModifierRemovedEventArgs e)
-        {
-            try
-            {
-                var modifier = e.Modifier;
-                var sender = modifier.Owner;
-                if (sender.Team != this.OwnerTeam)
-                {
-                    return;
-                }
-
-                if (modifier.Name != "modifier_spirit_breaker_charge_of_darkness_vision")
-                {
-                    return;
-                }
-
-                this.effect.Dispose();
-                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
+            Logger.Error(ex);
         }
     }
 }

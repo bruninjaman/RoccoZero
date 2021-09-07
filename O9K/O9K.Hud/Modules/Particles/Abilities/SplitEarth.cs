@@ -1,67 +1,66 @@
-﻿namespace O9K.Hud.Modules.Particles.Abilities
+﻿namespace O9K.Hud.Modules.Particles.Abilities;
+
+using System;
+
+using Core.Entities.Metadata;
+using Core.Helpers;
+using Core.Logger;
+using Divine.Modifier;
+using Divine.Numerics;
+using Divine.Particle;
+using Divine.Modifier.EventArgs;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers.Notificator;
+
+using MainMenu;
+
+[AbilityId(AbilityId.leshrac_split_earth)]
+internal class SplitEarth : AbilityModule
 {
-    using System;
+    private readonly Vector3 radius;
 
-    using Core.Entities.Metadata;
-    using Core.Helpers;
-    using Core.Logger;
-    using Divine.Modifier;
-    using Divine.Numerics;
-    using Divine.Particle;
-    using Divine.Modifier.EventArgs;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers.Notificator;
-
-    using MainMenu;
-
-    [AbilityId(AbilityId.leshrac_split_earth)]
-    internal class SplitEarth : AbilityModule
+    public SplitEarth(INotificator notificator, IHudMenu hudMenu)
+        : base(notificator, hudMenu)
     {
-        private readonly Vector3 radius;
+        var radiusData = new SpecialData(AbilityId.leshrac_split_earth, "radius").GetValue(3);
+        this.radius = new Vector3(radiusData, -radiusData, -radiusData);
+    }
 
-        public SplitEarth(INotificator notificator, IHudMenu hudMenu)
-            : base(notificator, hudMenu)
-        {
-            var radiusData = new SpecialData(AbilityId.leshrac_split_earth, "radius").GetValue(3);
-            this.radius = new Vector3(radiusData, -radiusData, -radiusData);
-        }
+    protected override void Disable()
+    {
+        ModifierManager.ModifierAdded -= this.OnModifierAdded;
+    }
 
-        protected override void Disable()
-        {
-            ModifierManager.ModifierAdded -= this.OnModifierAdded;
-        }
+    protected override void Enable()
+    {
+        ModifierManager.ModifierAdded += this.OnModifierAdded;
+    }
 
-        protected override void Enable()
+    private void OnModifierAdded(ModifierAddedEventArgs e)
+    {
+        try
         {
-            ModifierManager.ModifierAdded += this.OnModifierAdded;
-        }
-
-        private void OnModifierAdded(ModifierAddedEventArgs e)
-        {
-            try
+            var modifer = e.Modifier;
+            var sender = modifer.Owner;
+            if (sender.Team == this.OwnerTeam)
             {
-                var modifer = e.Modifier;
-                var sender = modifer.Owner;
-                if (sender.Team == this.OwnerTeam)
-                {
-                    return;
-                }
-
-                if (modifer.Name != "modifier_leshrac_split_earth_thinker")
-                {
-                    return;
-                }
-
-                var effect = ParticleManager.CreateParticle("particles/units/heroes/hero_leshrac/leshrac_split_projected.vpcf", sender.Position);
-                effect.SetControlPoint(1, this.radius);
-
-                effect.Release();
+                return;
             }
-            catch (Exception ex)
+
+            if (modifer.Name != "modifier_leshrac_split_earth_thinker")
             {
-                Logger.Error(ex);
+                return;
             }
+
+            var effect = ParticleManager.CreateParticle("particles/units/heroes/hero_leshrac/leshrac_split_projected.vpcf", sender.Position);
+            effect.SetControlPoint(1, this.radius);
+
+            effect.Release();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
         }
     }
 }

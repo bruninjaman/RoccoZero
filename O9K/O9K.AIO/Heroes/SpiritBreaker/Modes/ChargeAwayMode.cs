@@ -1,45 +1,44 @@
-﻿namespace O9K.AIO.Heroes.SpiritBreaker.Modes
+﻿namespace O9K.AIO.Heroes.SpiritBreaker.Modes;
+
+using System.Linq;
+
+using AIO.Modes.KeyPress;
+
+using Base;
+
+using Units;
+
+internal class ChargeAwayMode : KeyPressMode
 {
-    using System.Linq;
+    private SpiritBreaker hero;
 
-    using AIO.Modes.KeyPress;
-
-    using Base;
-
-    using Units;
-
-    internal class ChargeAwayMode : KeyPressMode
+    public ChargeAwayMode(BaseHero baseHero, KeyPressModeMenu menu)
+        : base(baseHero, menu)
     {
-        private SpiritBreaker hero;
+        this.LockTarget = false;
+    }
 
-        public ChargeAwayMode(BaseHero baseHero, KeyPressModeMenu menu)
-            : base(baseHero, menu)
+    private SpiritBreaker Hero
+    {
+        get
         {
-            this.LockTarget = false;
-        }
-
-        private SpiritBreaker Hero
-        {
-            get
+            if (this.hero == null)
             {
-                if (this.hero == null)
-                {
-                    this.hero = this.UnitManager.ControllableUnits.FirstOrDefault(x => this.Owner.Hero.Handle == x.Handle) as SpiritBreaker;
-                }
-
-                return this.hero;
-            }
-        }
-
-        protected override void ExecuteCombo()
-        {
-            if (this.Hero == null)
-            {
-                return;
+                this.hero = this.UnitManager.ControllableUnits.FirstOrDefault(x => this.Owner.Hero.Handle == x.Handle) as SpiritBreaker;
             }
 
-            this.hero.ChargeAway(this.TargetManager);
-            this.hero.Orbwalk(this.TargetManager.Target, true, true);
+            return this.hero;
         }
+    }
+
+    protected override void ExecuteCombo()
+    {
+        if (this.Hero == null)
+        {
+            return;
+        }
+
+        this.hero.ChargeAway(this.TargetManager);
+        this.hero.Orbwalk(this.TargetManager.Target, true, true);
     }
 }

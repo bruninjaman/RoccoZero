@@ -1,38 +1,37 @@
-﻿namespace O9K.Evader.Metadata
+﻿namespace O9K.Evader.Metadata;
+
+using System;
+using System.Collections.Generic;
+
+using Core.Entities.Units;
+
+using Divine.Numerics;
+
+using Pathfinder.Obstacles;
+
+internal interface IPathfinder
 {
-    using System;
-    using System.Collections.Generic;
+    event EventHandler<IObstacle> AbilityCanceled;
 
-    using Core.Entities.Units;
+    event EventHandler<bool> ObstacleAdded;
 
-    using Divine.Numerics;
+    List<uint> AddNavMeshObstacle(Vector3 start, Vector3 end, float radius);
 
-    using Pathfinder.Obstacles;
+    Dictionary<uint, Vector3> AddNavMeshObstacle(Vector3 startPosition, Vector3 endPosition, float radius, float endRadius);
 
-    internal interface IPathfinder
-    {
-        event EventHandler<IObstacle> AbilityCanceled;
+    List<uint> AddNavMeshObstacle(Vector3 position, float radius);
 
-        event EventHandler<bool> ObstacleAdded;
+    void AddObstacle(IObstacle obstacle);
 
-        List<uint> AddNavMeshObstacle(Vector3 start, Vector3 end, float radius);
+    void CancelObstacle(uint abilityHandle, bool forceCancel = false, bool first = false);
 
-        Dictionary<uint, Vector3> AddNavMeshObstacle(Vector3 startPosition, Vector3 endPosition, float radius, float endRadius);
+    bool CanEvadeObstacle(Unit9 unit, Vector3 position, float remainingTime);
 
-        List<uint> AddNavMeshObstacle(Vector3 position, float radius);
+    IEnumerable<IObstacle> GetIntersectingObstacles(Unit9 unit);
 
-        void AddObstacle(IObstacle obstacle);
+    IEnumerable<Vector3> GetPathFromObstacle(Unit9 unit, float speed, Vector3 position, float remainingTime, out bool success);
 
-        void CancelObstacle(uint abilityHandle, bool forceCancel = false, bool first = false);
+    void RemoveNavMeshObstacle(IEnumerable<uint> obstacleIds);
 
-        bool CanEvadeObstacle(Unit9 unit, Vector3 position, float remainingTime);
-
-        IEnumerable<IObstacle> GetIntersectingObstacles(Unit9 unit);
-
-        IEnumerable<Vector3> GetPathFromObstacle(Unit9 unit, float speed, Vector3 position, float remainingTime, out bool success);
-
-        void RemoveNavMeshObstacle(IEnumerable<uint> obstacleIds);
-
-        void RemoveNavMeshObstacle(Dictionary<uint, Vector3> obstacleIds);
-    }
+    void RemoveNavMeshObstacle(Dictionary<uint, Vector3> obstacleIds);
 }

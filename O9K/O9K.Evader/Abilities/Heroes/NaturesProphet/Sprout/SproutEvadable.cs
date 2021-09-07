@@ -1,58 +1,57 @@
-﻿namespace O9K.Evader.Abilities.Heroes.NaturesProphet.Sprout
+﻿namespace O9K.Evader.Abilities.Heroes.NaturesProphet.Sprout;
+
+using Base.Evadable;
+using Base.Evadable.Components;
+using Base.Usable;
+
+using Core.Entities.Abilities.Base;
+
+using Divine.Game;
+using Divine.Particle.Particles;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+using Pathfinder.Obstacles.Abilities.AreaOfEffect;
+
+internal sealed class SproutEvadable : AreaOfEffectEvadable, IParticle
 {
-    using Base.Evadable;
-    using Base.Evadable.Components;
-    using Base.Usable;
-
-    using Core.Entities.Abilities.Base;
-
-    using Divine.Game;
-    using Divine.Particle.Particles;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-    using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    internal sealed class SproutEvadable : AreaOfEffectEvadable, IParticle
+    public SproutEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
+        : base(ability, pathfinder, menu)
     {
-        public SproutEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
-            : base(ability, pathfinder, menu)
+        this.Counters.Add(Abilities.TreeGrab);
+        this.Counters.Add(Abilities.QuellingBlade);
+        this.Counters.Add(Abilities.BattleFury);
+        this.Counters.Add(Abilities.IronTalon);
+        this.Counters.UnionWith(Abilities.Tango);
+    }
+
+    public override bool CanBeDodged { get; } = false;
+
+    public void AddParticle(Particle particle, string name)
+    {
+        var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
+        var position = particle.GetControlPoint(0);
+
+        var obstacle = new AreaOfEffectObstacle(this, position)
         {
-            this.Counters.Add(Abilities.TreeGrab);
-            this.Counters.Add(Abilities.QuellingBlade);
-            this.Counters.Add(Abilities.BattleFury);
-            this.Counters.Add(Abilities.IronTalon);
-            this.Counters.UnionWith(Abilities.Tango);
-        }
+            EndCastTime = time,
+            EndObstacleTime = time + this.Ability.Duration
+        };
 
-        public override bool CanBeDodged { get; } = false;
+        this.Pathfinder.AddObstacle(obstacle);
+    }
 
-        public void AddParticle(Particle particle, string name)
-        {
-            var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
-            var position = particle.GetControlPoint(0);
+    public override bool IgnoreRemainingTime(IObstacle obstacle, UsableAbility usableAbility)
+    {
+        return true;
+    }
 
-            var obstacle = new AreaOfEffectObstacle(this, position)
-            {
-                EndCastTime = time,
-                EndObstacleTime = time + this.Ability.Duration
-            };
+    public override void PhaseCancel()
+    {
+    }
 
-            this.Pathfinder.AddObstacle(obstacle);
-        }
-
-        public override bool IgnoreRemainingTime(IObstacle obstacle, UsableAbility usableAbility)
-        {
-            return true;
-        }
-
-        public override void PhaseCancel()
-        {
-        }
-
-        public override void PhaseStart()
-        {
-        }
+    public override void PhaseStart()
+    {
     }
 }

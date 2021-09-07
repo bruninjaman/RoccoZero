@@ -1,38 +1,37 @@
-﻿namespace O9K.AIO.Heroes.StormSpirit.Modes
+﻿namespace O9K.AIO.Heroes.StormSpirit.Modes;
+
+using System.Linq;
+
+using AIO.Modes.KeyPress;
+
+using Base;
+
+using Units;
+
+internal class OverloadChargeMode : KeyPressMode
 {
-    using System.Linq;
+    private StormSpirit hero;
 
-    using AIO.Modes.KeyPress;
-
-    using Base;
-
-    using Units;
-
-    internal class OverloadChargeMode : KeyPressMode
+    public OverloadChargeMode(BaseHero baseHero, KeyPressModeMenu menu)
+        : base(baseHero, menu)
     {
-        private StormSpirit hero;
+    }
 
-        public OverloadChargeMode(BaseHero baseHero, KeyPressModeMenu menu)
-            : base(baseHero, menu)
+    private StormSpirit Hero
+    {
+        get
         {
-        }
-
-        private StormSpirit Hero
-        {
-            get
+            if (this.hero == null)
             {
-                if (this.hero == null)
-                {
-                    this.hero = this.UnitManager.ControllableUnits.FirstOrDefault(x => this.Owner.Hero.Handle == x.Handle) as StormSpirit;
-                }
-
-                return this.hero;
+                this.hero = this.UnitManager.ControllableUnits.FirstOrDefault(x => this.Owner.Hero.Handle == x.Handle) as StormSpirit;
             }
-        }
 
-        protected override void ExecuteCombo()
-        {
-            this.Hero?.ChargeOverload();
+            return this.hero;
         }
+    }
+
+    protected override void ExecuteCombo()
+    {
+        this.Hero?.ChargeOverload();
     }
 }

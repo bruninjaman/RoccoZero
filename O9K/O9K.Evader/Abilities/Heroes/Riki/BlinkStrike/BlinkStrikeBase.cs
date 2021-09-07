@@ -1,25 +1,24 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Riki.BlinkStrike
+﻿namespace O9K.Evader.Abilities.Heroes.Riki.BlinkStrike;
+
+using Base;
+using Base.Usable.BlinkAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.riki_blink_strike)]
+internal class BlinkStrikeBase : EvaderBaseAbility, IUsable<BlinkAbility>
 {
-    using Base;
-    using Base.Usable.BlinkAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.riki_blink_strike)]
-    internal class BlinkStrikeBase : EvaderBaseAbility, IUsable<BlinkAbility>
+    public BlinkStrikeBase(Ability9 ability)
+        : base(ability)
     {
-        public BlinkStrikeBase(Ability9 ability)
-            : base(ability)
-        {
-            //todo add disable ?
-        }
+        //todo add disable ?
+    }
 
-        public BlinkAbility GetUsableAbility()
-        {
-            return new BlinkTargetableAbility(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public BlinkAbility GetUsableAbility()
+    {
+        return new BlinkTargetableAbility(this.Ability, this.Pathfinder, this.Menu);
     }
 }

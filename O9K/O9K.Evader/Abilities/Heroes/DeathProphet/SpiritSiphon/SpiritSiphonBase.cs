@@ -1,25 +1,24 @@
-﻿namespace O9K.Evader.Abilities.Heroes.DeathProphet.SpiritSiphon
+﻿namespace O9K.Evader.Abilities.Heroes.DeathProphet.SpiritSiphon;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.death_prophet_spirit_siphon)]
+internal class SpiritSiphonBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.death_prophet_spirit_siphon)]
-    internal class SpiritSiphonBase : EvaderBaseAbility, IEvadable
+    public SpiritSiphonBase(Ability9 ability)
+        : base(ability)
     {
-        public SpiritSiphonBase(Ability9 ability)
-            : base(ability)
-        {
-            //todo add usable ?
-        }
+        //todo add usable ?
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new SpiritSiphonEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new SpiritSiphonEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

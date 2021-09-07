@@ -1,86 +1,85 @@
-﻿namespace O9K.AIO.Heroes.VoidSpirit.Abilities
+﻿namespace O9K.AIO.Heroes.VoidSpirit.Abilities;
+
+using AIO.Abilities;
+
+using Core.Entities.Abilities.Base;
+using Core.Extensions;
+using Core.Helpers;
+
+using TargetManager;
+
+internal class AetherRemnant : DisableAbility
 {
-    using AIO.Abilities;
+    private readonly Core.Entities.Abilities.Heroes.VoidSpirit.AetherRemnant remnant;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Extensions;
-    using Core.Helpers;
-
-    using TargetManager;
-
-    internal class AetherRemnant : DisableAbility
+    public AetherRemnant(ActiveAbility ability)
+        : base(ability)
     {
-        private readonly Core.Entities.Abilities.Heroes.VoidSpirit.AetherRemnant remnant;
+        this.remnant = (Core.Entities.Abilities.Heroes.VoidSpirit.AetherRemnant)ability;
+    }
 
-        public AetherRemnant(ActiveAbility ability)
-            : base(ability)
+    public override bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper)
+    {
+        var position = targetManager.Target.Position;
+
+        if (!this.remnant.UseAbility(position.Extend2D(this.Owner.Position, 100), position))
         {
-            this.remnant = (Core.Entities.Abilities.Heroes.VoidSpirit.AetherRemnant)ability;
+            return false;
         }
 
-        public override bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper)
+        var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
+        var delay = this.Ability.GetCastDelay(targetManager.Target);
+
+        targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
+        comboSleeper.Sleep(delay);
+        this.OrbwalkSleeper.Sleep(delay);
+        this.Sleeper.Sleep(hitTime);
+
+        return true;
+    }
+
+    public override bool ShouldCast(TargetManager targetManager)
+    {
+        var target = targetManager.Target;
+
+        if (target.IsDarkPactProtected)
         {
-            var position = targetManager.Target.Position;
+            return false;
+        }
 
-            if (!this.remnant.UseAbility(position.Extend2D(this.Owner.Position, 100), position))
-            {
-                return false;
-            }
-
-            var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
-            var delay = this.Ability.GetCastDelay(targetManager.Target);
-
-            targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
-            comboSleeper.Sleep(delay);
-            this.OrbwalkSleeper.Sleep(delay);
-            this.Sleeper.Sleep(hitTime);
-
+        if (target.IsInvulnerable)
+        {
             return true;
         }
 
-        public override bool ShouldCast(TargetManager targetManager)
+        if (this.Ability.GetDamage(target) < target.Health)
         {
-            var target = targetManager.Target;
-
-            if (target.IsDarkPactProtected)
+            if (target.IsStunned)
             {
-                return false;
+                return this.ChainStun(target, false);
             }
 
-            if (target.IsInvulnerable)
+            if (target.IsHexed)
             {
-                return true;
+                return this.ChainStun(target, false);
             }
 
-            if (this.Ability.GetDamage(target) < target.Health)
+            if (target.IsSilenced)
             {
-                if (target.IsStunned)
-                {
-                    return this.ChainStun(target, false);
-                }
-
-                if (target.IsHexed)
-                {
-                    return this.ChainStun(target, false);
-                }
-
-                if (target.IsSilenced)
-                {
-                    return !this.Disable.IsSilence(false) || this.ChainStun(target, false);
-                }
-
-                if (target.IsRooted)
-                {
-                    return !this.Disable.IsRoot() || this.ChainStun(target, false);
-                }
+                return !this.Disable.IsSilence(false) || this.ChainStun(target, false);
             }
 
-            if (target.IsRooted && !this.Ability.UnitTargetCast && target.GetImmobilityDuration() <= 0)
+            if (target.IsRooted)
             {
-                return false;
+                return !this.Disable.IsRoot() || this.ChainStun(target, false);
             }
-
-            return true;
         }
+
+        if (target.IsRooted && !this.Ability.UnitTargetCast && target.GetImmobilityDuration() <= 0)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

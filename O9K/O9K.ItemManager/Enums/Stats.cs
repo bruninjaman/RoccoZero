@@ -1,16 +1,15 @@
-﻿namespace O9K.ItemManager.Enums
+﻿namespace O9K.ItemManager.Enums;
+
+using System;
+
+[Flags]
+public enum Stats
 {
-    using System;
+    None = 0,
 
-    [Flags]
-    public enum Stats
-    {
-        None = 0,
+    Health = 1 << 0,
 
-        Health = 1 << 0,
+    Mana = 1 << 1,
 
-        Mana = 1 << 1,
-
-        All = Health | Mana
-    }
+    All = Health | Mana
 }

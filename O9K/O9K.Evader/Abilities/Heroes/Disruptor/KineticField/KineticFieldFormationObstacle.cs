@@ -1,48 +1,47 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.KineticField
+﻿namespace O9K.Evader.Abilities.Heroes.Disruptor.KineticField;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Base.Evadable;
+
+using Core.Entities.Units;
+using Divine.Numerics;
+using Divine.Modifier.Modifiers;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Pathfinder.Obstacles.Abilities.AreaOfEffect;
+
+internal class KineticFieldFormationObstacle : AreaOfEffectModifierObstacle
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly float activationTime;
 
-    using Base.Evadable;
-
-    using Core.Entities.Units;
-    using Divine.Numerics;
-    using Divine.Modifier.Modifiers;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Pathfinder.Obstacles.Abilities.AreaOfEffect;
-
-    internal class KineticFieldFormationObstacle : AreaOfEffectModifierObstacle
+    public KineticFieldFormationObstacle(EvadableAbility ability, Vector3 position, Modifier modifier, float activationTime)
+        : base(ability, position, modifier)
     {
-        private readonly float activationTime;
+        this.activationTime = activationTime;
+    }
 
-        public KineticFieldFormationObstacle(EvadableAbility ability, Vector3 position, Modifier modifier, float activationTime)
-            : base(ability, position, modifier)
+    public override bool IsExpired
+    {
+        get
         {
-            this.activationTime = activationTime;
+            return !this.Modifier.IsValid || this.activationTime - this.Modifier.ElapsedTime <= 0;
+        }
+    }
+
+    public override IEnumerable<AbilityId> GetCounters(Unit9 ally)
+    {
+        return Enumerable.Empty<AbilityId>();
+    }
+
+    public override float GetEvadeTime(Unit9 ally, bool blink)
+    {
+        if (!this.Modifier.IsValid)
+        {
+            return 0;
         }
 
-        public override bool IsExpired
-        {
-            get
-            {
-                return !this.Modifier.IsValid || this.activationTime - this.Modifier.ElapsedTime <= 0;
-            }
-        }
-
-        public override IEnumerable<AbilityId> GetCounters(Unit9 ally)
-        {
-            return Enumerable.Empty<AbilityId>();
-        }
-
-        public override float GetEvadeTime(Unit9 ally, bool blink)
-        {
-            if (!this.Modifier.IsValid)
-            {
-                return 0;
-            }
-
-            return this.activationTime - this.Modifier.ElapsedTime;
-        }
+        return this.activationTime - this.Modifier.ElapsedTime;
     }
 }

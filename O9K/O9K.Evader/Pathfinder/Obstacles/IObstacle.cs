@@ -1,41 +1,40 @@
-﻿namespace O9K.Evader.Pathfinder.Obstacles
+﻿namespace O9K.Evader.Pathfinder.Obstacles;
+
+using System.Collections.Generic;
+
+using Core.Entities.Units;
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities.Components;
+
+using O9K.Evader.Abilities.Base.Evadable;
+
+internal interface IObstacle
 {
-    using System.Collections.Generic;
+    bool CanBeDodged { get; }
 
-    using Core.Entities.Units;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities.Components;
+    Unit9 Caster { get; }
 
-    using O9K.Evader.Abilities.Base.Evadable;
+    EvadableAbility EvadableAbility { get; }
 
-    internal interface IObstacle
-    {
-        bool CanBeDodged { get; }
+    uint Id { get; set; }
 
-        Unit9 Caster { get; }
+    bool IsModifierObstacle { get; }
 
-        EvadableAbility EvadableAbility { get; }
+    bool IsProactiveObstacle { get; }
 
-        uint Id { get; set; }
+    Vector3 Position { get; }
 
-        bool IsModifierObstacle { get; }
+    IEnumerable<AbilityId> GetBlinks(Unit9 ally);
 
-        bool IsProactiveObstacle { get; }
+    IEnumerable<AbilityId> GetCounters(Unit9 ally);
 
-        Vector3 Position { get; }
+    int GetDamage(Unit9 ally);
 
-        IEnumerable<AbilityId> GetBlinks(Unit9 ally);
+    IEnumerable<AbilityId> GetDisables(Unit9 ally);
 
-        IEnumerable<AbilityId> GetCounters(Unit9 ally);
+    float GetDisableTime(Unit9 enemy);
 
-        int GetDamage(Unit9 ally);
+    float GetEvadeTime(Unit9 ally, bool blink);
 
-        IEnumerable<AbilityId> GetDisables(Unit9 ally);
-
-        float GetDisableTime(Unit9 enemy);
-
-        float GetEvadeTime(Unit9 ally, bool blink);
-
-        bool IsIntersecting(Unit9 unit, bool checkPrediction);
-    }
+    bool IsIntersecting(Unit9 unit, bool checkPrediction);
 }

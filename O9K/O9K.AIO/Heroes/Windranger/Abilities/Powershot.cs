@@ -1,130 +1,129 @@
-﻿namespace O9K.AIO.Heroes.Windranger.Abilities
+﻿namespace O9K.AIO.Heroes.Windranger.Abilities;
+
+using System;
+using System.Collections.Generic;
+
+using AIO.Abilities;
+
+using Core.Entities.Abilities.Base;
+using Core.Extensions;
+using Core.Helpers;
+
+using Divine.Numerics;
+using Divine.Order;
+using Divine.Order.EventArgs;
+using Divine.Order.Orders.Components;
+
+using Modes.Combo;
+
+using O9K.Core.Geometry;
+
+using TargetManager;
+
+using BasePowershot = Core.Entities.Abilities.Heroes.Windranger.Powershot;
+
+internal class Powershot : NukeAbility, IDisposable
 {
-    using System;
-    using System.Collections.Generic;
+    private readonly BasePowershot powershot;
 
-    using AIO.Abilities;
+    private Vector3 castPosition;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Extensions;
-    using Core.Helpers;
-
-    using Divine.Numerics;
-    using Divine.Order;
-    using Divine.Order.EventArgs;
-    using Divine.Order.Orders.Components;
-
-    using Modes.Combo;
-
-    using O9K.Core.Geometry;
-
-    using TargetManager;
-
-    using BasePowershot = Core.Entities.Abilities.Heroes.Windranger.Powershot;
-
-    internal class Powershot : NukeAbility, IDisposable
+    public Powershot(ActiveAbility ability)
+        : base(ability)
     {
-        private readonly BasePowershot powershot;
+        this.powershot = (BasePowershot)ability;
+        OrderManager.OrderAdding += this.OnOrderAdding;
+    }
 
-        private Vector3 castPosition;
+    public Shackleshot Shackleshot { get; set; }
 
-        public Powershot(ActiveAbility ability)
-            : base(ability)
+    public bool CancelChanneling(TargetManager targetManager)
+    {
+        if (!this.Ability.IsChanneling || !this.Ability.BaseAbility.IsChanneling)
         {
-            this.powershot = (BasePowershot)ability;
-            OrderManager.OrderAdding += this.OnOrderAdding;
-        }
-
-        public Shackleshot Shackleshot { get; set; }
-
-        public bool CancelChanneling(TargetManager targetManager)
-        {
-            if (!this.Ability.IsChanneling || !this.Ability.BaseAbility.IsChanneling)
-            {
-                return false;
-            }
-
-            var target = targetManager.Target;
-            if (target.IsStunned || target.IsRooted)
-            {
-                return false;
-            }
-
-            var polygon = new Polygon.Rectangle(
-                this.Owner.Position,
-                this.Owner.Position.Extend2D(this.castPosition, this.Ability.Range),
-                this.Ability.Radius - 75);
-
-            var input = this.Ability.GetPredictionInput(target);
-            input.Delay = this.powershot.ChannelTime - this.Ability.BaseAbility.ChannelTime;
-            var output = this.Ability.GetPredictionOutput(input);
-
-            if (!polygon.IsInside(output.TargetPosition) || this.powershot.GetCurrentDamage(target) > target.Health)
-            {
-                return this.Owner.BaseUnit.Stop();
-            }
-
             return false;
         }
 
-        public void Dispose()
+        var target = targetManager.Target;
+        if (target.IsStunned || target.IsRooted)
         {
-            OrderManager.OrderAdding -= this.OnOrderAdding;
+            return false;
         }
 
-        public override bool ShouldConditionCast(TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
+        var polygon = new Polygon.Rectangle(
+            this.Owner.Position,
+            this.Owner.Position.Extend2D(this.castPosition, this.Ability.Range),
+            this.Ability.Radius - 75);
+
+        var input = this.Ability.GetPredictionInput(target);
+        input.Delay = this.powershot.ChannelTime - this.Ability.BaseAbility.ChannelTime;
+        var output = this.Ability.GetPredictionOutput(input);
+
+        if (!polygon.IsInside(output.TargetPosition) || this.powershot.GetCurrentDamage(target) > target.Health)
         {
-            var target = targetManager.Target;
+            return this.Owner.BaseUnit.Stop();
+        }
 
-            if (this.Ability.GetDamage(target) > target.Health)
-            {
-                return true;
-            }
+        return false;
+    }
 
-            if (usableAbilities.Count > 0)
-            {
-                return target.GetImmobilityDuration() > 0.4f;
-            }
+    public void Dispose()
+    {
+        OrderManager.OrderAdding -= this.OnOrderAdding;
+    }
 
+    public override bool ShouldConditionCast(TargetManager targetManager, IComboModeMenu menu, List<UsableAbility> usableAbilities)
+    {
+        var target = targetManager.Target;
+
+        if (this.Ability.GetDamage(target) > target.Health)
+        {
             return true;
         }
 
-        public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
+        if (usableAbilities.Count > 0)
         {
-            var target = targetManager.Target;
-            var input = this.Ability.GetPredictionInput(target);
-
-            if (this.Shackleshot?.Ability.TimeSinceCasted < 0.5f)
-            {
-                input.Delay -= this.Ability.ActivationDelay;
-            }
-
-            var output = this.Ability.GetPredictionOutput(input);
-
-            if (!this.Ability.UseAbility(output.CastPosition))
-            {
-                return false;
-            }
-
-            var delay = this.Ability.GetCastDelay(targetManager.Target);
-            comboSleeper.Sleep(delay);
-            this.Sleeper.Sleep(delay + 0.5f);
-            this.OrbwalkSleeper.Sleep(delay);
-            return true;
+            return target.GetImmobilityDuration() > 0.4f;
         }
 
-        private void OnOrderAdding(OrderAddingEventArgs e)
-        {
-            var order = e.Order;
-            if (order.IsQueued || order.Type != OrderType.CastPosition)
-            {
-                return;
-            }
+        return true;
+    }
 
-            if (order.Ability.Handle == this.Ability.Handle)
-            {
-                this.castPosition = order.Position;
-            }
+    public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
+    {
+        var target = targetManager.Target;
+        var input = this.Ability.GetPredictionInput(target);
+
+        if (this.Shackleshot?.Ability.TimeSinceCasted < 0.5f)
+        {
+            input.Delay -= this.Ability.ActivationDelay;
+        }
+
+        var output = this.Ability.GetPredictionOutput(input);
+
+        if (!this.Ability.UseAbility(output.CastPosition))
+        {
+            return false;
+        }
+
+        var delay = this.Ability.GetCastDelay(targetManager.Target);
+        comboSleeper.Sleep(delay);
+        this.Sleeper.Sleep(delay + 0.5f);
+        this.OrbwalkSleeper.Sleep(delay);
+        return true;
+    }
+
+    private void OnOrderAdding(OrderAddingEventArgs e)
+    {
+        var order = e.Order;
+        if (order.IsQueued || order.Type != OrderType.CastPosition)
+        {
+            return;
+        }
+
+        if (order.Ability.Handle == this.Ability.Handle)
+        {
+            this.castPosition = order.Position;
         }
     }
 }

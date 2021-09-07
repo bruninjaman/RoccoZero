@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Tiny.Toss
+﻿namespace O9K.Evader.Abilities.Heroes.Tiny.Toss;
+
+using Base;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.tiny_toss)]
+internal class TossBase : EvaderBaseAbility, IUsable<CounterEnemyAbility>
 {
-    using Base;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.tiny_toss)]
-    internal class TossBase : EvaderBaseAbility, IUsable<CounterEnemyAbility>
+    public TossBase(Ability9 ability)
+        : base(ability)
     {
-        public TossBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public CounterEnemyAbility GetUsableAbility()
-        {
-            return new CounterEnemyAbility(this.Ability, this.Menu);
-        }
+    public CounterEnemyAbility GetUsableAbility()
+    {
+        return new CounterEnemyAbility(this.Ability, this.Menu);
     }
 }

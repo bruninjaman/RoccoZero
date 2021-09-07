@@ -1,87 +1,86 @@
-﻿namespace O9K.AutoUsage.Abilities.Debuff.Unique.SpiritSiphon
+﻿namespace O9K.AutoUsage.Abilities.Debuff.Unique.SpiritSiphon;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Abilities.Heroes.DeathProphet;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+using Divine.Extensions;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Settings;
+
+[AbilityId(AbilityId.death_prophet_spirit_siphon)]
+internal class SpiritSiphonAbility : DebuffAbility
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly SpiritSiphonSettings settings;
 
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Abilities.Heroes.DeathProphet;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-    using Divine.Extensions;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpiritSiphon spiritSiphon;
 
-    using Settings;
-
-    [AbilityId(AbilityId.death_prophet_spirit_siphon)]
-    internal class SpiritSiphonAbility : DebuffAbility
+    public SpiritSiphonAbility(IDebuff debuff, GroupSettings settings)
+        : base(debuff)
     {
-        private readonly SpiritSiphonSettings settings;
+        this.settings = new SpiritSiphonSettings(settings.Menu, debuff);
+        this.spiritSiphon = (SpiritSiphon)debuff;
+    }
 
-        private readonly SpiritSiphon spiritSiphon;
-
-        public SpiritSiphonAbility(IDebuff debuff, GroupSettings settings)
-            : base(debuff)
+    public override bool UseAbility(List<Unit9> heroes)
+    {
+        if (this.Owner.HealthPercentage > this.settings.HpThreshold)
         {
-            this.settings = new SpiritSiphonSettings(settings.Menu, debuff);
-            this.spiritSiphon = (SpiritSiphon)debuff;
-        }
-
-        public override bool UseAbility(List<Unit9> heroes)
-        {
-            if (this.Owner.HealthPercentage > this.settings.HpThreshold)
-            {
-                return false;
-            }
-
-            var enemies = heroes.Where(x => !x.IsInvulnerable && x.IsEnemy(this.Owner))
-                .OrderByDescending(x => x.Equals(this.Owner.Target))
-                .ThenBy(x => x.Distance(this.Owner))
-                .ToList();
-
-            foreach (var enemy in enemies)
-            {
-                if (!this.settings.IsHeroEnabled(enemy.Name))
-                {
-                    continue;
-                }
-
-                if (!this.Ability.CanHit(enemy))
-                {
-                    continue;
-                }
-
-                if (this.Check(this.Owner, enemy))
-                {
-                    return true;
-                }
-            }
-
             return false;
         }
 
-        private bool Check(Unit9 ally, Unit9 enemy)
+        var enemies = heroes.Where(x => !x.IsInvulnerable && x.IsEnemy(this.Owner))
+            .OrderByDescending(x => x.Equals(this.Owner.Target))
+            .ThenBy(x => x.Distance(this.Owner))
+            .ToList();
+
+        foreach (var enemy in enemies)
         {
-            if (this.settings.MaxCastRange > 0 && enemy.Distance(ally) > this.settings.MaxCastRange)
+            if (!this.settings.IsHeroEnabled(enemy.Name))
             {
-                return false;
+                continue;
             }
 
-            if (enemy.BaseUnit.HasModifier(this.spiritSiphon.DebuffModifierName))
+            if (!this.Ability.CanHit(enemy))
             {
-                return false;
+                continue;
             }
 
-            if (!this.settings.OnSight && (!this.settings.OnAttack || !ally.IsAttackingHero()))
+            if (this.Check(this.Owner, enemy))
             {
-                return false;
+                return true;
             }
-
-            if (this.Ability.UnitTargetCast && enemy.IsBlockingAbilities)
-            {
-                return false;
-            }
-
-            return this.Ability.UseAbility(enemy);
         }
+
+        return false;
+    }
+
+    private bool Check(Unit9 ally, Unit9 enemy)
+    {
+        if (this.settings.MaxCastRange > 0 && enemy.Distance(ally) > this.settings.MaxCastRange)
+        {
+            return false;
+        }
+
+        if (enemy.BaseUnit.HasModifier(this.spiritSiphon.DebuffModifierName))
+        {
+            return false;
+        }
+
+        if (!this.settings.OnSight && (!this.settings.OnAttack || !ally.IsAttackingHero()))
+        {
+            return false;
+        }
+
+        if (this.Ability.UnitTargetCast && enemy.IsBlockingAbilities)
+        {
+            return false;
+        }
+
+        return this.Ability.UseAbility(enemy);
     }
 }

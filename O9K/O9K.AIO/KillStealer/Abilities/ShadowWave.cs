@@ -1,60 +1,59 @@
-﻿namespace O9K.AIO.KillStealer.Abilities
+﻿namespace O9K.AIO.KillStealer.Abilities;
+
+using System.Linq;
+
+using Base;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+using Core.Managers.Entity;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.dazzle_shadow_wave)]
+internal class ShadowWave : KillStealAbility
 {
-    using System.Linq;
+    private readonly Core.Entities.Abilities.Heroes.Dazzle.ShadowWave shadowWave;
 
-    using Base;
+    private Unit9 waveTarget;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-    using Core.Managers.Entity;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.dazzle_shadow_wave)]
-    internal class ShadowWave : KillStealAbility
+    public ShadowWave(ActiveAbility ability)
+        : base(ability)
     {
-        private readonly Core.Entities.Abilities.Heroes.Dazzle.ShadowWave shadowWave;
+        this.shadowWave = (Core.Entities.Abilities.Heroes.Dazzle.ShadowWave)ability;
+    }
 
-        private Unit9 waveTarget;
-
-        public ShadowWave(ActiveAbility ability)
-            : base(ability)
+    public override bool ShouldCast(Unit9 target)
+    {
+        if (!base.ShouldCast(target))
         {
-            this.shadowWave = (Core.Entities.Abilities.Heroes.Dazzle.ShadowWave)ability;
+            return false;
         }
 
-        public override bool ShouldCast(Unit9 target)
+        var input = this.Ability.GetPredictionInput(target);
+        var output = this.Ability.GetPredictionOutput(input);
+
+        var ally = EntityManager9.Units.FirstOrDefault(
+            x => x.IsUnit && x.IsAlive && !x.IsInvulnerable && x.IsAlly(this.Ability.Owner)
+                 && x.Distance(output.TargetPosition) < this.shadowWave.DamageRadius);
+
+        if (ally == null)
         {
-            if (!base.ShouldCast(target))
-            {
-                return false;
-            }
-
-            var input = this.Ability.GetPredictionInput(target);
-            var output = this.Ability.GetPredictionOutput(input);
-
-            var ally = EntityManager9.Units.FirstOrDefault(
-                x => x.IsUnit && x.IsAlive && !x.IsInvulnerable && x.IsAlly(this.Ability.Owner)
-                     && x.Distance(output.TargetPosition) < this.shadowWave.DamageRadius);
-
-            if (ally == null)
-            {
-                return false;
-            }
-
-            this.waveTarget = ally;
-            return true;
+            return false;
         }
 
-        public override bool UseAbility(Unit9 target)
-        {
-            if (this.waveTarget?.IsValid != true)
-            {
-                return false;
-            }
+        this.waveTarget = ally;
+        return true;
+    }
 
-            return base.UseAbility(this.waveTarget);
+    public override bool UseAbility(Unit9 target)
+    {
+        if (this.waveTarget?.IsValid != true)
+        {
+            return false;
         }
+
+        return base.UseAbility(this.waveTarget);
     }
 }

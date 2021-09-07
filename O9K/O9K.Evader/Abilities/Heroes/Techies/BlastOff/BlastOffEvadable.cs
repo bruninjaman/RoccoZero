@@ -1,113 +1,112 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Techies.BlastOff
+﻿namespace O9K.Evader.Abilities.Heroes.Techies.BlastOff;
+
+using System;
+
+using Base;
+using Base.Evadable;
+using Base.Evadable.Components;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+using Core.Logger;
+using Divine.Game;
+using Divine.Numerics;
+using Divine.Update;
+using Divine.Modifier.Modifiers;
+using Divine.Particle.Particles;
+using Divine.Entity.Entities.Units;
+
+using Metadata;
+
+using Pathfinder.Obstacles.Abilities.LinearAreaOfEffect;
+using Pathfinder.Obstacles.Modifiers;
+
+internal sealed class BlastOffEvadable : LinearAreaOfEffectEvadable, IModifierCounter, IModifierObstacle, IParticle
 {
-    using System;
+    private Vector3 startPosition = Vector3.Zero;
 
-    using Base;
-    using Base.Evadable;
-    using Base.Evadable.Components;
+    private float startTime;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-    using Core.Logger;
-    using Divine.Game;
-    using Divine.Numerics;
-    using Divine.Update;
-    using Divine.Modifier.Modifiers;
-    using Divine.Particle.Particles;
-    using Divine.Entity.Entities.Units;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles.Abilities.LinearAreaOfEffect;
-    using Pathfinder.Obstacles.Modifiers;
-
-    internal sealed class BlastOffEvadable : LinearAreaOfEffectEvadable, IModifierCounter, IModifierObstacle, IParticle
+    public BlastOffEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
+        : base(ability, pathfinder, menu)
     {
-        private Vector3 startPosition = Vector3.Zero;
+        this.Blinks.UnionWith(Abilities.Blink);
 
-        private float startTime;
+        this.Disables.UnionWith(Abilities.Disable);
 
-        public BlastOffEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
-            : base(ability, pathfinder, menu)
+        this.Counters.Add(Abilities.SleightOfFist);
+        this.Counters.Add(Abilities.BallLightning);
+        this.Counters.Add(Abilities.Mischief);
+        this.Counters.Add(Abilities.Spoink);
+        this.Counters.Add(Abilities.MantaStyle);
+        this.Counters.Add(Abilities.AttributeShift);
+        this.Counters.UnionWith(Abilities.StrongShield);
+        this.Counters.UnionWith(Abilities.Invulnerability);
+        this.Counters.UnionWith(Abilities.StrongMagicShield);
+        this.Counters.UnionWith(Abilities.Heal);
+        this.Counters.Add(Abilities.Armlet);
+        this.Counters.UnionWith(Abilities.Suicide);
+        this.Counters.Add(Abilities.BladeMail);
+
+        this.ModifierCounters.Add(Abilities.MantaStyle);
+        this.ModifierCounters.UnionWith(Abilities.AllyPurge);
+        this.ModifierCounters.Add(Abilities.PressTheAttack);
+    }
+
+    public bool AllyModifierObstacle { get; } = false;
+
+    public bool ModifierAllyCounter { get; } = true;
+
+    public bool ModifierEnemyCounter { get; } = false;
+
+    public void AddModifier(Modifier modifier, Unit9 modifierOwner)
+    {
+        var obstacle = new ModifierAllyObstacle(this, modifier, modifierOwner);
+        this.Pathfinder.AddObstacle(obstacle);
+    }
+
+    public void AddModifierObstacle(Modifier modifier, Unit sender)
+    {
+        if (this.startPosition.IsZero)
         {
-            this.Blinks.UnionWith(Abilities.Blink);
-
-            this.Disables.UnionWith(Abilities.Disable);
-
-            this.Counters.Add(Abilities.SleightOfFist);
-            this.Counters.Add(Abilities.BallLightning);
-            this.Counters.Add(Abilities.Mischief);
-            this.Counters.Add(Abilities.Spoink);
-            this.Counters.Add(Abilities.MantaStyle);
-            this.Counters.Add(Abilities.AttributeShift);
-            this.Counters.UnionWith(Abilities.StrongShield);
-            this.Counters.UnionWith(Abilities.Invulnerability);
-            this.Counters.UnionWith(Abilities.StrongMagicShield);
-            this.Counters.UnionWith(Abilities.Heal);
-            this.Counters.Add(Abilities.Armlet);
-            this.Counters.UnionWith(Abilities.Suicide);
-            this.Counters.Add(Abilities.BladeMail);
-
-            this.ModifierCounters.Add(Abilities.MantaStyle);
-            this.ModifierCounters.UnionWith(Abilities.AllyPurge);
-            this.ModifierCounters.Add(Abilities.PressTheAttack);
+            return;
         }
 
-        public bool AllyModifierObstacle { get; } = false;
-
-        public bool ModifierAllyCounter { get; } = true;
-
-        public bool ModifierEnemyCounter { get; } = false;
-
-        public void AddModifier(Modifier modifier, Unit9 modifierOwner)
+        var obstacle = new LinearAreaOfEffectObstacle(this, this.startPosition)
         {
-            var obstacle = new ModifierAllyObstacle(this, modifier, modifierOwner);
-            this.Pathfinder.AddObstacle(obstacle);
+            EndCastTime = this.startTime,
+            EndObstacleTime = this.startTime + this.Ability.ActivationDelay,
+        };
+
+        this.Pathfinder.AddObstacle(obstacle);
+        this.startPosition = Vector3.Zero;
+    }
+
+    public void AddParticle(Particle particle, string name)
+    {
+        if (this.Owner.IsVisible)
+        {
+            return;
         }
 
-        public void AddModifierObstacle(Modifier modifier, Unit sender)
-        {
-            if (this.startPosition.IsZero)
-            {
-                return;
-            }
+        this.startTime = GameManager.RawGameTime - (GameManager.Ping / 2000);
 
-            var obstacle = new LinearAreaOfEffectObstacle(this, this.startPosition)
-            {
-                EndCastTime = this.startTime,
-                EndObstacleTime = this.startTime + this.Ability.ActivationDelay,
-            };
-
-            this.Pathfinder.AddObstacle(obstacle);
-            this.startPosition = Vector3.Zero;
-        }
-
-        public void AddParticle(Particle particle, string name)
-        {
-            if (this.Owner.IsVisible)
-            {
-                return;
-            }
-
-            this.startTime = GameManager.RawGameTime - (GameManager.Ping / 2000);
-
-            UpdateManager.BeginInvoke(
-                () =>
+        UpdateManager.BeginInvoke(
+            () =>
+                {
+                    try
                     {
-                        try
+                        if (!particle.IsValid)
                         {
-                            if (!particle.IsValid)
-                            {
-                                return;
-                            }
+                            return;
+                        }
 
-                            this.startPosition = particle.GetControlPoint(1);
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Error(e);
-                        }
-                    });
-        }
+                        this.startPosition = particle.GetControlPoint(1);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+                });
     }
 }

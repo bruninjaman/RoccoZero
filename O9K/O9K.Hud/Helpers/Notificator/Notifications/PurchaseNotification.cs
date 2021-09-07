@@ -1,83 +1,82 @@
-﻿namespace O9K.Hud.Helpers.Notificator.Notifications
+﻿namespace O9K.Hud.Helpers.Notificator.Notifications;
+
+using Core.Entities.Abilities.Base;
+using Divine.Numerics;
+using Divine.Renderer;
+using Divine.Entity.Entities.Abilities.Items;
+
+internal sealed class PurchaseNotification : Notification
 {
-    using Core.Entities.Abilities.Base;
-    using Divine.Numerics;
-    using Divine.Renderer;
-    using Divine.Entity.Entities.Abilities.Items;
+    private readonly string heroName;
 
-    internal sealed class PurchaseNotification : Notification
+    private readonly Item item;
+
+    private readonly string itemName;
+
+    private readonly bool pingOnClick;
+
+    public PurchaseNotification(Ability9 ability, bool ping)
     {
-        private readonly string heroName;
+        this.pingOnClick = ping;
+        this.heroName = ability.Owner.TextureName;
+        this.itemName = ability.TextureName;
+        this.item = ability.BaseItem;
+    }
 
-        private readonly Item item;
+    public override void Draw(RectangleF position, IMinimap minimap)
+    {
+        var heroPosition = GetHeroPosition(position);
+        var itemPosition = GetItemPosition(position, heroPosition);
+        var goldPosition = GetGoldPosition(position, heroPosition, itemPosition);
+        var opacity = this.GetOpacity();
 
-        private readonly string itemName;
+        RendererManager.DrawImage("o9k.notification_bg", position, opacity);
+        RendererManager.DrawImage(this.heroName, heroPosition, ImageType.Unit, opacity);
+        RendererManager.DrawImage("o9k.gold", goldPosition, opacity);
+        RendererManager.DrawImage(this.itemName, itemPosition, ImageType.Ability, opacity);
+    }
 
-        private readonly bool pingOnClick;
-
-        public PurchaseNotification(Ability9 ability, bool ping)
+    public override bool OnClick()
+    {
+        if (!this.pingOnClick || !this.item.IsValid)
         {
-            this.pingOnClick = ping;
-            this.heroName = ability.Owner.TextureName;
-            this.itemName = ability.TextureName;
-            this.item = ability.BaseItem;
+            return false;
         }
 
-        public override void Draw(RectangleF position, IMinimap minimap)
-        {
-            var heroPosition = GetHeroPosition(position);
-            var itemPosition = GetItemPosition(position, heroPosition);
-            var goldPosition = GetGoldPosition(position, heroPosition, itemPosition);
-            var opacity = this.GetOpacity();
+        this.item.Announce();
+        return true;
+    }
 
-            RendererManager.DrawImage("o9k.notification_bg", position, opacity);
-            RendererManager.DrawImage(this.heroName, heroPosition, ImageType.Unit, opacity);
-            RendererManager.DrawImage("o9k.gold", goldPosition, opacity);
-            RendererManager.DrawImage(this.itemName, itemPosition, ImageType.Ability, opacity);
-        }
+    private static RectangleF GetGoldPosition(RectangleF position, RectangleF heroPosition, RectangleF itemPosition)
+    {
+        var rec = new RectangleF();
 
-        public override bool OnClick()
-        {
-            if (!this.pingOnClick || !this.item.IsValid)
-            {
-                return false;
-            }
+        rec.Width = position.Width * 0.18f;
+        rec.Height = position.Height * 0.6f;
+        rec.X = ((heroPosition.Right + itemPosition.Left) / 2f) - (rec.Width / 2f);
+        rec.Y = (position.Y + (position.Height / 2f)) - (rec.Height / 2);
 
-            this.item.Announce();
-            return true;
-        }
+        return rec;
+    }
 
-        private static RectangleF GetGoldPosition(RectangleF position, RectangleF heroPosition, RectangleF itemPosition)
-        {
-            var rec = new RectangleF();
+    private static RectangleF GetHeroPosition(RectangleF position)
+    {
+        var rec = position;
 
-            rec.Width = position.Width * 0.18f;
-            rec.Height = position.Height * 0.6f;
-            rec.X = ((heroPosition.Right + itemPosition.Left) / 2f) - (rec.Width / 2f);
-            rec.Y = (position.Y + (position.Height / 2f)) - (rec.Height / 2);
+        rec.X += position.Width * 0.05f;
+        rec.Y += position.Height * 0.15f;
+        rec.Width = position.Width * 0.3f;
+        rec.Height = position.Height * 0.7f;
 
-            return rec;
-        }
+        return rec;
+    }
 
-        private static RectangleF GetHeroPosition(RectangleF position)
-        {
-            var rec = position;
+    private static RectangleF GetItemPosition(RectangleF position, RectangleF heroPosition)
+    {
+        var rec = heroPosition;
+        rec.Width *= 0.8f;
+        rec.X = position.Right - (position.Width * 0.05f) - rec.Width;
 
-            rec.X += position.Width * 0.05f;
-            rec.Y += position.Height * 0.15f;
-            rec.Width = position.Width * 0.3f;
-            rec.Height = position.Height * 0.7f;
-
-            return rec;
-        }
-
-        private static RectangleF GetItemPosition(RectangleF position, RectangleF heroPosition)
-        {
-            var rec = heroPosition;
-            rec.Width *= 0.8f;
-            rec.X = position.Right - (position.Width * 0.05f) - rec.Width;
-
-            return rec;
-        }
+        return rec;
     }
 }

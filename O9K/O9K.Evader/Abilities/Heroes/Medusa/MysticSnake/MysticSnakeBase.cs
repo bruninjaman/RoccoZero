@@ -1,30 +1,29 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Medusa.MysticSnake
+﻿namespace O9K.Evader.Abilities.Heroes.Medusa.MysticSnake;
+
+using Base;
+using Base.Evadable;
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.medusa_mystic_snake)]
+internal class MysticSnakeBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>
 {
-    using Base;
-    using Base.Evadable;
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.medusa_mystic_snake)]
-    internal class MysticSnakeBase : EvaderBaseAbility, IEvadable, IUsable<CounterEnemyAbility>
+    public MysticSnakeBase(Ability9 ability)
+        : base(ability)
     {
-        public MysticSnakeBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new MysticSnakeEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new MysticSnakeEvadable(this.Ability, this.Pathfinder, this.Menu);
+    }
 
-        public CounterEnemyAbility GetUsableAbility()
-        {
-            return new CounterEnemyAbility(this.Ability, this.Menu);
-        }
+    public CounterEnemyAbility GetUsableAbility()
+    {
+        return new CounterEnemyAbility(this.Ability, this.Menu);
     }
 }

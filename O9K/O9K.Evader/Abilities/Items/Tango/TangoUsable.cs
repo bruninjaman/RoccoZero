@@ -1,58 +1,57 @@
-﻿namespace O9K.Evader.Abilities.Items.Tango
+﻿namespace O9K.Evader.Abilities.Items.Tango;
+
+using System.Linq;
+
+using Base.Usable.CounterAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+using Core.Managers.Entity;
+using Divine.Extensions;
+using Divine.Entity.Entities.Trees;
+
+using Metadata;
+
+using Pathfinder.Obstacles;
+
+internal class TangoUsable : CounterAbility
 {
-    using System.Linq;
+    private Tree tree;
 
-    using Base.Usable.CounterAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-    using Core.Managers.Entity;
-    using Divine.Extensions;
-    using Divine.Entity.Entities.Trees;
-
-    using Metadata;
-
-    using Pathfinder.Obstacles;
-
-    internal class TangoUsable : CounterAbility
+    public TangoUsable(Ability9 ability, IMainMenu menu)
+        : base(ability, menu)
     {
-        private Tree tree;
+        this.CanBeCastedOnAlly = true;
+    }
 
-        public TangoUsable(Ability9 ability, IMainMenu menu)
-            : base(ability, menu)
+    public override bool CanBeCasted(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        if (!base.CanBeCasted(ally, enemy, obstacle))
         {
-            this.CanBeCastedOnAlly = true;
+            return false;
         }
 
-        public override bool CanBeCasted(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+        this.tree = EntityManager9.Trees
+            .Where(x => x.Distance2D(ally.Position) < obstacle.EvadableAbility.Ability.Radius && x.Name == "dota_temp_tree")
+            .OrderBy(x => this.Owner.GetTurnTime(x.Position))
+            .FirstOrDefault(x => x.Distance2D(this.Owner.Position) < this.Ability.CastRange);
+
+        if (this.tree == null)
         {
-            if (!base.CanBeCasted(ally, enemy, obstacle))
-            {
-                return false;
-            }
-
-            this.tree = EntityManager9.Trees
-                .Where(x => x.Distance2D(ally.Position) < obstacle.EvadableAbility.Ability.Radius && x.Name == "dota_temp_tree")
-                .OrderBy(x => this.Owner.GetTurnTime(x.Position))
-                .FirstOrDefault(x => x.Distance2D(this.Owner.Position) < this.Ability.CastRange);
-
-            if (this.tree == null)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
-        public override float GetRequiredTime(Unit9 ally, Unit9 enemy, IObstacle obstacle)
-        {
-            return this.ActiveAbility.GetHitTime(this.tree.Position);
-        }
+        return true;
+    }
 
-        public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
-        {
-            this.MoveCamera(this.tree.Position);
-            return this.ActiveAbility.UseAbility(this.tree, false, true);
-        }
+    public override float GetRequiredTime(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        return this.ActiveAbility.GetHitTime(this.tree.Position);
+    }
+
+    public override bool Use(Unit9 ally, Unit9 enemy, IObstacle obstacle)
+    {
+        this.MoveCamera(this.tree.Position);
+        return this.ActiveAbility.UseAbility(this.tree, false, true);
     }
 }

@@ -1,226 +1,225 @@
-﻿namespace O9K.AIO.Heroes.Morphling
+﻿namespace O9K.AIO.Heroes.Morphling;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Base;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Heroes.Unique;
+using Core.Logger;
+
+using Dynamic.Units;
+using Divine.Game;
+using Divine.Numerics;
+
+using Modes.Combo;
+
+using UnitManager;
+
+internal class MorphlingUnitManager : UnitManager
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Base;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Heroes.Unique;
-    using Core.Logger;
-
-    using Dynamic.Units;
-    using Divine.Game;
-    using Divine.Numerics;
-
-    using Modes.Combo;
-
-    using UnitManager;
-
-    internal class MorphlingUnitManager : UnitManager
+    public MorphlingUnitManager(BaseHero baseHero)
+        : base(baseHero)
     {
-        public MorphlingUnitManager(BaseHero baseHero)
-            : base(baseHero)
-        {
-        }
+    }
 
-        public override void ExecuteCombo(ComboModeMenu comboModeMenu)
-        {
-            var controlMorphedUnitName = this.owner.Hero is Morphling morphling && morphling.IsMorphed
-                                             ? morphling.MorphedHero.Name
-                                             : this.owner.HeroName;
+    public override void ExecuteCombo(ComboModeMenu comboModeMenu)
+    {
+        var controlMorphedUnitName = this.owner.Hero is Morphling morphling && morphling.IsMorphed
+                                         ? morphling.MorphedHero.Name
+                                         : this.owner.HeroName;
 
-            foreach (var controllable in this.ControllableUnits.Where(
-                x => x.MorphedUnitName == null || x.MorphedUnitName == controlMorphedUnitName))
+        foreach (var controllable in this.ControllableUnits.Where(
+            x => x.MorphedUnitName == null || x.MorphedUnitName == controlMorphedUnitName))
+        {
+            if (controllable.ComboSleeper.IsSleeping)
             {
-                if (controllable.ComboSleeper.IsSleeping)
-                {
-                    continue;
-                }
-
-                if (!comboModeMenu.IgnoreInvisibility && controllable.IsInvisible)
-                {
-                    return;
-                }
-
-                if (controllable.Combo(this.targetManager, comboModeMenu))
-                {
-                    controllable.LastMovePosition = Vector3.Zero;
-                }
+                continue;
             }
-        }
 
-        public override void Orbwalk(ComboModeMenu comboModeMenu)
-        {
-            if (this.issuedAction.IsSleeping)
+            if (!comboModeMenu.IgnoreInvisibility && controllable.IsInvisible)
             {
                 return;
             }
 
-            var controlMorphedUnitName = this.owner.Hero is Morphling morphling && morphling.IsMorphed
-                                             ? morphling.MorphedHero.Name
-                                             : this.owner.HeroName;
-
-            var allUnits = this.ControllableUnits.Where(x => x.MorphedUnitName == null || x.MorphedUnitName == controlMorphedUnitName)
-                .OrderBy(x => this.IssuedActionTime(x.Handle))
-                .ToList();
-
-            if (this.BodyBlock(allUnits, comboModeMenu))
+            if (controllable.Combo(this.targetManager, comboModeMenu))
             {
-                this.issuedAction.Sleep(0.05f);
-                return;
-            }
-
-            var noOrbwalkUnits = new List<ControllableUnit>();
-            foreach (var controllable in allUnits)
-            {
-                if (!controllable.OrbwalkEnabled)
-                {
-                    noOrbwalkUnits.Add(controllable);
-                    continue;
-                }
-
-                if (this.unitIssuedAction.IsSleeping(controllable.Handle))
-                {
-                    continue;
-                }
-
-                if (!controllable.Orbwalk(this.targetManager.Target, comboModeMenu))
-                {
-                    continue;
-                }
-
-                this.issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
-                this.unitIssuedAction.Sleep(controllable.Handle, 0.2f);
-                this.issuedAction.Sleep(0.05f);
-                return;
-            }
-
-            if (noOrbwalkUnits.Count > 0 && !this.unitIssuedAction.IsSleeping(uint.MaxValue))
-            {
-                this.ControlAllUnits(noOrbwalkUnits);
+                controllable.LastMovePosition = Vector3.Zero;
             }
         }
+    }
 
-        protected override void OnAbilityAdded(Ability9 entity)
+    public override void Orbwalk(ComboModeMenu comboModeMenu)
+    {
+        if (this.issuedAction.IsSleeping)
         {
-            try
+            return;
+        }
+
+        var controlMorphedUnitName = this.owner.Hero is Morphling morphling && morphling.IsMorphed
+                                         ? morphling.MorphedHero.Name
+                                         : this.owner.HeroName;
+
+        var allUnits = this.ControllableUnits.Where(x => x.MorphedUnitName == null || x.MorphedUnitName == controlMorphedUnitName)
+            .OrderBy(x => this.IssuedActionTime(x.Handle))
+            .ToList();
+
+        if (this.BodyBlock(allUnits, comboModeMenu))
+        {
+            this.issuedAction.Sleep(0.05f);
+            return;
+        }
+
+        var noOrbwalkUnits = new List<ControllableUnit>();
+        foreach (var controllable in allUnits)
+        {
+            if (!controllable.OrbwalkEnabled)
             {
-                if (!entity.IsControllable || entity.IsFake || !entity.Owner.IsAlly(this.owner.Team)
-                    || !(entity is ActiveAbility activeAbility))
+                noOrbwalkUnits.Add(controllable);
+                continue;
+            }
+
+            if (this.unitIssuedAction.IsSleeping(controllable.Handle))
+            {
+                continue;
+            }
+
+            if (!controllable.Orbwalk(this.targetManager.Target, comboModeMenu))
+            {
+                continue;
+            }
+
+            this.issuedActionTimings[controllable.Handle] = GameManager.RawGameTime;
+            this.unitIssuedAction.Sleep(controllable.Handle, 0.2f);
+            this.issuedAction.Sleep(0.05f);
+            return;
+        }
+
+        if (noOrbwalkUnits.Count > 0 && !this.unitIssuedAction.IsSleeping(uint.MaxValue))
+        {
+            this.ControlAllUnits(noOrbwalkUnits);
+        }
+    }
+
+    protected override void OnAbilityAdded(Ability9 entity)
+    {
+        try
+        {
+            if (!entity.IsControllable || entity.IsFake || !entity.Owner.IsAlly(this.owner.Team)
+                || !(entity is ActiveAbility activeAbility))
+            {
+                return;
+            }
+
+            var abilityOwner = entity.Owner;
+            var morph = entity.Owner as Morphling;
+
+            if (morph?.IsMorphed == true)
+            {
+                ControllableUnit morphedUnit;
+
+                if (this.unitTypes.TryGetValue(morph.MorphedHero.Name, out var type))
                 {
-                    return;
-                }
+                    morphedUnit = this.controllableUnits.Find(x => x.Handle == abilityOwner.Handle && x.GetType() == type);
 
-                var abilityOwner = entity.Owner;
-                var morph = entity.Owner as Morphling;
-
-                if (morph?.IsMorphed == true)
-                {
-                    ControllableUnit morphedUnit;
-
-                    if (this.unitTypes.TryGetValue(morph.MorphedHero.Name, out var type))
+                    if (morphedUnit == null)
                     {
-                        morphedUnit = this.controllableUnits.Find(x => x.Handle == abilityOwner.Handle && x.GetType() == type);
+                        morphedUnit = (ControllableUnit)Activator.CreateInstance(
+                            type,
+                            abilityOwner,
+                            this.abilitySleeper,
+                            this.orbwalkSleeper[abilityOwner.Handle],
+                            this.GetUnitMenu(abilityOwner));
+                        morphedUnit.FailSafe = this.BaseHero.FailSafe;
+                        morphedUnit.MorphedUnitName = morph.MorphedHero.Name;
 
-                        if (morphedUnit == null)
+                        foreach (var item in abilityOwner.Abilities.Where(x => x.IsItem).OfType<ActiveAbility>())
                         {
-                            morphedUnit = (ControllableUnit)Activator.CreateInstance(
-                                type,
-                                abilityOwner,
-                                this.abilitySleeper,
-                                this.orbwalkSleeper[abilityOwner.Handle],
-                                this.GetUnitMenu(abilityOwner));
-                            morphedUnit.FailSafe = this.BaseHero.FailSafe;
-                            morphedUnit.MorphedUnitName = morph.MorphedHero.Name;
-
-                            foreach (var item in abilityOwner.Abilities.Where(x => x.IsItem).OfType<ActiveAbility>())
-                            {
-                                morphedUnit.AddAbility(item, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
-                            }
-
-                            this.controllableUnits.Add(morphedUnit);
+                            morphedUnit.AddAbility(item, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
                         }
-                    }
-                    else
-                    {
-                        morphedUnit = this.controllableUnits.Find(x => x.Handle == abilityOwner.Handle && x is DynamicUnit);
 
-                        if (morphedUnit == null)
-                        {
-                            morphedUnit = new DynamicUnit(
-                                abilityOwner,
-                                this.abilitySleeper,
-                                this.orbwalkSleeper[abilityOwner.Handle],
-                                this.GetUnitMenu(abilityOwner),
-                                this.BaseHero)
-                            {
-                                FailSafe = this.BaseHero.FailSafe,
-                                MorphedUnitName = morph.MorphedHero.Name
-                            };
-                            foreach (var item in abilityOwner.Abilities.Where(x => x.IsItem).OfType<ActiveAbility>())
-                            {
-                                morphedUnit.AddAbility(item, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
-                            }
-
-                            this.controllableUnits.Add(morphedUnit);
-                        }
-                    }
-
-                    if (activeAbility.IsItem)
-                    {
-                        foreach (var controllableUnit in this.controllableUnits.Where(x => x.Handle == abilityOwner.Handle))
-                        {
-                            controllableUnit.AddAbility(activeAbility, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
-                        }
-                    }
-                    else
-                    {
-                        morphedUnit.AddAbility(activeAbility, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
-                    }
-
-                    return;
-                }
-
-                if (activeAbility.IsItem)
-                {
-                    foreach (var controllable in this.controllableUnits.Where(x => x.Handle == abilityOwner.Handle))
-                    {
-                        controllable.AddAbility(activeAbility, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
+                        this.controllableUnits.Add(morphedUnit);
                     }
                 }
                 else
                 {
-                    var controllable = this.controllableUnits.Find(x => x.Handle == entity.Owner.Handle);
-                    controllable?.AddAbility(activeAbility, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
+                    morphedUnit = this.controllableUnits.Find(x => x.Handle == abilityOwner.Handle && x is DynamicUnit);
+
+                    if (morphedUnit == null)
+                    {
+                        morphedUnit = new DynamicUnit(
+                            abilityOwner,
+                            this.abilitySleeper,
+                            this.orbwalkSleeper[abilityOwner.Handle],
+                            this.GetUnitMenu(abilityOwner),
+                            this.BaseHero)
+                        {
+                            FailSafe = this.BaseHero.FailSafe,
+                            MorphedUnitName = morph.MorphedHero.Name
+                        };
+                        foreach (var item in abilityOwner.Abilities.Where(x => x.IsItem).OfType<ActiveAbility>())
+                        {
+                            morphedUnit.AddAbility(item, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
+                        }
+
+                        this.controllableUnits.Add(morphedUnit);
+                    }
+                }
+
+                if (activeAbility.IsItem)
+                {
+                    foreach (var controllableUnit in this.controllableUnits.Where(x => x.Handle == abilityOwner.Handle))
+                    {
+                        controllableUnit.AddAbility(activeAbility, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
+                    }
+                }
+                else
+                {
+                    morphedUnit.AddAbility(activeAbility, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
+                }
+
+                return;
+            }
+
+            if (activeAbility.IsItem)
+            {
+                foreach (var controllable in this.controllableUnits.Where(x => x.Handle == abilityOwner.Handle))
+                {
+                    controllable.AddAbility(activeAbility, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
                 }
             }
-            catch (Exception e)
+            else
             {
-                Logger.Error(e);
+                var controllable = this.controllableUnits.Find(x => x.Handle == entity.Owner.Handle);
+                controllable?.AddAbility(activeAbility, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
             }
         }
-
-        protected override void OnAbilityRemoved(Ability9 entity)
+        catch (Exception e)
         {
-            try
-            {
-                if (!entity.IsControllable || entity.IsFake || !entity.Owner.IsAlly(this.owner.Team)
-                    || !(entity is ActiveAbility activeAbility))
-                {
-                    return;
-                }
+            Logger.Error(e);
+        }
+    }
 
-                foreach (var controllable in this.controllableUnits.Where(x => x.Handle == entity.Owner.Handle))
-                {
-                    controllable.RemoveAbility(activeAbility);
-                }
-            }
-            catch (Exception e)
+    protected override void OnAbilityRemoved(Ability9 entity)
+    {
+        try
+        {
+            if (!entity.IsControllable || entity.IsFake || !entity.Owner.IsAlly(this.owner.Team)
+                || !(entity is ActiveAbility activeAbility))
             {
-                Logger.Error(e);
+                return;
             }
+
+            foreach (var controllable in this.controllableUnits.Where(x => x.Handle == entity.Owner.Handle))
+            {
+                controllable.RemoveAbility(activeAbility);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

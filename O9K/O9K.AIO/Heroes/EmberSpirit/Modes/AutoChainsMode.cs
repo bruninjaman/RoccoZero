@@ -1,157 +1,156 @@
-﻿namespace O9K.AIO.Heroes.EmberSpirit.Modes
+﻿namespace O9K.AIO.Heroes.EmberSpirit.Modes;
+
+using System;
+using System.Linq;
+
+using AIO.Modes.Permanent;
+
+using Base;
+
+using Core.Entities.Abilities.Base;
+using Core.Logger;
+
+using Divine.Modifier;
+using Divine.Order;
+using Divine.Update;
+using Divine.Modifier.EventArgs;
+using Divine.Order.EventArgs;
+using Divine.Order.Orders.Components;
+using Divine.Entity.Entities.Abilities.Components;
+
+internal class AutoChainsMode : PermanentMode
 {
-    using System;
-    using System.Linq;
+    private readonly AutoChainsModeMenu menu;
 
-    using AIO.Modes.Permanent;
+    private bool useChains;
 
-    using Base;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Logger;
-
-    using Divine.Modifier;
-    using Divine.Order;
-    using Divine.Update;
-    using Divine.Modifier.EventArgs;
-    using Divine.Order.EventArgs;
-    using Divine.Order.Orders.Components;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    internal class AutoChainsMode : PermanentMode
+    public AutoChainsMode(BaseHero baseHero, AutoChainsModeMenu menu)
+        : base(baseHero, menu)
     {
-        private readonly AutoChainsModeMenu menu;
+        this.menu = menu;
+        OrderManager.OrderAdding += OnOrderAdding;
+    }
 
-        private bool useChains;
+    public override void Dispose()
+    {
+        base.Dispose();
+        OrderManager.OrderAdding -= OnOrderAdding;
+        ModifierManager.ModifierAdded -= this.OnModifierAdded;
+        ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
+    }
 
-        public AutoChainsMode(BaseHero baseHero, AutoChainsModeMenu menu)
-            : base(baseHero, menu)
+    protected override void Execute()
+    {
+        if (!this.useChains)
         {
-            this.menu = menu;
-            OrderManager.OrderAdding += OnOrderAdding;
+            return;
         }
 
-        public override void Dispose()
+        var hero = this.Owner.Hero;
+
+        if (!hero.IsValid || !hero.IsAlive)
         {
-            base.Dispose();
-            OrderManager.OrderAdding -= OnOrderAdding;
-            ModifierManager.ModifierAdded -= this.OnModifierAdded;
-            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
+            return;
         }
 
-        protected override void Execute()
+        var chains = hero.Abilities.FirstOrDefault(x => x.Id == AbilityId.ember_spirit_searing_chains) as ActiveAbility;
+        if (chains?.IsValid != true || !chains.CanBeCasted())
         {
-            if (!this.useChains)
-            {
-                return;
-            }
-
-            var hero = this.Owner.Hero;
-
-            if (!hero.IsValid || !hero.IsAlive)
-            {
-                return;
-            }
-
-            var chains = hero.Abilities.FirstOrDefault(x => x.Id == AbilityId.ember_spirit_searing_chains) as ActiveAbility;
-            if (chains?.IsValid != true || !chains.CanBeCasted())
-            {
-                return;
-            }
-
-            var enemy = this.TargetManager.EnemyHeroes.Any(x => chains.CanHit(x));
-            if (!enemy)
-            {
-                return;
-            }
-
-            if (this.menu.fistKey)
-            {
-                chains.UseAbility();
-            }
-
-            this.useChains = false;
+            return;
         }
 
-        private void OnOrderAdding(OrderAddingEventArgs e)
+        var enemy = this.TargetManager.EnemyHeroes.Any(x => chains.CanHit(x));
+        if (!enemy)
+        {
+            return;
+        }
+
+        if (this.menu.fistKey)
+        {
+            chains.UseAbility();
+        }
+
+        this.useChains = false;
+    }
+
+    private void OnOrderAdding(OrderAddingEventArgs e)
+    {
+        try
+        {
+            if (e.IsCustom || !e.Process)
+            {
+                return;
+            }
+
+            var order = e.Order;
+            if (order.Type != OrderType.CastPosition)
+            {
+                return;
+            }
+
+            if (order.Ability.Id == AbilityId.ember_spirit_sleight_of_fist)
+            {
+                ModifierManager.ModifierAdded += this.OnModifierAdded;
+                ModifierManager.ModifierRemoved += this.OnModifierRemoved;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+    private void OnModifierAdded(ModifierAddedEventArgs e)
+    {
+        var modifier = e.Modifier;
+        if (modifier.Name != "modifier_ember_spirit_sleight_of_fist_caster")
+        {
+            return;
+        }
+
+        UpdateManager.BeginInvoke(() =>
         {
             try
             {
-                if (e.IsCustom || !e.Process)
+                if (modifier.Owner.Handle != this.Owner.HeroHandle)
                 {
                     return;
                 }
 
-                var order = e.Order;
-                if (order.Type != OrderType.CastPosition)
-                {
-                    return;
-                }
-
-                if (order.Ability.Id == AbilityId.ember_spirit_sleight_of_fist)
-                {
-                    ModifierManager.ModifierAdded += this.OnModifierAdded;
-                    ModifierManager.ModifierRemoved += this.OnModifierRemoved;
-                }
+                this.useChains = true;
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
             }
-        }
+        });
+    }
 
-        private void OnModifierAdded(ModifierAddedEventArgs e)
+    private void OnModifierRemoved(ModifierRemovedEventArgs e)
+    {
+        var modifier = e.Modifier;
+        if (modifier.Name != "modifier_ember_spirit_sleight_of_fist_caster")
         {
-            var modifier = e.Modifier;
-            if (modifier.Name != "modifier_ember_spirit_sleight_of_fist_caster")
-            {
-                return;
-            }
-
-            UpdateManager.BeginInvoke(() =>
-            {
-                try
-                {
-                    if (modifier.Owner.Handle != this.Owner.HeroHandle)
-                    {
-                        return;
-                    }
-
-                    this.useChains = true;
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex);
-                }
-            });
+            return;
         }
 
-        private void OnModifierRemoved(ModifierRemovedEventArgs e)
+        UpdateManager.BeginInvoke(() =>
         {
-            var modifier = e.Modifier;
-            if (modifier.Name != "modifier_ember_spirit_sleight_of_fist_caster")
+            try
             {
-                return;
+                if (modifier.Owner.Handle != this.Owner.HeroHandle)
+                {
+                    return;
+                }
+
+                ModifierManager.ModifierAdded -= this.OnModifierAdded;
+                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
+                this.useChains = false;
             }
-
-            UpdateManager.BeginInvoke(() =>
+            catch (Exception ex)
             {
-                try
-                {
-                    if (modifier.Owner.Handle != this.Owner.HeroHandle)
-                    {
-                        return;
-                    }
-
-                    ModifierManager.ModifierAdded -= this.OnModifierAdded;
-                    ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
-                    this.useChains = false;
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex);
-                }
-            });
-        }
+                Logger.Error(ex);
+            }
+        });
     }
 }

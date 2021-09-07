@@ -1,9 +1,8 @@
-﻿namespace O9K.Evader.Pathfinder.Obstacles.Types
-{
-    internal interface IUpdatable
-    {
-        bool IsUpdated { get; }
+﻿namespace O9K.Evader.Pathfinder.Obstacles.Types;
 
-        void Update();
-    }
+internal interface IUpdatable
+{
+    bool IsUpdated { get; }
+
+    void Update();
 }

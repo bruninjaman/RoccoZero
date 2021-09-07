@@ -1,208 +1,207 @@
-﻿namespace O9K.AIO.Heroes.Morphling.Units
+﻿namespace O9K.AIO.Heroes.Morphling.Units;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Abilities;
+
+using AIO.Abilities;
+using AIO.Abilities.Items;
+
+using Base;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+using Core.Helpers;
+using Core.Logger;
+using Divine.Order;
+using Divine.Order.EventArgs;
+using Divine.Order.Orders.Components;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Modes.Combo;
+
+using TargetManager;
+
+using BaseMorphling = Core.Entities.Heroes.Unique.Morphling;
+
+[UnitName(nameof(HeroId.npc_dota_hero_morphling))]
+internal class Morphling : ControllableUnit, IDisposable
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly BaseMorphling morphling;
 
-    using Abilities;
+    private readonly MultiSleeper morphlingAbilitySleeper = new MultiSleeper();
 
-    using AIO.Abilities;
-    using AIO.Abilities.Items;
+    private NukeAbility agi;
 
-    using Base;
+    private DisableAbility bloodthorn;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-    using Core.Helpers;
-    using Core.Logger;
-    using Divine.Order;
-    using Divine.Order.EventArgs;
-    using Divine.Order.Orders.Components;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Heroes.Components;
+    private NukeAbility ethereal;
 
-    using Modes.Combo;
+    private BuffAbility manta;
 
-    using TargetManager;
+    //private Morph morph;
 
-    using BaseMorphling = Core.Entities.Heroes.Unique.Morphling;
+    private DisableAbility orchid;
 
-    [UnitName(nameof(HeroId.npc_dota_hero_morphling))]
-    internal class Morphling : ControllableUnit, IDisposable
+    //private Replicate replicate;
+
+    private DisableAbility str;
+
+    private NukeAbility wave;
+
+    private BlinkAbility waveBlink;
+
+    public Morphling(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
+        : base(owner, abilitySleeper, orbwalkSleeper, menu)
     {
-        private readonly BaseMorphling morphling;
+        this.morphling = (BaseMorphling)owner;
 
-        private readonly MultiSleeper morphlingAbilitySleeper = new MultiSleeper();
-
-        private NukeAbility agi;
-
-        private DisableAbility bloodthorn;
-
-        private NukeAbility ethereal;
-
-        private BuffAbility manta;
-
-        //private Morph morph;
-
-        private DisableAbility orchid;
-
-        //private Replicate replicate;
-
-        private DisableAbility str;
-
-        private NukeAbility wave;
-
-        private BlinkAbility waveBlink;
-
-        public Morphling(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
-            : base(owner, abilitySleeper, orbwalkSleeper, menu)
+        this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
         {
-            this.morphling = (BaseMorphling)owner;
+            { AbilityId.morphling_waveform, x => this.wave = new Wave(x) },
+            { AbilityId.morphling_adaptive_strike_str, x => this.str = new DisableAbility(x) },
+            { AbilityId.morphling_adaptive_strike_agi, x => this.agi = new NukeAbility(x) },
 
-            this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
-            {
-                { AbilityId.morphling_waveform, x => this.wave = new Wave(x) },
-                { AbilityId.morphling_adaptive_strike_str, x => this.str = new DisableAbility(x) },
-                { AbilityId.morphling_adaptive_strike_agi, x => this.agi = new NukeAbility(x) },
+            //{ AbilityId.morphling_replicate, x => this.replicate = new Replicate(x) },
+            //{ AbilityId.morphling_morph_replicate, x => this.morph = new Morph(x) },
 
-                //{ AbilityId.morphling_replicate, x => this.replicate = new Replicate(x) },
-                //{ AbilityId.morphling_morph_replicate, x => this.morph = new Morph(x) },
+            { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
+            { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
+            { AbilityId.item_ethereal_blade, x => this.ethereal = new NukeAbility(x) },
+            { AbilityId.item_manta, x => this.manta = new MantaStyle(x) },
+        };
 
-                { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
-                { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
-                { AbilityId.item_ethereal_blade, x => this.ethereal = new NukeAbility(x) },
-                { AbilityId.item_manta, x => this.manta = new MantaStyle(x) },
-            };
+        this.MoveComboAbilities.Add(AbilityId.morphling_waveform, x => this.waveBlink = new BlinkAbility(x));
 
-            this.MoveComboAbilities.Add(AbilityId.morphling_waveform, x => this.waveBlink = new BlinkAbility(x));
+        OrderManager.OrderAdding += this.OnOrderAdding;
+    }
 
-            OrderManager.OrderAdding += this.OnOrderAdding;
-        }
-
-        public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
+    public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
+    {
+        if (this.morphling.IsMorphed)
         {
-            if (this.morphling.IsMorphed)
-            {
-                return false;
-            }
-
-            var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
-
-            if (abilityHelper.UseAbility(this.orchid))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.bloodthorn))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.ethereal))
-            {
-                return true;
-            }
-
-            if (abilityHelper.UseAbility(this.wave))
-            {
-                return true;
-            }
-
-            if (targetManager.Target.IsChanneling)
-            {
-                if (abilityHelper.UseAbility(this.str))
-                {
-                    return true;
-                }
-            }
-
-            if (this.Owner.TotalAgility > this.Owner.TotalStrength)
-            {
-                if (abilityHelper.UseAbility(this.agi))
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                if (abilityHelper.UseAbility(this.str))
-                {
-                    return true;
-                }
-            }
-
-            if (abilityHelper.UseAbility(this.manta))
-            {
-                return true;
-            }
-
             return false;
         }
 
-        public void Dispose()
+        var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
+
+        if (abilityHelper.UseAbility(this.orchid))
         {
-            OrderManager.OrderAdding -= this.OnOrderAdding;
+            return true;
         }
 
-        public override bool Orbwalk(Unit9 target, bool attack, bool move, ComboModeMenu comboMenu = null)
+        if (abilityHelper.UseAbility(this.bloodthorn))
         {
-            if (this.morphling.IsMorphed)
-            {
-                return false;
-            }
-
-            return base.Orbwalk(target, attack, move, comboMenu);
+            return true;
         }
 
-        protected override bool MoveComboUseBlinks(AbilityHelper abilityHelper)
+        if (abilityHelper.UseAbility(this.ethereal))
         {
-            if (base.MoveComboUseBlinks(abilityHelper))
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.wave))
+        {
+            return true;
+        }
+
+        if (targetManager.Target.IsChanneling)
+        {
+            if (abilityHelper.UseAbility(this.str))
             {
                 return true;
             }
+        }
 
-            if (abilityHelper.UseMoveAbility(this.waveBlink))
+        if (this.Owner.TotalAgility > this.Owner.TotalStrength)
+        {
+            if (abilityHelper.UseAbility(this.agi))
             {
                 return true;
             }
+        }
+        else
+        {
+            if (abilityHelper.UseAbility(this.str))
+            {
+                return true;
+            }
+        }
 
+        if (abilityHelper.UseAbility(this.manta))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void Dispose()
+    {
+        OrderManager.OrderAdding -= this.OnOrderAdding;
+    }
+
+    public override bool Orbwalk(Unit9 target, bool attack, bool move, ComboModeMenu comboMenu = null)
+    {
+        if (this.morphling.IsMorphed)
+        {
             return false;
         }
 
-        private void OnOrderAdding(OrderAddingEventArgs e)
+        return base.Orbwalk(target, attack, move, comboMenu);
+    }
+
+    protected override bool MoveComboUseBlinks(AbilityHelper abilityHelper)
+    {
+        if (base.MoveComboUseBlinks(abilityHelper))
         {
-            try
+            return true;
+        }
+
+        if (abilityHelper.UseMoveAbility(this.waveBlink))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void OnOrderAdding(OrderAddingEventArgs e)
+    {
+        try
+        {
+            if (!this.morphling.IsMorphed)
             {
-                if (!this.morphling.IsMorphed)
-                {
-                    return;
-                }
-
-                if (!e.Process)
-                {
-                    return;
-                }
-
-                var order = e.Order;
-                if (order.IsQueued || !order.Units.Contains(this.Owner.BaseUnit))
-                {
-                    return;
-                }
-
-                var type = order.Type;
-                if (type != OrderType.Cast && type != OrderType.CastPosition && type != OrderType.CastTarget)
-                {
-                    return;
-                }
-
-                var ability = order.Ability;
-                this.morphlingAbilitySleeper.Sleep(ability.Handle, ability.CooldownLength);
+                return;
             }
-            catch (Exception ex)
+
+            if (!e.Process)
             {
-                Logger.Error(ex);
+                return;
             }
+
+            var order = e.Order;
+            if (order.IsQueued || !order.Units.Contains(this.Owner.BaseUnit))
+            {
+                return;
+            }
+
+            var type = order.Type;
+            if (type != OrderType.Cast && type != OrderType.CastPosition && type != OrderType.CastTarget)
+            {
+                return;
+            }
+
+            var ability = order.Ability;
+            this.morphlingAbilitySleeper.Sleep(ability.Handle, ability.CooldownLength);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
         }
     }
 }

@@ -1,103 +1,102 @@
-﻿namespace O9K.Evader.Abilities.Heroes.DrowRanger.Multishot
+﻿namespace O9K.Evader.Abilities.Heroes.DrowRanger.Multishot;
+
+using System.Collections.Generic;
+
+using Core.Entities.Units;
+using Divine.Game;
+using Divine.Numerics;
+using Divine.Modifier.Modifiers;
+
+using O9K.Core.Geometry;
+
+using Pathfinder.Obstacles.Abilities;
+using Pathfinder.Obstacles.Types;
+
+internal class MultishotObstacle : AbilityObstacle, IUpdatable
 {
-    using System.Collections.Generic;
+    protected Dictionary<uint, Vector3> NavMeshObstacles;
 
-    using Core.Entities.Units;
-    using Divine.Game;
-    using Divine.Numerics;
-    using Divine.Modifier.Modifiers;
+    private readonly Modifier modifier;
 
-    using O9K.Core.Geometry;
-
-    using Pathfinder.Obstacles.Abilities;
-    using Pathfinder.Obstacles.Types;
-
-    internal class MultishotObstacle : AbilityObstacle, IUpdatable
+    public MultishotObstacle(MultishotEvadable ability, Vector3 position, Modifier modifier)
+        : base(ability)
     {
-        protected Dictionary<uint, Vector3> NavMeshObstacles;
+        this.modifier = modifier;
+        const int RadiusIncrease = 75;
+        const int EndRadiusIncrease = 50;
+        const int RangeIncrease = 50;
 
-        private readonly Modifier modifier;
+        this.Position = position;
+        this.Range = ability.ActiveAbility.Range + RangeIncrease;
+        this.Radius = ability.ActiveAbility.Radius + RadiusIncrease;
+        this.EndRadius = ability.Multishot.EndRadius + EndRadiusIncrease;
+        this.IsUpdated = false;
+    }
 
-        public MultishotObstacle(MultishotEvadable ability, Vector3 position, Modifier modifier)
-            : base(ability)
+    public override bool IsExpired
+    {
+        get
         {
-            this.modifier = modifier;
-            const int RadiusIncrease = 75;
-            const int EndRadiusIncrease = 50;
-            const int RangeIncrease = 50;
-
-            this.Position = position;
-            this.Range = ability.ActiveAbility.Range + RangeIncrease;
-            this.Radius = ability.ActiveAbility.Radius + RadiusIncrease;
-            this.EndRadius = ability.Multishot.EndRadius + EndRadiusIncrease;
-            this.IsUpdated = false;
-        }
-
-        public override bool IsExpired
-        {
-            get
+            if (!this.modifier.IsValid)
             {
-                if (!this.modifier.IsValid)
-                {
-                    return true;
-                }
-
-                return base.IsExpired;
-            }
-        }
-
-        public bool IsUpdated { get; protected set; }
-
-        protected Vector3 EndPosition { get; set; }
-
-        protected float EndRadius { get; }
-
-        protected float Radius { get; }
-
-        protected float Range { get; }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-            if (this.NavMeshId != null)
-            {
-                this.Pathfinder.RemoveNavMeshObstacle(this.NavMeshObstacles);
-            }
-        }
-
-        public override void Draw()
-        {
-            if (this.NavMeshId == null)
-            {
-                return;
+                return true;
             }
 
-            this.Drawer.DrawArcRectangle(this.Position, this.EndPosition, this.Radius, this.EndRadius);
+            return base.IsExpired;
         }
+    }
 
-        public override float GetDisableTime(Unit9 enemy)
+    public bool IsUpdated { get; protected set; }
+
+    protected Vector3 EndPosition { get; set; }
+
+    protected float EndRadius { get; }
+
+    protected float Radius { get; }
+
+    protected float Range { get; }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        if (this.NavMeshId != null)
         {
-            return this.EndObstacleTime - GameManager.RawGameTime;
+            this.Pathfinder.RemoveNavMeshObstacle(this.NavMeshObstacles);
         }
+    }
 
-        public override float GetEvadeTime(Unit9 ally, bool blink)
+    public override void Draw()
+    {
+        if (this.NavMeshId == null)
         {
-            return this.EndObstacleTime - GameManager.RawGameTime;
+            return;
         }
 
-        public void Update()
-        {
-            //if (this.Caster.IsRotating)
-            //{
-            //    return;
-            //}
+        this.Drawer.DrawArcRectangle(this.Position, this.EndPosition, this.Radius, this.EndRadius);
+    }
 
-            this.EndPosition = this.Caster.InFront(this.Range);
-            this.Polygon = new Polygon.Trapezoid(this.Position, this.EndPosition, this.Radius, this.EndRadius);
-            this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.Position, this.EndPosition, this.Radius, this.EndRadius);
-            this.NavMeshId = 1; // hack
+    public override float GetDisableTime(Unit9 enemy)
+    {
+        return this.EndObstacleTime - GameManager.RawGameTime;
+    }
 
-            this.IsUpdated = true;
-        }
+    public override float GetEvadeTime(Unit9 ally, bool blink)
+    {
+        return this.EndObstacleTime - GameManager.RawGameTime;
+    }
+
+    public void Update()
+    {
+        //if (this.Caster.IsRotating)
+        //{
+        //    return;
+        //}
+
+        this.EndPosition = this.Caster.InFront(this.Range);
+        this.Polygon = new Polygon.Trapezoid(this.Position, this.EndPosition, this.Radius, this.EndRadius);
+        this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.Position, this.EndPosition, this.Radius, this.EndRadius);
+        this.NavMeshId = 1; // hack
+
+        this.IsUpdated = true;
     }
 }

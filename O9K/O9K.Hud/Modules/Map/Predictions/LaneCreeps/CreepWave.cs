@@ -1,158 +1,157 @@
-﻿namespace O9K.Hud.Modules.Map.Predictions.LaneCreeps
+﻿namespace O9K.Hud.Modules.Map.Predictions.LaneCreeps;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Data;
+using Core.Entities.Units;
+using Core.Extensions;
+
+using Divine.Extensions;
+using Divine.Game;
+using Divine.Numerics;
+
+using LaneData;
+
+internal class CreepWave
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    public List<Unit9> Creeps = new List<Unit9>();
 
-    using Core.Data;
-    using Core.Entities.Units;
-    using Core.Extensions;
+    private readonly Vector3 endPosition;
 
-    using Divine.Extensions;
-    using Divine.Game;
-    using Divine.Numerics;
+    private readonly int pathLength;
 
-    using LaneData;
+    private int lastPoint;
 
-    internal class CreepWave
+    private Vector3 lastVisiblePosition;
+
+    private Vector3 predictedPosition;
+
+    private Vector3[] remainingPath;
+
+    public CreepWave(LanePosition lane, Vector3[] path)
     {
-        public List<Unit9> Creeps = new List<Unit9>();
+        this.Lane = lane;
+        this.Path = path;
+        this.pathLength = this.Path.Length;
+        this.endPosition = path[this.pathLength - 1];
+        this.predictedPosition = path[0];
+    }
 
-        private readonly Vector3 endPosition;
+    public bool IsSpawned { get; private set; }
 
-        private readonly int pathLength;
-
-        private int lastPoint;
-
-        private Vector3 lastVisiblePosition;
-
-        private Vector3 predictedPosition;
-
-        private Vector3[] remainingPath;
-
-        public CreepWave(LanePosition lane, Vector3[] path)
+    public bool IsValid
+    {
+        get
         {
-            this.Lane = lane;
-            this.Path = path;
-            this.pathLength = this.Path.Length;
-            this.endPosition = path[this.pathLength - 1];
-            this.predictedPosition = path[0];
+            return this.Creeps.Any(x => x.IsValid && x.BaseUnit.IsAlive) && this.PredictedPosition.Distance2D(this.endPosition) > 300;
         }
+    }
 
-        public bool IsSpawned { get; private set; }
-
-        public bool IsValid
+    public bool IsVisible
+    {
+        get
         {
-            get
+            return this.Creeps.Any(x => x.IsValid && x.IsVisible);
+        }
+    }
+
+    public LanePosition Lane { get; }
+
+    public float LastVisibleTime { get; private set; }
+
+    public Vector3[] Path { get; }
+
+    public Vector3 Position
+    {
+        get
+        {
+            var creeps = this.Creeps.Where(x => x.IsValid && x.IsVisible).ToList();
+
+            //if (creeps.Count(x => x.IsVisible) <= Creeps.Count / 2)
+            //{
+            //    return lastVisiblePosition;
+            //}
+
+            this.lastVisiblePosition = creeps.Aggregate(new Vector3(), (position, creep) => position + creep.Position) / creeps.Count;
+            this.LastVisibleTime = GameManager.RawGameTime;
+            this.remainingPath = null;
+
+            return this.lastVisiblePosition;
+        }
+    }
+
+    public Vector3 PredictedPosition
+    {
+        get
+        {
+            return this.predictedPosition;
+        }
+        set
+        {
+            this.predictedPosition = value;
+
+            if (this.predictedPosition.Distance2D(this.Path[this.lastPoint]) < 500)
             {
-                return this.Creeps.Any(x => x.IsValid && x.BaseUnit.IsAlive) && this.PredictedPosition.Distance2D(this.endPosition) > 300;
+                this.lastPoint = Math.Min(this.lastPoint + 1, this.pathLength - 1);
             }
         }
+    }
 
-        public bool IsVisible
+    public Vector3[] RemainingPath
+    {
+        get
         {
-            get
+            if (this.remainingPath != null)
             {
-                return this.Creeps.Any(x => x.IsValid && x.IsVisible);
-            }
-        }
-
-        public LanePosition Lane { get; }
-
-        public float LastVisibleTime { get; private set; }
-
-        public Vector3[] Path { get; }
-
-        public Vector3 Position
-        {
-            get
-            {
-                var creeps = this.Creeps.Where(x => x.IsValid && x.IsVisible).ToList();
-
-                //if (creeps.Count(x => x.IsVisible) <= Creeps.Count / 2)
-                //{
-                //    return lastVisiblePosition;
-                //}
-
-                this.lastVisiblePosition = creeps.Aggregate(new Vector3(), (position, creep) => position + creep.Position) / creeps.Count;
-                this.LastVisibleTime = GameManager.RawGameTime;
-                this.remainingPath = null;
-
-                return this.lastVisiblePosition;
-            }
-        }
-
-        public Vector3 PredictedPosition
-        {
-            get
-            {
-                return this.predictedPosition;
-            }
-            set
-            {
-                this.predictedPosition = value;
-
-                if (this.predictedPosition.Distance2D(this.Path[this.lastPoint]) < 500)
-                {
-                    this.lastPoint = Math.Min(this.lastPoint + 1, this.pathLength - 1);
-                }
-            }
-        }
-
-        public Vector3[] RemainingPath
-        {
-            get
-            {
-                if (this.remainingPath != null)
-                {
-                    return this.remainingPath;
-                }
-
-                var remainingPoints = this.pathLength - this.lastPoint;
-
-                this.remainingPath = new Vector3[remainingPoints + 1];
-                this.remainingPath[0] = this.lastVisiblePosition;
-                Array.Copy(this.Path, this.lastPoint, this.remainingPath, 1, remainingPoints);
-
                 return this.remainingPath;
             }
+
+            var remainingPoints = this.pathLength - this.lastPoint;
+
+            this.remainingPath = new Vector3[remainingPoints + 1];
+            this.remainingPath[0] = this.lastVisiblePosition;
+            Array.Copy(this.Path, this.lastPoint, this.remainingPath, 1, remainingPoints);
+
+            return this.remainingPath;
         }
+    }
 
-        public float SpawnTime { get; private set; }
+    public float SpawnTime { get; private set; }
 
-        public bool WasVisible
+    public bool WasVisible
+    {
+        get
         {
-            get
-            {
-                return this.Creeps.Any(x => x.IsValid && x.BaseUnit.IsSpawned);
-            }
+            return this.Creeps.Any(x => x.IsValid && x.BaseUnit.IsSpawned);
         }
+    }
 
-        public void Spawn()
+    public void Spawn()
+    {
+        this.IsSpawned = true;
+        this.SpawnTime = GameManager.RawGameTime + 0.4f;
+    }
+
+    public void Update()
+    {
+        if (!this.WasVisible)
         {
-            this.IsSpawned = true;
-            this.SpawnTime = GameManager.RawGameTime + 0.4f;
+            this.PredictedPosition = this.Path.PositionAfter(GameManager.RawGameTime - this.SpawnTime, GameData.CreepSpeed);
         }
-
-        public void Update()
+        else if (this.IsVisible)
         {
-            if (!this.WasVisible)
+            this.PredictedPosition = this.Position;
+        }
+        else
+        {
+            if (this.LastVisibleTime <= 0)
             {
-                this.PredictedPosition = this.Path.PositionAfter(GameManager.RawGameTime - this.SpawnTime, GameData.CreepSpeed);
+                this.LastVisibleTime = GameManager.RawGameTime;
             }
-            else if (this.IsVisible)
-            {
-                this.PredictedPosition = this.Position;
-            }
-            else
-            {
-                if (this.LastVisibleTime <= 0)
-                {
-                    this.LastVisibleTime = GameManager.RawGameTime;
-                }
 
-                this.PredictedPosition = this.RemainingPath.PositionAfter(GameManager.RawGameTime - this.LastVisibleTime, GameData.CreepSpeed);
-            }
+            this.PredictedPosition = this.RemainingPath.PositionAfter(GameManager.RawGameTime - this.LastVisibleTime, GameData.CreepSpeed);
         }
     }
 }

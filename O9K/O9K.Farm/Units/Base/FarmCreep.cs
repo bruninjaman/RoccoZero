@@ -1,94 +1,93 @@
-﻿namespace O9K.Farm.Units.Base
+﻿namespace O9K.Farm.Units.Base;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Damage;
+
+using Divine.Update;
+
+using O9K.Core.Entities.Units;
+using O9K.Core.Logger;
+
+internal class FarmCreep : FarmUnit
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-
-    using Damage;
-
-    using Divine.Update;
-
-    using O9K.Core.Entities.Units;
-    using O9K.Core.Logger;
-
-    internal class FarmCreep : FarmUnit
+    public FarmCreep(Unit9 unit)
+        : base(unit)
     {
-        public FarmCreep(Unit9 unit)
-            : base(unit)
+    }
+
+    public override UnitDamage AddDamage(FarmUnit target, float attackStartTime, bool addNext, bool forceRanged)
+    {
+        UnitDamage nextDamage;
+        var damage = target.IncomingDamage.Find(x => x.IsPredicted && x.Source.Equals(this));
+        damage?.Delete();
+
+        if (this.Unit.IsRanged)
         {
+            damage = new RangedDamage(this, target, attackStartTime, 128, 0.048f);
+            nextDamage = new RangedDamage(damage);
+        }
+        else
+        {
+            damage = new MeleeDamage(this, target, attackStartTime, 0.036f);
+            nextDamage = new MeleeDamage(damage);
         }
 
-        public override UnitDamage AddDamage(FarmUnit target, float attackStartTime, bool addNext, bool forceRanged)
+        target.IncomingDamage.Add(damage);
+
+        if (addNext)
         {
-            UnitDamage nextDamage;
-            var damage = target.IncomingDamage.Find(x => x.IsPredicted && x.Source.Equals(this));
-            damage?.Delete();
-
-            if (this.Unit.IsRanged)
-            {
-                damage = new RangedDamage(this, target, attackStartTime, 128, 0.048f);
-                nextDamage = new RangedDamage(damage);
-            }
-            else
-            {
-                damage = new MeleeDamage(this, target, attackStartTime, 0.036f);
-                nextDamage = new MeleeDamage(damage);
-            }
-
-            target.IncomingDamage.Add(damage);
-
-            if (addNext)
-            {
-                target.IncomingDamage.Add(nextDamage);
-            }
-
-            return damage;
+            target.IncomingDamage.Add(nextDamage);
         }
 
-        public override void AttackStart(IReadOnlyList<FarmUnit> units, float attackStartTime)
-        {
-            // ReSharper disable once AsyncVoidFunctionExpression
-            UpdateManager.BeginInvoke(
-                async () =>
+        return damage;
+    }
+
+    public override void AttackStart(IReadOnlyList<FarmUnit> units, float attackStartTime)
+    {
+        // ReSharper disable once AsyncVoidFunctionExpression
+        UpdateManager.BeginInvoke(
+            async () =>
+            {
+                try
                 {
-                    try
+                    var rotation = 0f;
+
+                    // ReSharper disable once CompareOfFloatsByEqualityOperator
+                    while (rotation != this.Unit.BaseUnit.Rotation)
                     {
-                        var rotation = 0f;
-
-                        // ReSharper disable once CompareOfFloatsByEqualityOperator
-                        while (rotation != this.Unit.BaseUnit.Rotation)
-                        {
-                            rotation = this.Unit.BaseUnit.Rotation;
-                            await Task.Delay(10);
-                        }
-
-                        if (!this.Unit.IsAlive || !this.Unit.IsVisible)
-                        {
-                            return;
-                        }
-
-                        var target = units
-                            .Where(
-                                x => x.Unit != this.Unit && x.Unit.IsValid
-                                                         && x.Unit.Distance(this.Unit) <= this.Unit.GetAttackRange(x.Unit)
-                                                         && !x.Unit.IsAlly(this.Unit))
-                            .OrderBy(x => this.Unit.GetAngle(x.Unit.Position))
-                            .FirstOrDefault(x => this.Unit.GetAngle(x.Unit.Position) < 0.2f);
-
-                        if (target == null)
-                        {
-                            return;
-                        }
-
-                        this.Target = target;
-                        this.AddDamage(target, attackStartTime, true, false);
+                        rotation = this.Unit.BaseUnit.Rotation;
+                        await Task.Delay(10);
                     }
-                    catch (Exception e)
+
+                    if (!this.Unit.IsAlive || !this.Unit.IsVisible)
                     {
-                        Logger.Error(e);
+                        return;
                     }
-                });
-        }
+
+                    var target = units
+                        .Where(
+                            x => x.Unit != this.Unit && x.Unit.IsValid
+                                                     && x.Unit.Distance(this.Unit) <= this.Unit.GetAttackRange(x.Unit)
+                                                     && !x.Unit.IsAlly(this.Unit))
+                        .OrderBy(x => this.Unit.GetAngle(x.Unit.Position))
+                        .FirstOrDefault(x => this.Unit.GetAngle(x.Unit.Position) < 0.2f);
+
+                    if (target == null)
+                    {
+                        return;
+                    }
+
+                    this.Target = target;
+                    this.AddDamage(target, attackStartTime, true, false);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                }
+            });
     }
 }

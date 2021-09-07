@@ -1,617 +1,616 @@
-﻿namespace O9K.Hud.Modules.Map.AbilityMonitor
+﻿namespace O9K.Hud.Modules.Map.AbilityMonitor;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Abilities.Base;
+using Abilities.Data.UniqueAbilities.Wards;
+
+using Core.Entities.Units;
+using Core.Helpers;
+using Core.Logger;
+using Core.Managers.Entity;
+using Core.Managers.Menu;
+using Core.Managers.Menu.EventArgs;
+using Core.Managers.Menu.Items;
+
+using Divine.Entity;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Components;
+using Divine.Entity.Entities.Units;
+using Divine.Entity.EventArgs;
+using Divine.Extensions;
+using Divine.Game;
+using Divine.Numerics;
+using Divine.Particle;
+using Divine.Particle.EventArgs;
+using Divine.Renderer;
+using Divine.Update;
+
+using Helpers;
+using Helpers.Notificator;
+
+using MainMenu;
+
+using AbilityData = Abilities.Data.AbilityData;
+
+internal class AbilityManager : IHudModule
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly List<IDrawableAbility> drawableAbilities = new List<IDrawableAbility>();
 
-    using Abilities.Base;
-    using Abilities.Data.UniqueAbilities.Wards;
+    private readonly MenuSwitcher enabled;
 
-    using Core.Entities.Units;
-    using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Entity;
-    using Core.Managers.Menu;
-    using Core.Managers.Menu.EventArgs;
-    using Core.Managers.Menu.Items;
+    private readonly List<EnemyUnit> enemyUnits = new List<EnemyUnit>();
 
-    using Divine.Entity;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Components;
-    using Divine.Entity.Entities.Units;
-    using Divine.Entity.EventArgs;
-    using Divine.Extensions;
-    using Divine.Game;
-    using Divine.Numerics;
-    using Divine.Particle;
-    using Divine.Particle.EventArgs;
-    using Divine.Renderer;
-    using Divine.Update;
+    private readonly IMinimap minimap;
 
-    using Helpers;
-    using Helpers.Notificator;
+    private readonly MenuSwitcher notificationsEnabled;
 
-    using MainMenu;
+    private readonly INotificator notificator;
 
-    using AbilityData = Abilities.Data.AbilityData;
+    private readonly MenuSwitcher showOnMap;
 
-    internal class AbilityManager : IHudModule
+    private readonly MenuSwitcher showOnMinimap;
+
+    private AbilityData abilityData;
+
+    private Team allyTeam;
+
+    private readonly IHudMenu hudMenu;
+
+    public AbilityManager(IMinimap minimap, INotificator notificator, IHudMenu hudMenu)
     {
-        private readonly List<IDrawableAbility> drawableAbilities = new List<IDrawableAbility>();
+        this.minimap = minimap;
+        this.notificator = notificator;
+        this.hudMenu = hudMenu;
 
-        private readonly MenuSwitcher enabled;
+        var abilitiesMenu = hudMenu.MapMenu.Add(new Menu("Abilities"));
+        abilitiesMenu.AddTranslation(Lang.Ru, "Способности");
+        abilitiesMenu.AddTranslation(Lang.Cn, "技能");
 
-        private readonly List<EnemyUnit> enemyUnits = new List<EnemyUnit>();
+        this.enabled = abilitiesMenu.Add(new MenuSwitcher("Enabled")).SetTooltip("Show used enemy abilities in fog");
+        this.enabled.AddTranslation(Lang.Ru, "Включено");
+        this.enabled.AddTooltipTranslation(Lang.Ru, "Показывать использованные способности врага в тумане");
+        this.enabled.AddTranslation(Lang.Cn, "启用");
+        this.enabled.AddTooltipTranslation(Lang.Cn, "在雾中显示使用过的敌人能力");
 
-        private readonly IMinimap minimap;
+        this.showOnMinimap = abilitiesMenu.Add(new MenuSwitcher("Show on minimap"));
+        this.showOnMinimap.AddTranslation(Lang.Ru, "Показывать на миникарте");
+        this.showOnMinimap.AddTranslation(Lang.Cn, "小地图上显示");
 
-        private readonly MenuSwitcher notificationsEnabled;
+        this.showOnMap = abilitiesMenu.Add(new MenuSwitcher("Show on map"));
+        this.showOnMap.AddTranslation(Lang.Ru, "Показывать на карте");
+        this.showOnMap.AddTranslation(Lang.Cn, "地图上显示");
 
-        private readonly INotificator notificator;
+        var notificationsMenu = hudMenu.NotificationsMenu.GetOrAdd(new Menu("Abilities"));
+        notificationsMenu.AddTranslation(Lang.Ru, "Способности");
+        notificationsMenu.AddTranslation(Lang.Cn, "技能");
 
-        private readonly MenuSwitcher showOnMap;
+        var usedMenu = notificationsMenu.GetOrAdd(new Menu("Used"));
+        usedMenu.AddTranslation(Lang.Ru, "Использованные");
+        usedMenu.AddTranslation(Lang.Cn, "使用");
 
-        private readonly MenuSwitcher showOnMinimap;
+        this.notificationsEnabled = usedMenu.GetOrAdd(new MenuSwitcher("Enabled")).SetTooltip("Notify about used dangerous abilities");
+        this.notificationsEnabled.AddTranslation(Lang.Ru, "Включено");
+        this.notificationsEnabled.AddTooltipTranslation(Lang.Ru, "Оповещать об использованных опасных способностях");
+        this.notificationsEnabled.AddTranslation(Lang.Cn, "启用");
+        this.notificationsEnabled.AddTooltipTranslation(Lang.Cn, "通知使用过的危险能力");
+    }
 
-        private AbilityData abilityData;
+    public void Activate()
+    {
+        this.LoadTextures();
 
-        private Team allyTeam;
+        this.abilityData = new AbilityData();
+        this.allyTeam = EntityManager9.Owner.Team;
 
-        private readonly IHudMenu hudMenu;
+        this.enabled.ValueChange += this.EnabledOnValueChange;
+    }
 
-        public AbilityManager(IMinimap minimap, INotificator notificator, IHudMenu hudMenu)
+    public void Dispose()
+    {
+        RendererManager.Draw -= this.OnDraw;
+        EntityManager9.UnitAdded -= this.OnUnitAdded;
+        EntityManager9.UnitRemoved -= this.OnUnitRemoved;
+        UpdateManager.DestroyIngameUpdate(this.OnUpdateRemove);
+        UpdateManager.DestroyIngameUpdate(this.OnUpdateWard);
+        ParticleManager.ParticleAdded -= this.OnParticleAdded;
+        EntityManager.EntityAdded -= this.OnAddEntity;
+        EntityManager.EntityRemoved -= this.OnRemoveEntity;
+        this.enabled.ValueChange -= this.EnabledOnValueChange;
+    }
+
+    private void AddWard(EnemyUnit enemy, string unitName)
+    {
+        if (!this.abilityData.Units.TryGetValue(unitName, out var data))
         {
-            this.minimap = minimap;
-            this.notificator = notificator;
-            this.hudMenu = hudMenu;
-
-            var abilitiesMenu = hudMenu.MapMenu.Add(new Menu("Abilities"));
-            abilitiesMenu.AddTranslation(Lang.Ru, "Способности");
-            abilitiesMenu.AddTranslation(Lang.Cn, "技能");
-
-            this.enabled = abilitiesMenu.Add(new MenuSwitcher("Enabled")).SetTooltip("Show used enemy abilities in fog");
-            this.enabled.AddTranslation(Lang.Ru, "Включено");
-            this.enabled.AddTooltipTranslation(Lang.Ru, "Показывать использованные способности врага в тумане");
-            this.enabled.AddTranslation(Lang.Cn, "启用");
-            this.enabled.AddTooltipTranslation(Lang.Cn, "在雾中显示使用过的敌人能力");
-
-            this.showOnMinimap = abilitiesMenu.Add(new MenuSwitcher("Show on minimap"));
-            this.showOnMinimap.AddTranslation(Lang.Ru, "Показывать на миникарте");
-            this.showOnMinimap.AddTranslation(Lang.Cn, "小地图上显示");
-
-            this.showOnMap = abilitiesMenu.Add(new MenuSwitcher("Show on map"));
-            this.showOnMap.AddTranslation(Lang.Ru, "Показывать на карте");
-            this.showOnMap.AddTranslation(Lang.Cn, "地图上显示");
-
-            var notificationsMenu = hudMenu.NotificationsMenu.GetOrAdd(new Menu("Abilities"));
-            notificationsMenu.AddTranslation(Lang.Ru, "Способности");
-            notificationsMenu.AddTranslation(Lang.Cn, "技能");
-
-            var usedMenu = notificationsMenu.GetOrAdd(new Menu("Used"));
-            usedMenu.AddTranslation(Lang.Ru, "Использованные");
-            usedMenu.AddTranslation(Lang.Cn, "使用");
-
-            this.notificationsEnabled = usedMenu.GetOrAdd(new MenuSwitcher("Enabled")).SetTooltip("Notify about used dangerous abilities");
-            this.notificationsEnabled.AddTranslation(Lang.Ru, "Включено");
-            this.notificationsEnabled.AddTooltipTranslation(Lang.Ru, "Оповещать об использованных опасных способностях");
-            this.notificationsEnabled.AddTranslation(Lang.Cn, "启用");
-            this.notificationsEnabled.AddTooltipTranslation(Lang.Cn, "通知使用过的危险能力");
+            return;
         }
 
-        public void Activate()
+        var wardPosition = enemy.Unit.InFront(400);
+
+        if (this.drawableAbilities.OfType<DrawableWardAbility>()
+            .Any(x => x.Unit != null && x.AbilityUnitName == unitName && x.Position.Distance2D(wardPosition) < 400))
         {
-            this.LoadTextures();
-
-            this.abilityData = new AbilityData();
-            this.allyTeam = EntityManager9.Owner.Team;
-
-            this.enabled.ValueChange += this.EnabledOnValueChange;
+            return;
         }
 
-        public void Dispose()
+        if (this.drawableAbilities.OfType<DrawableWardAbility>().Any(x => x.Position.Distance2D(wardPosition) <= 50))
         {
-            RendererManager.Draw -= this.OnDraw;
-            EntityManager9.UnitAdded -= this.OnUnitAdded;
-            EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-            UpdateManager.DestroyIngameUpdate(this.OnUpdateRemove);
-            UpdateManager.DestroyIngameUpdate(this.OnUpdateWard);
-            ParticleManager.ParticleAdded -= this.OnParticleAdded;
-            EntityManager.EntityAdded -= this.OnAddEntity;
-            EntityManager.EntityRemoved -= this.OnRemoveEntity;
-            this.enabled.ValueChange -= this.EnabledOnValueChange;
+            wardPosition += new Vector3(60, 0, 0);
         }
 
-        private void AddWard(EnemyUnit enemy, string unitName)
+        ((WardAbilityData)data).AddDrawableAbility(this.drawableAbilities, wardPosition);
+    }
+
+    private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
+    {
+        if (e.NewValue)
         {
-            if (!this.abilityData.Units.TryGetValue(unitName, out var data))
+            if (e.OldValue)
             {
-                return;
-            }
-
-            var wardPosition = enemy.Unit.InFront(400);
-
-            if (this.drawableAbilities.OfType<DrawableWardAbility>()
-                .Any(x => x.Unit != null && x.AbilityUnitName == unitName && x.Position.Distance2D(wardPosition) < 400))
-            {
-                return;
-            }
-
-            if (this.drawableAbilities.OfType<DrawableWardAbility>().Any(x => x.Position.Distance2D(wardPosition) <= 50))
-            {
-                wardPosition += new Vector3(60, 0, 0);
-            }
-
-            ((WardAbilityData)data).AddDrawableAbility(this.drawableAbilities, wardPosition);
-        }
-
-        private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
-        {
-            if (e.NewValue)
-            {
-                if (e.OldValue)
+                //todo delete
+                if (AppDomain.CurrentDomain.GetAssemblies()
+                    .Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("VisionControl")))
                 {
-                    //todo delete
-                    if (AppDomain.CurrentDomain.GetAssemblies()
-                        .Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("VisionControl")))
-                    {
-                        Hud.DisplayWarning("O9K.Hud // VisionControl is already included in O9K.Hud");
-                    }
-
-                    if (AppDomain.CurrentDomain.GetAssemblies().Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("BeAware")))
-                    {
-                        Hud.DisplayWarning("O9K.Hud // BeAware is already included in O9K.Hud");
-                    }
+                    Hud.DisplayWarning("O9K.Hud // VisionControl is already included in O9K.Hud");
                 }
 
-                EntityManager9.UnitAdded += this.OnUnitAdded;
-                EntityManager9.UnitRemoved += this.OnUnitRemoved;
-                UpdateManager.CreateIngameUpdate(500, this.OnUpdateRemove);
-                UpdateManager.CreateIngameUpdate(200, this.OnUpdateWard);
-                ParticleManager.ParticleAdded += this.OnParticleAdded;
-                EntityManager.EntityAdded += this.OnAddEntity;
-                EntityManager.EntityRemoved += this.OnRemoveEntity;
-                RendererManager.Draw += this.OnDraw;
-
-                foreach (var particle in ParticleManager.Particles.Where(x => x.IsValid && x.Name == "particles/units/heroes/hero_wisp/wisp_ambient_entity_tentacles.vpcf"))
+                if (AppDomain.CurrentDomain.GetAssemblies().Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("BeAware")))
                 {
+                    Hud.DisplayWarning("O9K.Hud // BeAware is already included in O9K.Hud");
+                }
+            }
+
+            EntityManager9.UnitAdded += this.OnUnitAdded;
+            EntityManager9.UnitRemoved += this.OnUnitRemoved;
+            UpdateManager.CreateIngameUpdate(500, this.OnUpdateRemove);
+            UpdateManager.CreateIngameUpdate(200, this.OnUpdateWard);
+            ParticleManager.ParticleAdded += this.OnParticleAdded;
+            EntityManager.EntityAdded += this.OnAddEntity;
+            EntityManager.EntityRemoved += this.OnRemoveEntity;
+            RendererManager.Draw += this.OnDraw;
+
+            foreach (var particle in ParticleManager.Particles.Where(x => x.IsValid && x.Name == "particles/units/heroes/hero_wisp/wisp_ambient_entity_tentacles.vpcf"))
+            {
+                try
+                {
+                    if (!this.abilityData.Particles.TryGetValue(particle.Name, out var data))
+                    {
+                        return;
+                    }
+
                     try
                     {
-                        if (!this.abilityData.Particles.TryGetValue(particle.Name, out var data))
-                        {
-                            return;
-                        }
-
-                        try
-                        {
-                            data.AddDrawableAbility(this.drawableAbilities, particle, this.allyTeam, this.notificationsEnabled ? this.notificator : null);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Error(ex);
-                        }
+                        data.AddDrawableAbility(this.drawableAbilities, particle, this.allyTeam, this.notificationsEnabled ? this.notificator : null);
                     }
                     catch (Exception ex)
                     {
                         Logger.Error(ex);
                     }
                 }
-            }
-            else
-            {
-                RendererManager.Draw -= this.OnDraw;
-                EntityManager9.UnitAdded -= this.OnUnitAdded;
-                EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-                ParticleManager.ParticleAdded -= this.OnParticleAdded;
-                EntityManager.EntityAdded -= this.OnAddEntity;
-                EntityManager.EntityRemoved -= this.OnRemoveEntity;
-                UpdateManager.DestroyIngameUpdate(this.OnUpdateRemove);
-                UpdateManager.DestroyIngameUpdate(this.OnUpdateWard);
-            }
-        }
-
-        private bool GaveWard(EnemyUnit enemy)
-        {
-            return this.enemyUnits.Any(
-                x => x.Unit.IsValid && !x.Equals(enemy) && x.Unit.IsVisible && x.Unit.IsAlive && x.Unit.Distance(enemy.Unit) <= 600
-                     && x.ObserversCount + x.SentryCount
-                     < x.CountWards(AbilityId.item_ward_observer) + x.CountWards(AbilityId.item_ward_sentry));
-        }
-
-        private void LoadTextures()
-        {
-            RendererManager.LoadImage(
-                "o9k.minimap_item_ward_observer",
-                @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
-                new ImageProperties
+                catch (Exception ex)
                 {
-                    ColorTint = new Color(255, 153, 0)
-                });
-
-            RendererManager.LoadImage(
-                "o9k.minimap_item_ward_sentry",
-                @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
-                new ImageProperties
-                {
-                    ColorTint = new Color(25, 102, 255)
-                });
-        }
-
-        private void OnAddEntity(EntityAddedEventArgs e)
-        {
-            try
-            {
-                var unit = e.Entity as Unit;
-
-                if (unit == null || unit.Team == this.allyTeam)
-                {
-                    return;
-                }
-
-                if (this.abilityData.Units.TryGetValue(unit.Name, out var data))
-                {
-                    data.AddDrawableAbility(this.drawableAbilities, unit, this.notificationsEnabled ? this.notificator : null);
-                }
-                else
-                {
-                    if (unit.NetworkName != "CDOTA_BaseNPC")
-                    {
-                        return;
-                    }
-
-                    var vision = unit.DayVision;
-
-                    if (vision <= 0)
-                    {
-                        return;
-                    }
-
-                    var ids = this.abilityData.AbilityUnitVision.Where(x => x.Value.Vision == unit.DayVision)
-                        .ToDictionary(x => x.Key, x => x.Value);
-
-                    var abilities = EntityManager9.Abilities.Where(
-                            x => x.Owner.Team != this.allyTeam && x.Owner.CanUseAbilities && ids.ContainsKey(x.Id)
-                                 && (!x.Owner.IsVisible || x.TimeSinceCasted < 0.5f + x.ActivationDelay))
-                        .ToList();
-
-                    if (abilities.Count != 1)
-                    {
-                        return;
-                    }
-
-                    if (!ids.TryGetValue(abilities[0].Id, out data))
-                    {
-                        return;
-                    }
-
-                    data.AddDrawableAbility(
-                        this.drawableAbilities,
-                        abilities[0],
-                        unit,
-                        this.notificationsEnabled ? this.notificator : null);
+                    Logger.Error(ex);
                 }
             }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
         }
-
-        private void OnDraw()
+        else
         {
-            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            RendererManager.Draw -= this.OnDraw;
+            EntityManager9.UnitAdded -= this.OnUnitAdded;
+            EntityManager9.UnitRemoved -= this.OnUnitRemoved;
+            ParticleManager.ParticleAdded -= this.OnParticleAdded;
+            EntityManager.EntityAdded -= this.OnAddEntity;
+            EntityManager.EntityRemoved -= this.OnRemoveEntity;
+            UpdateManager.DestroyIngameUpdate(this.OnUpdateRemove);
+            UpdateManager.DestroyIngameUpdate(this.OnUpdateWard);
+        }
+    }
+
+    private bool GaveWard(EnemyUnit enemy)
+    {
+        return this.enemyUnits.Any(
+            x => x.Unit.IsValid && !x.Equals(enemy) && x.Unit.IsVisible && x.Unit.IsAlive && x.Unit.Distance(enemy.Unit) <= 600
+                 && x.ObserversCount + x.SentryCount
+                 < x.CountWards(AbilityId.item_ward_observer) + x.CountWards(AbilityId.item_ward_sentry));
+    }
+
+    private void LoadTextures()
+    {
+        RendererManager.LoadImage(
+            "o9k.minimap_item_ward_observer",
+            @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
+            new ImageProperties
+            {
+                ColorTint = new Color(255, 153, 0)
+            });
+
+        RendererManager.LoadImage(
+            "o9k.minimap_item_ward_sentry",
+            @"panorama\images\hero_selection\minimap_ward_obs_png.vtex_c",
+            new ImageProperties
+            {
+                ColorTint = new Color(25, 102, 255)
+            });
+    }
+
+    private void OnAddEntity(EntityAddedEventArgs e)
+    {
+        try
+        {
+            var unit = e.Entity as Unit;
+
+            if (unit == null || unit.Team == this.allyTeam)
             {
                 return;
             }
 
-            try
+            if (this.abilityData.Units.TryGetValue(unit.Name, out var data))
             {
-                foreach (var ability in this.drawableAbilities)
-                {
-                    try
-                    {
-                        if (!ability.Draw)
-                        {
-                            continue;
-                        }
-
-                        if (this.showOnMap)
-                        {
-                            ability.DrawOnMap(this.minimap);
-                        }
-
-                        if (this.showOnMinimap)
-                        {
-                            ability.DrawOnMinimap(this.minimap);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e);
-                    }
-                }
-
-                var mines = this.drawableAbilities.Where(x => x.AbilityId == AbilityId.techies_remote_mines).ToArray();
-
-                if (mines.Length < 2)
+                data.AddDrawableAbility(this.drawableAbilities, unit, this.notificationsEnabled ? this.notificator : null);
+            }
+            else
+            {
+                if (unit.NetworkName != "CDOTA_BaseNPC")
                 {
                     return;
                 }
 
-                var ignoredMines = new List<IDrawableAbility>();
+                var vision = unit.DayVision;
 
-                foreach (var mine in mines)
-                {
-                    if (ignoredMines.Contains(mine))
-                    {
-                        continue;
-                    }
-
-                    var stack = mines.Where(x => x.Position.DistanceSquared(mine.Position) < 10000).ToList();
-
-                    if (stack.Count < 2)
-                    {
-                        continue;
-                    }
-
-                    ignoredMines.AddRange(stack);
-
-                    var position = this.minimap.WorldToScreen(mine.Position, 24 * Hud.Info.ScreenRatio);
-
-                    if (position.IsZero)
-                    {
-                        continue;
-                    }
-
-                    RendererManager.DrawText(
-                        "x" + stack.Count,
-                        position + new Vector2(40, 10),
-                        Color.White,
-                        FontFlags.Left,
-                        24 * Hud.Info.ScreenRatio);
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                // ignore
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
-
-        private void OnParticleAdded(ParticleAddedEventArgs e)
-        {
-            try
-            {
-                if (!this.abilityData.Particles.TryGetValue(e.Particle.Name, out var data))
+                if (vision <= 0)
                 {
                     return;
                 }
 
-                /*if (data.ParticleReleaseData)
-                {
-                    return;
-                }*/
+                var ids = this.abilityData.AbilityUnitVision.Where(x => x.Value.Vision == unit.DayVision)
+                    .ToDictionary(x => x.Key, x => x.Value);
 
-                UpdateManager.BeginInvoke(
-                    () =>
-                    {
-                        try
-                        {
-                            var particle = e.Particle;
+                var abilities = EntityManager9.Abilities.Where(
+                        x => x.Owner.Team != this.allyTeam && x.Owner.CanUseAbilities && ids.ContainsKey(x.Id)
+                             && (!x.Owner.IsVisible || x.TimeSinceCasted < 0.5f + x.ActivationDelay))
+                    .ToList();
 
-                            if (!particle.IsValid)
-                            {
-                                return;
-                            }
-
-                            data.AddDrawableAbility(
-                                this.drawableAbilities,
-                                particle,
-                                this.allyTeam,
-                                this.notificationsEnabled ? this.notificator : null);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Error(ex);
-                        }
-                    });
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
-        }
-
-        /*private void OnParticleReleased(Entity sender, ParticleReleasedEventArgs args)
-        {
-            try
-            {
-                if (!args.Particle.IsValid)
+                if (abilities.Count != 1)
                 {
                     return;
                 }
 
-                if (!this.abilityData.Particles.TryGetValue(args.Particle.Name, out var data))
-                {
-                    return;
-                }
-
-                if (!data.ParticleReleaseData)
+                if (!ids.TryGetValue(abilities[0].Id, out data))
                 {
                     return;
                 }
 
                 data.AddDrawableAbility(
                     this.drawableAbilities,
-                    args.Particle,
-                    this.allyTeam,
+                    abilities[0],
+                    unit,
                     this.notificationsEnabled ? this.notificator : null);
             }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }*/
-
-        private void OnRemoveEntity(EntityRemovedEventArgs e)
+        }
+        catch (Exception ex)
         {
-            try
-            {
-                var entity = e.Entity;
+            Logger.Error(ex);
+        }
+    }
 
-                if (entity.Team == this.allyTeam)
-                {
-                    return;
-                }
-
-                if (!this.abilityData.Units.ContainsKey(entity.Name))
-                {
-                    return;
-                }
-
-                var unit = this.drawableAbilities.OfType<DrawableUnitAbility>().FirstOrDefault(x => x.Unit == entity);
-
-                if (unit != null)
-                {
-                    this.drawableAbilities.Remove(unit);
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
+    private void OnDraw()
+    {
+        if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+        {
+            return;
         }
 
-        private void OnUnitAdded(Unit9 entity)
+        try
         {
-            try
-            {
-                if ((!entity.IsHero && !entity.IsCourier) || !entity.CanUseAbilities || entity.Team == this.allyTeam)
-                {
-                    return;
-                }
-
-                this.enemyUnits.Add(new EnemyUnit(entity));
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
-
-        private void OnUnitRemoved(Unit9 entity)
-        {
-            try
-            {
-                if ((!entity.IsHero && !entity.IsCourier) || !entity.CanUseAbilities || entity.Team == this.allyTeam)
-                {
-                    return;
-                }
-
-                var unit = this.enemyUnits.Find(x => x.Unit == entity);
-
-                if (unit != null)
-                {
-                    this.enemyUnits.Remove(unit);
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
-
-        private void OnUpdateRemove()
-        {
-            for (var i = this.drawableAbilities.Count - 1; i > -1; i--)
+            foreach (var ability in this.drawableAbilities)
             {
                 try
                 {
-                    var ability = this.drawableAbilities[i];
-
-                    if (ability.IsValid)
+                    if (!ability.Draw)
                     {
                         continue;
                     }
 
-                    if (ability.IsShowingRange)
+                    if (this.showOnMap)
                     {
-                        ability.RemoveRange();
+                        ability.DrawOnMap(this.minimap);
                     }
 
-                    this.drawableAbilities.RemoveAt(i);
+                    if (this.showOnMinimap)
+                    {
+                        ability.DrawOnMinimap(this.minimap);
+                    }
                 }
-                catch
+                catch (Exception e)
                 {
-                    this.drawableAbilities.RemoveAt(i);
+                    Logger.Error(e);
                 }
             }
-        }
 
-        private void OnUpdateWard()
+            var mines = this.drawableAbilities.Where(x => x.AbilityId == AbilityId.techies_remote_mines).ToArray();
+
+            if (mines.Length < 2)
+            {
+                return;
+            }
+
+            var ignoredMines = new List<IDrawableAbility>();
+
+            foreach (var mine in mines)
+            {
+                if (ignoredMines.Contains(mine))
+                {
+                    continue;
+                }
+
+                var stack = mines.Where(x => x.Position.DistanceSquared(mine.Position) < 10000).ToList();
+
+                if (stack.Count < 2)
+                {
+                    continue;
+                }
+
+                ignoredMines.AddRange(stack);
+
+                var position = this.minimap.WorldToScreen(mine.Position, 24 * Hud.Info.ScreenRatio);
+
+                if (position.IsZero)
+                {
+                    continue;
+                }
+
+                RendererManager.DrawText(
+                    "x" + stack.Count,
+                    position + new Vector2(40, 10),
+                    Color.White,
+                    FontFlags.Left,
+                    24 * Hud.Info.ScreenRatio);
+            }
+        }
+        catch (InvalidOperationException)
+        {
+            // ignore
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void OnParticleAdded(ParticleAddedEventArgs e)
+    {
+        try
+        {
+            if (!this.abilityData.Particles.TryGetValue(e.Particle.Name, out var data))
+            {
+                return;
+            }
+
+            /*if (data.ParticleReleaseData)
+            {
+                return;
+            }*/
+
+            UpdateManager.BeginInvoke(
+                () =>
+                {
+                    try
+                    {
+                        var particle = e.Particle;
+
+                        if (!particle.IsValid)
+                        {
+                            return;
+                        }
+
+                        data.AddDrawableAbility(
+                            this.drawableAbilities,
+                            particle,
+                            this.allyTeam,
+                            this.notificationsEnabled ? this.notificator : null);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                    }
+                });
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+    /*private void OnParticleReleased(Entity sender, ParticleReleasedEventArgs args)
+    {
+        try
+        {
+            if (!args.Particle.IsValid)
+            {
+                return;
+            }
+
+            if (!this.abilityData.Particles.TryGetValue(args.Particle.Name, out var data))
+            {
+                return;
+            }
+
+            if (!data.ParticleReleaseData)
+            {
+                return;
+            }
+
+            data.AddDrawableAbility(
+                this.drawableAbilities,
+                args.Particle,
+                this.allyTeam,
+                this.notificationsEnabled ? this.notificator : null);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }*/
+
+    private void OnRemoveEntity(EntityRemovedEventArgs e)
+    {
+        try
+        {
+            var entity = e.Entity;
+
+            if (entity.Team == this.allyTeam)
+            {
+                return;
+            }
+
+            if (!this.abilityData.Units.ContainsKey(entity.Name))
+            {
+                return;
+            }
+
+            var unit = this.drawableAbilities.OfType<DrawableUnitAbility>().FirstOrDefault(x => x.Unit == entity);
+
+            if (unit != null)
+            {
+                this.drawableAbilities.Remove(unit);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+    private void OnUnitAdded(Unit9 entity)
+    {
+        try
+        {
+            if ((!entity.IsHero && !entity.IsCourier) || !entity.CanUseAbilities || entity.Team == this.allyTeam)
+            {
+                return;
+            }
+
+            this.enemyUnits.Add(new EnemyUnit(entity));
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void OnUnitRemoved(Unit9 entity)
+    {
+        try
+        {
+            if ((!entity.IsHero && !entity.IsCourier) || !entity.CanUseAbilities || entity.Team == this.allyTeam)
+            {
+                return;
+            }
+
+            var unit = this.enemyUnits.Find(x => x.Unit == entity);
+
+            if (unit != null)
+            {
+                this.enemyUnits.Remove(unit);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void OnUpdateRemove()
+    {
+        for (var i = this.drawableAbilities.Count - 1; i > -1; i--)
         {
             try
             {
-                foreach (var enemy in this.enemyUnits)
+                var ability = this.drawableAbilities[i];
+
+                if (ability.IsValid)
                 {
-                    if (!enemy.Unit.IsValid)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    if (!enemy.Unit.IsVisible)
-                    {
-                        enemy.ObserversCount = 0;
-                        enemy.SentryCount = 0;
+                if (ability.IsShowingRange)
+                {
+                    ability.RemoveRange();
+                }
 
-                        continue;
-                    }
+                this.drawableAbilities.RemoveAt(i);
+            }
+            catch
+            {
+                this.drawableAbilities.RemoveAt(i);
+            }
+        }
+    }
 
-                    if (this.PlacedWard(enemy, AbilityId.item_ward_observer))
-                    {
-                        this.AddWard(enemy, "npc_dota_observer_wards");
-                    }
-                    else if (this.PlacedWard(enemy, AbilityId.item_ward_sentry))
-                    {
-                        this.AddWard(enemy, "npc_dota_sentry_wards");
-                    }
+    private void OnUpdateWard()
+    {
+        try
+        {
+            foreach (var enemy in this.enemyUnits)
+            {
+                if (!enemy.Unit.IsValid)
+                {
+                    continue;
+                }
+
+                if (!enemy.Unit.IsVisible)
+                {
+                    enemy.ObserversCount = 0;
+                    enemy.SentryCount = 0;
+
+                    continue;
+                }
+
+                if (this.PlacedWard(enemy, AbilityId.item_ward_observer))
+                {
+                    this.AddWard(enemy, "npc_dota_observer_wards");
+                }
+                else if (this.PlacedWard(enemy, AbilityId.item_ward_sentry))
+                {
+                    this.AddWard(enemy, "npc_dota_sentry_wards");
                 }
             }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
         }
-
-        private bool PlacedWard(EnemyUnit enemy, AbilityId id)
+        catch (Exception e)
         {
-            var count = enemy.CountWards(id);
-
-            if (count < enemy.GetWardsCount(id))
-            {
-                enemy.SetWardsCount(id, count);
-
-                if (!this.GaveWard(enemy) && !enemy.DroppedWard(id) && !enemy.Unit.IsCourier)
-                {
-                    return true;
-                }
-            }
-            else if (count > enemy.GetWardsCount(id) && !this.TookWard(enemy))
-            {
-                enemy.SetWardsCount(id, count);
-            }
-
-            return false;
+            Logger.Error(e);
         }
+    }
 
-        private bool TookWard(EnemyUnit enemy)
+    private bool PlacedWard(EnemyUnit enemy, AbilityId id)
+    {
+        var count = enemy.CountWards(id);
+
+        if (count < enemy.GetWardsCount(id))
         {
-            return this.enemyUnits.Any(
-                x => x.Unit.IsValid && !x.Equals(enemy) && x.Unit.IsAlive && x.Unit.Distance(enemy.Unit) <= 600
-                     && x.ObserversCount + x.SentryCount
-                     > x.CountWards(AbilityId.item_ward_observer) + x.CountWards(AbilityId.item_ward_sentry));
+            enemy.SetWardsCount(id, count);
+
+            if (!this.GaveWard(enemy) && !enemy.DroppedWard(id) && !enemy.Unit.IsCourier)
+            {
+                return true;
+            }
         }
+        else if (count > enemy.GetWardsCount(id) && !this.TookWard(enemy))
+        {
+            enemy.SetWardsCount(id, count);
+        }
+
+        return false;
+    }
+
+    private bool TookWard(EnemyUnit enemy)
+    {
+        return this.enemyUnits.Any(
+            x => x.Unit.IsValid && !x.Equals(enemy) && x.Unit.IsAlive && x.Unit.Distance(enemy.Unit) <= 600
+                 && x.ObserversCount + x.SentryCount
+                 > x.CountWards(AbilityId.item_ward_observer) + x.CountWards(AbilityId.item_ward_sentry));
     }
 }

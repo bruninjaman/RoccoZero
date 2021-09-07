@@ -1,116 +1,115 @@
-﻿namespace O9K.AIO.Heroes.Magnus.Abilities
+﻿namespace O9K.AIO.Heroes.Magnus.Abilities;
+
+using AIO.Abilities;
+using AIO.Abilities.Menus;
+using AIO.Modes.Combo;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Units;
+using Core.Helpers;
+
+using Divine.Update;
+
+using TargetManager;
+
+internal class ReversePolarity : DisableAbility
 {
-    using AIO.Abilities;
-    using AIO.Abilities.Menus;
-    using AIO.Modes.Combo;
+    private Unit9 ally;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Units;
-    using Core.Helpers;
+    private Skewer skewer;
 
-    using Divine.Update;
-
-    using TargetManager;
-
-    internal class ReversePolarity : DisableAbility
+    public ReversePolarity(ActiveAbility ability)
+        : base(ability)
     {
-        private Unit9 ally;
+    }
 
-        private Skewer skewer;
+    public void AddSkewer(Skewer skewer)
+    {
+        this.skewer = skewer;
+    }
 
-        public ReversePolarity(ActiveAbility ability)
-            : base(ability)
+    public override bool CanBeCasted(TargetManager targetManager, bool channelingCheck, IComboModeMenu comboMenu)
+    {
+        if (!base.CanBeCasted(targetManager, channelingCheck, comboMenu))
         {
+            return false;
         }
 
-        public void AddSkewer(Skewer skewer)
+        this.ally = this.skewer.GetPreferedAlly(targetManager, comboMenu);
+        return true;
+    }
+
+    public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)
+    {
+        if (!base.CanHit(targetManager, comboMenu))
         {
-            this.skewer = skewer;
+            return false;
         }
 
-        public override bool CanBeCasted(TargetManager targetManager, bool channelingCheck, IComboModeMenu comboMenu)
+        if (!this.Ability.CanHit(targetManager.Target, targetManager.EnemyHeroes, this.TargetsToHit(comboMenu)))
         {
-            if (!base.CanBeCasted(targetManager, channelingCheck, comboMenu))
-            {
-                return false;
-            }
-
-            this.ally = this.skewer.GetPreferedAlly(targetManager, comboMenu);
-            return true;
+            return false;
         }
 
-        public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)
+        return true;
+    }
+
+    public bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper, ComboModeMenu comboModeMenu)
+    {
+        this.ally = this.skewer.GetPreferedAlly(targetManager, comboModeMenu);
+
+        if (this.ally != null)
         {
-            if (!base.CanHit(targetManager, comboMenu))
-            {
-                return false;
-            }
-
-            if (!this.Ability.CanHit(targetManager.Target, targetManager.EnemyHeroes, this.TargetsToHit(comboMenu)))
-            {
-                return false;
-            }
-
-            return true;
+            this.Owner.BaseUnit.Move(this.ally.Position);
+            UpdateManager.BeginInvoke(150, () => this.Ability.UseAbility());
+        }
+        else
+        {
+            this.Ability.UseAbility();
         }
 
-        public bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper, ComboModeMenu comboModeMenu)
+        var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
+        var delay = this.Ability.GetCastDelay(targetManager.Target);
+
+        targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
+        comboSleeper.Sleep(delay);
+        this.OrbwalkSleeper.Sleep(delay);
+        this.Sleeper.Sleep(hitTime);
+
+        return true;
+    }
+
+    public override UsableAbilityMenu GetAbilityMenu(string simplifiedName)
+    {
+        return new UsableAbilityHitCountMenu(this.Ability, simplifiedName);
+    }
+
+    public int TargetsToHit(IComboModeMenu comboMenu)
+    {
+        var menu = comboMenu.GetAbilitySettingsMenu<UsableAbilityHitCountMenu>(this);
+        return menu.HitCount;
+    }
+
+    public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
+    {
+        if (this.ally != null)
         {
-            this.ally = this.skewer.GetPreferedAlly(targetManager, comboModeMenu);
-
-            if (this.ally != null)
-            {
-                this.Owner.BaseUnit.Move(this.ally.Position);
-                UpdateManager.BeginInvoke(150, () => this.Ability.UseAbility());
-            }
-            else
-            {
-                this.Ability.UseAbility();
-            }
-
-            var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
-            var delay = this.Ability.GetCastDelay(targetManager.Target);
-
-            targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
-            comboSleeper.Sleep(delay);
-            this.OrbwalkSleeper.Sleep(delay);
-            this.Sleeper.Sleep(hitTime);
-
-            return true;
+            this.Owner.BaseUnit.Move(this.ally.Position);
         }
 
-        public override UsableAbilityMenu GetAbilityMenu(string simplifiedName)
+        if (!this.Ability.UseAbility())
         {
-            return new UsableAbilityHitCountMenu(this.Ability, simplifiedName);
+            return false;
         }
 
-        public int TargetsToHit(IComboModeMenu comboMenu)
-        {
-            var menu = comboMenu.GetAbilitySettingsMenu<UsableAbilityHitCountMenu>(this);
-            return menu.HitCount;
-        }
+        var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
+        var delay = this.Ability.GetCastDelay(targetManager.Target);
 
-        public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
-        {
-            if (this.ally != null)
-            {
-                this.Owner.BaseUnit.Move(this.ally.Position);
-            }
+        targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
+        comboSleeper.Sleep(delay);
+        this.OrbwalkSleeper.Sleep(delay);
+        this.Sleeper.Sleep(hitTime);
 
-            if (!this.Ability.UseAbility())
-            {
-                return false;
-            }
-
-            var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
-            var delay = this.Ability.GetCastDelay(targetManager.Target);
-
-            targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
-            comboSleeper.Sleep(delay);
-            this.OrbwalkSleeper.Sleep(delay);
-            this.Sleeper.Sleep(hitTime);
-
-            return true;
-        }
+        return true;
     }
 }

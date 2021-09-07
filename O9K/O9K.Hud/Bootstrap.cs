@@ -1,99 +1,98 @@
-﻿namespace O9K.Hud
+﻿namespace O9K.Hud;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
+using Core.Logger;
+
+using Divine.Service;
+
+using Helpers;
+
+using MainMenu;
+
+using Modules;
+
+using O9K.Hud.Helpers.Notificator;
+
+//[ExportPlugin("O9K // Hud", priority: int.MaxValue)]
+internal sealed class Bootstrap : Bootstrapper
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
+    private readonly List<IHudModule> modules = new List<IHudModule>();
 
-    using Core.Logger;
-
-    using Divine.Service;
-
-    using Helpers;
-
-    using MainMenu;
-
-    using Modules;
-
-    using O9K.Hud.Helpers.Notificator;
-
-    //[ExportPlugin("O9K // Hud", priority: int.MaxValue)]
-    internal sealed class Bootstrap : Bootstrapper
+    protected override void OnActivate()
     {
-        private readonly List<IHudModule> modules = new List<IHudModule>();
+        var hudMenu = new HudMenu();
+        var minimap = new Minimap(hudMenu);
+        var topPanel = new TopPanel(hudMenu);
+        var notificator = new Notificator(minimap, hudMenu);
 
-        protected override void OnActivate()
+        modules.Add(hudMenu);
+        modules.Add(minimap);
+        modules.Add(topPanel);
+        modules.Add(notificator);
+
+        var mainModules = new Dictionary<Type, IHudModule>
         {
-            var hudMenu = new HudMenu();
-            var minimap = new Minimap(hudMenu);
-            var topPanel = new TopPanel(hudMenu);
-            var notificator = new Notificator(minimap, hudMenu);
+            { typeof(IHudMenu), hudMenu },
+            { typeof(IMinimap), minimap },
+            { typeof(ITopPanel), topPanel },
+            { typeof(INotificator), notificator }
+        };
 
-            modules.Add(hudMenu);
-            modules.Add(minimap);
-            modules.Add(topPanel);
-            modules.Add(notificator);
-
-            var mainModules = new Dictionary<Type, IHudModule>
+        foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+        {
+            if (!type.IsClass || !typeof(IHudModule).IsAssignableFrom(type))
             {
-                { typeof(IHudMenu), hudMenu },
-                { typeof(IMinimap), minimap },
-                { typeof(ITopPanel), topPanel },
-                { typeof(INotificator), notificator }
-            };
-
-            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
-            {
-                if (!type.IsClass || !typeof(IHudModule).IsAssignableFrom(type))
-                {
-                    continue;
-                }
-
-                if (type == typeof(HudMenu) || type == typeof(Minimap) || type == typeof(TopPanel) || type == typeof(Notificator))
-                {
-                    continue;
-                }
-
-                var constructor = type.GetConstructors()[0];
-
-                var parameters = constructor.GetParameters();
-                var objectParameters = new object[parameters.Length];
-
-                for (var i = 0; i < parameters.Length; i++)
-                {
-                    var parameter = parameters[i];
-                    objectParameters[i] = mainModules[parameter.ParameterType];
-                }
-
-                modules.Add((IHudModule)Activator.CreateInstance(type, objectParameters));
+                continue;
             }
 
-            foreach (var hudModule in this.modules.OrderByDescending(x => x is IHudMenu).ThenByDescending(x => x is IMinimap))
+            if (type == typeof(HudMenu) || type == typeof(Minimap) || type == typeof(TopPanel) || type == typeof(Notificator))
             {
-                try
-                {
-                    hudModule.Activate();
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e);
-                }
+                continue;
             }
+
+            var constructor = type.GetConstructors()[0];
+
+            var parameters = constructor.GetParameters();
+            var objectParameters = new object[parameters.Length];
+
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                var parameter = parameters[i];
+                objectParameters[i] = mainModules[parameter.ParameterType];
+            }
+
+            modules.Add((IHudModule)Activator.CreateInstance(type, objectParameters));
         }
 
-        protected override void OnDeactivate()
+        foreach (var hudModule in this.modules.OrderByDescending(x => x is IHudMenu).ThenByDescending(x => x is IMinimap))
         {
-            /*foreach (var hudModule in this.modules)
+            try
             {
-                try
-                {
-                    hudModule.Dispose();
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e);
-                }
-            }*/
+                hudModule.Activate();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
         }
+    }
+
+    protected override void OnDeactivate()
+    {
+        /*foreach (var hudModule in this.modules)
+        {
+            try
+            {
+                hudModule.Dispose();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+        }*/
     }
 }

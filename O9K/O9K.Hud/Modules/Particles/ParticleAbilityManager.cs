@@ -1,107 +1,106 @@
-﻿namespace O9K.Hud.Modules.Particles
+﻿namespace O9K.Hud.Modules.Particles;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+using Core.Logger;
+using Core.Managers.Entity;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers.Notificator;
+
+using MainMenu;
+
+internal class ParticleAbilityManager : IHudModule
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
+    private readonly Dictionary<AbilityId, AbilityModule> abilities = new Dictionary<AbilityId, AbilityModule>();
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-    using Core.Logger;
-    using Core.Managers.Entity;
+    private readonly IHudMenu hudMenu;
 
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly INotificator notificator;
 
-    using Helpers.Notificator;
-
-    using MainMenu;
-
-    internal class ParticleAbilityManager : IHudModule
+    public ParticleAbilityManager(INotificator notificator, IHudMenu hudMenu)
     {
-        private readonly Dictionary<AbilityId, AbilityModule> abilities = new Dictionary<AbilityId, AbilityModule>();
+        this.notificator = notificator;
+        this.hudMenu = hudMenu;
+    }
 
-        private readonly IHudMenu hudMenu;
-
-        private readonly INotificator notificator;
-
-        public ParticleAbilityManager(INotificator notificator, IHudMenu hudMenu)
+    public void Activate()
+    {
+        foreach (var type in Assembly.GetExecutingAssembly().GetTypes().Where(x => !x.IsAbstract && x.IsClass))
         {
-            this.notificator = notificator;
-            this.hudMenu = hudMenu;
-        }
-
-        public void Activate()
-        {
-            foreach (var type in Assembly.GetExecutingAssembly().GetTypes().Where(x => !x.IsAbstract && x.IsClass))
+            if (!typeof(AbilityModule).IsAssignableFrom(type))
             {
-                if (!typeof(AbilityModule).IsAssignableFrom(type))
-                {
-                    continue;
-                }
-
-                foreach (var attribute in type.GetCustomAttributes<AbilityIdAttribute>())
-                {
-                    try
-                    {
-                        var ability = (AbilityModule)Activator.CreateInstance(type, this.notificator, this.hudMenu);
-                        this.abilities.Add(attribute.AbilityId, ability);
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e);
-                    }
-                }
+                continue;
             }
 
-            EntityManager9.AbilityAdded += this.OnAbilityAdded;
-            EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
-        }
-
-        public void Dispose()
-        {
-            foreach (var abilityModule in this.abilities.Values)
+            foreach (var attribute in type.GetCustomAttributes<AbilityIdAttribute>())
             {
-                abilityModule.Dispose();
-            }
-
-            this.abilities.Clear();
-
-            EntityManager9.AbilityAdded -= this.OnAbilityAdded;
-            EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
-        }
-
-        private void OnAbilityAdded(Ability9 ability)
-        {
-            try
-            {
-                if (!this.abilities.TryGetValue(ability.Id, out var abilityModule))
+                try
                 {
-                    return;
+                    var ability = (AbilityModule)Activator.CreateInstance(type, this.notificator, this.hudMenu);
+                    this.abilities.Add(attribute.AbilityId, ability);
                 }
-
-                abilityModule.AbilityAdded(ability);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                }
             }
         }
 
-        private void OnAbilityRemoved(Ability9 ability)
-        {
-            try
-            {
-                if (!this.abilities.TryGetValue(ability.Id, out var abilityModule))
-                {
-                    return;
-                }
+        EntityManager9.AbilityAdded += this.OnAbilityAdded;
+        EntityManager9.AbilityRemoved += this.OnAbilityRemoved;
+    }
 
-                abilityModule.AbilityRemoved(ability);
-            }
-            catch (Exception e)
+    public void Dispose()
+    {
+        foreach (var abilityModule in this.abilities.Values)
+        {
+            abilityModule.Dispose();
+        }
+
+        this.abilities.Clear();
+
+        EntityManager9.AbilityAdded -= this.OnAbilityAdded;
+        EntityManager9.AbilityRemoved -= this.OnAbilityRemoved;
+    }
+
+    private void OnAbilityAdded(Ability9 ability)
+    {
+        try
+        {
+            if (!this.abilities.TryGetValue(ability.Id, out var abilityModule))
             {
-                Logger.Error(e);
+                return;
             }
+
+            abilityModule.AbilityAdded(ability);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void OnAbilityRemoved(Ability9 ability)
+    {
+        try
+        {
+            if (!this.abilities.TryGetValue(ability.Id, out var abilityModule))
+            {
+                return;
+            }
+
+            abilityModule.AbilityRemoved(ability);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

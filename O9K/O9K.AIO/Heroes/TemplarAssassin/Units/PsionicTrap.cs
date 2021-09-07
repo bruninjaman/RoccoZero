@@ -1,54 +1,53 @@
-﻿namespace O9K.AIO.Heroes.TemplarAssassin.Units
+﻿namespace O9K.AIO.Heroes.TemplarAssassin.Units;
+
+using System;
+using System.Collections.Generic;
+
+using Abilities;
+
+using AIO.Abilities;
+
+using Base;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+using Core.Entities.Units;
+using Core.Helpers;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+using Modes.Combo;
+
+using TargetManager;
+
+[UnitName("npc_dota_templar_assassin_psionic_trap")]
+internal class PsionicTrap : ControllableUnit
 {
-    using System;
-    using System.Collections.Generic;
+    private TrapExplode trapExplode;
 
-    using Abilities;
-
-    using AIO.Abilities;
-
-    using Base;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-    using Core.Entities.Units;
-    using Core.Helpers;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Modes.Combo;
-
-    using TargetManager;
-
-    [UnitName("npc_dota_templar_assassin_psionic_trap")]
-    internal class PsionicTrap : ControllableUnit
+    public PsionicTrap(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
+        : base(owner, abilitySleeper, orbwalkSleeper, menu)
     {
-        private TrapExplode trapExplode;
-
-        public PsionicTrap(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
-            : base(owner, abilitySleeper, orbwalkSleeper, menu)
+        this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
         {
-            this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
-            {
-                { AbilityId.templar_assassin_self_trap, x => this.trapExplode = new TrapExplode(x) },
-            };
-        }
+            { AbilityId.templar_assassin_self_trap, x => this.trapExplode = new TrapExplode(x) },
+        };
+    }
 
-        public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
+    public override bool Combo(TargetManager targetManager, ComboModeMenu comboModeMenu)
+    {
+        if (comboModeMenu.IsHarassCombo)
         {
-            if (comboModeMenu.IsHarassCombo)
-            {
-                return false;
-            }
-
-            var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
-
-            if (abilityHelper.UseAbility(this.trapExplode))
-            {
-                return true;
-            }
-
             return false;
         }
+
+        var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
+
+        if (abilityHelper.UseAbility(this.trapExplode))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Earthshaker.Aftershock
+﻿namespace O9K.Evader.Abilities.Heroes.Earthshaker.Aftershock;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.earthshaker_aftershock)]
+internal class AftershockBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.earthshaker_aftershock)]
-    internal class AftershockBase : EvaderBaseAbility, IEvadable
+    public AftershockBase(Ability9 ability)
+        : base(ability)
     {
-        public AftershockBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new AftershockEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new AftershockEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

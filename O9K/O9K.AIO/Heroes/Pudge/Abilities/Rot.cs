@@ -1,77 +1,76 @@
-﻿namespace O9K.AIO.Heroes.Pudge.Abilities
+﻿namespace O9K.AIO.Heroes.Pudge.Abilities;
+
+using AIO.Abilities;
+
+using Core.Entities.Abilities.Base;
+using Core.Helpers;
+
+using TargetManager;
+
+internal class Rot : UsableAbility
 {
-    using AIO.Abilities;
+    private readonly ToggleAbility rot;
 
-    using Core.Entities.Abilities.Base;
-    using Core.Helpers;
-
-    using TargetManager;
-
-    internal class Rot : UsableAbility
+    public Rot(ActiveAbility ability)
+        : base(ability)
     {
-        private readonly ToggleAbility rot;
+        this.rot = (ToggleAbility)ability;
+    }
 
-        public Rot(ActiveAbility ability)
-            : base(ability)
+    public bool IsEnabled
+    {
+        get
         {
-            this.rot = (ToggleAbility)ability;
+            return this.rot.Enabled;
+        }
+    }
+
+    public bool AutoToggle(TargetManager targetManager)
+    {
+        if (this.rot.Enabled)
+        {
+            if (!this.ShouldCast(targetManager))
+            {
+                return this.UseAbility(null, null, false);
+            }
+        }
+        else
+        {
+            if (this.ShouldCast(targetManager))
+            {
+                return this.UseAbility(null, null, false);
+            }
         }
 
-        public bool IsEnabled
-        {
-            get
-            {
-                return this.rot.Enabled;
-            }
-        }
+        return false;
+    }
 
-        public bool AutoToggle(TargetManager targetManager)
-        {
-            if (this.rot.Enabled)
-            {
-                if (!this.ShouldCast(targetManager))
-                {
-                    return this.UseAbility(null, null, false);
-                }
-            }
-            else
-            {
-                if (this.ShouldCast(targetManager))
-                {
-                    return this.UseAbility(null, null, false);
-                }
-            }
+    public override bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper)
+    {
+        return false;
+    }
 
+    public override bool ShouldCast(TargetManager targetManager)
+    {
+        var target = targetManager.Target;
+
+        if (!this.rot.CanHit(target))
+        {
             return false;
         }
 
-        public override bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper)
+        if (target.IsInvulnerable)
         {
             return false;
         }
 
-        public override bool ShouldCast(TargetManager targetManager)
-        {
-            var target = targetManager.Target;
+        return true;
+    }
 
-            if (!this.rot.CanHit(target))
-            {
-                return false;
-            }
-
-            if (target.IsInvulnerable)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
-        {
-            this.rot.Enabled = !this.rot.Enabled;
-            this.Sleeper.Sleep(0.1f);
-            return true;
-        }
+    public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
+    {
+        this.rot.Enabled = !this.rot.Enabled;
+        this.Sleeper.Sleep(0.1f);
+        return true;
     }
 }

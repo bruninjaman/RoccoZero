@@ -1,25 +1,24 @@
-﻿namespace O9K.Evader.Abilities.Heroes.WinterWyvern.SplinterBlast
+﻿namespace O9K.Evader.Abilities.Heroes.WinterWyvern.SplinterBlast;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.winter_wyvern_splinter_blast)]
+internal class SplinterBlastBase : EvaderBaseAbility //, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.winter_wyvern_splinter_blast)]
-    internal class SplinterBlastBase : EvaderBaseAbility //, IEvadable
+    public SplinterBlastBase(Ability9 ability)
+        : base(ability)
     {
-        public SplinterBlastBase(Ability9 ability)
-            : base(ability)
-        {
-            //todo fix evadable
-        }
+        //todo fix evadable
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new SplinterBlastEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new SplinterBlastEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

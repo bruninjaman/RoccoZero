@@ -1,45 +1,44 @@
-﻿namespace O9K.ItemManager.Modules.Snatcher.Controllables
+﻿namespace O9K.ItemManager.Modules.Snatcher.Controllables;
+
+using System.Linq;
+
+using Core.Entities.Units;
+using Divine.Entity.Entities.PhysicalItems;
+using Divine.Entity.Entities.Abilities.Components;
+
+internal class SpiritBear : Controllable
 {
-    using System.Linq;
-
-    using Core.Entities.Units;
-    using Divine.Entity.Entities.PhysicalItems;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    internal class SpiritBear : Controllable
+    public SpiritBear(Unit9 unit)
+        : base(unit)
     {
-        public SpiritBear(Unit9 unit)
-            : base(unit)
+    }
+
+    public override bool CanPick(PhysicalItem physicalItem)
+    {
+        if (!this.ShouldPick(physicalItem))
         {
+            return false;
         }
 
-        public override bool CanPick(PhysicalItem physicalItem)
+        switch (physicalItem.Item.Id)
         {
-            if (!this.ShouldPick(physicalItem))
+            case AbilityId.item_gem:
+            case AbilityId.item_rapier:
+            {
+                return this.Unit.BaseInventory.FreeMainSlots.Any();
+            }
+            case AbilityId.item_aegis:
             {
                 return false;
             }
-
-            switch (physicalItem.Item.Id)
+            case AbilityId.item_refresher_shard:
+            case AbilityId.item_ultimate_scepter_2:
+            case AbilityId.item_cheese:
             {
-                case AbilityId.item_gem:
-                case AbilityId.item_rapier:
-                {
-                    return this.Unit.BaseInventory.FreeMainSlots.Any();
-                }
-                case AbilityId.item_aegis:
-                {
-                    return false;
-                }
-                case AbilityId.item_refresher_shard:
-                case AbilityId.item_ultimate_scepter_2:
-                case AbilityId.item_cheese:
-                {
-                    return this.Unit.BaseInventory.FreeMainSlots.Any() || this.Unit.BaseInventory.FreeBackpackSlots.Any();
-                }
+                return this.Unit.BaseInventory.FreeMainSlots.Any() || this.Unit.BaseInventory.FreeBackpackSlots.Any();
             }
-
-            return false;
         }
+
+        return false;
     }
 }

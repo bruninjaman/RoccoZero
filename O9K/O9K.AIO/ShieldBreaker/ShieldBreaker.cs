@@ -1,208 +1,207 @@
-﻿namespace O9K.AIO.ShieldBreaker
+﻿namespace O9K.AIO.ShieldBreaker;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Abilities.Base.Components.Base;
+using Core.Entities.Abilities.Base.Types;
+using Core.Entities.Units;
+using Core.Helpers;
+using Core.Logger;
+using Core.Managers.Entity;
+using Core.Managers.Menu.Items;
+
+using Divine.Update;
+
+using Heroes.Base;
+
+using Modes.Base;
+using Modes.Combo;
+
+using TargetManager;
+
+using UnitManager;
+
+using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
+
+internal class ShieldBreaker : BaseMode
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly Dictionary<MenuHoldKey, ComboModeMenu> comboMenus = new Dictionary<MenuHoldKey, ComboModeMenu>();
 
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Abilities.Base.Components.Base;
-    using Core.Entities.Abilities.Base.Types;
-    using Core.Entities.Units;
-    using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Entity;
-    using Core.Managers.Menu.Items;
+    private readonly MultiSleeper linkensSleeper = new MultiSleeper();
 
-    using Divine.Update;
+    private readonly MultiSleeper orbwalkerSleeper;
 
-    using Heroes.Base;
+    private readonly ShieldBreakerMenu shieldBreakerMenu;
 
-    using Modes.Base;
-    using Modes.Combo;
+    private readonly TargetManager targetManager;
 
-    using TargetManager;
+    private readonly UpdateHandler updateHandler;
 
-    using UnitManager;
+    private ComboModeMenu comboModeMenu;
 
-    using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
-
-    internal class ShieldBreaker : BaseMode
+    public ShieldBreaker(BaseHero baseHero)
+        : base(baseHero)
     {
-        private readonly Dictionary<MenuHoldKey, ComboModeMenu> comboMenus = new Dictionary<MenuHoldKey, ComboModeMenu>();
+        this.targetManager = baseHero.TargetManager;
+        this.orbwalkerSleeper = baseHero.OrbwalkSleeper;
+        this.shieldBreakerMenu = new ShieldBreakerMenu(baseHero.Menu.RootMenu);
 
-        private readonly MultiSleeper linkensSleeper = new MultiSleeper();
+        this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
+    }
 
-        private readonly MultiSleeper orbwalkerSleeper;
+    public IUnitManager UnitManager { get; set; }
 
-        private readonly ShieldBreakerMenu shieldBreakerMenu;
-
-        private readonly TargetManager targetManager;
-
-        private readonly UpdateHandler updateHandler;
-
-        private ComboModeMenu comboModeMenu;
-
-        public ShieldBreaker(BaseHero baseHero)
-            : base(baseHero)
+    public void AddComboMenu(IEnumerable<ComboModeMenu> menus)
+    {
+        foreach (var comboMenu in menus)
         {
-            this.targetManager = baseHero.TargetManager;
-            this.orbwalkerSleeper = baseHero.OrbwalkSleeper;
-            this.shieldBreakerMenu = new ShieldBreakerMenu(baseHero.Menu.RootMenu);
-
-            this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
+            this.comboMenus.Add(comboMenu.Key, comboMenu);
         }
+    }
 
-        public IUnitManager UnitManager { get; set; }
+    public void Disable()
+    {
+        EntityManager9.AbilityAdded -= this.OnAbilityAdded;
+        this.updateHandler.IsEnabled = false;
 
-        public void AddComboMenu(IEnumerable<ComboModeMenu> menus)
+        foreach (var comboMenu in this.comboMenus)
         {
-            foreach (var comboMenu in menus)
+            comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
+        }
+    }
+
+    public override void Dispose()
+    {
+        UpdateManager.DestroyIngameUpdate(this.updateHandler);
+        EntityManager9.AbilityAdded -= this.OnAbilityAdded;
+        foreach (var comboMenu in this.comboMenus)
+        {
+            comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
+        }
+    }
+
+    public void Enable()
+    {
+        EntityManager9.AbilityAdded += this.OnAbilityAdded;
+
+        foreach (var comboMenu in this.comboMenus)
+        {
+            comboMenu.Key.ValueChange += this.KeyOnValueChanged;
+        }
+    }
+
+    private void KeyOnValueChanged(object sender, KeyEventArgs e)
+    {
+        this.updateHandler.IsEnabled = e.NewValue;
+        this.comboModeMenu = this.comboMenus[(MenuHoldKey)sender];
+    }
+
+    private void OnAbilityAdded(Ability9 ability)
+    {
+        try
+        {
+            if (!ability.IsControllable || ability.IsFake || !ability.Owner.IsAlly(this.Owner.Team) || !ability.Owner.IsMyControllable
+                || !(ability is ActiveAbility active))
             {
-                this.comboMenus.Add(comboMenu.Key, comboMenu);
+                return;
             }
-        }
 
-        public void Disable()
-        {
-            EntityManager9.AbilityAdded -= this.OnAbilityAdded;
-            this.updateHandler.IsEnabled = false;
-
-            foreach (var comboMenu in this.comboMenus)
+            if (!active.UnitTargetCast || !active.TargetsEnemy || !active.BreaksLinkens)
             {
-                comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
+                return;
             }
-        }
 
-        public override void Dispose()
+            this.shieldBreakerMenu.AddBreakerAbility(ability);
+        }
+        catch (Exception e)
         {
-            UpdateManager.DestroyIngameUpdate(this.updateHandler);
-            EntityManager9.AbilityAdded -= this.OnAbilityAdded;
-            foreach (var comboMenu in this.comboMenus)
+            Logger.Error(e);
+        }
+    }
+
+    private void OnUpdate()
+    {
+        try
+        {
+            if (!this.targetManager.HasValidTarget)
             {
-                comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
+                return;
             }
-        }
 
-        public void Enable()
-        {
-            EntityManager9.AbilityAdded += this.OnAbilityAdded;
-
-            foreach (var comboMenu in this.comboMenus)
+            if (!this.comboModeMenu.IgnoreInvisibility && this.Owner.Hero.IsInvisible)
             {
-                comboMenu.Key.ValueChange += this.KeyOnValueChanged;
+                return;
             }
-        }
 
-        private void KeyOnValueChanged(object sender, KeyEventArgs e)
-        {
-            this.updateHandler.IsEnabled = e.NewValue;
-            this.comboModeMenu = this.comboMenus[(MenuHoldKey)sender];
-        }
-
-        private void OnAbilityAdded(Ability9 ability)
-        {
-            try
+            if (this.targetManager.TargetSleeper.IsSleeping)
             {
-                if (!ability.IsControllable || ability.IsFake || !ability.Owner.IsAlly(this.Owner.Team) || !ability.Owner.IsMyControllable
-                    || !(ability is ActiveAbility active))
-                {
-                    return;
-                }
-
-                if (!active.UnitTargetCast || !active.TargetsEnemy || !active.BreaksLinkens)
-                {
-                    return;
-                }
-
-                this.shieldBreakerMenu.AddBreakerAbility(ability);
+                return;
             }
-            catch (Exception e)
+
+            var target = this.targetManager.Target;
+
+            foreach (var unit in this.UnitManager.ControllableUnits)
             {
-                Logger.Error(e);
-            }
-        }
+                var abilities = unit.Owner.Abilities
+                    .Where(
+                        x => (this.shieldBreakerMenu.IsLinkensBreakerEnabled(x.Name)
+                              || this.shieldBreakerMenu.IsSpellShieldBreakerEnabled(x.Name)) && x.CanBeCasted())
+                    .OfType<ActiveAbility>()
+                    .OrderBy(x => x.CastPoint);
 
-        private void OnUpdate()
-        {
-            try
-            {
-                if (!this.targetManager.HasValidTarget)
+                foreach (var ability in abilities)
                 {
-                    return;
-                }
-
-                if (!this.comboModeMenu.IgnoreInvisibility && this.Owner.Hero.IsInvisible)
-                {
-                    return;
-                }
-
-                if (this.targetManager.TargetSleeper.IsSleeping)
-                {
-                    return;
-                }
-
-                var target = this.targetManager.Target;
-
-                foreach (var unit in this.UnitManager.ControllableUnits)
-                {
-                    var abilities = unit.Owner.Abilities
-                        .Where(
-                            x => (this.shieldBreakerMenu.IsLinkensBreakerEnabled(x.Name)
-                                  || this.shieldBreakerMenu.IsSpellShieldBreakerEnabled(x.Name)) && x.CanBeCasted())
-                        .OfType<ActiveAbility>()
-                        .OrderBy(x => x.CastPoint);
-
-                    foreach (var ability in abilities)
+                    if (!ability.CanHit(target) || !this.ShouldUseBreaker(ability, unit.Owner, target))
                     {
-                        if (!ability.CanHit(target) || !this.ShouldUseBreaker(ability, unit.Owner, target))
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        if (ability.UseAbility(target))
-                        {
-                            this.linkensSleeper.Sleep(unit.Handle, ability.GetHitTime(target) + 5.5f);
-                            this.orbwalkerSleeper.Sleep(unit.Handle, ability.GetCastDelay(target));
-                            this.targetManager.TargetSleeper.Sleep(ability.GetHitTime(target) + 0.1f);
-                            return;
-                        }
+                    if (ability.UseAbility(target))
+                    {
+                        this.linkensSleeper.Sleep(unit.Handle, ability.GetHitTime(target) + 5.5f);
+                        this.orbwalkerSleeper.Sleep(unit.Handle, ability.GetCastDelay(target));
+                        this.targetManager.TargetSleeper.Sleep(ability.GetHitTime(target) + 0.1f);
+                        return;
                     }
                 }
             }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
         }
-
-        private bool ShouldUseBreaker(IActiveAbility ability, Unit9 owner, Unit9 target)
+        catch (Exception e)
         {
-            if (!ability.UnitTargetCast || this.linkensSleeper.IsSleeping(target.Handle))
-            {
-                return false;
-            }
+            Logger.Error(e);
+        }
+    }
 
-            if (target.IsUntargetable || !target.IsVisible || target.IsInvulnerable)
-            {
-                return false;
-            }
-
-            if (owner.Abilities.OfType<IDisable>().Any(x => x.NoTargetCast && x.CanBeCasted() && x.CanHit(target)))
-            {
-                return false;
-            }
-
-            if ((target.IsLinkensProtected && target.IsLotusProtected) || target.IsSpellShieldProtected)
-            {
-                return this.shieldBreakerMenu.IsSpellShieldBreakerEnabled(ability.Name);
-            }
-
-            if (target.IsLinkensProtected && this.shieldBreakerMenu.IsLinkensBreakerEnabled(ability.Name))
-            {
-                return true;
-            }
-
+    private bool ShouldUseBreaker(IActiveAbility ability, Unit9 owner, Unit9 target)
+    {
+        if (!ability.UnitTargetCast || this.linkensSleeper.IsSleeping(target.Handle))
+        {
             return false;
         }
+
+        if (target.IsUntargetable || !target.IsVisible || target.IsInvulnerable)
+        {
+            return false;
+        }
+
+        if (owner.Abilities.OfType<IDisable>().Any(x => x.NoTargetCast && x.CanBeCasted() && x.CanHit(target)))
+        {
+            return false;
+        }
+
+        if ((target.IsLinkensProtected && target.IsLotusProtected) || target.IsSpellShieldProtected)
+        {
+            return this.shieldBreakerMenu.IsSpellShieldBreakerEnabled(ability.Name);
+        }
+
+        if (target.IsLinkensProtected && this.shieldBreakerMenu.IsLinkensBreakerEnabled(ability.Name))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1,59 +1,58 @@
-﻿namespace O9K.Hud.Helpers.Notificator.Notifications
+﻿namespace O9K.Hud.Helpers.Notificator.Notifications;
+
+using Core.Helpers;
+
+using Divine.Numerics;
+using Divine.Renderer;
+
+internal sealed class RuneNotification : Notification
 {
-    using Core.Helpers;
+    private readonly bool bounty;
 
-    using Divine.Numerics;
-    using Divine.Renderer;
+    private readonly Vector3[] positions;
 
-    internal sealed class RuneNotification : Notification
+    public RuneNotification(bool bounty, bool playSound, Vector3[] positions)
+        : base(playSound)
     {
-        private readonly bool bounty;
+        this.bounty = bounty;
+        this.positions = positions;
+        this.TimeToShow = 6;
+    }
 
-        private readonly Vector3[] positions;
+    public override void Draw(RectangleF position, IMinimap minimap)
+    {
+        var notificationSize = GetNotificationSize(position);
+        var textureSize = GetTextureSize(notificationSize);
+        var opacity = this.GetOpacity();
 
-        public RuneNotification(bool bounty, bool playSound, Vector3[] positions)
-            : base(playSound)
+        RendererManager.DrawImage("o9k.notification_bg", notificationSize, opacity);
+        RendererManager.DrawImage(this.bounty ? "o9k.rune_bounty" : "o9k.rune_regen", textureSize, opacity);
+
+        foreach (var vector3 in this.positions)
         {
-            this.bounty = bounty;
-            this.positions = positions;
-            this.TimeToShow = 6;
+            RendererManager.DrawImage("o9k.ping", minimap.WorldToMinimap(vector3, 25 * Hud.Info.ScreenRatio * this.GetPingSize()));
         }
+    }
 
-        public override void Draw(RectangleF position, IMinimap minimap)
-        {
-            var notificationSize = GetNotificationSize(position);
-            var textureSize = GetTextureSize(notificationSize);
-            var opacity = this.GetOpacity();
+    private static RectangleF GetNotificationSize(RectangleF position)
+    {
+        var rec = position;
 
-            RendererManager.DrawImage("o9k.notification_bg", notificationSize, opacity);
-            RendererManager.DrawImage(this.bounty ? "o9k.rune_bounty" : "o9k.rune_regen", textureSize, opacity);
+        rec.X = position.Center.X;
+        rec.Width = position.Width * 0.5f;
 
-            foreach (var vector3 in this.positions)
-            {
-                RendererManager.DrawImage("o9k.ping", minimap.WorldToMinimap(vector3, 25 * Hud.Info.ScreenRatio * this.GetPingSize()));
-            }
-        }
+        return rec;
+    }
 
-        private static RectangleF GetNotificationSize(RectangleF position)
-        {
-            var rec = position;
+    private static RectangleF GetTextureSize(RectangleF position)
+    {
+        var rec = new RectangleF();
 
-            rec.X = position.Center.X;
-            rec.Width = position.Width * 0.5f;
+        rec.Width = position.Width * 0.5f;
+        rec.Height = position.Height;
+        rec.X = position.Center.X - (rec.Width / 2f);
+        rec.Y = position.Y;
 
-            return rec;
-        }
-
-        private static RectangleF GetTextureSize(RectangleF position)
-        {
-            var rec = new RectangleF();
-
-            rec.Width = position.Width * 0.5f;
-            rec.Height = position.Height;
-            rec.X = position.Center.X - (rec.Width / 2f);
-            rec.Y = position.Y;
-
-            return rec;
-        }
+        return rec;
     }
 }

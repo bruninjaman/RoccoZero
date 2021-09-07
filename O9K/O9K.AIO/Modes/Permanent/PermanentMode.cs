@@ -1,76 +1,75 @@
-﻿namespace O9K.AIO.Modes.Permanent
+﻿namespace O9K.AIO.Modes.Permanent;
+
+using System;
+
+using Base;
+
+using Core.Logger;
+using Core.Managers.Menu.EventArgs;
+
+using Divine.Game;
+using Divine.Update;
+
+using Heroes.Base;
+
+using UnitManager;
+
+internal abstract class PermanentMode : BaseMode
 {
-    using System;
+    protected readonly UpdateHandler Handler;
 
-    using Base;
+    private readonly PermanentModeMenu menu;
 
-    using Core.Logger;
-    using Core.Managers.Menu.EventArgs;
-
-    using Divine.Game;
-    using Divine.Update;
-
-    using Heroes.Base;
-
-    using UnitManager;
-
-    internal abstract class PermanentMode : BaseMode
+    protected PermanentMode(BaseHero baseHero, PermanentModeMenu menu)
+        : base(baseHero)
     {
-        protected readonly UpdateHandler Handler;
+        this.UnitManager = baseHero.UnitManager;
+        this.menu = menu;
 
-        private readonly PermanentModeMenu menu;
+        this.Handler = UpdateManager.CreateIngameUpdate(0, menu.Enabled, this.OnUpdate);
+    }
 
-        protected PermanentMode(BaseHero baseHero, PermanentModeMenu menu)
-            : base(baseHero)
+    protected IUnitManager UnitManager { get; }
+
+    public virtual void Disable()
+    {
+        this.Handler.IsEnabled = false;
+        this.menu.Enabled.ValueChange -= this.EnabledOnValueChanged;
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        UpdateManager.DestroyIngameUpdate(this.Handler);
+        this.menu.Enabled.ValueChange -= this.EnabledOnValueChanged;
+    }
+
+    public virtual void Enable()
+    {
+        this.menu.Enabled.ValueChange += this.EnabledOnValueChanged;
+    }
+
+    protected abstract void Execute();
+
+    private void EnabledOnValueChanged(object sender, SwitcherEventArgs e)
+    {
+        this.Handler.IsEnabled = e.NewValue;
+    }
+
+    private void OnUpdate()
+    {
+        if (GameManager.IsPaused)
         {
-            this.UnitManager = baseHero.UnitManager;
-            this.menu = menu;
-
-            this.Handler = UpdateManager.CreateIngameUpdate(0, menu.Enabled, this.OnUpdate);
+            return;
         }
 
-        protected IUnitManager UnitManager { get; }
-
-        public virtual void Disable()
+        try
         {
-            this.Handler.IsEnabled = false;
-            this.menu.Enabled.ValueChange -= this.EnabledOnValueChanged;
+            this.Execute();
         }
-
-        public override void Dispose()
+        catch (Exception e)
         {
-            base.Dispose();
-            UpdateManager.DestroyIngameUpdate(this.Handler);
-            this.menu.Enabled.ValueChange -= this.EnabledOnValueChanged;
-        }
-
-        public virtual void Enable()
-        {
-            this.menu.Enabled.ValueChange += this.EnabledOnValueChanged;
-        }
-
-        protected abstract void Execute();
-
-        private void EnabledOnValueChanged(object sender, SwitcherEventArgs e)
-        {
-            this.Handler.IsEnabled = e.NewValue;
-        }
-
-        private void OnUpdate()
-        {
-            if (GameManager.IsPaused)
-            {
-                return;
-            }
-
-            try
-            {
-                this.Execute();
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            Logger.Error(e);
         }
     }
 }

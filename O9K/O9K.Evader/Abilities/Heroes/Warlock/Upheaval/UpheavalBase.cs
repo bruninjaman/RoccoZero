@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Warlock.Upheaval
+﻿namespace O9K.Evader.Abilities.Heroes.Warlock.Upheaval;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.warlock_upheaval)]
+internal class UpheavalBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.warlock_upheaval)]
-    internal class UpheavalBase : EvaderBaseAbility, IEvadable
+    public UpheavalBase(Ability9 ability)
+        : base(ability)
     {
-        public UpheavalBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new UpheavalEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new UpheavalEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

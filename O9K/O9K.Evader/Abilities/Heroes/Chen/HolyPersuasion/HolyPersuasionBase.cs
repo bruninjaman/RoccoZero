@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Chen.HolyPersuasion
+﻿namespace O9K.Evader.Abilities.Heroes.Chen.HolyPersuasion;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.chen_holy_persuasion)]
+internal class HolyPersuasionBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.chen_holy_persuasion)]
-    internal class HolyPersuasionBase : EvaderBaseAbility, IEvadable
+    public HolyPersuasionBase(Ability9 ability)
+        : base(ability)
     {
-        public HolyPersuasionBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new HolyPersuasionEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new HolyPersuasionEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

@@ -1,31 +1,30 @@
-﻿namespace O9K.Hud.MainMenu
+﻿namespace O9K.Hud.MainMenu;
+
+using Core.Managers.Menu.Items;
+
+internal interface IHudMenu
 {
-    using Core.Managers.Menu.Items;
+    Menu MapMenu { get; }
 
-    internal interface IHudMenu
-    {
-        Menu MapMenu { get; }
+    Menu MinimapSettingsMenu { get; }
 
-        Menu MinimapSettingsMenu { get; }
+    Menu NotificationsMenu { get; }
 
-        Menu NotificationsMenu { get; }
+    Menu NotificationsSettingsMenu { get; }
 
-        Menu NotificationsSettingsMenu { get; }
+    Menu ParticlesMenu { get; }
 
-        Menu ParticlesMenu { get; }
+    Menu RootMenu { get; }
 
-        Menu RootMenu { get; }
+    Menu ScreenMenu { get; }
 
-        Menu ScreenMenu { get; }
+    Menu TopPanelMenu { get; }
 
-        Menu TopPanelMenu { get; }
+    Menu TopPanelSettingsMenu { get; }
 
-        Menu TopPanelSettingsMenu { get; }
+    Menu UniqueMenu { get; }
 
-        Menu UniqueMenu { get; }
+    Menu UnitsMenu { get; }
 
-        Menu UnitsMenu { get; }
-
-        MenuSwitcher DontDrawWhenShopIsOpen { get; }
-    }
+    MenuSwitcher DontDrawWhenShopIsOpen { get; }
 }

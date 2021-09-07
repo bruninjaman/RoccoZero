@@ -1,216 +1,215 @@
-﻿namespace O9K.Hud.Modules.Screen.Awareness
+﻿namespace O9K.Hud.Modules.Screen.Awareness;
+
+using System;
+using System.Collections.Generic;
+
+using Core.Entities.Heroes;
+using Core.Entities.Heroes.Unique;
+using Core.Entities.Units;
+using Core.Helpers;
+using Core.Logger;
+using Core.Managers.Entity;
+using Core.Managers.Menu;
+using Core.Managers.Menu.EventArgs;
+using Core.Managers.Menu.Items;
+using Core.Managers.Renderer.Utils;
+
+using Divine.Game;
+using Divine.Numerics;
+using Divine.Renderer;
+using Divine.Update;
+
+using Helpers;
+
+using Heroes;
+
+using MainMenu;
+
+internal class Awareness : IHudModule
 {
-    using System;
-    using System.Collections.Generic;
+    private readonly MenuSwitcher enabled;
 
-    using Core.Entities.Heroes;
-    using Core.Entities.Heroes.Unique;
-    using Core.Entities.Units;
-    using Core.Helpers;
-    using Core.Logger;
-    using Core.Managers.Entity;
-    using Core.Managers.Menu;
-    using Core.Managers.Menu.EventArgs;
-    using Core.Managers.Menu.Items;
-    using Core.Managers.Renderer.Utils;
+    private readonly List<AwarenessHero> heroes = new List<AwarenessHero>();
 
-    using Divine.Game;
-    using Divine.Numerics;
-    using Divine.Renderer;
-    using Divine.Update;
+    private readonly IMinimap minimap;
 
-    using Helpers;
+    private float margin;
 
-    using Heroes;
+    private Owner owner;
 
-    using MainMenu;
+    private Vector2 start;
 
-    internal class Awareness : IHudModule
+    private float textureSize;
+
+    private readonly IHudMenu hudMenu;
+
+    public Awareness(IMinimap minimap, IHudMenu hudMenu)
     {
-        private readonly MenuSwitcher enabled;
+        this.minimap = minimap;
+        this.hudMenu = hudMenu;
 
-        private readonly List<AwarenessHero> heroes = new List<AwarenessHero>();
+        var menu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Map awareness"));
+        menu.AddTranslation(Lang.Ru, "Осведомленность");
+        menu.AddTranslation(Lang.Cn, "地图意识");
 
-        private readonly IMinimap minimap;
+        this.enabled = menu.Add(new MenuSwitcher("Enabled"));
+        this.enabled.AddTranslation(Lang.Ru, "Включено");
+        this.enabled.AddTranslation(Lang.Cn, "启用");
+    }
 
-        private float margin;
+    public void Activate()
+    {
+        this.owner = EntityManager9.Owner;
+        this.enabled.ValueChange += this.EnabledOnValueChange;
+    }
 
-        private Owner owner;
+    public void Dispose()
+    {
+        this.enabled.ValueChange -= this.EnabledOnValueChange;
+        UpdateManager.DestroyIngameUpdate(this.OnUpdate);
+        EntityManager9.UnitAdded -= this.OnUnitAdded;
+        EntityManager9.UnitRemoved -= this.OnUnitRemoved;
+        RendererManager.Draw -= this.OnDraw;
+        this.heroes.Clear();
+    }
 
-        private Vector2 start;
+    private void CalculatePosition()
+    {
+        var map = this.minimap.GetMinimap();
+        var width = map.Width;
+        var ratio = Hud.Info.ScreenRatio;
+        this.textureSize = 30 * ratio;
+        var count = this.heroes.Count;
+        this.margin = (8 * ratio);
+        var offset = (width - ((count * this.textureSize) + ((count - 1) * this.margin))) / 2f;
+        this.start = new Vector2(map.X + offset, map.Y - this.textureSize - (this.textureSize / 8f));
+    }
 
-        private float textureSize;
-
-        private readonly IHudMenu hudMenu;
-
-        public Awareness(IMinimap minimap, IHudMenu hudMenu)
+    private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
+    {
+        if (e.NewValue)
         {
-            this.minimap = minimap;
-            this.hudMenu = hudMenu;
-
-            var menu = hudMenu.ScreenMenu.GetOrAdd(new Menu("Map awareness"));
-            menu.AddTranslation(Lang.Ru, "Осведомленность");
-            menu.AddTranslation(Lang.Cn, "地图意识");
-
-            this.enabled = menu.Add(new MenuSwitcher("Enabled"));
-            this.enabled.AddTranslation(Lang.Ru, "Включено");
-            this.enabled.AddTranslation(Lang.Cn, "启用");
+            UpdateManager.CreateIngameUpdate(500, this.OnUpdate);
+            EntityManager9.UnitAdded += this.OnUnitAdded;
+            EntityManager9.UnitRemoved += this.OnUnitRemoved;
+            RendererManager.Draw += this.OnDraw;
         }
-
-        public void Activate()
+        else
         {
-            this.owner = EntityManager9.Owner;
-            this.enabled.ValueChange += this.EnabledOnValueChange;
-        }
-
-        public void Dispose()
-        {
-            this.enabled.ValueChange -= this.EnabledOnValueChange;
             UpdateManager.DestroyIngameUpdate(this.OnUpdate);
             EntityManager9.UnitAdded -= this.OnUnitAdded;
             EntityManager9.UnitRemoved -= this.OnUnitRemoved;
             RendererManager.Draw -= this.OnDraw;
             this.heroes.Clear();
         }
+    }
 
-        private void CalculatePosition()
+    private void OnDraw()
+    {
+        if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
         {
-            var map = this.minimap.GetMinimap();
-            var width = map.Width;
-            var ratio = Hud.Info.ScreenRatio;
-            this.textureSize = 30 * ratio;
-            var count = this.heroes.Count;
-            this.margin = (8 * ratio);
-            var offset = (width - ((count * this.textureSize) + ((count - 1) * this.margin))) / 2f;
-            this.start = new Vector2(map.X + offset, map.Y - this.textureSize - (this.textureSize / 8f));
+            return;
         }
 
-        private void EnabledOnValueChange(object sender, SwitcherEventArgs e)
+        try
         {
-            if (e.NewValue)
+            var rec = new Rectangle9(this.start, this.textureSize, this.textureSize);
+
+            foreach (var hero in this.heroes)
             {
-                UpdateManager.CreateIngameUpdate(500, this.OnUpdate);
-                EntityManager9.UnitAdded += this.OnUnitAdded;
-                EntityManager9.UnitRemoved += this.OnUnitRemoved;
-                RendererManager.Draw += this.OnDraw;
-            }
-            else
-            {
-                UpdateManager.DestroyIngameUpdate(this.OnUpdate);
-                EntityManager9.UnitAdded -= this.OnUnitAdded;
-                EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-                RendererManager.Draw -= this.OnDraw;
-                this.heroes.Clear();
+                if (!hero.IsValid)
+                {
+                    continue;
+                }
+
+                RendererManager.DrawImage(hero.OutlineTextureName, rec * 1.2f);
+                RendererManager.DrawImage(hero.TextureName, rec, UnitImageType.MiniUnit);
+
+                rec += new Vector2(this.textureSize + this.margin, 0);
             }
         }
-
-        private void OnDraw()
+        catch (InvalidOperationException)
         {
-            if (GameManager.IsShopOpen && this.hudMenu.DontDrawWhenShopIsOpen)
+            //ignore
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void OnUnitAdded(Unit9 entity)
+    {
+        try
+        {
+            if (!entity.IsHero || entity.IsIllusion || entity.IsAlly(this.owner.Team))
             {
                 return;
             }
 
-            try
+            if (entity is Meepo meepo && !meepo.IsMainMeepo)
             {
-                var rec = new Rectangle9(this.start, this.textureSize, this.textureSize);
+                return;
+            }
 
-                foreach (var hero in this.heroes)
+            this.heroes.Add(new AwarenessHero(entity));
+            this.CalculatePosition();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void OnUnitRemoved(Unit9 entity)
+    {
+        try
+        {
+            if (!entity.IsHero || entity.IsIllusion || entity.IsAlly(this.owner.Team))
+            {
+                return;
+            }
+
+            var hero = this.heroes.Find(x => x.Handle == entity.Handle);
+
+            if (hero == null)
+            {
+                return;
+            }
+
+            this.heroes.Remove(hero);
+            this.CalculatePosition();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    private void OnUpdate()
+    {
+        try
+        {
+            var myHero = this.owner.Hero;
+
+            if (myHero == null)
+            {
+                return;
+            }
+
+            foreach (var hero in this.heroes)
+            {
+                if (!hero.IsValid)
                 {
-                    if (!hero.IsValid)
-                    {
-                        continue;
-                    }
-
-                    RendererManager.DrawImage(hero.OutlineTextureName, rec * 1.2f);
-                    RendererManager.DrawImage(hero.TextureName, rec, UnitImageType.MiniUnit);
-
-                    rec += new Vector2(this.textureSize + this.margin, 0);
+                    continue;
                 }
-            }
-            catch (InvalidOperationException)
-            {
-                //ignore
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
+
+                hero.Update(myHero);
             }
         }
-
-        private void OnUnitAdded(Unit9 entity)
+        catch (Exception e)
         {
-            try
-            {
-                if (!entity.IsHero || entity.IsIllusion || entity.IsAlly(this.owner.Team))
-                {
-                    return;
-                }
-
-                if (entity is Meepo meepo && !meepo.IsMainMeepo)
-                {
-                    return;
-                }
-
-                this.heroes.Add(new AwarenessHero(entity));
-                this.CalculatePosition();
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
-
-        private void OnUnitRemoved(Unit9 entity)
-        {
-            try
-            {
-                if (!entity.IsHero || entity.IsIllusion || entity.IsAlly(this.owner.Team))
-                {
-                    return;
-                }
-
-                var hero = this.heroes.Find(x => x.Handle == entity.Handle);
-
-                if (hero == null)
-                {
-                    return;
-                }
-
-                this.heroes.Remove(hero);
-                this.CalculatePosition();
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
-
-        private void OnUpdate()
-        {
-            try
-            {
-                var myHero = this.owner.Hero;
-
-                if (myHero == null)
-                {
-                    return;
-                }
-
-                foreach (var hero in this.heroes)
-                {
-                    if (!hero.IsValid)
-                    {
-                        continue;
-                    }
-
-                    hero.Update(myHero);
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            Logger.Error(e);
         }
     }
 }

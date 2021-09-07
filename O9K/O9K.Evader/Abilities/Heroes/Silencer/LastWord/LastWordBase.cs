@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Silencer.LastWord
+﻿namespace O9K.Evader.Abilities.Heroes.Silencer.LastWord;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.silencer_last_word)]
+internal class LastWordBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.silencer_last_word)]
-    internal class LastWordBase : EvaderBaseAbility, IEvadable
+    public LastWordBase(Ability9 ability)
+        : base(ability)
     {
-        public LastWordBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new LastWordEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new LastWordEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

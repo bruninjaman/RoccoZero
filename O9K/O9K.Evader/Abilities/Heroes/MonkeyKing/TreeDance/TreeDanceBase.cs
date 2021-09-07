@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.MonkeyKing.TreeDance
+﻿namespace O9K.Evader.Abilities.Heroes.MonkeyKing.TreeDance;
+
+using Base;
+using Base.Usable.BlinkAbility;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.monkey_king_tree_dance)]
+internal class TreeDanceBase : EvaderBaseAbility, IUsable<BlinkAbility>
 {
-    using Base;
-    using Base.Usable.BlinkAbility;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.monkey_king_tree_dance)]
-    internal class TreeDanceBase : EvaderBaseAbility, IUsable<BlinkAbility>
+    public TreeDanceBase(Ability9 ability)
+        : base(ability)
     {
-        public TreeDanceBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public BlinkAbility GetUsableAbility()
-        {
-            return new TreeDanceUsable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public BlinkAbility GetUsableAbility()
+    {
+        return new TreeDanceUsable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

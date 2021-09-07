@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.Techies.StasisTrap
+﻿namespace O9K.Evader.Abilities.Heroes.Techies.StasisTrap;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.techies_stasis_trap)]
+internal class StasisTrapBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.techies_stasis_trap)]
-    internal class StasisTrapBase : EvaderBaseAbility, IEvadable
+    public StasisTrapBase(Ability9 ability)
+        : base(ability)
     {
-        public StasisTrapBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new StasisTrapEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new StasisTrapEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

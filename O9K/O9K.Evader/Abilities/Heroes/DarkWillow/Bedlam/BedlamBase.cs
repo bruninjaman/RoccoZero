@@ -1,24 +1,23 @@
-﻿namespace O9K.Evader.Abilities.Heroes.DarkWillow.Bedlam
+﻿namespace O9K.Evader.Abilities.Heroes.DarkWillow.Bedlam;
+
+using Base;
+using Base.Evadable;
+
+using Core.Entities.Abilities.Base;
+using Core.Entities.Metadata;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+[AbilityId(AbilityId.dark_willow_bedlam)]
+internal class BedlamBase : EvaderBaseAbility, IEvadable
 {
-    using Base;
-    using Base.Evadable;
-
-    using Core.Entities.Abilities.Base;
-    using Core.Entities.Metadata;
-
-    using Divine.Entity.Entities.Abilities.Components;
-
-    [AbilityId(AbilityId.dark_willow_bedlam)]
-    internal class BedlamBase : EvaderBaseAbility, IEvadable
+    public BedlamBase(Ability9 ability)
+        : base(ability)
     {
-        public BedlamBase(Ability9 ability)
-            : base(ability)
-        {
-        }
+    }
 
-        public EvadableAbility GetEvadableAbility()
-        {
-            return new BedlamEvadable(this.Ability, this.Pathfinder, this.Menu);
-        }
+    public EvadableAbility GetEvadableAbility()
+    {
+        return new BedlamEvadable(this.Ability, this.Pathfinder, this.Menu);
     }
 }

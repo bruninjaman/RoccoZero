@@ -1,200 +1,199 @@
-﻿namespace O9K.ItemManager.Utils
+﻿namespace O9K.ItemManager.Utils;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Core.Entities.Abilities.Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Abilities.Items.Components;
+using Divine.Entity.Entities.Components;
+using Divine.Entity.Entities.Units.Components;
+using Divine.Game;
+
+using Enums;
+
+internal static class ItemUtils
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Core.Entities.Abilities.Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Abilities.Items.Components;
-    using Divine.Entity.Entities.Components;
-    using Divine.Entity.Entities.Units.Components;
-    using Divine.Game;
-
-    using Enums;
-
-    internal static class ItemUtils
+    private static readonly HashSet<string> BonusAllStats = new HashSet<string>
     {
-        private static readonly HashSet<string> BonusAllStats = new HashSet<string>
+        "bonus_all_stats",
+        "bonus_stats"
+    };
+
+    private static readonly HashSet<string> BonusHealth = new HashSet<string>
+    {
+        "bonus_strength",
+        "bonus_str",
+        "bonus_health"
+    };
+
+    private static readonly HashSet<string> BonusMana = new HashSet<string>
+    {
+        "bonus_intellect",
+        "bonus_intelligence",
+        "bonus_int",
+        "bonus_mana"
+    };
+
+    private static readonly Dictionary<AbilityId, int> ItemPrice = new Dictionary<AbilityId, int>();
+
+    private static readonly Dictionary<AbilityId, ShopFlags> ItemShopFlags = new Dictionary<AbilityId, ShopFlags>();
+
+    private static readonly Dictionary<AbilityId, Stats> ItemStats = new Dictionary<AbilityId, Stats>();
+
+    private static readonly Dictionary<AbilityId, bool> Recipes = new Dictionary<AbilityId, bool>();
+
+    public static bool CanBePurchased(this AbilityId itemId, Team team)
+    {
+        var itemStockInfo = GameManager.ItemStockInfos.FirstOrDefault(x => x.AbilityId == itemId && x.Team == team);
+        if (itemStockInfo != null && itemStockInfo.StockCount <= 0)
         {
-            "bonus_all_stats",
-            "bonus_stats"
-        };
-
-        private static readonly HashSet<string> BonusHealth = new HashSet<string>
-        {
-            "bonus_strength",
-            "bonus_str",
-            "bonus_health"
-        };
-
-        private static readonly HashSet<string> BonusMana = new HashSet<string>
-        {
-            "bonus_intellect",
-            "bonus_intelligence",
-            "bonus_int",
-            "bonus_mana"
-        };
-
-        private static readonly Dictionary<AbilityId, int> ItemPrice = new Dictionary<AbilityId, int>();
-
-        private static readonly Dictionary<AbilityId, ShopFlags> ItemShopFlags = new Dictionary<AbilityId, ShopFlags>();
-
-        private static readonly Dictionary<AbilityId, Stats> ItemStats = new Dictionary<AbilityId, Stats>();
-
-        private static readonly Dictionary<AbilityId, bool> Recipes = new Dictionary<AbilityId, bool>();
-
-        public static bool CanBePurchased(this AbilityId itemId, Team team)
-        {
-            var itemStockInfo = GameManager.ItemStockInfos.FirstOrDefault(x => x.AbilityId == itemId && x.Team == team);
-            if (itemStockInfo != null && itemStockInfo.StockCount <= 0)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
-        public static ItemSlot GetItemSlot(this Ability9 ability)
+        return true;
+    }
+
+    public static ItemSlot GetItemSlot(this Ability9 ability)
+    {
+        var hero = ability.Owner.BaseUnit;
+
+        for (var i = ItemSlot.MainSlot1; i <= ItemSlot.StashSlot6; i++)
         {
-            var hero = ability.Owner.BaseUnit;
-
-            for (var i = ItemSlot.MainSlot1; i <= ItemSlot.StashSlot6; i++)
+            var inventoryItem = hero.Inventory.GetItem(i);
+            if (inventoryItem?.Handle != ability.Handle)
             {
-                var inventoryItem = hero.Inventory.GetItem(i);
-                if (inventoryItem?.Handle != ability.Handle)
-                {
-                    continue;
-                }
-
-                return i;
+                continue;
             }
 
-            var neutralItem = hero.Inventory.GetItem(ItemSlot.NeutralItemSlot);
-            if (neutralItem?.Handle == ability.Handle)
-            {
-                return ItemSlot.NeutralItemSlot;
-            }
-
-            return (ItemSlot)(-1);
+            return i;
         }
 
-        public static int GetPrice(this AbilityId itemId)
+        var neutralItem = hero.Inventory.GetItem(ItemSlot.NeutralItemSlot);
+        if (neutralItem?.Handle == ability.Handle)
         {
-            if (ItemPrice.TryGetValue(itemId, out var price))
-            {
-                return price;
-            }
+            return ItemSlot.NeutralItemSlot;
+        }
 
-            ItemPrice[itemId] = Ability.GetKeyValueById(itemId).GetSubKey("ItemCost")?.GetInt32() ?? 0;
+        return (ItemSlot)(-1);
+    }
+
+    public static int GetPrice(this AbilityId itemId)
+    {
+        if (ItemPrice.TryGetValue(itemId, out var price))
+        {
             return price;
         }
 
-        public static ShopFlags GetShopFlags(this AbilityId itemId)
+        ItemPrice[itemId] = Ability.GetKeyValueById(itemId).GetSubKey("ItemCost")?.GetInt32() ?? 0;
+        return price;
+    }
+
+    public static ShopFlags GetShopFlags(this AbilityId itemId)
+    {
+        if (ItemShopFlags.TryGetValue(itemId, out var flags))
         {
-            if (ItemShopFlags.TryGetValue(itemId, out var flags))
-            {
-                return flags;
-            }
-
-            var itemName = itemId.ToString();
-
-            if (HasGlobalTag(itemName))
-            {
-                flags |= ShopFlags.Base;
-            }
-
-            if (HasSecretShopFlag(itemName))
-            {
-                flags |= ShopFlags.Secret;
-            }
-
-            if (HasSideShopFlag(itemName))
-            {
-                flags |= ShopFlags.Side;
-
-                if ((flags & ShopFlags.Secret) == 0)
-                {
-                    flags |= ShopFlags.Base;
-                }
-            }
-
-            if (flags == ShopFlags.None)
-            {
-                flags = ShopFlags.Base;
-            }
-
-            ItemShopFlags[itemId] = flags;
             return flags;
         }
 
-        public static bool HasHealthStats(this AbilityId itemId)
+        var itemName = itemId.ToString();
+
+        if (HasGlobalTag(itemName))
         {
-            return (GetItemStats(itemId) & Stats.Health) != 0;
+            flags |= ShopFlags.Base;
         }
 
-        public static bool HasManaStats(this AbilityId itemId)
+        if (HasSecretShopFlag(itemName))
         {
-            return (GetItemStats(itemId) & Stats.Mana) != 0;
+            flags |= ShopFlags.Secret;
         }
 
-        public static bool IsRecipe(this AbilityId itemId)
+        if (HasSideShopFlag(itemName))
         {
-            if (Recipes.TryGetValue(itemId, out var value))
+            flags |= ShopFlags.Side;
+
+            if ((flags & ShopFlags.Secret) == 0)
             {
-                return value;
+                flags |= ShopFlags.Base;
             }
+        }
 
-            value = itemId.ToString().Contains("recipe");
-            Recipes[itemId] = value;
+        if (flags == ShopFlags.None)
+        {
+            flags = ShopFlags.Base;
+        }
 
+        ItemShopFlags[itemId] = flags;
+        return flags;
+    }
+
+    public static bool HasHealthStats(this AbilityId itemId)
+    {
+        return (GetItemStats(itemId) & Stats.Health) != 0;
+    }
+
+    public static bool HasManaStats(this AbilityId itemId)
+    {
+        return (GetItemStats(itemId) & Stats.Mana) != 0;
+    }
+
+    public static bool IsRecipe(this AbilityId itemId)
+    {
+        if (Recipes.TryGetValue(itemId, out var value))
+        {
             return value;
         }
 
-        private static Stats GetItemStats(AbilityId itemId)
+        value = itemId.ToString().Contains("recipe");
+        Recipes[itemId] = value;
+
+        return value;
+    }
+
+    private static Stats GetItemStats(AbilityId itemId)
+    {
+        if (ItemStats.TryGetValue(itemId, out var stats))
         {
-            if (ItemStats.TryGetValue(itemId, out var stats))
-            {
-                return stats;
-            }
-
-            var data = Ability.GetAbilityDataById(itemId).AbilitySpecialData.ToList();
-
-            if (data.Any(x => BonusAllStats.Contains(x.Name)))
-            {
-                stats = Stats.All;
-            }
-            else
-            {
-                if (data.Any(x => BonusHealth.Contains(x.Name)))
-                {
-                    stats |= Stats.Health;
-                }
-
-                if (data.Any(x => BonusMana.Contains(x.Name)))
-                {
-                    stats |= Stats.Mana;
-                }
-            }
-
-            ItemStats[itemId] = stats;
             return stats;
         }
 
-        private static bool HasGlobalTag(string name)
+        var data = Ability.GetAbilityDataById(itemId).AbilitySpecialData.ToList();
+
+        if (data.Any(x => BonusAllStats.Contains(x.Name)))
         {
-            return Ability.GetKeyValueByName(name).GetSubKey("GlobalShop")?.GetBooleon() ?? false;
+            stats = Stats.All;
+        }
+        else
+        {
+            if (data.Any(x => BonusHealth.Contains(x.Name)))
+            {
+                stats |= Stats.Health;
+            }
+
+            if (data.Any(x => BonusMana.Contains(x.Name)))
+            {
+                stats |= Stats.Mana;
+            }
         }
 
-        private static bool HasSecretShopFlag(string name)
-        {
-            return Ability.GetKeyValueByName(name).GetSubKey("SecretShop")?.GetBooleon() ?? false;
-        }
+        ItemStats[itemId] = stats;
+        return stats;
+    }
 
-        private static bool HasSideShopFlag(string name)
-        {
-            return Ability.GetKeyValueByName(name).GetSubKey("SideShop")?.GetBooleon() ?? false;
-        }
+    private static bool HasGlobalTag(string name)
+    {
+        return Ability.GetKeyValueByName(name).GetSubKey("GlobalShop")?.GetBooleon() ?? false;
+    }
+
+    private static bool HasSecretShopFlag(string name)
+    {
+        return Ability.GetKeyValueByName(name).GetSubKey("SecretShop")?.GetBooleon() ?? false;
+    }
+
+    private static bool HasSideShopFlag(string name)
+    {
+        return Ability.GetKeyValueByName(name).GetSubKey("SideShop")?.GetBooleon() ?? false;
     }
 }
