@@ -1,236 +1,235 @@
-﻿namespace Debugger.Tools.Information
+﻿namespace Debugger.Tools.Information;
+
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using Debugger.Menus;
+
+using Divine.Entity;
+using Divine.Entity.Entities.Abilities.Items;
+using Divine.Entity.Entities.Players;
+using Divine.Entity.Entities.Units;
+using Divine.Game;
+using Divine.Game.EventArgs;
+using Divine.Helpers;
+using Divine.Menu.EventArgs;
+using Divine.Menu.Items;
+using Divine.Numerics;
+using Divine.Update;
+
+using Logger;
+
+internal class Items : IDebuggerTool
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    private readonly Player player;
 
-    using Debugger.Menus;
+    private MenuSwitcher autoUpdate;
 
-    using Divine.Entity;
-    using Divine.Entity.Entities.Abilities.Items;
-    using Divine.Entity.Entities.Players;
-    using Divine.Entity.Entities.Units;
-    using Divine.Game;
-    using Divine.Game.EventArgs;
-    using Divine.Helpers;
-    using Divine.Menu.EventArgs;
-    using Divine.Menu.Items;
-    using Divine.Numerics;
-    using Divine.Update;
+    private MenuSwitcher information;
 
-    using Logger;
+    private uint lastUnitInfo;
 
-    internal class Items : IDebuggerTool
+    private readonly ILog log;
+
+    private IMainMenu mainMenu;
+
+    private Menu menu;
+
+    private MenuSwitcher showBackpack;
+
+    private MenuSwitcher showBehavior;
+
+    private MenuSwitcher showCastRange;
+
+    private MenuSwitcher showInventory;
+
+    private MenuSwitcher showManaCost;
+
+    private MenuSwitcher showSpecialData;
+
+    private MenuSwitcher showStash;
+
+    private MenuSwitcher showTargetType;
+
+
+    public Items(IMainMenu mainMenu, ILog log)
     {
-        private readonly Player player;
+        this.mainMenu = mainMenu;
+        this.log = log;
+        this.player = EntityManager.LocalPlayer;
+    }
 
-        private MenuSwitcher autoUpdate;
+    public int LoadPriority { get; } = 80;
 
-        private MenuSwitcher information;
+    public void Activate()
+    {
+        this.menu = this.mainMenu.InformationMenu.CreateMenu("Items");
 
-        private uint lastUnitInfo;
+        this.information = this.menu.CreateSwitcher("Get", false);
+        this.information.ValueChanged += this.InformationOnPropertyChanged;
 
-        private readonly ILog log;
+        this.autoUpdate = this.menu.CreateSwitcher("Auto update", false);
+        this.autoUpdate.ValueChanged += this.AutoUpdateOnPropertyChanged;
 
-        private IMainMenu mainMenu;
+        this.showInventory = this.menu.CreateSwitcher("Show inventory items", true);
+        this.showBackpack = this.menu.CreateSwitcher("Show backpack items", false);
+        this.showStash = this.menu.CreateSwitcher("Show stash items", false);
+        this.showManaCost = this.menu.CreateSwitcher("Show mana cost", false);
+        this.showCastRange = this.menu.CreateSwitcher("Show cast range", false);
+        this.showBehavior = this.menu.CreateSwitcher("Show behavior", false);
+        this.showTargetType = this.menu.CreateSwitcher("Show target type", false);
+        this.showSpecialData = this.menu.CreateSwitcher("Show all special data", false);
 
-        private Menu menu;
+        this.AutoUpdateOnPropertyChanged(null, null);
+    }
 
-        private MenuSwitcher showBackpack;
+    public void Dispose()
+    {
+        this.information.ValueChanged -= this.InformationOnPropertyChanged;
+        this.autoUpdate.ValueChanged -= this.AutoUpdateOnPropertyChanged;
+        GameManager.GameEvent -= this.GameOnGameEvent;
+    }
 
-        private MenuSwitcher showBehavior;
-
-        private MenuSwitcher showCastRange;
-
-        private MenuSwitcher showInventory;
-
-        private MenuSwitcher showManaCost;
-
-        private MenuSwitcher showSpecialData;
-
-        private MenuSwitcher showStash;
-
-        private MenuSwitcher showTargetType;
-
-
-        public Items(IMainMenu mainMenu, ILog log)
+    private void AutoUpdateOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
         {
-            this.mainMenu = mainMenu;
-            this.log = log;
-            this.player = EntityManager.LocalPlayer;
-        }
-
-        public int LoadPriority { get; } = 80;
-
-        public void Activate()
-        {
-            this.menu = this.mainMenu.InformationMenu.CreateMenu("Items");
-
-            this.information = this.menu.CreateSwitcher("Get", false);
-            this.information.ValueChanged += this.InformationOnPropertyChanged;
-
-            this.autoUpdate = this.menu.CreateSwitcher("Auto update", false);
-            this.autoUpdate.ValueChanged += this.AutoUpdateOnPropertyChanged;
-
-            this.showInventory = this.menu.CreateSwitcher("Show inventory items", true);
-            this.showBackpack = this.menu.CreateSwitcher("Show backpack items", false);
-            this.showStash = this.menu.CreateSwitcher("Show stash items", false);
-            this.showManaCost = this.menu.CreateSwitcher("Show mana cost", false);
-            this.showCastRange = this.menu.CreateSwitcher("Show cast range", false);
-            this.showBehavior = this.menu.CreateSwitcher("Show behavior", false);
-            this.showTargetType = this.menu.CreateSwitcher("Show target type", false);
-            this.showSpecialData = this.menu.CreateSwitcher("Show all special data", false);
-
-            this.AutoUpdateOnPropertyChanged(null, null);
-        }
-
-        public void Dispose()
-        {
-            this.information.ValueChanged -= this.InformationOnPropertyChanged;
-            this.autoUpdate.ValueChanged -= this.AutoUpdateOnPropertyChanged;
-            GameManager.GameEvent -= this.GameOnGameEvent;
-        }
-
-        private void AutoUpdateOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            UpdateManager.BeginInvoke(() =>
+            if (this.autoUpdate)
             {
-                if (this.autoUpdate)
-                {
-                    this.menu.AddAsterisk();
-                    GameManager.GameEvent += this.GameOnGameEvent;
-                    this.InformationOnPropertyChanged(null, null);
-                }
-                else
-                {
-                    this.menu.RemoveAsterisk();
-                    GameManager.GameEvent -= this.GameOnGameEvent;
-                }
-            });
-        }
-
-        private void GameOnGameEvent(GameEventEventArgs e)
-        {
-            if (e.GameEvent.Name != "dota_player_update_selected_unit" && e.GameEvent.Name != "dota_player_update_query_unit")
-            {
-                return;
+                this.menu.AddAsterisk();
+                GameManager.GameEvent += this.GameOnGameEvent;
+                this.InformationOnPropertyChanged(null, null);
             }
+            else
+            {
+                this.menu.RemoveAsterisk();
+                GameManager.GameEvent -= this.GameOnGameEvent;
+            }
+        });
+    }
 
+    private void GameOnGameEvent(GameEventEventArgs e)
+    {
+        if (e.GameEvent.Name != "dota_player_update_selected_unit" && e.GameEvent.Name != "dota_player_update_query_unit")
+        {
+            return;
+        }
+
+        var unit = (this.player.QueryUnit ?? this.player.SelectedUnits.FirstOrDefault()) as Unit;
+        if (unit?.IsValid != true)
+        {
+            return;
+        }
+
+        if (unit.Handle == this.lastUnitInfo)
+        {
+            return;
+        }
+
+        this.InformationOnPropertyChanged(null, null);
+    }
+
+    private void InformationOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        if (e.Value == information)
+        {
+            return;
+        }
+
+        UpdateManager.BeginInvoke(() =>
+        {
             var unit = (this.player.QueryUnit ?? this.player.SelectedUnits.FirstOrDefault()) as Unit;
-            if (unit?.IsValid != true)
+            if (unit?.IsValid != true || !unit.HasInventory)
             {
                 return;
             }
 
-            if (unit.Handle == this.lastUnitInfo)
+            this.lastUnitInfo = unit.Handle;
+
+            var item = new LogItem(LogType.Item, Color.PaleGreen, "Items information");
+
+            item.AddLine("Unit name: " + unit.Name, unit.Name);
+            item.AddLine("Unit network name: " + unit.NetworkName, unit.NetworkName);
+            item.AddLine("Unit classID: " + unit.ClassId, unit.ClassId);
+
+            var localizeName = LocalizationHelper.LocalizeName(unit);
+            item.AddLine("Unit display name: " + localizeName, localizeName);
+
+            var items = new List<Item>();
+
+            if (this.showInventory)
             {
-                return;
+                items.AddRange(unit.Inventory.Items);
             }
 
-            this.InformationOnPropertyChanged(null, null);
-        }
-
-        private void InformationOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            if (e.Value == information)
+            if (this.showBackpack)
             {
-                return;
+                items.AddRange(unit.Inventory.BackpackItems);
             }
 
-            UpdateManager.BeginInvoke(() =>
+            if (this.showStash)
             {
-                var unit = (this.player.QueryUnit ?? this.player.SelectedUnits.FirstOrDefault()) as Unit;
-                if (unit?.IsValid != true || !unit.HasInventory)
+                items.AddRange(unit.Inventory.StashItems);
+            }
+
+            foreach (var ability in items.Reverse<Item>())
+            {
+                var abilityItem = new LogItem(LogType.Spell, Color.PaleGreen);
+
+                abilityItem.AddLine("Name: " + ability.Name, ability.Name);
+                abilityItem.AddLine("Network name: " + ability.NetworkName, ability.NetworkName);
+                abilityItem.AddLine("ClassID: " + ability.ClassId, ability.ClassId);
+
+                var localizeAbilityName = LocalizationHelper.LocalizeAbilityName(ability.Name);
+                abilityItem.AddLine("Display name: " + localizeAbilityName, localizeAbilityName);
+
+                if (this.showManaCost)
                 {
-                    return;
+                    abilityItem.AddLine("Mana cost: " + ability.ManaCost, ability.ManaCost);
                 }
 
-                this.lastUnitInfo = unit.Handle;
-
-                var item = new LogItem(LogType.Item, Color.PaleGreen, "Items information");
-
-                item.AddLine("Unit name: " + unit.Name, unit.Name);
-                item.AddLine("Unit network name: " + unit.NetworkName, unit.NetworkName);
-                item.AddLine("Unit classID: " + unit.ClassId, unit.ClassId);
-
-                var localizeName = LocalizationHelper.LocalizeName(unit);
-                item.AddLine("Unit display name: " + localizeName, localizeName);
-
-                var items = new List<Item>();
-
-                if (this.showInventory)
+                if (this.showCastRange)
                 {
-                    items.AddRange(unit.Inventory.Items);
+                    abilityItem.AddLine("Cast range: " + ability.CastRange, ability.CastRange);
                 }
 
-                if (this.showBackpack)
+                if (this.showBehavior)
                 {
-                    items.AddRange(unit.Inventory.BackpackItems);
+                    abilityItem.AddLine("Behavior: " + ability.AbilityBehavior, ability.AbilityBehavior);
                 }
 
-                if (this.showStash)
+                if (this.showTargetType)
                 {
-                    items.AddRange(unit.Inventory.StashItems);
+                    abilityItem.AddLine("Target type: " + ability.TargetType, ability.TargetType);
+                    abilityItem.AddLine("Target team type: " + ability.TargetTeamType, ability.TargetTeamType);
                 }
 
-                foreach (var ability in items.Reverse<Item>())
+                if (this.showSpecialData)
                 {
-                    var abilityItem = new LogItem(LogType.Spell, Color.PaleGreen);
-
-                    abilityItem.AddLine("Name: " + ability.Name, ability.Name);
-                    abilityItem.AddLine("Network name: " + ability.NetworkName, ability.NetworkName);
-                    abilityItem.AddLine("ClassID: " + ability.ClassId, ability.ClassId);
-
-                    var localizeAbilityName = LocalizationHelper.LocalizeAbilityName(ability.Name);
-                    abilityItem.AddLine("Display name: " + localizeAbilityName, localizeAbilityName);
-
-                    if (this.showManaCost)
+                    abilityItem.AddLine("Special data =>");
+                    foreach (var abilitySpecialData in ability.AbilitySpecialData.Where(x => !x.Name.StartsWith("#")))
                     {
-                        abilityItem.AddLine("Mana cost: " + ability.ManaCost, ability.ManaCost);
-                    }
+                        var values = new StringBuilder();
+                        var count = abilitySpecialData.Count;
 
-                    if (this.showCastRange)
-                    {
-                        abilityItem.AddLine("Cast range: " + ability.CastRange, ability.CastRange);
-                    }
-
-                    if (this.showBehavior)
-                    {
-                        abilityItem.AddLine("Behavior: " + ability.AbilityBehavior, ability.AbilityBehavior);
-                    }
-
-                    if (this.showTargetType)
-                    {
-                        abilityItem.AddLine("Target type: " + ability.TargetType, ability.TargetType);
-                        abilityItem.AddLine("Target team type: " + ability.TargetTeamType, ability.TargetTeamType);
-                    }
-
-                    if (this.showSpecialData)
-                    {
-                        abilityItem.AddLine("Special data =>");
-                        foreach (var abilitySpecialData in ability.AbilitySpecialData.Where(x => !x.Name.StartsWith("#")))
+                        for (uint i = 0; i < count; i++)
                         {
-                            var values = new StringBuilder();
-                            var count = abilitySpecialData.Count;
-
-                            for (uint i = 0; i < count; i++)
+                            values.Append(abilitySpecialData.GetValue(i));
+                            if (i < count - 1)
                             {
-                                values.Append(abilitySpecialData.GetValue(i));
-                                if (i < count - 1)
-                                {
-                                    values.Append(", ");
-                                }
+                                values.Append(", ");
                             }
-
-                            abilityItem.AddLine("  " + abilitySpecialData.Name + ": " + values, abilitySpecialData.Name);
                         }
-                    }
 
-                    this.log.Display(abilityItem);
+                        abilityItem.AddLine("  " + abilitySpecialData.Name + ": " + values, abilitySpecialData.Name);
+                    }
                 }
 
-                this.log.Display(item);
-            });
-        }
+                this.log.Display(abilityItem);
+            }
+
+            this.log.Display(item);
+        });
     }
 }

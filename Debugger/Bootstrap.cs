@@ -1,78 +1,77 @@
-﻿namespace Debugger
+﻿namespace Debugger;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
+using Debugger.Logger;
+using Debugger.Menus;
+
+using Divine.Service;
+
+using Tools;
+
+//[ExportPlugin("Debugger", StartupMode.Auto, priority: 1)]
+internal class Bootstrap : Bootstrapper
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
+    private readonly List<IDebuggerTool> tools = new();
 
-    using Debugger.Logger;
-    using Debugger.Menus;
+    private MainMenu MainMenu;
 
-    using Divine.Service;
+    private Log Log;
 
-    using Tools;
-
-    //[ExportPlugin("Debugger", StartupMode.Auto, priority: 1)]
-    internal class Bootstrap : Bootstrapper
+    protected override void OnPreActivate()
     {
-        private readonly List<IDebuggerTool> tools = new();
+        //UpdateManager.BeginInvoke(OnActivate);
+    }
 
-        private MainMenu MainMenu;
-
-        private Log Log;
-
-        protected override void OnPreActivate()
+    protected override void OnActivate()
+    {
+        MainMenu = new MainMenu();
+        MainMenu.Activate();
+       
+        Log = new Log(MainMenu);
+        Log.Activate();
+        
+        var mainModules = new Dictionary<Type, object>
         {
-            //UpdateManager.BeginInvoke(OnActivate);
+            { typeof(IMainMenu), MainMenu },
+            { typeof(ILog), Log }
+        };
+
+        foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+        {
+            if (!type.IsClass || !typeof(IDebuggerTool).IsAssignableFrom(type))
+            {
+                continue;
+            }
+
+            var constructor = type.GetConstructors()[0];
+
+            var parameters = constructor.GetParameters();
+            var objectParameters = new object[parameters.Length];
+
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                var parameter = parameters[i];
+                objectParameters[i] = mainModules[parameter.ParameterType];
+            }
+
+            tools.Add((IDebuggerTool)Activator.CreateInstance(type, objectParameters));
         }
 
-        protected override void OnActivate()
+        foreach (var service in this.tools.OrderByDescending(x => x.LoadPriority))
         {
-            MainMenu = new MainMenu();
-            MainMenu.Activate();
-           
-            Log = new Log(MainMenu);
-            Log.Activate();
-            
-            var mainModules = new Dictionary<Type, object>
-            {
-                { typeof(IMainMenu), MainMenu },
-                { typeof(ILog), Log }
-            };
-
-            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
-            {
-                if (!type.IsClass || !typeof(IDebuggerTool).IsAssignableFrom(type))
-                {
-                    continue;
-                }
-
-                var constructor = type.GetConstructors()[0];
-
-                var parameters = constructor.GetParameters();
-                var objectParameters = new object[parameters.Length];
-
-                for (var i = 0; i < parameters.Length; i++)
-                {
-                    var parameter = parameters[i];
-                    objectParameters[i] = mainModules[parameter.ParameterType];
-                }
-
-                tools.Add((IDebuggerTool)Activator.CreateInstance(type, objectParameters));
-            }
-
-            foreach (var service in this.tools.OrderByDescending(x => x.LoadPriority))
-            {
-                service.Activate();
-            }
+            service.Activate();
         }
+    }
 
-        protected override void OnDeactivate()
+    protected override void OnDeactivate()
+    {
+        foreach (var service in this.tools.OrderBy(x => x.LoadPriority))
         {
-            foreach (var service in this.tools.OrderBy(x => x.LoadPriority))
-            {
-                service.Dispose();
-            }
+            service.Dispose();
         }
     }
 }

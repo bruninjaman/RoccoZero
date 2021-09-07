@@ -1,39 +1,38 @@
-﻿namespace Debugger.Logger
+﻿namespace Debugger.Logger;
+
+using System;
+using System.Collections.Generic;
+
+using Divine.Game;
+using Divine.Numerics;
+
+internal class LogItem
 {
-    using System;
-    using System.Collections.Generic;
-
-    using Divine.Game;
-    using Divine.Numerics;
-
-    internal class LogItem
+    public LogItem(LogType type, Color color, string firstLine = null)
     {
-        public LogItem(LogType type, Color color, string firstLine = null)
+        if (firstLine != null)
         {
-            if (firstLine != null)
-            {
-                this.FirstLine = firstLine + " // " + GameManager.RawGameTime + " (" + TimeSpan.FromSeconds(GameManager.GameTime).ToString(@"mm\:ss")
-                                 + ")";
-            }
-
-            this.Type = type;
-            this.Color = color;
-            this.Time = GameManager.RawGameTime;
+            this.FirstLine = firstLine + " // " + GameManager.RawGameTime + " (" + TimeSpan.FromSeconds(GameManager.GameTime).ToString(@"mm\:ss")
+                             + ")";
         }
 
-        public Color Color { get; }
+        this.Type = type;
+        this.Color = color;
+        this.Time = GameManager.RawGameTime;
+    }
 
-        public string FirstLine { get; }
+    public Color Color { get; }
 
-        public List<Tuple<string, string>> Lines { get; } = new List<Tuple<string, string>>();
+    public string FirstLine { get; }
 
-        public float Time { get; }
+    public List<Tuple<string, string>> Lines { get; } = new List<Tuple<string, string>>();
 
-        public LogType Type { get; }
+    public float Time { get; }
 
-        public void AddLine(string text, object param = null)
-        {
-            this.Lines.Add(Tuple.Create(text, param.ToCopyFormat()));
-        }
+    public LogType Type { get; }
+
+    public void AddLine(string text, object param = null)
+    {
+        this.Lines.Add(Tuple.Create(text, param.ToCopyFormat()));
     }
 }

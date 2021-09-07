@@ -1,4 +1,6 @@
-﻿using Divine.Entity;
+﻿namespace VisibleByEnemyPlus;
+
+using Divine.Entity;
 using Divine.Entity.Entities;
 using Divine.Entity.Entities.Components;
 using Divine.Entity.Entities.Units;
@@ -13,165 +15,162 @@ using Divine.Particle.Components;
 using Divine.Service;
 using Divine.Update;
 
-namespace VisibleByEnemyPlus
+public class VisibleByEnemyPlus : Bootstrapper
 {
-    public class VisibleByEnemyPlus : Bootstrapper
+    private Config Config { get; set; }
+
+    private bool AddEffectType { get; set; }
+
+    private int Red => Config.RedItem;
+
+    private int Green => Config.GreenItem;
+
+    private int Blue => Config.BlueItem;
+
+    private int Alpha => Config.AlphaItem;
+
+    protected override void OnActivate()
     {
-        private Config Config { get; set; }
+        Config = new Config();
 
-        private bool AddEffectType { get; set; }
+        Config.EffectTypeItem.ValueChanged += (selector, e) => { UpdateMenu(e.NewValue, Red, Green, Blue, Alpha); };
+        Config.RedItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, e.NewValue, Green, Blue, Alpha); };
+        Config.GreenItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, e.NewValue, Blue, Alpha); };
+        Config.BlueItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, Green, e.NewValue, Alpha); };
+        Config.AlphaItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, Green, Blue, e.NewValue); };
 
-        private int Red => Config.RedItem;
+        UpdateManager.IngameUpdate += OnIngameUpdate;
+    }
 
-        private int Green => Config.GreenItem;
+    protected override void OnDeactivate()
+    {
+        /*UpdateManager.Unsubscribe(LoopEntities);
 
-        private int Blue => Config.BlueItem;
+        Config.EffectTypeItem.PropertyChanged -= ItemChanged;
 
-        private int Alpha => Config.AlphaItem;
+        Config.RedItem.PropertyChanged -= ItemChanged;
+        Config.GreenItem.PropertyChanged -= ItemChanged;
+        Config.BlueItem.PropertyChanged -= ItemChanged;
+        Config.AlphaItem.PropertyChanged -= ItemChanged;
 
-        protected override void OnActivate()
+        Config?.Dispose();
+        ParticleManager.Dispose();*/
+    }
+
+    private void UpdateMenu(string selector, int red, int green, int blue, int alpha)
+    {
+        if (selector == "Default")
         {
-            Config = new Config();
-
-            Config.EffectTypeItem.ValueChanged += (selector, e) => { UpdateMenu(e.NewValue, Red, Green, Blue, Alpha); };
-            Config.RedItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, e.NewValue, Green, Blue, Alpha); };
-            Config.GreenItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, e.NewValue, Blue, Alpha); };
-            Config.BlueItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, Green, e.NewValue, Alpha); };
-            Config.AlphaItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, Green, Blue, e.NewValue); };
-
-            UpdateManager.IngameUpdate += OnIngameUpdate;
+            Config.RedItem.SetFontColor(Color.Black);
+            Config.GreenItem.SetFontColor(Color.Black);
+            Config.BlueItem.SetFontColor(Color.Black);
+            Config.AlphaItem.SetFontColor(Color.Black);
+        }
+        else
+        {
+            Config.RedItem.SetFontColor(new Color(red, 0, 0, 255));
+            Config.GreenItem.SetFontColor(new Color(0, green, 0, 255));
+            Config.BlueItem.SetFontColor(new Color(0, 0, blue, 255));
+            Config.AlphaItem.SetFontColor(new Color(185, 176, 163, alpha));
         }
 
-        protected override void OnDeactivate()
+        var localHero = EntityManager.LocalHero;
+        if (localHero != null && localHero.IsValid)
         {
-            /*UpdateManager.Unsubscribe(LoopEntities);
+            HandleEffect(localHero, true);
+            AddEffectType = false;
+        }
+    }
 
-            Config.EffectTypeItem.PropertyChanged -= ItemChanged;
+    private static bool IsMine(Entity sender)
+    {
+        return sender.ClassId == ClassId.CDOTA_NPC_TechiesMines;
+    }
 
-            Config.RedItem.PropertyChanged -= ItemChanged;
-            Config.GreenItem.PropertyChanged -= ItemChanged;
-            Config.BlueItem.PropertyChanged -= ItemChanged;
-            Config.AlphaItem.PropertyChanged -= ItemChanged;
+    private static bool IsUnit(Unit sender)
+    {
+        return (sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Lane
+               && sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Siege
+               || sender.IsControllable)
+               && sender.ClassId != ClassId.CDOTA_NPC_TechiesMines
+               && sender.ClassId != ClassId.CDOTA_NPC_Observer_Ward
+               && sender.ClassId != ClassId.CDOTA_NPC_Observer_Ward_TrueSight
+               && sender.ClassId != ClassId.CDOTA_BaseNPC_Healer;
+    }
 
-            Config?.Dispose();
-            ParticleManager.Dispose();*/
+    private float LastTime;
+
+    private void OnIngameUpdate()
+    {
+        if (GameManager.RawGameTime - LastTime < 0.25f)
+        {
+            return;
         }
 
-        private void UpdateMenu(string selector, int red, int green, int blue, int alpha)
-        {
-            if (selector == "Default")
-            {
-                Config.RedItem.SetFontColor(Color.Black);
-                Config.GreenItem.SetFontColor(Color.Black);
-                Config.BlueItem.SetFontColor(Color.Black);
-                Config.AlphaItem.SetFontColor(Color.Black);
-            }
-            else
-            {
-                Config.RedItem.SetFontColor(new Color(red, 0, 0, 255));
-                Config.GreenItem.SetFontColor(new Color(0, green, 0, 255));
-                Config.BlueItem.SetFontColor(new Color(0, 0, blue, 255));
-                Config.AlphaItem.SetFontColor(new Color(185, 176, 163, alpha));
-            }
+        LastTime = GameManager.RawGameTime;
 
-            var localHero = EntityManager.LocalHero;
-            if (localHero != null && localHero.IsValid)
-            {
-                HandleEffect(localHero, true);
-                AddEffectType = false;
-            }
+        var localHero = EntityManager.LocalHero;
+        if (localHero == null || !localHero.IsValid)
+        {
+            return;
         }
 
-        private static bool IsMine(Entity sender)
+        foreach (var unit in EntityManager.GetEntities<Unit>())
         {
-            return sender.ClassId == ClassId.CDOTA_NPC_TechiesMines;
-        }
-
-        private static bool IsUnit(Unit sender)
-        {
-            return (sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Lane
-                   && sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Siege
-                   || sender.IsControllable)
-                   && sender.ClassId != ClassId.CDOTA_NPC_TechiesMines
-                   && sender.ClassId != ClassId.CDOTA_NPC_Observer_Ward
-                   && sender.ClassId != ClassId.CDOTA_NPC_Observer_Ward_TrueSight
-                   && sender.ClassId != ClassId.CDOTA_BaseNPC_Healer;
-        }
-
-        private float LastTime;
-
-        private void OnIngameUpdate()
-        {
-            if (GameManager.RawGameTime - LastTime < 0.25f)
+            if (unit.Team == localHero.Team)
             {
-                return;
-            }
-
-            LastTime = GameManager.RawGameTime;
-
-            var localHero = EntityManager.LocalHero;
-            if (localHero == null || !localHero.IsValid)
-            {
-                return;
-            }
-
-            foreach (var unit in EntityManager.GetEntities<Unit>())
-            {
-                if (unit.Team == localHero.Team)
+                if (Config.AlliedHeroesItem && unit is Hero)
                 {
-                    if (Config.AlliedHeroesItem && unit is Hero)
-                    {
-                        HandleEffect(unit, unit.IsVisibleToEnemies);
-                    }
-                    else if (Config.BuildingsItem && unit is Building)
-                    {
-                        HandleEffect(unit, unit.IsVisibleToEnemies);
-                    }
-                    else if (Config.WardsItem && unit is ObserverWard)
-                    {
-                        HandleEffect(unit, unit.IsVisibleToEnemies);
-                    }
-                    else if (Config.MinesItem && IsMine(unit))
-                    {
-                        HandleEffect(unit, unit.IsVisibleToEnemies);
-                    }
-                    else if (Config.OutpostsItem && unit is Outpost)
-                    {
-                        HandleEffect(unit, unit.IsVisibleToEnemies);
-                    }
-                    else if (Config.UnitsItem && IsUnit(unit))
-                    {
-                        HandleEffect(unit, unit.IsVisibleToEnemies);
-                    }
+                    HandleEffect(unit, unit.IsVisibleToEnemies);
                 }
-                else if (Config.NeutralsItem && unit is Neutral)
+                else if (Config.BuildingsItem && unit is Building)
+                {
+                    HandleEffect(unit, unit.IsVisibleToEnemies);
+                }
+                else if (Config.WardsItem && unit is ObserverWard)
+                {
+                    HandleEffect(unit, unit.IsVisibleToEnemies);
+                }
+                else if (Config.MinesItem && IsMine(unit))
+                {
+                    HandleEffect(unit, unit.IsVisibleToEnemies);
+                }
+                else if (Config.OutpostsItem && unit is Outpost)
+                {
+                    HandleEffect(unit, unit.IsVisibleToEnemies);
+                }
+                else if (Config.UnitsItem && IsUnit(unit))
                 {
                     HandleEffect(unit, unit.IsVisibleToEnemies);
                 }
             }
+            else if (Config.NeutralsItem && unit is Neutral)
+            {
+                HandleEffect(unit, unit.IsVisibleToEnemies);
+            }
+        }
+    }
+
+    private void HandleEffect(Unit unit, bool visible)
+    {
+        if (!AddEffectType /*&& Owner.Animation.Name != "idle"*/)
+        {
+            AddEffectType = true;
         }
 
-        private void HandleEffect(Unit unit, bool visible)
+        if (visible && unit.IsAlive /*&& unit.Position.IsOnScreen()*/)
         {
-            if (!AddEffectType /*&& Owner.Animation.Name != "idle"*/)
-            {
-                AddEffectType = true;
-            }
-
-            if (visible && unit.IsAlive /*&& unit.Position.IsOnScreen()*/)
-            {
-                ParticleManager.CreateOrUpdateParticle(
-                    $"VisibleByEnemyPlus.{unit.Handle}",
-                    Config.Effects[Config.EffectTypeItem],
-                     unit,
-                    ParticleAttachment.AbsOriginFollow,
-                    new ControlPoint(1, Red, Green, Blue),
-                    new ControlPoint(2, Alpha));
-            }
-            else if (AddEffectType)
-            {
-                ParticleManager.RemoveParticle($"VisibleByEnemyPlus.{unit.Handle}");
-            }
+            ParticleManager.CreateOrUpdateParticle(
+                $"VisibleByEnemyPlus.{unit.Handle}",
+                Config.Effects[Config.EffectTypeItem],
+                 unit,
+                ParticleAttachment.AbsOriginFollow,
+                new ControlPoint(1, Red, Green, Blue),
+                new ControlPoint(2, Alpha));
+        }
+        else if (AddEffectType)
+        {
+            ParticleManager.RemoveParticle($"VisibleByEnemyPlus.{unit.Handle}");
         }
     }
 }

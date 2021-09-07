@@ -1,41 +1,40 @@
-namespace Debugger.Logger
+﻿namespace Debugger.Logger;
+
+public enum LogType
 {
-    public enum LogType
-    {
-        Modifier,
+    Modifier,
 
-        Particle,
+    Particle,
 
-        Unit,
+    Unit,
 
-        Ability,
+    Ability,
 
-        Spell,
+    Spell,
 
-        Item,
+    Item,
 
-        Projectile,
+    Projectile,
 
-        Animation,
+    Animation,
 
-        Bool,
+    Bool,
 
-        Float,
+    Float,
 
-        Handle,
+    Handle,
 
-        Int32,
+    Int32,
 
-        Int64,
+    Int64,
 
-        String,
+    String,
 
-        ExecuteOrder,
+    ExecuteOrder,
 
-        GameEvent,
+    GameEvent,
 
-        Information,
+    Information,
 
-        Exception
-    }
+    Exception
 }

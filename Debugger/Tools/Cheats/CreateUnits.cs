@@ -1,152 +1,151 @@
-﻿namespace Debugger.Tools.Cheats
+﻿namespace Debugger.Tools.Cheats;
+
+using System;
+using System.Linq;
+using System.Windows.Input;
+
+using Debugger.Menus;
+
+using Divine.Entity;
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Entity.Entities.Units.Heroes.Components;
+using Divine.GameConsole;
+using Divine.Menu.EventArgs;
+using Divine.Menu.Items;
+using Divine.Update;
+
+internal class CreateUnits : IDebuggerTool
 {
-    using System;
-    using System.Linq;
-    using System.Windows.Input;
+    private readonly Random random = new();
 
-    using Debugger.Menus;
+    private readonly IMainMenu mainMenu;
 
-    using Divine.Entity;
-    using Divine.Entity.Entities.Units.Heroes;
-    using Divine.Entity.Entities.Units.Heroes.Components;
-    using Divine.GameConsole;
-    using Divine.Menu.EventArgs;
-    using Divine.Menu.Items;
-    using Divine.Update;
+    private MenuHoldKey meleeAllyCreep;
 
-    internal class CreateUnits : IDebuggerTool
+    private MenuHoldKey meleeEnemyCreep;
+
+    private Menu menu;
+
+    private MenuHoldKey randomAlly;
+
+    private MenuHoldKey randomEnemy;
+
+    private MenuHoldKey rangedAllyCreep;
+
+    private MenuHoldKey rangedEnemyCreep;
+
+    public CreateUnits(IMainMenu mainMenu)
     {
-        private readonly Random random = new();
+        this.mainMenu = mainMenu;
+    }
 
-        private readonly IMainMenu mainMenu;
+    public int LoadPriority { get; } = 5;
 
-        private MenuHoldKey meleeAllyCreep;
+    public void Activate()
+    {
+        this.menu = this.mainMenu.CheatsMenu.CreateMenu("Create unit");
 
-        private MenuHoldKey meleeEnemyCreep;
+        this.randomAlly = this.menu.CreateHoldKey("Random ally hero", Key.NumPad3);
+        this.randomAlly.ValueChanged += this.RandomAllyOnPropertyChanged;
 
-        private Menu menu;
+        this.meleeAllyCreep = this.menu.CreateHoldKey("Melee ally creep", Key.NumPad8);
+        this.meleeAllyCreep.ValueChanged += this.MeleeAllyCreepOnPropertyChanged;
 
-        private MenuHoldKey randomAlly;
+        this.rangedAllyCreep = this.menu.CreateHoldKey("Ranged ally creep", Key.NumPad9);
+        this.rangedAllyCreep.ValueChanged += this.RangedAllyCreepOnPropertyChanged;
 
-        private MenuHoldKey randomEnemy;
+        this.randomEnemy = this.menu.CreateHoldKey("Random enemy hero", Key.NumPad4);
+        this.randomEnemy.ValueChanged += this.RandomEnemyOnPropertyChanged;
 
-        private MenuHoldKey rangedAllyCreep;
+        this.meleeEnemyCreep = this.menu.CreateHoldKey("Melee enemy creep", Key.NumPad5);
+        this.meleeEnemyCreep.ValueChanged += this.MeleeEnemyCreepOnPropertyChanged;
 
-        private MenuHoldKey rangedEnemyCreep;
+        this.rangedEnemyCreep = this.menu.CreateHoldKey("Ranged enemy creep", Key.NumPad6);
+        this.rangedEnemyCreep.ValueChanged += this.RangedEnemyCreepOnPropertyChanged;
+    }
 
-        public CreateUnits(IMainMenu mainMenu)
+    public void Dispose()
+    {
+        this.randomAlly.ValueChanged -= this.RandomAllyOnPropertyChanged;
+        this.meleeAllyCreep.ValueChanged -= this.MeleeAllyCreepOnPropertyChanged;
+        this.rangedAllyCreep.ValueChanged -= this.RangedAllyCreepOnPropertyChanged;
+        this.randomEnemy.ValueChanged -= this.RandomEnemyOnPropertyChanged;
+        this.meleeEnemyCreep.ValueChanged -= this.MeleeEnemyCreepOnPropertyChanged;
+        this.rangedEnemyCreep.ValueChanged -= this.RangedEnemyCreepOnPropertyChanged;
+    }
+
+    private string GetRandomHero()
+    {
+        var alreadyAdded = EntityManager.GetEntities<Hero>().Select(x => x.HeroId);
+        var heroes = Enum.GetValues(typeof(HeroId)).Cast<HeroId>().Except(alreadyAdded).ToList();
+        var randomHero = heroes[this.random.Next(1, heroes.Count - 1)];
+
+        return randomHero.ToString();
+    }
+
+    private void MeleeAllyCreepOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
         {
-            this.mainMenu = mainMenu;
-        }
-
-        public int LoadPriority { get; } = 5;
-
-        public void Activate()
-        {
-            this.menu = this.mainMenu.CheatsMenu.CreateMenu("Create unit");
-
-            this.randomAlly = this.menu.CreateHoldKey("Random ally hero", Key.NumPad3);
-            this.randomAlly.ValueChanged += this.RandomAllyOnPropertyChanged;
-
-            this.meleeAllyCreep = this.menu.CreateHoldKey("Melee ally creep", Key.NumPad8);
-            this.meleeAllyCreep.ValueChanged += this.MeleeAllyCreepOnPropertyChanged;
-
-            this.rangedAllyCreep = this.menu.CreateHoldKey("Ranged ally creep", Key.NumPad9);
-            this.rangedAllyCreep.ValueChanged += this.RangedAllyCreepOnPropertyChanged;
-
-            this.randomEnemy = this.menu.CreateHoldKey("Random enemy hero", Key.NumPad4);
-            this.randomEnemy.ValueChanged += this.RandomEnemyOnPropertyChanged;
-
-            this.meleeEnemyCreep = this.menu.CreateHoldKey("Melee enemy creep", Key.NumPad5);
-            this.meleeEnemyCreep.ValueChanged += this.MeleeEnemyCreepOnPropertyChanged;
-
-            this.rangedEnemyCreep = this.menu.CreateHoldKey("Ranged enemy creep", Key.NumPad6);
-            this.rangedEnemyCreep.ValueChanged += this.RangedEnemyCreepOnPropertyChanged;
-        }
-
-        public void Dispose()
-        {
-            this.randomAlly.ValueChanged -= this.RandomAllyOnPropertyChanged;
-            this.meleeAllyCreep.ValueChanged -= this.MeleeAllyCreepOnPropertyChanged;
-            this.rangedAllyCreep.ValueChanged -= this.RangedAllyCreepOnPropertyChanged;
-            this.randomEnemy.ValueChanged -= this.RandomEnemyOnPropertyChanged;
-            this.meleeEnemyCreep.ValueChanged -= this.MeleeEnemyCreepOnPropertyChanged;
-            this.rangedEnemyCreep.ValueChanged -= this.RangedEnemyCreepOnPropertyChanged;
-        }
-
-        private string GetRandomHero()
-        {
-            var alreadyAdded = EntityManager.GetEntities<Hero>().Select(x => x.HeroId);
-            var heroes = Enum.GetValues(typeof(HeroId)).Cast<HeroId>().Except(alreadyAdded).ToList();
-            var randomHero = heroes[this.random.Next(1, heroes.Count - 1)];
-
-            return randomHero.ToString();
-        }
-
-        private void MeleeAllyCreepOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
-        {
-            UpdateManager.BeginInvoke(() =>
+            if (this.meleeAllyCreep)
             {
-                if (this.meleeAllyCreep)
-                {
-                    GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_melee");
-                }
-            });
-        }
+                GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_melee");
+            }
+        });
+    }
 
-        private void MeleeEnemyCreepOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
+    private void MeleeEnemyCreepOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
         {
-            UpdateManager.BeginInvoke(() =>
+            if (this.meleeEnemyCreep)
             {
-                if (this.meleeEnemyCreep)
-                {
-                    GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_melee enemy");
-                }
-            });
-        }
+                GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_melee enemy");
+            }
+        });
+    }
 
-        private void RandomAllyOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
+    private void RandomAllyOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
         {
-            UpdateManager.BeginInvoke(() =>
+            if (this.randomAlly)
             {
-                if (this.randomAlly)
-                {
-                    GameConsoleManager.ExecuteCommand("dota_create_unit " + this.GetRandomHero());
-                }
-            });
-        }
+                GameConsoleManager.ExecuteCommand("dota_create_unit " + this.GetRandomHero());
+            }
+        });
+    }
 
-        private void RandomEnemyOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
+    private void RandomEnemyOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
         {
-            UpdateManager.BeginInvoke(() =>
+            if (this.randomEnemy)
             {
-                if (this.randomEnemy)
-                {
-                    GameConsoleManager.ExecuteCommand("dota_create_unit " + this.GetRandomHero() + " enemy");
-                }
-            });
-        }
+                GameConsoleManager.ExecuteCommand("dota_create_unit " + this.GetRandomHero() + " enemy");
+            }
+        });
+    }
 
-        private void RangedAllyCreepOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
+    private void RangedAllyCreepOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
         {
-            UpdateManager.BeginInvoke(() =>
+            if (this.rangedAllyCreep)
             {
-                if (this.rangedAllyCreep)
-                {
-                    GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_ranged");
-                }
-            });
-        }
+                GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_ranged");
+            }
+        });
+    }
 
-        private void RangedEnemyCreepOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
+    private void RangedEnemyCreepOnPropertyChanged(MenuHoldKey holdKey, HoldKeyEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
         {
-            UpdateManager.BeginInvoke(() =>
+            if (this.rangedEnemyCreep)
             {
-                if (this.rangedEnemyCreep)
-                {
-                    GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_ranged enemy");
-                }
-            });
-        }
+                GameConsoleManager.ExecuteCommand("dota_create_unit npc_dota_creep_goodguys_ranged enemy");
+            }
+        });
     }
 }

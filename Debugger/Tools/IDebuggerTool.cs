@@ -1,11 +1,10 @@
-﻿namespace Debugger.Tools
+﻿namespace Debugger.Tools;
+
+using System;
+
+internal interface IDebuggerTool : IDisposable
 {
-    using System;
+    int LoadPriority { get; }
 
-    internal interface IDebuggerTool : IDisposable
-    {
-        int LoadPriority { get; }
-
-        void Activate();
-    }
+    void Activate();
 }

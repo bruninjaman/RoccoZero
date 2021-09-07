@@ -1,112 +1,111 @@
-﻿namespace Debugger.Tools.Information
+﻿namespace Debugger.Tools.Information;
+
+using System;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+using Debugger.Menus;
+
+using Divine.Menu.EventArgs;
+using Divine.Menu.Items;
+using Divine.Numerics;
+using Divine.Update;
+
+using Logger;
+
+internal class Exceptions : IDebuggerTool
 {
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Text.RegularExpressions;
+    private TextWriter defaultOutput;
 
-    using Debugger.Menus;
+    private MenuSwitcher enabled;
 
-    using Divine.Menu.EventArgs;
-    using Divine.Menu.Items;
-    using Divine.Numerics;
-    using Divine.Update;
+    private readonly ILog log;
 
-    using Logger;
+    private IMainMenu mainMenu;
 
-    internal class Exceptions : IDebuggerTool
+    private Menu menu;
+
+    private StringWriter output;
+
+    private UpdateHandler updateHandler;
+
+    public Exceptions(IMainMenu mainMenu, ILog log)
     {
-        private TextWriter defaultOutput;
+        this.mainMenu = mainMenu;
+        this.log = log;
+    }
 
-        private MenuSwitcher enabled;
+    public int LoadPriority { get; } = 1;
 
-        private readonly ILog log;
+    public void Activate()
+    {
+        this.menu = this.mainMenu.InformationMenu.CreateMenu("Exceptions");
 
-        private IMainMenu mainMenu;
+        this.enabled = this.menu.CreateSwitcher("Enabled", false);
+        this.enabled.ValueChanged += this.EnabledOnPropertyChanged;
 
-        private Menu menu;
+        this.defaultOutput = Console.Out;
 
-        private StringWriter output;
+        this.updateHandler = UpdateManager.CreateIngameUpdate(200, false, this.Check);
+        this.EnabledOnPropertyChanged(null, null);
+    }
 
-        private UpdateHandler updateHandler;
+    public void Dispose()
+    {
+        this.enabled.ValueChanged -= this.EnabledOnPropertyChanged;
+        UpdateManager.CreateIngameUpdate(this.Check);
+        Console.SetOut(this.defaultOutput);
+        this.output?.Dispose();
+    }
 
-        public Exceptions(IMainMenu mainMenu, ILog log)
+    private void Check()
+    {
+        var text = this.output.ToString();
+        if (!text.Any())
         {
-            this.mainMenu = mainMenu;
-            this.log = log;
+            return;
         }
 
-        public int LoadPriority { get; } = 1;
-
-        public void Activate()
+        try
         {
-            this.menu = this.mainMenu.InformationMenu.CreateMenu("Exceptions");
+            var match = Regex.Match(text, @"(.*?exception)", RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                var item = new LogItem(LogType.Exception, Color.Red, "Exception");
+                item.AddLine(match.Value.Split(' ').Last());
+                this.log.Display(item);
 
-            this.enabled = this.menu.CreateSwitcher("Enabled", false);
-            this.enabled.ValueChanged += this.EnabledOnPropertyChanged;
-
-            this.defaultOutput = Console.Out;
-
-            this.updateHandler = UpdateManager.CreateIngameUpdate(200, false, this.Check);
-            this.EnabledOnPropertyChanged(null, null);
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
         }
-
-        public void Dispose()
+        finally
         {
-            this.enabled.ValueChanged -= this.EnabledOnPropertyChanged;
-            UpdateManager.CreateIngameUpdate(this.Check);
             Console.SetOut(this.defaultOutput);
-            this.output?.Dispose();
+            Console.Write(text);
+            Console.ResetColor();
+            this.output.Dispose();
+            Console.SetOut(this.output = new StringWriter());
         }
+    }
 
-        private void Check()
+    private void EnabledOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
         {
-            var text = this.output.ToString();
-            if (!text.Any())
+            if (this.enabled)
             {
-                return;
-            }
-
-            try
-            {
-                var match = Regex.Match(text, @"(.*?exception)", RegexOptions.IgnoreCase);
-                if (match.Success)
-                {
-                    var item = new LogItem(LogType.Exception, Color.Red, "Exception");
-                    item.AddLine(match.Value.Split(' ').Last());
-                    this.log.Display(item);
-
-                    Console.ForegroundColor = ConsoleColor.Red;
-                }
-            }
-            finally
-            {
-                Console.SetOut(this.defaultOutput);
-                Console.Write(text);
-                Console.ResetColor();
-                this.output.Dispose();
+                this.menu.AddAsterisk();
+                this.updateHandler.IsEnabled = true;
+                this.output?.Dispose();
                 Console.SetOut(this.output = new StringWriter());
             }
-        }
-
-        private void EnabledOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            UpdateManager.BeginInvoke(() =>
+            else
             {
-                if (this.enabled)
-                {
-                    this.menu.AddAsterisk();
-                    this.updateHandler.IsEnabled = true;
-                    this.output?.Dispose();
-                    Console.SetOut(this.output = new StringWriter());
-                }
-                else
-                {
-                    this.menu.RemoveAsterisk();
-                    this.updateHandler.IsEnabled = false;
-                    Console.SetOut(this.defaultOutput);
-                }
-            });
-        }
+                this.menu.RemoveAsterisk();
+                this.updateHandler.IsEnabled = false;
+                Console.SetOut(this.defaultOutput);
+            }
+        });
     }
 }

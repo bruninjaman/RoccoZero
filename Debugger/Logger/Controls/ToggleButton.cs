@@ -1,41 +1,40 @@
-﻿namespace Debugger.Logger.Controls
+﻿namespace Debugger.Logger.Controls;
+
+using Divine.Numerics;
+
+internal class ToggleButton : Button
 {
-    using Divine.Numerics;
+    private readonly Button disableButton;
 
-    internal class ToggleButton : Button
+    public ToggleButton(string name, string nameOff, Vector2 position, Vector2 buttonSize)
+        : base(name, position, buttonSize)
     {
-        private readonly Button disableButton;
+        this.disableButton = new Button(nameOff, position, buttonSize);
+    }
 
-        public ToggleButton(string name, string nameOff, Vector2 position, Vector2 buttonSize)
-            : base(name, position, buttonSize)
+    public bool Enabled { get; set; } = true;
+
+    public override void Draw()
+    {
+        if (this.Enabled)
         {
-            this.disableButton = new Button(nameOff, position, buttonSize);
+            base.Draw();
         }
-
-        public bool Enabled { get; set; } = true;
-
-        public override void Draw()
+        else
         {
-            if (this.Enabled)
-            {
-                base.Draw();
-            }
-            else
-            {
-                this.disableButton.Draw();
-            }
+            this.disableButton.Draw();
         }
+    }
 
-        public override void UpdateSize(float size)
-        {
-            base.UpdateSize(size);
-            this.disableButton.UpdateSize(size);
-        }
+    public override void UpdateSize(float size)
+    {
+        base.UpdateSize(size);
+        this.disableButton.UpdateSize(size);
+    }
 
-        public override void UpdateYPosition(float y)
-        {
-            base.UpdateYPosition(y);
-            this.disableButton.UpdateYPosition(y);
-        }
+    public override void UpdateYPosition(float y)
+    {
+        base.UpdateYPosition(y);
+        this.disableButton.UpdateYPosition(y);
     }
 }

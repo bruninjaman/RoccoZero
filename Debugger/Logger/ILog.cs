@@ -1,9 +1,8 @@
-﻿namespace Debugger.Logger
-{
-    internal interface ILog
-    {
-        void Display(LogItem newItem);
+﻿namespace Debugger.Logger;
 
-        bool IsMouseUnderLog();
-    }
+internal interface ILog
+{
+    void Display(LogItem newItem);
+
+    bool IsMouseUnderLog();
 }

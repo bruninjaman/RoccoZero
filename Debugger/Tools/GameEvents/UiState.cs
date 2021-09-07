@@ -1,73 +1,72 @@
-﻿namespace Debugger.Tools.GameEvents
+﻿namespace Debugger.Tools.GameEvents;
+
+
+using Debugger.Menus;
+
+using Divine.Menu.EventArgs;
+using Divine.Menu.Items;
+using Divine.Update;
+
+using Logger;
+
+internal class UiState : IDebuggerTool
 {
+    private MenuSwitcher enabled;
 
-    using Debugger.Menus;
+    private IMainMenu mainMenu;
 
-    using Divine.Menu.EventArgs;
-    using Divine.Menu.Items;
-    using Divine.Update;
+    private readonly ILog log;
 
-    using Logger;
+    private Menu menu;
 
-    internal class UiState : IDebuggerTool
+    public UiState(IMainMenu mainMenu, ILog log)
     {
-        private MenuSwitcher enabled;
-
-        private IMainMenu mainMenu;
-
-        private readonly ILog log;
-
-        private Menu menu;
-
-        public UiState(IMainMenu mainMenu, ILog log)
-        {
-            this.mainMenu = mainMenu;
-            this.log = log;
-        }
-
-        public int LoadPriority { get; } = 83;
-
-        public void Activate()
-        {
-            this.menu = this.mainMenu.GameEventsMenu.CreateMenu("UI state");
-
-            this.enabled = this.menu.CreateSwitcher("Enabled", false);
-            this.enabled.SetTooltip("Game.OnUIStateChanged");
-            this.enabled.ValueChanged += this.EnabledOnPropertyChanged;
-
-            this.EnabledOnPropertyChanged(null, null);
-        }
-
-        public void Dispose()
-        {
-            this.enabled.ValueChanged -= this.EnabledOnPropertyChanged;
-            //GameManager.OnUIStateChanged -= this.OnUIStateChanged;
-        }
-
-        private void EnabledOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            UpdateManager.BeginInvoke(() =>
-            {
-                if (this.enabled)
-                {
-                    this.menu.AddAsterisk();
-                    //GameManager.OnUIStateChanged += this.OnUIStateChanged;
-                }
-                else
-                {
-                    this.menu.RemoveAsterisk();
-                    //GameManager.OnUIStateChanged -= this.OnUIStateChanged;
-                }
-            });
-        }
-
-        /*private void OnUIStateChanged(UIStateChangedEventArgs args)
-        {
-            var item = new LogItem(LogType.GameEvent, Color.Yellow, "UI state changed");
-
-            item.AddLine("Name: " + args.UIState, args.UIState);
-
-            this.log.Display(item);
-        }*/
+        this.mainMenu = mainMenu;
+        this.log = log;
     }
+
+    public int LoadPriority { get; } = 83;
+
+    public void Activate()
+    {
+        this.menu = this.mainMenu.GameEventsMenu.CreateMenu("UI state");
+
+        this.enabled = this.menu.CreateSwitcher("Enabled", false);
+        this.enabled.SetTooltip("Game.OnUIStateChanged");
+        this.enabled.ValueChanged += this.EnabledOnPropertyChanged;
+
+        this.EnabledOnPropertyChanged(null, null);
+    }
+
+    public void Dispose()
+    {
+        this.enabled.ValueChanged -= this.EnabledOnPropertyChanged;
+        //GameManager.OnUIStateChanged -= this.OnUIStateChanged;
+    }
+
+    private void EnabledOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
+        {
+            if (this.enabled)
+            {
+                this.menu.AddAsterisk();
+                //GameManager.OnUIStateChanged += this.OnUIStateChanged;
+            }
+            else
+            {
+                this.menu.RemoveAsterisk();
+                //GameManager.OnUIStateChanged -= this.OnUIStateChanged;
+            }
+        });
+    }
+
+    /*private void OnUIStateChanged(UIStateChangedEventArgs args)
+    {
+        var item = new LogItem(LogType.GameEvent, Color.Yellow, "UI state changed");
+
+        item.AddLine("Name: " + args.UIState, args.UIState);
+
+        this.log.Display(item);
+    }*/
 }

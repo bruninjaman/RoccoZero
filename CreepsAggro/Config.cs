@@ -1,29 +1,28 @@
-﻿namespace CreepsAggro
+﻿namespace CreepsAggro;
+
+using System;
+using System.Windows.Input;
+
+using Divine.Menu;
+using Divine.Menu.Items;
+
+internal class Config : IDisposable
 {
-    using System;
-    using System.Windows.Input;
-
-    using Divine.Menu;
-    using Divine.Menu.Items;
-
-    internal class Config : IDisposable
+    public Config()
     {
-        public Config()
-        {
-            var factory = MenuManager.CreateRootMenu("Creeps Aggro");
-            Aggro = factory.CreateHoldKey("Aggro", Key.None);
-            UnAggro = factory.CreateHoldKey("Drop aggro", Key.None);
-        }
+        var factory = MenuManager.CreateRootMenu("Creeps Aggro");
+        Aggro = factory.CreateHoldKey("Aggro", Key.None);
+        UnAggro = factory.CreateHoldKey("Drop aggro", Key.None);
+    }
 
-        public MenuHoldKey Aggro { get; }
+    public MenuHoldKey Aggro { get; }
 
-        public MenuHoldKey UnAggro { get; }
+    public MenuHoldKey UnAggro { get; }
 
-        public MenuSwitcher MoveToMousePosition { get; }
+    public MenuSwitcher MoveToMousePosition { get; }
 
-        public void Dispose()
-        {
-            //factory?.Dispose();
-        }
+    public void Dispose()
+    {
+        //factory?.Dispose();
     }
 }

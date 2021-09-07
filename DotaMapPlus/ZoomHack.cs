@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace DotaMapPlus;
+
+using System;
 
 using Divine.GameConsole;
 using Divine.Input;
@@ -6,68 +8,65 @@ using Divine.Input.EventArgs;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 
-namespace DotaMapPlus
+internal class ZoomHack
 {
-    internal class ZoomHack
+    private MenuHoldKey ZoomKeyItem { get; }
+
+    private MenuSlider ZoomSliderItem { get; }
+
+    private int DefaultZoomValue { get; } = 1200;
+
+    private int MaxZoomValue { get; } = 9000;
+
+    private int MinZoomValue { get; } = 1134;
+
+    public ZoomHack(RootMenu rootMenu)
     {
-        private MenuHoldKey ZoomKeyItem { get; }
+        var zoomHackMenu = rootMenu.CreateMenu("Zoom Hack");
+        ZoomKeyItem = zoomHackMenu.CreateHoldKey("Key", System.Windows.Input.Key.LeftCtrl);
+        ZoomSliderItem = zoomHackMenu.CreateSlider("Camera Distance", DefaultZoomValue, MinZoomValue, MaxZoomValue);
 
-        private MenuSlider ZoomSliderItem { get; }
+        GameConsoleManager.SetValue("r_farz", 18000);
 
-        private int DefaultZoomValue { get; } = 1200;
+        ZoomSliderItem.ValueChanged += OnZoomSliderValueChanged;
+        InputManager.MouseWheel += OnInputManagerMouseWheel;
 
-        private int MaxZoomValue { get; } = 9000;
+        GameConsoleManager.ExecuteCommand("dota_camera_disable_zoom true");
+    }
 
-        private int MinZoomValue { get; } = 1134;
+    /*public void Dispose()
+    {
+        Game.ExecuteCommand("dota_camera_disable_zoom false");
 
-        public ZoomHack(RootMenu rootMenu)
+        ZoomVar.SetValue(DefaultZoomValue);
+
+        ZoomSliderItem.PropertyChanged -= ZoomSliderItemChanged;
+        InputManage.Value.MouseWheel -= InputManagerMouseWheel;
+    }*/
+
+    private void OnZoomSliderValueChanged(MenuSlider slider, SliderEventArgs e)
+    {
+        GameConsoleManager.SetValue("dota_camera_distance", e.NewValue);
+    }
+
+    private void OnInputManagerMouseWheel(MouseWheelEventArgs e)
+    {
+        if (ZoomKeyItem)
         {
-            var zoomHackMenu = rootMenu.CreateMenu("Zoom Hack");
-            ZoomKeyItem = zoomHackMenu.CreateHoldKey("Key", System.Windows.Input.Key.LeftCtrl);
-            ZoomSliderItem = zoomHackMenu.CreateSlider("Camera Distance", DefaultZoomValue, MinZoomValue, MaxZoomValue);
+            var zoomValue = GameConsoleManager.GetInt32("dota_camera_distance");
 
-            GameConsoleManager.SetValue("r_farz", 18000);
-
-            ZoomSliderItem.ValueChanged += OnZoomSliderValueChanged;
-            InputManager.MouseWheel += OnInputManagerMouseWheel;
-
-            GameConsoleManager.ExecuteCommand("dota_camera_disable_zoom true");
-        }
-
-        /*public void Dispose()
-        {
-            Game.ExecuteCommand("dota_camera_disable_zoom false");
-
-            ZoomVar.SetValue(DefaultZoomValue);
-
-            ZoomSliderItem.PropertyChanged -= ZoomSliderItemChanged;
-            InputManage.Value.MouseWheel -= InputManagerMouseWheel;
-        }*/
-
-        private void OnZoomSliderValueChanged(MenuSlider slider, SliderEventArgs e)
-        {
-            GameConsoleManager.SetValue("dota_camera_distance", e.NewValue);
-        }
-
-        private void OnInputManagerMouseWheel(MouseWheelEventArgs e)
-        {
-            if (ZoomKeyItem)
+            if (e.Up)
             {
-                var zoomValue = GameConsoleManager.GetInt32("dota_camera_distance");
-
-                if (e.Up)
-                {
-                    zoomValue -= 50;
-                    zoomValue = Math.Max(zoomValue, MinZoomValue);
-                }
-                else
-                {
-                    zoomValue += 50;
-                    zoomValue = Math.Min(zoomValue, MaxZoomValue);
-                }
-
-                ZoomSliderItem.Value = zoomValue;
+                zoomValue -= 50;
+                zoomValue = Math.Max(zoomValue, MinZoomValue);
             }
+            else
+            {
+                zoomValue += 50;
+                zoomValue = Math.Min(zoomValue, MaxZoomValue);
+            }
+
+            ZoomSliderItem.Value = zoomValue;
         }
     }
 }

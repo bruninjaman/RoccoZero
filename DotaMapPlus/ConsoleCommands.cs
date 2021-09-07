@@ -1,53 +1,52 @@
-﻿using Divine.GameConsole;
+﻿namespace DotaMapPlus;
+
+using Divine.GameConsole;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 
-namespace DotaMapPlus
+internal class ConsoleCommands
 {
-    internal class ConsoleCommands
+    private MenuSwitcher FogItem { get; }
+
+    private MenuSwitcher FilteringItem { get; }
+
+    private MenuSwitcher ParticleHackItem { get; }
+
+    public ConsoleCommands(RootMenu rootMenu)
     {
-        private MenuSwitcher FogItem { get; }
+        var consoleCommandsMenu = rootMenu.CreateMenu("Console Commands");
+        FogItem = consoleCommandsMenu.CreateSwitcher("Fog Disable");
+        FilteringItem = consoleCommandsMenu.CreateSwitcher("Filtering Disable");
+        ParticleHackItem = consoleCommandsMenu.CreateSwitcher("Particle Hack Enable");
 
-        private MenuSwitcher FilteringItem { get; }
+        FogItem.ValueChanged += FogItemChanged;
+        FilteringItem.ValueChanged += FilteringItemChanged;
+        ParticleHackItem.ValueChanged += ParticleHackItemChanged;
+    }
 
-        private MenuSwitcher ParticleHackItem { get; }
+    /*public void Dispose()
+    {
+        Fog.SetValue(1);
+        Filtering.SetValue(0);
+        ParticleHack.SetValue(1);
 
-        public ConsoleCommands(RootMenu rootMenu)
-        {
-            var consoleCommandsMenu = rootMenu.CreateMenu("Console Commands");
-            FogItem = consoleCommandsMenu.CreateSwitcher("Fog Disable");
-            FilteringItem = consoleCommandsMenu.CreateSwitcher("Filtering Disable");
-            ParticleHackItem = consoleCommandsMenu.CreateSwitcher("Particle Hack Enable");
+        FogItem.PropertyChanged -= FogItemChanged;
+        FilteringItem.PropertyChanged -= FilteringItemChanged;
+        ParticleHackItem.PropertyChanged -= ParticleHackItemChanged;
+    }*/
 
-            FogItem.ValueChanged += FogItemChanged;
-            FilteringItem.ValueChanged += FilteringItemChanged;
-            ParticleHackItem.ValueChanged += ParticleHackItemChanged;
-        }
+    private void FogItemChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        GameConsoleManager.SetValue("fog_enable", !e.Value);
+    }
 
-        /*public void Dispose()
-        {
-            Fog.SetValue(1);
-            Filtering.SetValue(0);
-            ParticleHack.SetValue(1);
+    private void FilteringItemChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        GameConsoleManager.SetValue("fow_client_nofiltering", e.Value);
+    }
 
-            FogItem.PropertyChanged -= FogItemChanged;
-            FilteringItem.PropertyChanged -= FilteringItemChanged;
-            ParticleHackItem.PropertyChanged -= ParticleHackItemChanged;
-        }*/
-
-        private void FogItemChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            GameConsoleManager.SetValue("fog_enable", !e.Value);
-        }
-
-        private void FilteringItemChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            GameConsoleManager.SetValue("fow_client_nofiltering", e.Value);
-        }
-
-        private void ParticleHackItemChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            GameConsoleManager.SetValue("dota_use_particle_fow", !e.Value);
-        }
+    private void ParticleHackItemChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        GameConsoleManager.SetValue("dota_use_particle_fow", !e.Value);
     }
 }

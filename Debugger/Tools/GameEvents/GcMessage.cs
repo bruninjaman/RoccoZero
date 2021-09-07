@@ -1,73 +1,72 @@
-﻿namespace Debugger.Tools.GameEvents
+﻿namespace Debugger.Tools.GameEvents;
+
+
+using Debugger.Menus;
+
+using Divine.Menu.EventArgs;
+using Divine.Menu.Items;
+using Divine.Update;
+
+using Logger;
+
+internal class GcMessage : IDebuggerTool
 {
+    private MenuSwitcher enabled;
 
-    using Debugger.Menus;
+    private IMainMenu mainMenu;
 
-    using Divine.Menu.EventArgs;
-    using Divine.Menu.Items;
-    using Divine.Update;
+    private readonly ILog log;
 
-    using Logger;
+    private Menu menu;
 
-    internal class GcMessage : IDebuggerTool
+    public GcMessage(IMainMenu mainMenu, ILog log)
     {
-        private MenuSwitcher enabled;
-
-        private IMainMenu mainMenu;
-
-        private readonly ILog log;
-
-        private Menu menu;
-
-        public GcMessage(IMainMenu mainMenu, ILog log)
-        {
-            this.mainMenu = mainMenu;
-            this.log = log;
-        }
-
-        public int LoadPriority { get; } = 84;
-
-        public void Activate()
-        {
-            this.menu = this.mainMenu.GameEventsMenu.CreateMenu("GC message");
-
-            this.enabled = this.menu.CreateSwitcher("Enabled", false);
-            this.enabled.SetTooltip("Game.OnGCMessageReceive");
-            this.enabled.ValueChanged += this.EnabledOnPropertyChanged;
-
-            this.EnabledOnPropertyChanged(null, null);
-        }
-
-        public void Dispose()
-        {
-            this.enabled.ValueChanged -= this.EnabledOnPropertyChanged;
-            //GameManager.OnGCMessageReceive -= this.OnGCMessageReceive;
-        }
-
-        private void EnabledOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            UpdateManager.BeginInvoke(() =>
-            {
-                if (this.enabled)
-                {
-                    this.menu.AddAsterisk();
-                    //GameManager.OnGCMessageReceive += this.OnGCMessageReceive;
-                }
-                else
-                {
-                    this.menu.RemoveAsterisk();
-                    //GameManager.OnGCMessageReceive -= this.OnGCMessageReceive;
-                }
-            });
-        }
-
-        /*private void OnGCMessageReceive(GCMessageEventArgs args)
-        {
-            var item = new LogItem(LogType.GameEvent, Color.Yellow, "GC message received");
-
-            item.AddLine("Name: " + args.MessageID, args.MessageID);
-
-            this.log.Display(item);
-        }*/
+        this.mainMenu = mainMenu;
+        this.log = log;
     }
+
+    public int LoadPriority { get; } = 84;
+
+    public void Activate()
+    {
+        this.menu = this.mainMenu.GameEventsMenu.CreateMenu("GC message");
+
+        this.enabled = this.menu.CreateSwitcher("Enabled", false);
+        this.enabled.SetTooltip("Game.OnGCMessageReceive");
+        this.enabled.ValueChanged += this.EnabledOnPropertyChanged;
+
+        this.EnabledOnPropertyChanged(null, null);
+    }
+
+    public void Dispose()
+    {
+        this.enabled.ValueChanged -= this.EnabledOnPropertyChanged;
+        //GameManager.OnGCMessageReceive -= this.OnGCMessageReceive;
+    }
+
+    private void EnabledOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
+        {
+            if (this.enabled)
+            {
+                this.menu.AddAsterisk();
+                //GameManager.OnGCMessageReceive += this.OnGCMessageReceive;
+            }
+            else
+            {
+                this.menu.RemoveAsterisk();
+                //GameManager.OnGCMessageReceive -= this.OnGCMessageReceive;
+            }
+        });
+    }
+
+    /*private void OnGCMessageReceive(GCMessageEventArgs args)
+    {
+        var item = new LogItem(LogType.GameEvent, Color.Yellow, "GC message received");
+
+        item.AddLine("Name: " + args.MessageID, args.MessageID);
+
+        this.log.Display(item);
+    }*/
 }

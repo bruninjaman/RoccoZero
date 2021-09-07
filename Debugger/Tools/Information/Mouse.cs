@@ -1,114 +1,113 @@
-﻿namespace Debugger.Tools.Information
+﻿namespace Debugger.Tools.Information;
+
+using System.Windows;
+
+using Debugger.Menus;
+
+using Divine.Game;
+using Divine.Input;
+using Divine.Input.EventArgs;
+using Divine.Menu.EventArgs;
+using Divine.Menu.Items;
+using Divine.Numerics;
+using Divine.Renderer;
+using Divine.Update;
+
+using Logger;
+
+internal class Mouse : IDebuggerTool
 {
-    using System.Windows;
+    private const uint WM_LBUTTONDOWN = 0x0201;
 
-    using Debugger.Menus;
+    private MenuSwitcher copyPosition;
 
-    using Divine.Game;
-    using Divine.Input;
-    using Divine.Input.EventArgs;
-    using Divine.Menu.EventArgs;
-    using Divine.Menu.Items;
-    using Divine.Numerics;
-    using Divine.Renderer;
-    using Divine.Update;
+    private readonly ILog log;
 
-    using Logger;
+    private IMainMenu mainMenu;
 
-    internal class Mouse : IDebuggerTool
+    private Menu menu;
+
+    private MenuSwitcher showMousePosition;
+
+    public Mouse(IMainMenu mainMenu, ILog log)
     {
-        private const uint WM_LBUTTONDOWN = 0x0201;
+        this.mainMenu = mainMenu;
+        this.log = log;
+    }
 
-        private MenuSwitcher copyPosition;
+    public int LoadPriority { get; } = 77;
 
-        private readonly ILog log;
+    public void Activate()
+    {
+        this.menu = this.mainMenu.InformationMenu.CreateMenu("Mouse");
 
-        private IMainMenu mainMenu;
+        this.showMousePosition = this.menu.CreateSwitcher("Show mouse position", false);
+        this.showMousePosition.ValueChanged += this.ShowMousePositionOnPropertyChanged;
 
-        private Menu menu;
+        this.copyPosition = this.menu.CreateSwitcher("Copy position on click", true);
+        this.copyPosition.ValueChanged += this.CopyPositionOnPropertyChanged;
 
-        private MenuSwitcher showMousePosition;
+        this.ShowMousePositionOnPropertyChanged(null, null);
+        this.CopyPositionOnPropertyChanged(null, null);
+    }
 
-        public Mouse(IMainMenu mainMenu, ILog log)
+    public void Dispose()
+    {
+        this.showMousePosition.ValueChanged -= this.ShowMousePositionOnPropertyChanged;
+        this.copyPosition.ValueChanged -= this.CopyPositionOnPropertyChanged;
+        RendererManager.Draw -= this.DrawingOnDraw;
+        InputManager.WindowProc -= this.GameOnWndProc;
+    }
+
+    private void CopyPositionOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
         {
-            this.mainMenu = mainMenu;
-            this.log = log;
-        }
-
-        public int LoadPriority { get; } = 77;
-
-        public void Activate()
-        {
-            this.menu = this.mainMenu.InformationMenu.CreateMenu("Mouse");
-
-            this.showMousePosition = this.menu.CreateSwitcher("Show mouse position", false);
-            this.showMousePosition.ValueChanged += this.ShowMousePositionOnPropertyChanged;
-
-            this.copyPosition = this.menu.CreateSwitcher("Copy position on click", true);
-            this.copyPosition.ValueChanged += this.CopyPositionOnPropertyChanged;
-
-            this.ShowMousePositionOnPropertyChanged(null, null);
-            this.CopyPositionOnPropertyChanged(null, null);
-        }
-
-        public void Dispose()
-        {
-            this.showMousePosition.ValueChanged -= this.ShowMousePositionOnPropertyChanged;
-            this.copyPosition.ValueChanged -= this.CopyPositionOnPropertyChanged;
-            RendererManager.Draw -= this.DrawingOnDraw;
-            InputManager.WindowProc -= this.GameOnWndProc;
-        }
-
-        private void CopyPositionOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            UpdateManager.BeginInvoke(() =>
+            if (this.copyPosition && this.showMousePosition)
             {
-                if (this.copyPosition && this.showMousePosition)
-                {
-                    InputManager.WindowProc += this.GameOnWndProc;
-                }
-                else
-                {
-                    InputManager.WindowProc -= this.GameOnWndProc;
-                }
-            });
-        }
-
-        private void DrawingOnDraw()
-        {
-            var pos = GameManager.MousePosition;
-
-            RendererManager.DrawText(
-                pos.ToCopyFormat(),
-                GameManager.MouseScreenPosition + new Vector2(35, 0),
-                Color.White,
-                "Arial",
-                20);
-        }
-
-        private void GameOnWndProc(WindowProcEventArgs e)
-        {
-            if (e.Msg == WM_LBUTTONDOWN && !this.log.IsMouseUnderLog())
-            {
-                Clipboard.SetText(GameManager.MousePosition.ToCopyFormat());
+                InputManager.WindowProc += this.GameOnWndProc;
             }
-        }
-
-        private void ShowMousePositionOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            UpdateManager.BeginInvoke(() =>
+            else
             {
-                if (this.showMousePosition)
-                {
-                    RendererManager.Draw += this.DrawingOnDraw;
-                }
-                else
-                {
-                    RendererManager.Draw -= this.DrawingOnDraw;
-                }
+                InputManager.WindowProc -= this.GameOnWndProc;
+            }
+        });
+    }
 
-                this.CopyPositionOnPropertyChanged(null, null);
-            });
+    private void DrawingOnDraw()
+    {
+        var pos = GameManager.MousePosition;
+
+        RendererManager.DrawText(
+            pos.ToCopyFormat(),
+            GameManager.MouseScreenPosition + new Vector2(35, 0),
+            Color.White,
+            "Arial",
+            20);
+    }
+
+    private void GameOnWndProc(WindowProcEventArgs e)
+    {
+        if (e.Msg == WM_LBUTTONDOWN && !this.log.IsMouseUnderLog())
+        {
+            Clipboard.SetText(GameManager.MousePosition.ToCopyFormat());
         }
+    }
+
+    private void ShowMousePositionOnPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        UpdateManager.BeginInvoke(() =>
+        {
+            if (this.showMousePosition)
+            {
+                RendererManager.Draw += this.DrawingOnDraw;
+            }
+            else
+            {
+                RendererManager.Draw -= this.DrawingOnDraw;
+            }
+
+            this.CopyPositionOnPropertyChanged(null, null);
+        });
     }
 }
