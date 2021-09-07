@@ -1,15 +1,14 @@
-﻿using Divine.Menu.Items;
+﻿namespace BeAware.MenuManager.ShowMeMore;
 
-namespace BeAware.MenuManager.ShowMeMore
+using Divine.Menu.Items;
+
+internal sealed class TrueSightVisionMenu
 {
-    internal sealed class TrueSightVisionMenu
+    public TrueSightVisionMenu(Menu showMeMoreMenu)
     {
-        public TrueSightVisionMenu(Menu showMeMoreMenu)
-        {
-            var trueSightVisionMenu = showMeMoreMenu.CreateMenu("True Sight Vision");
-            EnableItem = trueSightVisionMenu.CreateSwitcher("Enable");
-        }
-
-        public MenuSwitcher EnableItem { get; }
+        var trueSightVisionMenu = showMeMoreMenu.CreateMenu("True Sight Vision");
+        EnableItem = trueSightVisionMenu.CreateSwitcher("Enable");
     }
+
+    public MenuSwitcher EnableItem { get; }
 }

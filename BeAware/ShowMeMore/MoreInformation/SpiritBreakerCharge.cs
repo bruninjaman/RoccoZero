@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace BeAware.ShowMeMore.MoreInformation;
+
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,172 +22,169 @@ using Divine.Particle;
 using Divine.Particle.Components;
 using Divine.Renderer;
 
-namespace BeAware.ShowMeMore.MoreInformation
+internal sealed class SpiritBreakerCharge : Base
 {
-    internal sealed class SpiritBreakerCharge : Base
+    private readonly SpiritBreakerChargeMenu SpiritBreakerChargeMenu;
+
+    private bool OnMinimap;
+
+    private bool ColorScreen;
+
+    private Vector3 startChargePosition;
+
+    private Vector3 endChargePosition;
+
+    public SpiritBreakerCharge(Common common) : base(common)
     {
-        private readonly SpiritBreakerChargeMenu SpiritBreakerChargeMenu;
+        SpiritBreakerChargeMenu = MoreInformationMenu.SpiritBreakerChargeMenu;
 
-        private bool OnMinimap;
+        RendererManager.LoadImage(HeroId.npc_dota_hero_spirit_breaker, UnitImageType.MiniUnit);
 
-        private bool ColorScreen;
+        RendererManager.Draw += RendererManagerOnDraw;
+    }
 
-        private Vector3 startChargePosition;
+    public void Dispose()
+    {
+        RendererManager.Draw -= RendererManagerOnDraw;
+    }
 
-        private Vector3 endChargePosition;
-
-        public SpiritBreakerCharge(Common common) : base(common)
+    private void RendererManagerOnDraw()
+    {
+        if (ColorScreen)
         {
-            SpiritBreakerChargeMenu = MoreInformationMenu.SpiritBreakerChargeMenu;
+            var color = new Color(
+            SpiritBreakerChargeMenu.RedItem.Value,
+            SpiritBreakerChargeMenu.GreenItem.Value,
+            SpiritBreakerChargeMenu.BlueItem.Value,
+            SpiritBreakerChargeMenu.AlphaItem.Value);
 
-            RendererManager.LoadImage(HeroId.npc_dota_hero_spirit_breaker, UnitImageType.MiniUnit);
-
-            RendererManager.Draw += RendererManagerOnDraw;
+            var screenSize = RendererManager.ScreenSize;
+            RendererManager.DrawFilledRectangle(new RectangleF(0, 0, screenSize.X, screenSize.Y), Color.Zero, color, 0);
         }
 
-        public void Dispose()
+        if (OnMinimap)
         {
-            RendererManager.Draw -= RendererManagerOnDraw;
+            var startPos = startChargePosition.WorldToMinimap();
+            var endPos = endChargePosition.WorldToMinimap();
+            RendererManager.DrawLine(startPos, endPos, Color.WhiteSmoke, 1);
+            RendererManager.DrawImage(@"mini_heroes\npc_dota_hero_spirit_breaker.png", new RectangleF(startPos.X - 11, startPos.Y - 13, 24, 24));
+        }
+    }
+
+    public override bool Modifier(Unit unit, Modifier modifier, bool isHero)
+    {
+        if (!SpiritBreakerChargeMenu.EnableItem || modifier.Name != "modifier_spirit_breaker_charge_of_darkness_vision")
+        {
+            return false;
         }
 
-        private void RendererManagerOnDraw()
+        Charge(unit, modifier, isHero);
+        return true;
+    }
+
+    private async void Charge(Unit unit, Modifier modifier, bool isHero)
+    {
+        try
         {
-            if (ColorScreen)
+            if (unit.Team != LocalHero.Team)
             {
-                var color = new Color(
-                SpiritBreakerChargeMenu.RedItem.Value,
-                SpiritBreakerChargeMenu.GreenItem.Value,
-                SpiritBreakerChargeMenu.BlueItem.Value,
-                SpiritBreakerChargeMenu.AlphaItem.Value);
-
-                var screenSize = RendererManager.ScreenSize;
-                RendererManager.DrawFilledRectangle(new RectangleF(0, 0, screenSize.X, screenSize.Y), Color.Zero, color, 0);
+                return;
             }
 
-            if (OnMinimap)
+            var effectName = "particles/units/heroes/hero_spirit_breaker/spirit_breaker_charge_target.vpcf";
+            if (isHero)
             {
-                var startPos = startChargePosition.WorldToMinimap();
-                var endPos = endChargePosition.WorldToMinimap();
-                RendererManager.DrawLine(startPos, endPos, Color.WhiteSmoke, 1);
-                RendererManager.DrawImage(@"mini_heroes\npc_dota_hero_spirit_breaker.png", new RectangleF(startPos.X - 11, startPos.Y - 13, 24, 24));
-            }
-        }
-
-        public override bool Modifier(Unit unit, Modifier modifier, bool isHero)
-        {
-            if (!SpiritBreakerChargeMenu.EnableItem || modifier.Name != "modifier_spirit_breaker_charge_of_darkness_vision")
-            {
-                return false;
-            }
-
-            Charge(unit, modifier, isHero);
-            return true;
-        }
-
-        private async void Charge(Unit unit, Modifier modifier, bool isHero)
-        {
-            try
-            {
-                if (unit.Team != LocalHero.Team)
+                if (LocalHero.Handle == unit.Handle)
                 {
-                    return;
+                    ColorScreen = true;
                 }
 
-                var effectName = "particles/units/heroes/hero_spirit_breaker/spirit_breaker_charge_target.vpcf";
-                if (isHero)
+                effectName = "materials/ensage_ui/particles/spirit_breaker_charge_target.vpcf";
+
+                var position = unit.Position;
+                var pos = Pos(position, SpiritBreakerChargeMenu.OnWorldItem);
+                var minimapPos = MinimapPos(position, SpiritBreakerChargeMenu.OnMinimapItem);
+
+                Verification.InfoVerification(pos, minimapPos, unit.Name, AbilityId.spirit_breaker_charge_of_darkness, 0, SpiritBreakerChargeMenu.SideMessageItem, SpiritBreakerChargeMenu.SoundItem);
+
+                if (SpiritBreakerChargeMenu.WriteOnChatItem)
                 {
-                    if (LocalHero.Handle == unit.Handle)
-                    {
-                        ColorScreen = true;
-                    }
-
-                    effectName = "materials/ensage_ui/particles/spirit_breaker_charge_target.vpcf";
-
-                    var position = unit.Position;
-                    var pos = Pos(position, SpiritBreakerChargeMenu.OnWorldItem);
-                    var minimapPos = MinimapPos(position, SpiritBreakerChargeMenu.OnMinimapItem);
-
-                    Verification.InfoVerification(pos, minimapPos, unit.Name, AbilityId.spirit_breaker_charge_of_darkness, 0, SpiritBreakerChargeMenu.SideMessageItem, SpiritBreakerChargeMenu.SoundItem);
-
-                    if (SpiritBreakerChargeMenu.WriteOnChatItem)
-                    {
-                        DisplayMessage(unit);
-                    }
+                    DisplayMessage(unit);
                 }
-
-                ParticleManager.CreateOrUpdateParticle($"ChargeUnit", effectName, EntityManager.GetEntityByHandle(unit.Handle), ParticleAttachment.OverheadFollow);
-
-                var spiritBreaker = EntityManager.GetEntities<Hero>().FirstOrDefault(x => !x.IsIllusion && x.HeroId == HeroId.npc_dota_hero_spirit_breaker);
-                var speed = spiritBreaker.GetAbilityById(AbilityId.spirit_breaker_charge_of_darkness).GetAbilitySpecialDataWithTalent(spiritBreaker, "movement_speed");
-
-                var rawGameTime = GameManager.RawGameTime;
-                var firstIsVisible = false;
-
-                do
-                {
-                    var isVisible = spiritBreaker.IsVisible;
-                    if (isVisible)
-                    {
-                        rawGameTime = GameManager.RawGameTime;
-                        firstIsVisible = true;
-                    }
-
-                    if (firstIsVisible)
-                    {
-                        startChargePosition = spiritBreaker.Position.Extend(unit.Position, (GameManager.RawGameTime - rawGameTime) * speed);
-                        endChargePosition = unit.Position;
-                        DrawLine("Charge", startChargePosition, endChargePosition, 150, 185, Color.DarkRed);
-
-                        if (SpiritBreakerChargeMenu.OnMinimapItem)
-                        {
-                            OnMinimap = true;
-                        }
-
-                        if (!isVisible)
-                        {
-                            DrawRange("Charge", startChargePosition, 100, Color.Red, 180);
-                        }
-                        else
-                        {
-                            DrawRangeRemove("Charge");
-                        }
-                    }
-
-                    await Task.Delay(50);
-                }
-                while (modifier.IsValid);
-
-                ColorScreen = false;
-                OnMinimap = false;
-
-                ParticleManager.RemoveParticle("ChargeUnit");
-                DrawRangeRemove("Charge");
-                DrawLineRemove("Charge");
-                startChargePosition = Vector3.Zero;
             }
-            catch (Exception e)
+
+            ParticleManager.CreateOrUpdateParticle($"ChargeUnit", effectName, EntityManager.GetEntityByHandle(unit.Handle), ParticleAttachment.OverheadFollow);
+
+            var spiritBreaker = EntityManager.GetEntities<Hero>().FirstOrDefault(x => !x.IsIllusion && x.HeroId == HeroId.npc_dota_hero_spirit_breaker);
+            var speed = spiritBreaker.GetAbilityById(AbilityId.spirit_breaker_charge_of_darkness).GetAbilitySpecialDataWithTalent(spiritBreaker, "movement_speed");
+
+            var rawGameTime = GameManager.RawGameTime;
+            var firstIsVisible = false;
+
+            do
             {
-                LogManager.Error(e);
+                var isVisible = spiritBreaker.IsVisible;
+                if (isVisible)
+                {
+                    rawGameTime = GameManager.RawGameTime;
+                    firstIsVisible = true;
+                }
+
+                if (firstIsVisible)
+                {
+                    startChargePosition = spiritBreaker.Position.Extend(unit.Position, (GameManager.RawGameTime - rawGameTime) * speed);
+                    endChargePosition = unit.Position;
+                    DrawLine("Charge", startChargePosition, endChargePosition, 150, 185, Color.DarkRed);
+
+                    if (SpiritBreakerChargeMenu.OnMinimapItem)
+                    {
+                        OnMinimap = true;
+                    }
+
+                    if (!isVisible)
+                    {
+                        DrawRange("Charge", startChargePosition, 100, Color.Red, 180);
+                    }
+                    else
+                    {
+                        DrawRangeRemove("Charge");
+                    }
+                }
+
+                await Task.Delay(50);
             }
+            while (modifier.IsValid);
+
+            ColorScreen = false;
+            OnMinimap = false;
+
+            ParticleManager.RemoveParticle("ChargeUnit");
+            DrawRangeRemove("Charge");
+            DrawLineRemove("Charge");
+            startChargePosition = Vector3.Zero;
         }
-
-        private void DisplayMessage(Unit unit)
+        catch (Exception e)
         {
-            switch (MenuConfig.LanguageItem)
-            {
-                case "EN":
-                    {
-                        DisplayMessage($"say_team Carefully, Spirit Breaker charge on {unit.GetDisplayName()}");
+            LogManager.Error(e);
+        }
+    }
 
-                    }
-                    break;
+    private void DisplayMessage(Unit unit)
+    {
+        switch (MenuConfig.LanguageItem)
+        {
+            case "EN":
+                {
+                    DisplayMessage($"say_team Carefully, Spirit Breaker charge on {unit.GetDisplayName()}");
 
-                case "RU":
-                    {
-                        DisplayMessage($"say_team Осторожно, Spirit Breaker разгон на {unit.GetDisplayName()}", true);
-                    }
-                    break;
-            }
+                }
+                break;
+
+            case "RU":
+                {
+                    DisplayMessage($"say_team Осторожно, Spirit Breaker разгон на {unit.GetDisplayName()}", true);
+                }
+                break;
         }
     }
 }

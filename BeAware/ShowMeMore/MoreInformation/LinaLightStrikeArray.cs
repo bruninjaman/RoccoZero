@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace BeAware.ShowMeMore.MoreInformation;
+
+using System.Threading.Tasks;
 
 using BeAware.MenuManager.ShowMeMore;
 using BeAware.MenuManager.ShowMeMore.MoreInformation;
@@ -10,66 +12,63 @@ using Divine.Entity.Entities.Units.Heroes.Components;
 using Divine.Extensions;
 using Divine.Numerics;
 
-namespace BeAware.ShowMeMore.MoreInformation
+internal sealed class LinaLightStrikeArray : Base
 {
-    internal sealed class LinaLightStrikeArray : Base
+    private readonly LinaLightStrikeArrayMenu LinaLightStrikeArrayMenu;
+
+    public LinaLightStrikeArray(Common common) : base(common)
     {
-        private readonly LinaLightStrikeArrayMenu LinaLightStrikeArrayMenu;
+        LinaLightStrikeArrayMenu = MoreInformationMenu.LinaLightStrikeArrayMenu;
+    }
 
-        public LinaLightStrikeArray(Common common) : base(common)
+    private Color Color
+    {
+        get
         {
-            LinaLightStrikeArrayMenu = MoreInformationMenu.LinaLightStrikeArrayMenu;
+            return new Color(LinaLightStrikeArrayMenu.RedItem.Value, LinaLightStrikeArrayMenu.GreenItem.Value, LinaLightStrikeArrayMenu.BlueItem.Value);
+        }
+    }
+
+    public override bool Entity(Unit unit, Hero hero)
+    {
+        if (hero.HeroId != HeroId.npc_dota_hero_lina)
+        {
+            return false;
         }
 
-        private Color Color
+        if (!LinaLightStrikeArrayMenu.EnableItem)
         {
-            get
-            {
-                return new Color(LinaLightStrikeArrayMenu.RedItem.Value, LinaLightStrikeArrayMenu.GreenItem.Value, LinaLightStrikeArrayMenu.BlueItem.Value);
-            }
-        }
-
-        public override bool Entity(Unit unit, Hero hero)
-        {
-            if (hero.HeroId != HeroId.npc_dota_hero_lina)
-            {
-                return false;
-            }
-
-            if (!LinaLightStrikeArrayMenu.EnableItem)
-            {
-                return true;
-            }
-
-            if (hero.IsAlly(LocalHero))
-            {
-                return true;
-            }
-
-            var position = unit.Position;
-            LightStrikeArray(unit, position);
-
-            if (LinaLightStrikeArrayMenu.WhenIsVisibleItem || !hero.IsVisible)
-            {
-                var pos = Pos(position, LinaLightStrikeArrayMenu.OnWorldItem);
-                var minimapPos = MinimapPos(position, LinaLightStrikeArrayMenu.OnMinimapItem);
-                Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_lina", AbilityId.lina_light_strike_array, 0, LinaLightStrikeArrayMenu.SideMessageItem, LinaLightStrikeArrayMenu.SoundItem);
-            }
-
             return true;
         }
 
-        private async void LightStrikeArray(Unit unit, Vector3 position)
+        if (hero.IsAlly(LocalHero))
         {
-            var id = unit.Handle.ToString();
-            DrawRange(id, position, 225, Color, 170);
-
-            while (unit.IsValid)
-            {
-                await Task.Delay(150);
-            }
-
-            DrawRangeRemove(id);
+            return true;
         }
+
+        var position = unit.Position;
+        LightStrikeArray(unit, position);
+
+        if (LinaLightStrikeArrayMenu.WhenIsVisibleItem || !hero.IsVisible)
+        {
+            var pos = Pos(position, LinaLightStrikeArrayMenu.OnWorldItem);
+            var minimapPos = MinimapPos(position, LinaLightStrikeArrayMenu.OnMinimapItem);
+            Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_lina", AbilityId.lina_light_strike_array, 0, LinaLightStrikeArrayMenu.SideMessageItem, LinaLightStrikeArrayMenu.SoundItem);
+        }
+
+        return true;
+    }
+
+    private async void LightStrikeArray(Unit unit, Vector3 position)
+    {
+        var id = unit.Handle.ToString();
+        DrawRange(id, position, 225, Color, 170);
+
+        while (unit.IsValid)
+        {
+            await Task.Delay(150);
+        }
+
+        DrawRangeRemove(id);
     }
 }

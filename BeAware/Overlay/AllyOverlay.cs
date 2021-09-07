@@ -1,66 +1,65 @@
-﻿using System.Collections.Generic;
+﻿namespace BeAware.Overlay;
+
+using System.Collections.Generic;
 using System.Linq;
 
 using Divine.Entity;
 using Divine.Entity.Entities.Units.Heroes;
 using Divine.Extensions;
 
-namespace BeAware.Overlay
+internal sealed class AllyOverlay : Overlay
 {
-    internal sealed class AllyOverlay : Overlay
+    public AllyOverlay(Common common) : base(common)
     {
-        public AllyOverlay(Common common) : base(common)
+    }
+
+    protected override IEnumerable<Hero> Heroes
+    {
+        get
         {
+            return EntityManager.GetEntities<Hero>().Where(x => x.IsAlly(LocalHero) && !x.IsIllusion);
+        }
+    }
+
+    protected override bool HeroIsVisible(Hero hero)
+    {
+        if (!VisibleStatusMenu.VisibleStatusAllyItem)
+        {
+            return false;
         }
 
-        protected override IEnumerable<Hero> Heroes
+        return hero.IsVisibleToEnemies;
+    }
+
+    protected override bool TopBarUltimateOverlay
+    {
+        get
         {
-            get
-            {
-                return EntityManager.GetEntities<Hero>().Where(x => x.IsAlly(LocalHero) && !x.IsIllusion);
-            }
+            return TopPanelMenu.UltimateBarMenu.UltimateBarAllyItem;
         }
+    }
 
-        protected override bool HeroIsVisible(Hero hero)
+    protected override bool SpellsOverlay
+    {
+        get
         {
-            if (!VisibleStatusMenu.VisibleStatusAllyItem)
-            {
-                return false;
-            }
-
-            return hero.IsVisibleToEnemies;
+            return SpellsMenu.AllyOverlayItem;
         }
+    }
 
-        protected override bool TopBarUltimateOverlay
+    protected override bool ItemsOverlay
+    {
+        get
         {
-            get
-            {
-                return TopPanelMenu.UltimateBarMenu.UltimateBarAllyItem;
-            }
+            return ItemsMenu.AllyOverlayItem;
         }
+    }
 
-        protected override bool SpellsOverlay
+    protected override bool TownPortalScrollOverlay
+    {
+        get
         {
-            get
-            {
-                return SpellsMenu.AllyOverlayItem;
-            }
-        }
-
-        protected override bool ItemsOverlay
-        {
-            get
-            {
-                return ItemsMenu.AllyOverlayItem;
-            }
-        }
-
-        protected override bool TownPortalScrollOverlay
-        {
-            get
-            {
-                return TownPortalScrollMenu.AllyItem;
-            }
+            return TownPortalScrollMenu.AllyItem;
         }
     }
 }

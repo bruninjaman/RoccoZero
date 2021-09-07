@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿namespace BeAware.ShowMeMore.MoreInformation;
+
+using System.Linq;
 
 using BeAware.MenuManager.ShowMeMore;
 using BeAware.MenuManager.ShowMeMore.MoreInformation;
@@ -12,59 +14,56 @@ using Divine.Numerics;
 using Divine.Particle.Particles;
 using Divine.Update;
 
-namespace BeAware.ShowMeMore.MoreInformation
+internal sealed class InvokerEMP : Base
 {
-    internal sealed class InvokerEMP : Base
+    private readonly InvokerEMPMenu InvokerEMPMenu;
+
+    public InvokerEMP(Common common) : base(common)
     {
-        private readonly InvokerEMPMenu InvokerEMPMenu;
+        InvokerEMPMenu = MoreInformationMenu.InvokerEMPMenu;
+    }
 
-        public InvokerEMP(Common common) : base(common)
+    private Color Color
+    {
+        get
         {
-            InvokerEMPMenu = MoreInformationMenu.InvokerEMPMenu;
+            return new Color(InvokerEMPMenu.RedItem.Value, InvokerEMPMenu.GreenItem.Value, InvokerEMPMenu.BlueItem.Value);
+        }
+    }
+
+    public override bool Particle(Particle particle, string name)
+    {
+        if (!name.Contains("invoker_emp"))
+        {
+            return false;
         }
 
-        private Color Color
+        if (!InvokerEMPMenu.EnableItem)
         {
-            get
-            {
-                return new Color(InvokerEMPMenu.RedItem.Value, InvokerEMPMenu.GreenItem.Value, InvokerEMPMenu.BlueItem.Value);
-            }
-        }
-
-        public override bool Particle(Particle particle, string name)
-        {
-            if (!name.Contains("invoker_emp"))
-            {
-                return false;
-            }
-
-            if (!InvokerEMPMenu.EnableItem)
-            {
-                return true;
-            }
-
-            if (!EntityManager.GetEntities<Hero>().Any(x => !x.IsAlly(LocalHero) && !x.IsIllusion && x.HeroId == HeroId.npc_dota_hero_invoker))
-            {
-                return true;
-            }
-
-            var handle = particle.Handle.ToString();
-            UpdateManager.BeginInvoke(1, () =>
-            {
-                var position = particle.GetControlPoint(0);
-                DrawRange(handle, position, 675, Color, 70);
-
-                var pos = Pos(position, InvokerEMPMenu.OnWorldItem);
-                var minimapPos = MinimapPos(position, InvokerEMPMenu.OnMinimapItem);
-                Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_invoker", AbilityId.invoker_emp, 0, InvokerEMPMenu.SideMessageItem, InvokerEMPMenu.SoundItem);
-            });
-
-            UpdateManager.BeginInvoke(2900, () =>
-            {
-                DrawRangeRemove(handle);
-            });
-
             return true;
         }
+
+        if (!EntityManager.GetEntities<Hero>().Any(x => !x.IsAlly(LocalHero) && !x.IsIllusion && x.HeroId == HeroId.npc_dota_hero_invoker))
+        {
+            return true;
+        }
+
+        var handle = particle.Handle.ToString();
+        UpdateManager.BeginInvoke(1, () =>
+        {
+            var position = particle.GetControlPoint(0);
+            DrawRange(handle, position, 675, Color, 70);
+
+            var pos = Pos(position, InvokerEMPMenu.OnWorldItem);
+            var minimapPos = MinimapPos(position, InvokerEMPMenu.OnMinimapItem);
+            Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_invoker", AbilityId.invoker_emp, 0, InvokerEMPMenu.SideMessageItem, InvokerEMPMenu.SoundItem);
+        });
+
+        UpdateManager.BeginInvoke(2900, () =>
+        {
+            DrawRangeRemove(handle);
+        });
+
+        return true;
     }
 }

@@ -1,15 +1,14 @@
-﻿using Divine.Menu.Items;
+﻿namespace BeAware.MenuManager.Overlay;
 
-namespace BeAware.MenuManager.Overlay
+using Divine.Menu.Items;
+
+internal class HpBarMenu
 {
-    internal class HpBarMenu
+    public HpBarMenu(Menu overlayMenu)
     {
-        public HpBarMenu(Menu overlayMenu)
-        {
-            var hpBarMenu = overlayMenu.CreateMenu("Hp Bar");
-            HpBarValueItem = hpBarMenu.CreateSwitcher("Value", false);
-        }
-
-        public MenuSwitcher HpBarValueItem { get; }
+        var hpBarMenu = overlayMenu.CreateMenu("Hp Bar");
+        HpBarValueItem = hpBarMenu.CreateSwitcher("Value", false);
     }
+
+    public MenuSwitcher HpBarValueItem { get; }
 }

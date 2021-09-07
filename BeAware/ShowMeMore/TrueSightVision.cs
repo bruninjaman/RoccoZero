@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿namespace BeAware.ShowMeMore;
+
+using System.Linq;
 
 using BeAware.MenuManager.ShowMeMore;
 
@@ -14,130 +16,127 @@ using Divine.Modifier.EventArgs;
 using Divine.Particle;
 using Divine.Particle.Components;
 
-namespace BeAware.ShowMeMore
+internal sealed class TrueSightVision
 {
-    internal sealed class TrueSightVision
+    private readonly Hero LocalHero = EntityManager.LocalHero;
+
+    private readonly TrueSightVisionMenu TrueSightVisionMenu;
+
+    public TrueSightVision(Common common)
     {
-        private readonly Hero LocalHero = EntityManager.LocalHero;
+        TrueSightVisionMenu = common.MenuConfig.ShowMeMoreMenu.TrueSightVisionMenu;
 
-        private readonly TrueSightVisionMenu TrueSightVisionMenu;
+        TrueSightVisionMenu.EnableItem.ValueChanged += OnEnableValueChanged;
+    }
 
-        public TrueSightVision(Common common)
+    public void Dispose()
+    {
+        TrueSightVisionMenu.EnableItem.ValueChanged -= OnEnableValueChanged;
+
+        if (TrueSightVisionMenu.EnableItem)
         {
-            TrueSightVisionMenu = common.MenuConfig.ShowMeMoreMenu.TrueSightVisionMenu;
-
-            TrueSightVisionMenu.EnableItem.ValueChanged += OnEnableValueChanged;
-        }
-
-        public void Dispose()
-        {
-            TrueSightVisionMenu.EnableItem.ValueChanged -= OnEnableValueChanged;
-
-            if (TrueSightVisionMenu.EnableItem)
+            foreach (var unit in EntityManager.GetEntities<Unit>())
             {
-                foreach (var unit in EntityManager.GetEntities<Unit>())
+                if (!unit.IsAlly(LocalHero))
                 {
-                    if (!unit.IsAlly(LocalHero))
-                    {
-                        continue;
-                    }
-
-                    if (!unit.ModifierStatus.Debuffs.Any(x => x.Name == "modifier_truesight"))
-                    {
-                        continue;
-                    }
-
-                    ParticleRemove(unit.Handle);
+                    continue;
                 }
 
-                ModifierManager.ModifierAdded -= OnModifierManagerModifierAdded;
-                ModifierManager.ModifierRemoved -= OnModifierManagerModifierRemoved;
-            }
-        }
-
-        private void OnEnableValueChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            if (e.Value)
-            {
-                foreach (var unit in EntityManager.GetEntities<Unit>())
+                if (!unit.ModifierStatus.Debuffs.Any(x => x.Name == "modifier_truesight"))
                 {
-                    if (!unit.IsAlly(LocalHero))
-                    {
-                        continue;
-                    }
-
-                    if (!unit.ModifierStatus.Debuffs.Any(x => x.Name == "modifier_truesight"))
-                    {
-                        continue;
-                    }
-
-                    ParticleAdd(unit);
+                    continue;
                 }
 
-                ModifierManager.ModifierAdded += OnModifierManagerModifierAdded;
-                ModifierManager.ModifierRemoved += OnModifierManagerModifierRemoved;
+                ParticleRemove(unit.Handle);
             }
-            else
+
+            ModifierManager.ModifierAdded -= OnModifierManagerModifierAdded;
+            ModifierManager.ModifierRemoved -= OnModifierManagerModifierRemoved;
+        }
+    }
+
+    private void OnEnableValueChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        if (e.Value)
+        {
+            foreach (var unit in EntityManager.GetEntities<Unit>())
             {
-                foreach (var unit in EntityManager.GetEntities<Unit>())
+                if (!unit.IsAlly(LocalHero))
                 {
-                    if (!unit.IsAlly(LocalHero))
-                    {
-                        continue;
-                    }
-
-                    if (!unit.ModifierStatus.Debuffs.Any(x => x.Name == "modifier_truesight"))
-                    {
-                        continue;
-                    }
-
-                    ParticleRemove(unit.Handle);
+                    continue;
                 }
 
-                ModifierManager.ModifierAdded -= OnModifierManagerModifierAdded;
-                ModifierManager.ModifierRemoved -= OnModifierManagerModifierRemoved;
-            }
-        }
+                if (!unit.ModifierStatus.Debuffs.Any(x => x.Name == "modifier_truesight"))
+                {
+                    continue;
+                }
 
-        private void OnModifierManagerModifierAdded(ModifierAddedEventArgs e)
+                ParticleAdd(unit);
+            }
+
+            ModifierManager.ModifierAdded += OnModifierManagerModifierAdded;
+            ModifierManager.ModifierRemoved += OnModifierManagerModifierRemoved;
+        }
+        else
         {
-            var owner = e.Modifier.Owner;
-            if (owner is not Unit unit || unit.IsEnemy(LocalHero) || e.Modifier.Name != "modifier_truesight")
+            foreach (var unit in EntityManager.GetEntities<Unit>())
             {
-                return;
+                if (!unit.IsAlly(LocalHero))
+                {
+                    continue;
+                }
+
+                if (!unit.ModifierStatus.Debuffs.Any(x => x.Name == "modifier_truesight"))
+                {
+                    continue;
+                }
+
+                ParticleRemove(unit.Handle);
             }
 
-            ParticleAdd(EntityManager.GetEntityByHandle(unit.Handle));
+            ModifierManager.ModifierAdded -= OnModifierManagerModifierAdded;
+            ModifierManager.ModifierRemoved -= OnModifierManagerModifierRemoved;
         }
+    }
 
-        private void OnModifierManagerModifierRemoved(ModifierRemovedEventArgs e)
+    private void OnModifierManagerModifierAdded(ModifierAddedEventArgs e)
+    {
+        var owner = e.Modifier.Owner;
+        if (owner is not Unit unit || unit.IsEnemy(LocalHero) || e.Modifier.Name != "modifier_truesight")
         {
-            var owner = e.Modifier.Owner;
-            if (owner is not Unit unit || unit.IsEnemy(LocalHero) || e.Modifier.Name != "modifier_truesight")
-            {
-                return;
-            }
-
-            ParticleRemove(unit.Handle);
+            return;
         }
 
-        private void ParticleAdd(Entity entity)
+        ParticleAdd(EntityManager.GetEntityByHandle(unit.Handle));
+    }
+
+    private void OnModifierManagerModifierRemoved(ModifierRemovedEventArgs e)
+    {
+        var owner = e.Modifier.Owner;
+        if (owner is not Unit unit || unit.IsEnemy(LocalHero) || e.Modifier.Name != "modifier_truesight")
         {
-            if (entity == null)
-            {
-                return;
-            }
-
-            ParticleManager.CreateOrUpdateParticle(
-                    $"TrueSightVision_{entity.Handle}",
-                    "particles/items2_fx/ward_true_sight.vpcf",
-                    entity,
-                    ParticleAttachment.AbsOriginFollow);
+            return;
         }
 
-        private void ParticleRemove(uint handle)
+        ParticleRemove(unit.Handle);
+    }
+
+    private void ParticleAdd(Entity entity)
+    {
+        if (entity == null)
         {
-            ParticleManager.RemoveParticle($"TrueSightVision_{handle}");
+            return;
         }
+
+        ParticleManager.CreateOrUpdateParticle(
+                $"TrueSightVision_{entity.Handle}",
+                "particles/items2_fx/ward_true_sight.vpcf",
+                entity,
+                ParticleAttachment.AbsOriginFollow);
+    }
+
+    private void ParticleRemove(uint handle)
+    {
+        ParticleManager.RemoveParticle($"TrueSightVision_{handle}");
     }
 }

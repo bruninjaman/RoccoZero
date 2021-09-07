@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace BeAware.Entities;
+
+using System;
 using System.Linq;
 
 using BeAware.Data;
@@ -17,160 +19,157 @@ using Divine.Extensions;
 using Divine.Log;
 using Divine.Numerics;
 
-namespace BeAware.Entities
+internal sealed class UnitMonitor
 {
-    internal sealed class UnitMonitor
+    private readonly PartialMapHackMenu PartialMapHackMenu;
+
+    private readonly MiranaArrow MiranaArrow;
+
+    private readonly InvokerSunStrike InvokerSunStrike;
+
+    private readonly KunkkaTorrent KunkkaTorrent;
+
+    private readonly LeshracSplitEarth LeshracSplitEarth;
+
+    private readonly LinaLightStrikeArray LinaLightStrikeArray;
+
+    //private readonly IllusionShow IllusionShow;
+
+    private readonly Verification Verification;
+
+    private static readonly Log Log = LogManager.GetCurrentClassLogger();
+
+    public UnitMonitor(Common common)
     {
-        private readonly PartialMapHackMenu PartialMapHackMenu;
+        PartialMapHackMenu = common.MenuConfig.PartialMapHackMenu;
 
-        private readonly MiranaArrow MiranaArrow;
+        Verification = common.Verification;
 
-        private readonly InvokerSunStrike InvokerSunStrike;
+        MiranaArrow = common.MiranaArrow;
+        InvokerSunStrike = common.InvokerSunStrike;
+        KunkkaTorrent = common.KunkkaTorrent;
+        LeshracSplitEarth = common.LeshracSplitEarth;
+        LinaLightStrikeArray = common.LinaLightStrikeArray;
 
-        private readonly KunkkaTorrent KunkkaTorrent;
+        //IllusionShow = common.IllusionShow;
 
-        private readonly LeshracSplitEarth LeshracSplitEarth;
+        EntityManager.EntityAdded += OnEntityAdded;
+    }
 
-        private readonly LinaLightStrikeArray LinaLightStrikeArray;
+    public void Dispose()
+    {
+        EntityManager.EntityAdded -= OnEntityAdded;
+    }
 
-        //private readonly IllusionShow IllusionShow;
+    private Hero FindHeroWithSpells(AbilityId abilityId) => EntityManager.GetEntities<Hero>().FirstOrDefault(x => !x.IsIllusion && x.Spellbook.Spells.Any(v => v.Id == abilityId));
 
-        private readonly Verification Verification;
-
-        private static readonly Log Log = LogManager.GetCurrentClassLogger();
-
-        public UnitMonitor(Common common)
+    private bool IsIgnoreHero(Vector3 position)
+    {
+        foreach (var hero in EntityManager.GetEntities<Hero>())
         {
-            PartialMapHackMenu = common.MenuConfig.PartialMapHackMenu;
-
-            Verification = common.Verification;
-
-            MiranaArrow = common.MiranaArrow;
-            InvokerSunStrike = common.InvokerSunStrike;
-            KunkkaTorrent = common.KunkkaTorrent;
-            LeshracSplitEarth = common.LeshracSplitEarth;
-            LinaLightStrikeArray = common.LinaLightStrikeArray;
-
-            //IllusionShow = common.IllusionShow;
-
-            EntityManager.EntityAdded += OnEntityAdded;
-        }
-
-        public void Dispose()
-        {
-            EntityManager.EntityAdded -= OnEntityAdded;
-        }
-
-        private Hero FindHeroWithSpells(AbilityId abilityId) => EntityManager.GetEntities<Hero>().FirstOrDefault(x => !x.IsIllusion && x.Spellbook.Spells.Any(v => v.Id == abilityId));
-
-        private bool IsIgnoreHero(Vector3 position)
-        {
-            foreach (var hero in EntityManager.GetEntities<Hero>())
+            if (hero.IsIllusion)
             {
-                if (hero.IsIllusion)
-                {
-                    continue;
-                }
-
-                if (hero.HeroId == HeroId.npc_dota_hero_invoker)
-                {
-                    return true;
-                }
+                continue;
             }
 
-            return false;
-        }
-
-        private void OnEntityAdded(EntityAddedEventArgs e)
-        {
-            try
+            if (hero.HeroId == HeroId.npc_dota_hero_invoker)
             {
-                var entity = e.Entity;
-                if (!entity.IsValid || entity is not Unit unit)
-                {
-                    return;
-                }
-
-                /*if (IllusionShow.Entity(unit))
-                {
-                    return;
-                }*/
-
-                if (unit.ClassId != ClassId.CDOTA_BaseNPC)
-                {
-                    return;
-                }
-
-                var hero = unit.Owner as Hero;
-                if (hero != null)
-                {
-                    if (InvokerSunStrike.Entity(unit, hero))
-                    {
-                        return;
-                    }
-
-                    if (KunkkaTorrent.Entity(unit, hero))
-                    {
-                        return;
-                    }
-
-                    if (LeshracSplitEarth.Entity(unit, hero))
-                    {
-                        return;
-                    }
-
-                    if (LinaLightStrikeArray.Entity(unit, hero))
-                    {
-                        return;
-                    }
-
-                    var units = UnitDictionaries.Units.FirstOrDefault(x => hero.HeroId == x.Key);
-                    if (units.Key > 0)
-                    {
-                        Spells(hero, units.Value, unit.Position);
-                        return;
-                    }
-                }
-
-                var unitDayVision = UnitDictionaries.UnitsDayVision.FirstOrDefault(x => unit.DayVision == x.Key);
-                if (unitDayVision.Key > 0)
-                {
-                    var abilityId = unitDayVision.Value;
-                    Spells(FindHeroWithSpells(abilityId), abilityId, unit.Position);
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
+                return true;
             }
         }
 
-        private void Spells(Hero hero, AbilityId abilityId, Vector3 position)
+        return false;
+    }
+
+    private void OnEntityAdded(EntityAddedEventArgs e)
+    {
+        try
         {
-            try
+            var entity = e.Entity;
+            if (!entity.IsValid || entity is not Unit unit)
             {
-                var isDangerousSpell = DangerousAbility.DangerousSpells.Contains(abilityId);
-                if (hero == null)
+                return;
+            }
+
+            /*if (IllusionShow.Entity(unit))
+            {
+                return;
+            }*/
+
+            if (unit.ClassId != ClassId.CDOTA_BaseNPC)
+            {
+                return;
+            }
+
+            var hero = unit.Owner as Hero;
+            if (hero != null)
+            {
+                if (InvokerSunStrike.Entity(unit, hero))
                 {
-                    Verification.EntityVerification(position, "npc_dota_hero_default", abilityId, 0, isDangerousSpell);
                     return;
                 }
 
-                if (hero.IsAlly(EntityManager.LocalHero))
+                if (KunkkaTorrent.Entity(unit, hero))
                 {
                     return;
                 }
 
-                if (!hero.IsVisible || PartialMapHackMenu.WhenIsVisibleItem && isDangerousSpell)
+                if (LeshracSplitEarth.Entity(unit, hero))
                 {
-                    Verification.EntityVerification(position, hero.Name, abilityId, hero.Player.Id + 1, isDangerousSpell);
+                    return;
+                }
+
+                if (LinaLightStrikeArray.Entity(unit, hero))
+                {
+                    return;
+                }
+
+                var units = UnitDictionaries.Units.FirstOrDefault(x => hero.HeroId == x.Key);
+                if (units.Key > 0)
+                {
+                    Spells(hero, units.Value, unit.Position);
+                    return;
                 }
             }
-            catch (Exception e)
+
+            var unitDayVision = UnitDictionaries.UnitsDayVision.FirstOrDefault(x => unit.DayVision == x.Key);
+            if (unitDayVision.Key > 0)
             {
-                Log.Error(e);
+                var abilityId = unitDayVision.Value;
+                Spells(FindHeroWithSpells(abilityId), abilityId, unit.Position);
+                return;
             }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex);
+        }
+    }
+
+    private void Spells(Hero hero, AbilityId abilityId, Vector3 position)
+    {
+        try
+        {
+            var isDangerousSpell = DangerousAbility.DangerousSpells.Contains(abilityId);
+            if (hero == null)
+            {
+                Verification.EntityVerification(position, "npc_dota_hero_default", abilityId, 0, isDangerousSpell);
+                return;
+            }
+
+            if (hero.IsAlly(EntityManager.LocalHero))
+            {
+                return;
+            }
+
+            if (!hero.IsVisible || PartialMapHackMenu.WhenIsVisibleItem && isDangerousSpell)
+            {
+                Verification.EntityVerification(position, hero.Name, abilityId, hero.Player.Id + 1, isDangerousSpell);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
         }
     }
 }

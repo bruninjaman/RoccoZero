@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿namespace BeAware.ShowMeMore.MoreInformation;
+
+using System.Linq;
 using System.Threading.Tasks;
 
 using BeAware.Helpers;
@@ -15,110 +17,107 @@ using Divine.Numerics;
 using Divine.Particle.Particles;
 using Divine.Update;
 
-namespace BeAware.ShowMeMore.MoreInformation
+internal sealed class MiranaArrow : Base
 {
-    internal sealed class MiranaArrow : Base
+    private readonly MiranaArrowMenu MiranaArrowMenu;
+
+    private Color Color
     {
-        private readonly MiranaArrowMenu MiranaArrowMenu;
-
-        private Color Color
+        get
         {
-            get
-            {
-                return new Color(MiranaArrowMenu.RedItem.Value, MiranaArrowMenu.GreenItem.Value, MiranaArrowMenu.BlueItem.Value);
-            }
+            return new Color(MiranaArrowMenu.RedItem.Value, MiranaArrowMenu.GreenItem.Value, MiranaArrowMenu.BlueItem.Value);
+        }
+    }
+
+    public MiranaArrow(Common common)
+        : base(common)
+    {
+        MiranaArrowMenu = MoreInformationMenu.MiranaArrowMenu;
+    }
+
+    public override bool Particle(Particle particle, string name)
+    {
+        if (!name.Contains("mirana_spell_arrow"))
+        {
+            return false;
         }
 
-        public MiranaArrow(Common common)
-            : base(common)
+        if (!MiranaArrowMenu.EnableItem)
         {
-            MiranaArrowMenu = MoreInformationMenu.MiranaArrowMenu;
-        }
-
-        public override bool Particle(Particle particle, string name)
-        {
-            if (!name.Contains("mirana_spell_arrow"))
-            {
-                return false;
-            }
-
-            if (!MiranaArrowMenu.EnableItem)
-            {
-                return true;
-            }
-
-            var hero = EntityManager.GetEntities<Hero>().FirstOrDefault(x => !x.IsAlly(LocalHero) && !x.IsIllusion && x.HeroId == HeroId.npc_dota_hero_mirana);
-            if (hero == null)
-            {
-                return true;
-            }
-
-            UpdateManager.BeginInvoke(() => 
-            {
-                var position = particle.GetControlPoint(0);
-
-                Arrow(particle, position, hero.Handle.ToString());
-
-                var pos = Pos(position, MiranaArrowMenu.OnWorldItem);
-                var minimapPos = MinimapPos(position, MiranaArrowMenu.OnMinimapItem);
-                Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_mirana", AbilityId.mirana_arrow, 0, MiranaArrowMenu.SideMessageItem, MiranaArrowMenu.SoundItem);
-
-                if (MiranaArrowMenu.WriteOnChatItem)
-                {
-                    DisplayMessage();
-                }
-            });
-
-
-
             return true;
         }
 
-        private async void Arrow(Particle particle, Vector3 position, string id)
+        var hero = EntityManager.GetEntities<Hero>().FirstOrDefault(x => !x.IsAlly(LocalHero) && !x.IsIllusion && x.HeroId == HeroId.npc_dota_hero_mirana);
+        if (hero == null)
         {
-            var endPosition = position.Extend(position + particle.GetControlPoint(1), 3000);
+            return true;
+        }
 
-            var color = Color;
-            DrawRange($"ArrowStart_{id}", position, 100, color, 170);
-            DrawRange($"ArrowEnd_{id}", endPosition, 100, color, 170);
-            DrawLine($"Arrow_{id}", position, endPosition, 115, 185, Color.DarkRed);
+        UpdateManager.BeginInvoke(() => 
+        {
+            var position = particle.GetControlPoint(0);
 
-            var rawGameTime = GameManager.RawGameTime;
-            do
+            Arrow(particle, position, hero.Handle.ToString());
+
+            var pos = Pos(position, MiranaArrowMenu.OnWorldItem);
+            var minimapPos = MinimapPos(position, MiranaArrowMenu.OnMinimapItem);
+            Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_mirana", AbilityId.mirana_arrow, 0, MiranaArrowMenu.SideMessageItem, MiranaArrowMenu.SoundItem);
+
+            if (MiranaArrowMenu.WriteOnChatItem)
             {
-                var distance = (GameManager.RawGameTime - rawGameTime) * 900;
-                if (distance > 3000)
+                DisplayMessage();
+            }
+        });
+
+
+
+        return true;
+    }
+
+    private async void Arrow(Particle particle, Vector3 position, string id)
+    {
+        var endPosition = position.Extend(position + particle.GetControlPoint(1), 3000);
+
+        var color = Color;
+        DrawRange($"ArrowStart_{id}", position, 100, color, 170);
+        DrawRange($"ArrowEnd_{id}", endPosition, 100, color, 170);
+        DrawLine($"Arrow_{id}", position, endPosition, 115, 185, Color.DarkRed);
+
+        var rawGameTime = GameManager.RawGameTime;
+        do
+        {
+            var distance = (GameManager.RawGameTime - rawGameTime) * 900;
+            if (distance > 3000)
+            {
+                break;
+            }
+
+            DrawRange($"ArrowMove_{id}", position.Extend(endPosition, distance), 100, color, 170);
+            await Task.Delay(20);
+        }
+        while (particle.IsValid);
+
+        DrawRangeRemove($"ArrowStart_{id}");
+        DrawRangeRemove($"ArrowEnd_{id}");
+        DrawRangeRemove($"ArrowMove_{id}");
+        DrawLineRemove($"Arrow_{id}");
+    }   
+
+    private void DisplayMessage()
+    {
+        switch (MenuConfig.LanguageItem)
+        {
+            case "EN":
                 {
-                    break;
+                    DisplayMessage($"say_team Carefully, Mirana Arrow");
                 }
+                break;
 
-                DrawRange($"ArrowMove_{id}", position.Extend(endPosition, distance), 100, color, 170);
-                await Task.Delay(20);
-            }
-            while (particle.IsValid);
-
-            DrawRangeRemove($"ArrowStart_{id}");
-            DrawRangeRemove($"ArrowEnd_{id}");
-            DrawRangeRemove($"ArrowMove_{id}");
-            DrawLineRemove($"Arrow_{id}");
-        }   
-
-        private void DisplayMessage()
-        {
-            switch (MenuConfig.LanguageItem)
-            {
-                case "EN":
-                    {
-                        DisplayMessage($"say_team Carefully, Mirana Arrow");
-                    }
-                    break;
-
-                case "RU":
-                    {
-                        DisplayMessage($"say_team Осторожно, Mirana Arrow", true);
-                    }
-                    break;
-            }
+            case "RU":
+                {
+                    DisplayMessage($"say_team Осторожно, Mirana Arrow", true);
+                }
+                break;
         }
     }
 }

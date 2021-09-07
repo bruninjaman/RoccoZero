@@ -1,4 +1,6 @@
-﻿using BeAware.MenuManager.ShowMeMore;
+﻿namespace BeAware.ShowMeMore;
+
+using BeAware.MenuManager.ShowMeMore;
 
 using Divine.Entity;
 using Divine.Entity.Entities.Units.Heroes;
@@ -9,63 +11,25 @@ using Divine.Particle;
 using Divine.Particle.Components;
 using Divine.Update;
 
-namespace BeAware.ShowMeMore
+internal sealed class LinkenShow
 {
-    internal sealed class LinkenShow
+    private readonly LinkenShowMenu LinkenShowMenu;
+
+    private readonly Hero LocalHero = EntityManager.LocalHero;
+
+    public LinkenShow(Common common)
     {
-        private readonly LinkenShowMenu LinkenShowMenu;
+        LinkenShowMenu = common.MenuConfig.ShowMeMoreMenu.LinkenShowMenu;
 
-        private readonly Hero LocalHero = EntityManager.LocalHero;
+        LinkenShowMenu.EnableItem.ValueChanged += OnEnableValueChanged;
+    }
 
-        public LinkenShow(Common common)
+    public void Dispose()
+    {
+        if (LinkenShowMenu.EnableItem)
         {
-            LinkenShowMenu = common.MenuConfig.ShowMeMoreMenu.LinkenShowMenu;
+            UpdateManager.DestroyIngameUpdate(OnUpdate);
 
-            LinkenShowMenu.EnableItem.ValueChanged += OnEnableValueChanged;
-        }
-
-        public void Dispose()
-        {
-            if (LinkenShowMenu.EnableItem)
-            {
-                UpdateManager.DestroyIngameUpdate(OnUpdate);
-
-                foreach (var hero in EntityManager.GetEntities<Hero>())
-                {
-                    if (hero.IsAlly(LocalHero))
-                    {
-                        continue;
-                    }
-
-                    RemoveLinkenShow(hero);
-                }
-            }
-        }
-
-        private void OnEnableValueChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            if (e.Value)
-            {
-                UpdateManager.CreateIngameUpdate(300, OnUpdate);
-            }
-            else
-            {
-                UpdateManager.DestroyIngameUpdate(OnUpdate);
-
-                foreach (var hero in EntityManager.GetEntities<Hero>())
-                {
-                    if (hero.IsAlly(LocalHero))
-                    {
-                        continue;
-                    }
-
-                    RemoveLinkenShow(hero);
-                }
-            }
-        }
-
-        private void OnUpdate()
-        {
             foreach (var hero in EntityManager.GetEntities<Hero>())
             {
                 if (hero.IsAlly(LocalHero))
@@ -73,25 +37,60 @@ namespace BeAware.ShowMeMore
                     continue;
                 }
 
-                if (hero.IsLinkensProtected() && hero.IsVisible && hero.IsAlive)
-                {
-                    AddLinkenShow(hero);
-                }
-                else
-                {
-                    RemoveLinkenShow(hero);
-                }
+                RemoveLinkenShow(hero);
             }
         }
+    }
 
-        private void AddLinkenShow(Hero hero)
+    private void OnEnableValueChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    {
+        if (e.Value)
         {
-            ParticleManager.CreateOrUpdateParticle($"LinkenShow_{hero.Handle}", "particles/items_fx/immunity_sphere_buff.vpcf", hero, ParticleAttachment.CenterFollow);
+            UpdateManager.CreateIngameUpdate(300, OnUpdate);
         }
+        else
+        {
+            UpdateManager.DestroyIngameUpdate(OnUpdate);
 
-        private void RemoveLinkenShow(Hero hero)
-        {
-            ParticleManager.RemoveParticle($"LinkenShow_{hero.Handle}");
+            foreach (var hero in EntityManager.GetEntities<Hero>())
+            {
+                if (hero.IsAlly(LocalHero))
+                {
+                    continue;
+                }
+
+                RemoveLinkenShow(hero);
+            }
         }
+    }
+
+    private void OnUpdate()
+    {
+        foreach (var hero in EntityManager.GetEntities<Hero>())
+        {
+            if (hero.IsAlly(LocalHero))
+            {
+                continue;
+            }
+
+            if (hero.IsLinkensProtected() && hero.IsVisible && hero.IsAlive)
+            {
+                AddLinkenShow(hero);
+            }
+            else
+            {
+                RemoveLinkenShow(hero);
+            }
+        }
+    }
+
+    private void AddLinkenShow(Hero hero)
+    {
+        ParticleManager.CreateOrUpdateParticle($"LinkenShow_{hero.Handle}", "particles/items_fx/immunity_sphere_buff.vpcf", hero, ParticleAttachment.CenterFollow);
+    }
+
+    private void RemoveLinkenShow(Hero hero)
+    {
+        ParticleManager.RemoveParticle($"LinkenShow_{hero.Handle}");
     }
 }

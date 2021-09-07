@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace BeAware.ShowMeMore;
+
+using System;
 using System.Linq;
 
 using BeAware.Helpers;
@@ -16,235 +18,232 @@ using Divine.Numerics;
 using Divine.Renderer;
 using Divine.Update;
 
-namespace BeAware.ShowMeMore
+internal class Additional
 {
-    internal class Additional
+    private CheckRuneMenu CheckRuneMenu { get; }
+
+    private CheckHandOfMidasMenu CheckHandOfMidasMenu { get; }
+
+    private RoshanMenu RoshanMenu { get; }
+
+    private MessageCreator MessageCreator { get; }
+
+    private SoundHelper SoundHelper { get; }
+
+    public Vector2 RoshanPanelPosition { get; }
+
+    private bool RoshanDead { get; set; }
+
+    private int RoshanTick { get; set; }
+
+    private string RoshanTextTimer { get; set; } = string.Empty;
+
+    private float AegisTime { get; set; }
+
+    private bool AegisEvent { get; set; }
+
+    private bool AegisWasFound { get; set; }
+
+    private Item Aegis { get; set; }
+
+    private string AegisTextTimer { get; set; } = string.Empty;
+
+    public Additional(Common common)
     {
-        private CheckRuneMenu CheckRuneMenu { get; }
+        CheckRuneMenu = common.MenuConfig.ShowMeMoreMenu.CheckRuneMenu;
+        CheckHandOfMidasMenu = common.MenuConfig.ShowMeMoreMenu.CheckHandOfMidasMenu;
+        RoshanMenu = common.MenuConfig.ShowMeMoreMenu.RoshanMenu;
 
-        private CheckHandOfMidasMenu CheckHandOfMidasMenu { get; }
+        MessageCreator = common.MessageCreator;
+        SoundHelper = common.SoundHelper;
 
-        private RoshanMenu RoshanMenu { get; }
+        RendererManager.LoadImageFromAssembly("BeAware.Resources.Textures.roshan_alive.png");
+        RendererManager.LoadImageFromAssembly("BeAware.Resources.Textures.roshan_dead.png");
 
-        private MessageCreator MessageCreator { get; }
+        RoshanPanelPosition = HUDInfo.GetCustomTopPanelPosition(1, Team.Radiant) - (new Vector2(480, -4) * RendererManager.Scaling);
 
-        private SoundHelper SoundHelper { get; }
+        GameManager.GameEvent += OnGameEvent;
+        UpdateManager.CreateIngameUpdate(1000, OnTimeEvent);
+        RendererManager.Draw += OnDraw;
+    }
 
-        public Vector2 RoshanPanelPosition { get; }
+    public void Dispose()
+    {
+        RendererManager.Draw -= OnDraw;
+        UpdateManager.DestroyIngameUpdate(OnTimeEvent);
+        GameManager.GameEvent += OnGameEvent;
+    }
 
-        private bool RoshanDead { get; set; }
-
-        private int RoshanTick { get; set; }
-
-        private string RoshanTextTimer { get; set; } = string.Empty;
-
-        private float AegisTime { get; set; }
-
-        private bool AegisEvent { get; set; }
-
-        private bool AegisWasFound { get; set; }
-
-        private Item Aegis { get; set; }
-
-        private string AegisTextTimer { get; set; } = string.Empty;
-
-        public Additional(Common common)
+    private void OnDraw()
+    {
+        if (!RoshanMenu.PanelItem)
         {
-            CheckRuneMenu = common.MenuConfig.ShowMeMoreMenu.CheckRuneMenu;
-            CheckHandOfMidasMenu = common.MenuConfig.ShowMeMoreMenu.CheckHandOfMidasMenu;
-            RoshanMenu = common.MenuConfig.ShowMeMoreMenu.RoshanMenu;
-
-            MessageCreator = common.MessageCreator;
-            SoundHelper = common.SoundHelper;
-
-            RendererManager.LoadImageFromAssembly("BeAware.Resources.Textures.roshan_alive.png");
-            RendererManager.LoadImageFromAssembly("BeAware.Resources.Textures.roshan_dead.png");
-
-            RoshanPanelPosition = HUDInfo.GetCustomTopPanelPosition(1, Team.Radiant) - (new Vector2(480, -4) * RendererManager.Scaling);
-
-            GameManager.GameEvent += OnGameEvent;
-            UpdateManager.CreateIngameUpdate(1000, OnTimeEvent);
-            RendererManager.Draw += OnDraw;
+            return;
         }
 
-        public void Dispose()
+        var textureSize = new Vector2(320, 72) * RendererManager.Scaling;
+
+        if (RoshanDead)
         {
-            RendererManager.Draw -= OnDraw;
-            UpdateManager.DestroyIngameUpdate(OnTimeEvent);
-            GameManager.GameEvent += OnGameEvent;
-        }
+            RendererManager.DrawImage("BeAware.Resources.Textures.roshan_dead.png", new RectangleF(RoshanPanelPosition.X, RoshanPanelPosition.Y, textureSize.X, textureSize.Y));
+            RendererManager.DrawText(RoshanTextTimer, RoshanPanelPosition + (new Vector2(86, 12) * RendererManager.Scaling), Color.Red, 40 * RendererManager.Scaling);
 
-        private void OnDraw()
-        {
-            if (!RoshanMenu.PanelItem)
+            if (AegisWasFound && RoshanMenu.AegisItem)
             {
-                return;
-            }
-
-            var textureSize = new Vector2(320, 72) * RendererManager.Scaling;
-
-            if (RoshanDead)
-            {
-                RendererManager.DrawImage("BeAware.Resources.Textures.roshan_dead.png", new RectangleF(RoshanPanelPosition.X, RoshanPanelPosition.Y, textureSize.X, textureSize.Y));
-                RendererManager.DrawText(RoshanTextTimer, RoshanPanelPosition + (new Vector2(86, 12) * RendererManager.Scaling), Color.Red, 40 * RendererManager.Scaling);
-
-                if (AegisWasFound && RoshanMenu.AegisItem)
-                {
-                    RendererManager.DrawText(AegisTextTimer, RoshanPanelPosition + (new Vector2(148, 44) * RendererManager.Scaling), Color.Aqua, 28 * RendererManager.Scaling);
-                }
-            }
-            else
-            {
-                RendererManager.DrawImage("BeAware.Resources.Textures.roshan_alive.png", new RectangleF(RoshanPanelPosition.X, RoshanPanelPosition.Y, textureSize.X, textureSize.Y));
-                RendererManager.DrawText("Roshan Alive", RoshanPanelPosition + (new Vector2(86, 12) * RendererManager.Scaling), Color.Aqua, 40 * RendererManager.Scaling);
+                RendererManager.DrawText(AegisTextTimer, RoshanPanelPosition + (new Vector2(148, 44) * RendererManager.Scaling), Color.Aqua, 28 * RendererManager.Scaling);
             }
         }
-
-        private void OnGameEvent(GameEventEventArgs e)
+        else
         {
-            var name = e.GameEvent.Name;
-            if (name == "dota_roshan_kill")
+            RendererManager.DrawImage("BeAware.Resources.Textures.roshan_alive.png", new RectangleF(RoshanPanelPosition.X, RoshanPanelPosition.Y, textureSize.X, textureSize.Y));
+            RendererManager.DrawText("Roshan Alive", RoshanPanelPosition + (new Vector2(86, 12) * RendererManager.Scaling), Color.Aqua, 40 * RendererManager.Scaling);
+        }
+    }
+
+    private void OnGameEvent(GameEventEventArgs e)
+    {
+        var name = e.GameEvent.Name;
+        if (name == "dota_roshan_kill")
+        {
+            RoshanDead = true;
+            return;
+        }
+
+        if (RoshanMenu.PanelItem && RoshanMenu.AegisItem && name == "aegis_event")
+        {
+            AegisTime = GameManager.GameTime;
+            AegisEvent = true;
+            return;
+        }
+    }
+
+    private readonly Sleeper checkRuneSleeper = new();
+
+    private readonly Sleeper midasSleeper = new();
+
+    private void OnTimeEvent()
+    {
+        if (GameManager.IsPaused)
+        {
+            return;
+        }
+
+        // Check Rune
+        var gameTime = GameManager.GameTime;
+        if (CheckRuneMenu.EnableItem && !checkRuneSleeper.Sleeping && ((Math.Round(gameTime + 10)) % 120 == 0 || (Math.Round(gameTime + 10)) % 300 == 0))
+        {
+            if (CheckRuneMenu.SideMessageItem)
             {
-                RoshanDead = true;
-                return;
+                MessageCreator.MessageCheckRuneCreator();
             }
 
-            if (RoshanMenu.PanelItem && RoshanMenu.AegisItem && name == "aegis_event")
+            if (CheckRuneMenu.PlaySoundItem)
             {
-                AegisTime = GameManager.GameTime;
-                AegisEvent = true;
-                return;
+                SoundHelper.Play("check_rune");
+            }
+
+            checkRuneSleeper.Sleep(2000);
+        }
+
+        // Hand Of Midas
+        if (CheckHandOfMidasMenu.EnableItem)
+        {
+            var handOfMidas = EntityManager.LocalHero.Inventory.GetItemsById(AbilityId.item_hand_of_midas).FirstOrDefault();
+            if (handOfMidas != null && Math.Round(handOfMidas.Cooldown) == 5 && !midasSleeper.Sleeping)
+            {
+                if (CheckHandOfMidasMenu.SideMessageItem)
+                {
+                    MessageCreator.MessageUseMidasCreator();
+                }
+
+                if (CheckHandOfMidasMenu.PlaySoundItem)
+                {
+                    SoundHelper.Play("use_midas");
+                }
+
+                midasSleeper.Sleep(2000);
             }
         }
 
-        private readonly Sleeper checkRuneSleeper = new();
-
-        private readonly Sleeper midasSleeper = new();
-
-        private void OnTimeEvent()
+        if (RoshanDead)
         {
-            if (GameManager.IsPaused)
-            {
-                return;
-            }
+            RoshanTick += 1;
 
-            // Check Rune
-            var gameTime = GameManager.GameTime;
-            if (CheckRuneMenu.EnableItem && !checkRuneSleeper.Sleeping && ((Math.Round(gameTime + 10)) % 120 == 0 || (Math.Round(gameTime + 10)) % 300 == 0))
+            if (RoshanMenu.PanelItem)
             {
-                if (CheckRuneMenu.SideMessageItem)
+                var tickMin = TimeSpan.FromSeconds(480 - RoshanTick);
+                var tickMax = TimeSpan.FromSeconds(660 - RoshanTick);
+
+                var roshanMin = "0:00";
+                if (tickMin.TotalSeconds > 0)
                 {
-                    MessageCreator.MessageCheckRuneCreator();
+                    roshanMin = string.Format("{0:0}:{1:00}", tickMin.Minutes, tickMin.Seconds);
                 }
 
-                if (CheckRuneMenu.PlaySoundItem)
+                var roshanMax = "0:00";
+                if (tickMax.TotalSeconds > 0)
                 {
-                    SoundHelper.Play("check_rune");
+                    roshanMax = string.Format("{0:0}:{1:00}", tickMax.Minutes, tickMax.Seconds);
                 }
 
-                checkRuneSleeper.Sleep(2000);
+                RoshanTextTimer = $"{ roshanMin } - { roshanMax }";
             }
 
-            // Hand Of Midas
-            if (CheckHandOfMidasMenu.EnableItem)
+            if (RoshanTick == 480)
             {
-                var handOfMidas = EntityManager.LocalHero.Inventory.GetItemsById(AbilityId.item_hand_of_midas).FirstOrDefault();
-                if (handOfMidas != null && Math.Round(handOfMidas.Cooldown) == 5 && !midasSleeper.Sleeping)
+                if (RoshanMenu.SideMessageItem)
                 {
-                    if (CheckHandOfMidasMenu.SideMessageItem)
-                    {
-                        MessageCreator.MessageUseMidasCreator();
-                    }
+                    MessageCreator.MessageRoshanMBAliveCreator();
+                }
 
-                    if (CheckHandOfMidasMenu.PlaySoundItem)
-                    {
-                        SoundHelper.Play("use_midas");
-                    }
-
-                    midasSleeper.Sleep(2000);
+                if (RoshanMenu.PlaySoundItem)
+                {
+                    SoundHelper.Play("roshan_mb_alive");
                 }
             }
 
-            if (RoshanDead)
+            if (RoshanTick > 480)
             {
-                RoshanTick += 1;
-
-                if (RoshanMenu.PanelItem)
-                {
-                    var tickMin = TimeSpan.FromSeconds(480 - RoshanTick);
-                    var tickMax = TimeSpan.FromSeconds(660 - RoshanTick);
-
-                    var roshanMin = "0:00";
-                    if (tickMin.TotalSeconds > 0)
-                    {
-                        roshanMin = string.Format("{0:0}:{1:00}", tickMin.Minutes, tickMin.Seconds);
-                    }
-
-                    var roshanMax = "0:00";
-                    if (tickMax.TotalSeconds > 0)
-                    {
-                        roshanMax = string.Format("{0:0}:{1:00}", tickMax.Minutes, tickMax.Seconds);
-                    }
-
-                    RoshanTextTimer = $"{ roshanMin } - { roshanMax }";
-                }
-
-                if (RoshanTick == 480)
+                if (EntityManager.GetEntities<Unit>().Any(x => x.IsAlive && x.ClassId == ClassId.CDOTA_Unit_Roshan) || RoshanTick == 660)
                 {
                     if (RoshanMenu.SideMessageItem)
                     {
-                        MessageCreator.MessageRoshanMBAliveCreator();
+                        MessageCreator.MessageRoshanAliveCreator();
                     }
 
                     if (RoshanMenu.PlaySoundItem)
                     {
-                        SoundHelper.Play("roshan_mb_alive");
+                        SoundHelper.Play("roshan_alive");
                     }
-                }
 
-                if (RoshanTick > 480)
-                {
-                    if (EntityManager.GetEntities<Unit>().Any(x => x.IsAlive && x.ClassId == ClassId.CDOTA_Unit_Roshan) || RoshanTick == 660)
-                    {
-                        if (RoshanMenu.SideMessageItem)
-                        {
-                            MessageCreator.MessageRoshanAliveCreator();
-                        }
-
-                        if (RoshanMenu.PlaySoundItem)
-                        {
-                            SoundHelper.Play("roshan_alive");
-                        }
-
-                        RoshanTick = 0;
-                        RoshanDead = false;
-                    }
+                    RoshanTick = 0;
+                    RoshanDead = false;
                 }
             }
+        }
 
-            if (AegisEvent)
+        if (AegisEvent)
+        {
+            if (!AegisWasFound)
             {
-                if (!AegisWasFound)
-                {
-                    Aegis = EntityManager.GetEntities<Item>().FirstOrDefault(x => x.Id == AbilityId.item_aegis);
-                }
+                Aegis = EntityManager.GetEntities<Item>().FirstOrDefault(x => x.Id == AbilityId.item_aegis);
+            }
 
-                if (Aegis != null && !AegisWasFound)
-                {
-                    AegisWasFound = true;
-                }
+            if (Aegis != null && !AegisWasFound)
+            {
+                AegisWasFound = true;
+            }
 
-                var time = TimeSpan.FromSeconds(300 - (gameTime - AegisTime));
-                if (time.Ticks > 0)
-                {
-                    AegisTextTimer = string.Format("{0:0}:{1:00}", time.Minutes, time.Seconds);
-                }
+            var time = TimeSpan.FromSeconds(300 - (gameTime - AegisTime));
+            if (time.Ticks > 0)
+            {
+                AegisTextTimer = string.Format("{0:0}:{1:00}", time.Minutes, time.Seconds);
+            }
 
-                if (time.Ticks < 0 || (AegisWasFound && (Aegis == null || !Aegis.IsValid)))
-                {
-                    AegisEvent = false;
-                    AegisWasFound = false;
-                }
+            if (time.Ticks < 0 || (AegisWasFound && (Aegis == null || !Aegis.IsValid)))
+            {
+                AegisEvent = false;
+                AegisWasFound = false;
             }
         }
     }

@@ -1,15 +1,14 @@
-﻿using Divine.Menu.Items;
+﻿namespace BeAware.MenuManager.ShowMeMore;
 
-namespace BeAware.MenuManager.ShowMeMore
+using Divine.Menu.Items;
+
+internal sealed class TowerHelperMenu
 {
-    internal sealed class TowerHelperMenu
+    public TowerHelperMenu(Menu showMeMoreMenu)
     {
-        public TowerHelperMenu(Menu showMeMoreMenu)
-        {
-            var towerHelperMenu = showMeMoreMenu.CreateMenu("Tower Helper");
-            AutoAttackRangeItem = towerHelperMenu.CreateSwitcher("Auto Attack Range");
-        }
-
-        public MenuSwitcher AutoAttackRangeItem { get; }
+        var towerHelperMenu = showMeMoreMenu.CreateMenu("Tower Helper");
+        AutoAttackRangeItem = towerHelperMenu.CreateSwitcher("Auto Attack Range");
     }
+
+    public MenuSwitcher AutoAttackRangeItem { get; }
 }

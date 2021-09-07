@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace BeAware.Helpers;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,359 +17,356 @@ using Divine.Numerics;
 using Divine.Renderer;
 using Divine.Update;
 
-namespace BeAware.Helpers
+internal class Verification
 {
-    internal class Verification
+    private MoreInformationMenu MoreInformationMenu { get; }
+
+    private PartialMapHackMenu PartialMapHackMenu { get; }
+
+    private MessageCreator MessageCreator { get; }
+
+    private SoundHelper SoundHelper { get; }
+
+    private Vector2 HeroIconExtraPos { get; }
+
+    private Vector2 IconExtraPos { get; }
+
+    private int IconSize { get; }
+
+    private static readonly Random Random = new();
+
+    private static readonly Log Log = LogManager.GetCurrentClassLogger();
+
+    public Verification(Common common)
     {
-        private MoreInformationMenu MoreInformationMenu { get; }
+        MoreInformationMenu = common.MenuConfig.ShowMeMoreMenu.MoreInformationMenu;
+        PartialMapHackMenu = common.MenuConfig.PartialMapHackMenu;
 
-        private PartialMapHackMenu PartialMapHackMenu { get; }
+        MessageCreator = common.MessageCreator;
+        SoundHelper = common.SoundHelper;
 
-        private MessageCreator MessageCreator { get; }
-
-        private SoundHelper SoundHelper { get; }
-
-        private Vector2 HeroIconExtraPos { get; }
-
-        private Vector2 IconExtraPos { get; }
-
-        private int IconSize { get; }
-
-        private static readonly Random Random = new();
-
-        private static readonly Log Log = LogManager.GetCurrentClassLogger();
-
-        public Verification(Common common)
+        for (var i = 0; i <= 10; i++)
         {
-            MoreInformationMenu = common.MenuConfig.ShowMeMoreMenu.MoreInformationMenu;
-            PartialMapHackMenu = common.MenuConfig.PartialMapHackMenu;
-
-            MessageCreator = common.MessageCreator;
-            SoundHelper = common.SoundHelper;
-
-            for (var i = 0; i <= 10; i++)
-            {
-                var heroColor = $"BeAware.Resources.Textures.HeroColors.{i}.png";
-                RendererManager.LoadImageFromAssembly(heroColor);
-            }
-
-            RendererManager.LoadImageFromAssembly("BeAware.Resources.Textures.HeroColors.red.png");
-
-            /*if (Drawing.RenderMode == RenderMode.Dx9)
-            {
-                HeroIconExtraPos = new Vector2(10, 12);
-                IconExtraPos = new Vector2(13, 37);
-                IconSize = 58;
-            }
-            else*/
-            {
-                HeroIconExtraPos = new Vector2(10, 12);
-                IconExtraPos = new Vector2(12, 19);
-                IconSize = 21;
-            }
-
-            RendererManager.Draw += OnRendererDraw;
+            var heroColor = $"BeAware.Resources.Textures.HeroColors.{i}.png";
+            RendererManager.LoadImageFromAssembly(heroColor);
         }
 
-        public void Dispose()
+        RendererManager.LoadImageFromAssembly("BeAware.Resources.Textures.HeroColors.red.png");
+
+        /*if (Drawing.RenderMode == RenderMode.Dx9)
         {
-            //RendererManager.Draw -= OnRendererDraw;
+            HeroIconExtraPos = new Vector2(10, 12);
+            IconExtraPos = new Vector2(13, 37);
+            IconSize = 58;
+        }
+        else*/
+        {
+            HeroIconExtraPos = new Vector2(10, 12);
+            IconExtraPos = new Vector2(12, 19);
+            IconSize = 21;
         }
 
-        public void EntityVerification(Vector3 position, string textureName, AbilityId abilityId, int playerId, bool isDangerous, string particleName = "")
+        RendererManager.Draw += OnRendererDraw;
+    }
+
+    public void Dispose()
+    {
+        //RendererManager.Draw -= OnRendererDraw;
+    }
+
+    public void EntityVerification(Vector3 position, string textureName, AbilityId abilityId, int playerId, bool isDangerous, string particleName = "")
+    {
+        try
         {
-            try
+            var abilityTextureName = abilityId.ToString();
+            var isTeleport = abilityId == AbilityId.item_tpscroll;
+            var isItem = abilityTextureName.Contains("item_");
+            var isEnd = ParticleCorrection.EndParticles.Any(x => particleName.Contains(x));
+            if (!isTeleport)
             {
-                var abilityTextureName = abilityId.ToString();
-                var isTeleport = abilityId == AbilityId.item_tpscroll;
-                var isItem = abilityTextureName.Contains("item_");
-                var isEnd = ParticleCorrection.EndParticles.Any(x => particleName.Contains(x));
-                if (!isTeleport)
+                if (PartialMapHackMenu.ReduceTheNumberOfIconsItem && !isEnd)
                 {
-                    if (PartialMapHackMenu.ReduceTheNumberOfIconsItem && !isEnd)
-                    {
-                        DrawingData.RemoveAll(x => x.GetHeroTexturName.Contains(textureName));
-                    }
-                    else if (isItem && textureName != "npc_dota_hero_default")
-                    {
-                        DrawingData.RemoveAll(x => $"{x.GetHeroTexturName}_{x.GetAbilityTexturName}" == $"{textureName}_{abilityTextureName}");
-                    }
-                    else
-                    {
-                        DrawingData.RemoveAll(x => x.GetParticleName.Contains(particleName));
-                    }
+                    DrawingData.RemoveAll(x => x.GetHeroTexturName.Contains(textureName));
                 }
-
-                var random = Random.Next(int.MaxValue);
-                DrawingData.Add(new Data(position, position.WorldToMinimap(), textureName, abilityTextureName, playerId, random, particleName, isItem, isEnd));
-
-                UpdateManager.BeginInvoke(PartialMapHackMenu.DrawTimerItem.Value * 1000, () =>
+                else if (isItem && textureName != "npc_dota_hero_default")
                 {
-                    DrawingData.RemoveAll(x => x.GetRandom == random);
-                });
-
-                if (!isEnd && isDangerous)
-                {
-                    if (PartialMapHackMenu.SideMessageItem)
-                    {
-                        if (!isItem)
-                        {
-                            MessageCreator.MessageEnemyCreator(textureName, abilityTextureName);
-                        }
-                        else
-                        {
-                            MessageCreator.MessageItemCreator(textureName, abilityTextureName);
-                        }
-                    }
-
-                    if (PartialMapHackMenu.SoundItem)
-                    {
-                        SoundHelper.Play(abilityTextureName);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                DrawingData.Clear();
-                Log.Error(e);
-            }
-        }
-
-        private readonly Sleeper roshanSleeper = new();
-
-        public void JungleVerification(Vector3 position, bool isRoshan)
-        {
-            try
-            {
-                var textureName = isRoshan ? "npc_dota_hero_roshan" : "npc_dota_hero_default";
-                DrawingData.RemoveAll(x => x.GetWorldPos.Distance(position) < 500 && x.GetHeroTexturName == textureName);
-
-                var random = Random.Next(int.MaxValue);
-                DrawingData.Add(new Data(position, position.WorldToMinimap(), textureName, "default", 0, random, ""));
-
-                UpdateManager.BeginInvoke(PartialMapHackMenu.DrawTimerItem.Value * 1000, () =>
-                {
-                    DrawingData.RemoveAll(x => x.GetRandom == random);
-                });
-
-                if (isRoshan && !roshanSleeper.Sleeping)
-                {
-                    if (PartialMapHackMenu.SideMessageItem)
-                    {
-                        MessageCreator.MessageEnemyCreator("npc_dota_hero_roshan", "roshan_spell_block");
-                    }
-
-                    if (PartialMapHackMenu.SoundItem)
-                    {
-                        SoundHelper.Play("default");
-                    }
-
-                    roshanSleeper.Sleep(8000);
-                }
-            }
-            catch (Exception e)
-            {
-                DrawingData.Clear();
-                Log.Error(e);
-            }
-        }
-
-        public void ModifierVerification(Vector3 position, string heroTextureName, string abilityTextureName, int playerId = 0, HeroId heroId = 0)
-        {
-            try
-            {
-                string correctName;
-                if (heroId != 0)
-                {
-                    correctName = heroId.ToString();
-                    playerId = 0;
+                    DrawingData.RemoveAll(x => $"{x.GetHeroTexturName}_{x.GetAbilityTexturName}" == $"{textureName}_{abilityTextureName}");
                 }
                 else
                 {
-                    correctName = heroTextureName;
-                }
-
-                if (heroId != HeroId.npc_dota_hero_nevermore)
-                {
-                    if (PartialMapHackMenu.ReduceTheNumberOfIconsItem)
-                    {
-                        DrawingData.RemoveAll(x => x.GetHeroTexturName.Contains(correctName));
-                    }
-                    else
-                    {
-                        DrawingData.RemoveAll(x => $"{x.GetHeroTexturName}_{x.GetAbilityTexturName}" == $"{correctName}_{abilityTextureName}");
-                    }
-                }
-
-                var isItem = abilityTextureName.Contains("item_");
-
-                var random = Random.Next(int.MaxValue);
-                DrawingData.Add(new Data(position, position.WorldToMinimap(), correctName, abilityTextureName, playerId, random, "", isItem));
-
-                UpdateManager.BeginInvoke(PartialMapHackMenu.DrawTimerItem.Value * 1000, () =>
-                {
-                    DrawingData.RemoveAll(x => x.GetRandom == random);
-                });
-
-                if (!ModifierCorrection.IgnoreModifiers.Any(x => x == abilityTextureName))
-                {
-                    if (PartialMapHackMenu.SideMessageItem)
-                    {
-                        if (isItem)
-                        {
-                            MessageCreator.MessageItemCreator(heroTextureName, abilityTextureName);
-                        }
-                        else
-                        {
-                            MessageCreator.MessageAllyCreator(heroTextureName, abilityTextureName);
-                        }
-                    }
-
-                    if (PartialMapHackMenu.SoundItem)
-                    {
-                        SoundHelper.Play(abilityTextureName);
-                    }
+                    DrawingData.RemoveAll(x => x.GetParticleName.Contains(particleName));
                 }
             }
-            catch (Exception e)
+
+            var random = Random.Next(int.MaxValue);
+            DrawingData.Add(new Data(position, position.WorldToMinimap(), textureName, abilityTextureName, playerId, random, particleName, isItem, isEnd));
+
+            UpdateManager.BeginInvoke(PartialMapHackMenu.DrawTimerItem.Value * 1000, () =>
             {
-                DrawingData.Clear();
-                Log.Error(e);
-            }
-        }
+                DrawingData.RemoveAll(x => x.GetRandom == random);
+            });
 
-        public void InfoVerification(Vector3 position, Vector2 minimapPos, string textureName, AbilityId abilityId, int playerId, bool isMessage = false, bool isSound = false)
-        {
-            try
+            if (!isEnd && isDangerous)
             {
-                var abilityTextureName = abilityId.ToString();
-                DrawingData.RemoveAll(x => $"{x.GetHeroTexturName}_{x.GetAbilityTexturName}" == $"{textureName}_{abilityTextureName}");
-
-                var random = Random.Next(int.MaxValue);
-                DrawingData.Add(new Data(position, minimapPos, textureName, abilityTextureName, playerId, random, string.Empty));
-
-                UpdateManager.BeginInvoke(MoreInformationMenu.DrawTimerItem.Value * 1000, () =>
+                if (PartialMapHackMenu.SideMessageItem)
                 {
-                    DrawingData.RemoveAll(x => x.GetRandom == random);
-                });
-
-                if (isMessage)
-                {
-                    if (abilityId == AbilityId.spirit_breaker_charge_of_darkness)
-                    {
-                        MessageCreator.MessageAllyCreator(textureName, abilityTextureName);
-                    }
-                    else
+                    if (!isItem)
                     {
                         MessageCreator.MessageEnemyCreator(textureName, abilityTextureName);
                     }
+                    else
+                    {
+                        MessageCreator.MessageItemCreator(textureName, abilityTextureName);
+                    }
                 }
 
-                if (isSound)
+                if (PartialMapHackMenu.SoundItem)
                 {
                     SoundHelper.Play(abilityTextureName);
                 }
             }
-            catch (Exception e)
+        }
+        catch (Exception e)
+        {
+            DrawingData.Clear();
+            Log.Error(e);
+        }
+    }
+
+    private readonly Sleeper roshanSleeper = new();
+
+    public void JungleVerification(Vector3 position, bool isRoshan)
+    {
+        try
+        {
+            var textureName = isRoshan ? "npc_dota_hero_roshan" : "npc_dota_hero_default";
+            DrawingData.RemoveAll(x => x.GetWorldPos.Distance(position) < 500 && x.GetHeroTexturName == textureName);
+
+            var random = Random.Next(int.MaxValue);
+            DrawingData.Add(new Data(position, position.WorldToMinimap(), textureName, "default", 0, random, ""));
+
+            UpdateManager.BeginInvoke(PartialMapHackMenu.DrawTimerItem.Value * 1000, () =>
             {
-                DrawingData.Clear();
-                Log.Error(e);
+                DrawingData.RemoveAll(x => x.GetRandom == random);
+            });
+
+            if (isRoshan && !roshanSleeper.Sleeping)
+            {
+                if (PartialMapHackMenu.SideMessageItem)
+                {
+                    MessageCreator.MessageEnemyCreator("npc_dota_hero_roshan", "roshan_spell_block");
+                }
+
+                if (PartialMapHackMenu.SoundItem)
+                {
+                    SoundHelper.Play("default");
+                }
+
+                roshanSleeper.Sleep(8000);
             }
         }
-
-        private void OnRendererDraw()
+        catch (Exception e)
         {
-            /*if (!Menu.PartialMapHackMenu.OnMinimapItem)
+            DrawingData.Clear();
+            Log.Error(e);
+        }
+    }
+
+    public void ModifierVerification(Vector3 position, string heroTextureName, string abilityTextureName, int playerId = 0, HeroId heroId = 0)
+    {
+        try
+        {
+            string correctName;
+            if (heroId != 0)
             {
-                return;
-            }*/
-
-            foreach (var data in DrawingData.ToArray().OrderBy(x => x.GetHeroTexturName != "npc_dota_hero_default"))
+                correctName = heroId.ToString();
+                playerId = 0;
+            }
+            else
             {
-                if (data.GetWorldPos.IsZero)
-                {
-                    continue;
-                }
+                correctName = heroTextureName;
+            }
 
-                var pos = data.GetMinimapPos;
-                if (pos.IsZero)
+            if (heroId != HeroId.npc_dota_hero_nevermore)
+            {
+                if (PartialMapHackMenu.ReduceTheNumberOfIconsItem)
                 {
-                    continue;
-                }
-
-                var playerId = data.GetPlayerId;
-                var heroTexturName = data.GetHeroTexturName;
-
-                if (data.GetIsEnd)
-                {
-                    RendererManager.DrawImage("BeAware.Resources.Textures.HeroColors.red.png", new RectangleF((pos.X - 4) - HeroIconExtraPos.X, (pos.Y - 4) - HeroIconExtraPos.Y, 26f, 26f), 1);
-                }
-
-                if (heroTexturName != "npc_dota_hero_default")
-                {
-                    RendererManager.DrawImage($"BeAware.Resources.Textures.HeroColors.{playerId}.png", new RectangleF((pos.X - 2.5f) - HeroIconExtraPos.X, (pos.Y - 2.5f) - HeroIconExtraPos.Y, 23, 23), 1);
-                    RendererManager.DrawImage(heroTexturName, new RectangleF(pos.X - HeroIconExtraPos.X, pos.Y - HeroIconExtraPos.Y, 18, 18), ImageType.MiniUnit, true);
+                    DrawingData.RemoveAll(x => x.GetHeroTexturName.Contains(correctName));
                 }
                 else
                 {
-                    RendererManager.DrawImage($"BeAware.Resources.Textures.HeroColors.{playerId}.png", new RectangleF((pos.X - 2.5f) - HeroIconExtraPos.X, (pos.Y - 2.5f) - HeroIconExtraPos.Y, 21.5f, 21.5f), 1);
+                    DrawingData.RemoveAll(x => $"{x.GetHeroTexturName}_{x.GetAbilityTexturName}" == $"{correctName}_{abilityTextureName}");
                 }
             }
 
-            foreach (var data in DrawingData.ToArray())
+            var isItem = abilityTextureName.Contains("item_");
+
+            var random = Random.Next(int.MaxValue);
+            DrawingData.Add(new Data(position, position.WorldToMinimap(), correctName, abilityTextureName, playerId, random, "", isItem));
+
+            UpdateManager.BeginInvoke(PartialMapHackMenu.DrawTimerItem.Value * 1000, () =>
             {
-                var worldPosition = data.GetWorldPos;
-                if (worldPosition.IsZero)
+                DrawingData.RemoveAll(x => x.GetRandom == random);
+            });
+
+            if (!ModifierCorrection.IgnoreModifiers.Any(x => x == abilityTextureName))
+            {
+                if (PartialMapHackMenu.SideMessageItem)
                 {
-                    continue;
+                    if (isItem)
+                    {
+                        MessageCreator.MessageItemCreator(heroTextureName, abilityTextureName);
+                    }
+                    else
+                    {
+                        MessageCreator.MessageAllyCreator(heroTextureName, abilityTextureName);
+                    }
                 }
 
-                var pos = RendererManager.WorldToScreen(worldPosition);
-                if (pos.IsZero)
+                if (PartialMapHackMenu.SoundItem)
                 {
-                    continue;
+                    SoundHelper.Play(abilityTextureName);
                 }
+            }
+        }
+        catch (Exception e)
+        {
+            DrawingData.Clear();
+            Log.Error(e);
+        }
+    }
 
-                RendererManager.DrawImage("BeAware.Resources.Textures.beawareplus_screen.png", new RectangleF(pos.X + 18, pos.Y - 35, 64, 128));
-                RendererManager.DrawImage(data.GetHeroTexturName, new RectangleF(pos.X + 25, pos.Y - 20, 50, 50), ImageType.RoundUnit, true);
-                RendererManager.DrawImage(data.GetAbilityTexturName, new RectangleF(pos.X + 34, pos.Y + 40, 35, 35), ImageType.RoundAbility, true);
+    public void InfoVerification(Vector3 position, Vector2 minimapPos, string textureName, AbilityId abilityId, int playerId, bool isMessage = false, bool isSound = false)
+    {
+        try
+        {
+            var abilityTextureName = abilityId.ToString();
+            DrawingData.RemoveAll(x => $"{x.GetHeroTexturName}_{x.GetAbilityTexturName}" == $"{textureName}_{abilityTextureName}");
+
+            var random = Random.Next(int.MaxValue);
+            DrawingData.Add(new Data(position, minimapPos, textureName, abilityTextureName, playerId, random, string.Empty));
+
+            UpdateManager.BeginInvoke(MoreInformationMenu.DrawTimerItem.Value * 1000, () =>
+            {
+                DrawingData.RemoveAll(x => x.GetRandom == random);
+            });
+
+            if (isMessage)
+            {
+                if (abilityId == AbilityId.spirit_breaker_charge_of_darkness)
+                {
+                    MessageCreator.MessageAllyCreator(textureName, abilityTextureName);
+                }
+                else
+                {
+                    MessageCreator.MessageEnemyCreator(textureName, abilityTextureName);
+                }
+            }
+
+            if (isSound)
+            {
+                SoundHelper.Play(abilityTextureName);
+            }
+        }
+        catch (Exception e)
+        {
+            DrawingData.Clear();
+            Log.Error(e);
+        }
+    }
+
+    private void OnRendererDraw()
+    {
+        /*if (!Menu.PartialMapHackMenu.OnMinimapItem)
+        {
+            return;
+        }*/
+
+        foreach (var data in DrawingData.ToArray().OrderBy(x => x.GetHeroTexturName != "npc_dota_hero_default"))
+        {
+            if (data.GetWorldPos.IsZero)
+            {
+                continue;
+            }
+
+            var pos = data.GetMinimapPos;
+            if (pos.IsZero)
+            {
+                continue;
+            }
+
+            var playerId = data.GetPlayerId;
+            var heroTexturName = data.GetHeroTexturName;
+
+            if (data.GetIsEnd)
+            {
+                RendererManager.DrawImage("BeAware.Resources.Textures.HeroColors.red.png", new RectangleF((pos.X - 4) - HeroIconExtraPos.X, (pos.Y - 4) - HeroIconExtraPos.Y, 26f, 26f), 1);
+            }
+
+            if (heroTexturName != "npc_dota_hero_default")
+            {
+                RendererManager.DrawImage($"BeAware.Resources.Textures.HeroColors.{playerId}.png", new RectangleF((pos.X - 2.5f) - HeroIconExtraPos.X, (pos.Y - 2.5f) - HeroIconExtraPos.Y, 23, 23), 1);
+                RendererManager.DrawImage(heroTexturName, new RectangleF(pos.X - HeroIconExtraPos.X, pos.Y - HeroIconExtraPos.Y, 18, 18), ImageType.MiniUnit, true);
+            }
+            else
+            {
+                RendererManager.DrawImage($"BeAware.Resources.Textures.HeroColors.{playerId}.png", new RectangleF((pos.X - 2.5f) - HeroIconExtraPos.X, (pos.Y - 2.5f) - HeroIconExtraPos.Y, 21.5f, 21.5f), 1);
             }
         }
 
-        private List<Data> DrawingData { get; } = new List<Data>();
-
-        private class Data
+        foreach (var data in DrawingData.ToArray())
         {
-            public string GetParticleName { get; }
-
-            public Vector3 GetWorldPos { get; }
-
-            public Vector2 GetMinimapPos { get; }
-
-            public string GetHeroTexturName { get; }
-
-            public string GetAbilityTexturName { get; }
-
-            public int GetPlayerId { get; }
-
-            public bool IsItem { get; }
-
-            public bool GetIsEnd { get; }
-
-            public int GetRandom { get; }
-
-            public Data(Vector3 position, Vector2 minimapPos, string TexturName, string abilityTexturName, int playerId, int random, string particleName, bool isItem = false, bool isEnd = false)
+            var worldPosition = data.GetWorldPos;
+            if (worldPosition.IsZero)
             {
-                GetParticleName = particleName;
-                GetWorldPos = position;
-                GetMinimapPos = minimapPos;
-                GetHeroTexturName = TexturName;
-                GetAbilityTexturName = abilityTexturName;
-                GetPlayerId = playerId;
-                IsItem = isItem;
-                GetIsEnd = isEnd;
-                GetRandom = random;
+                continue;
             }
+
+            var pos = RendererManager.WorldToScreen(worldPosition);
+            if (pos.IsZero)
+            {
+                continue;
+            }
+
+            RendererManager.DrawImage("BeAware.Resources.Textures.beawareplus_screen.png", new RectangleF(pos.X + 18, pos.Y - 35, 64, 128));
+            RendererManager.DrawImage(data.GetHeroTexturName, new RectangleF(pos.X + 25, pos.Y - 20, 50, 50), ImageType.RoundUnit, true);
+            RendererManager.DrawImage(data.GetAbilityTexturName, new RectangleF(pos.X + 34, pos.Y + 40, 35, 35), ImageType.RoundAbility, true);
+        }
+    }
+
+    private List<Data> DrawingData { get; } = new List<Data>();
+
+    private class Data
+    {
+        public string GetParticleName { get; }
+
+        public Vector3 GetWorldPos { get; }
+
+        public Vector2 GetMinimapPos { get; }
+
+        public string GetHeroTexturName { get; }
+
+        public string GetAbilityTexturName { get; }
+
+        public int GetPlayerId { get; }
+
+        public bool IsItem { get; }
+
+        public bool GetIsEnd { get; }
+
+        public int GetRandom { get; }
+
+        public Data(Vector3 position, Vector2 minimapPos, string TexturName, string abilityTexturName, int playerId, int random, string particleName, bool isItem = false, bool isEnd = false)
+        {
+            GetParticleName = particleName;
+            GetWorldPos = position;
+            GetMinimapPos = minimapPos;
+            GetHeroTexturName = TexturName;
+            GetAbilityTexturName = abilityTexturName;
+            GetPlayerId = playerId;
+            IsItem = isItem;
+            GetIsEnd = isEnd;
+            GetRandom = random;
         }
     }
 }

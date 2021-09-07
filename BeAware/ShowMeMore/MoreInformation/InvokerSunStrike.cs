@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿namespace BeAware.ShowMeMore.MoreInformation;
+
+using System.Linq;
 using System.Threading.Tasks;
 
 using BeAware.MenuManager.ShowMeMore.MoreInformation;
@@ -12,96 +14,93 @@ using Divine.Extensions;
 using Divine.Helpers;
 using Divine.Numerics;
 
-namespace BeAware.ShowMeMore.MoreInformation
+internal sealed class InvokerSunStrike : Base
 {
-    internal sealed class InvokerSunStrike : Base
+    private readonly InvokerSunStrikeMenu InvokerSunStrikeMenu;
+
+    public InvokerSunStrike(Common common) : base(common)
     {
-        private readonly InvokerSunStrikeMenu InvokerSunStrikeMenu;
+        InvokerSunStrikeMenu = MoreInformationMenu.InvokerSunStrikeMenu;
+    }
 
-        public InvokerSunStrike(Common common) : base(common)
+    private Color Color
+    {
+        get
         {
-            InvokerSunStrikeMenu = MoreInformationMenu.InvokerSunStrikeMenu;
+            return new Color(InvokerSunStrikeMenu.RedItem.Value, InvokerSunStrikeMenu.GreenItem.Value, InvokerSunStrikeMenu.BlueItem.Value);
+        }
+    }
+
+    private readonly Sleeper Sleeper = new();
+
+    public override bool Entity(Unit unit, Hero hero)
+    {
+        if (hero.HeroId != HeroId.npc_dota_hero_invoker)
+        {
+            return false;
         }
 
-        private Color Color
+        if (!InvokerSunStrikeMenu.EnableItem)
         {
-            get
-            {
-                return new Color(InvokerSunStrikeMenu.RedItem.Value, InvokerSunStrikeMenu.GreenItem.Value, InvokerSunStrikeMenu.BlueItem.Value);
-            }
-        }
-
-        private readonly Sleeper Sleeper = new();
-
-        public override bool Entity(Unit unit, Hero hero)
-        {
-            if (hero.HeroId != HeroId.npc_dota_hero_invoker)
-            {
-                return false;
-            }
-
-            if (!InvokerSunStrikeMenu.EnableItem)
-            {
-                return true;
-            }
-
-            if (hero.IsAlly(LocalHero))
-            {
-                return true;
-            }
-
-            var position = unit.Position;
-            SunStrike(unit, position);
-
-            var pos = Pos(position, InvokerSunStrikeMenu.OnWorldItem);
-            var minimapPos = MinimapPos(position, InvokerSunStrikeMenu.OnMinimapItem);
-
-            var sleeping = !Sleeper.Sleeping;
-            Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_invoker", AbilityId.invoker_sun_strike, 0, InvokerSunStrikeMenu.SideMessageItem && sleeping, InvokerSunStrikeMenu.SoundItem && sleeping);
-            Sleeper.Sleep(250);
-
-            if (InvokerSunStrikeMenu.WriteOnChatItem)
-            {
-                DisplayMessage(pos);
-            }
-
             return true;
         }
 
-        private async void SunStrike(Unit unit, Vector3 position)
+        if (hero.IsAlly(LocalHero))
         {
-            DrawRange(position.ToString(), position, 175, Color, 170);
-
-            while (unit.IsValid)
-            {
-                await Task.Delay(150);
-            }
-
-            DrawRangeRemove(position.ToString());
+            return true;
         }
 
-        private void DisplayMessage(Vector3 position)
+        var position = unit.Position;
+        SunStrike(unit, position);
+
+        var pos = Pos(position, InvokerSunStrikeMenu.OnWorldItem);
+        var minimapPos = MinimapPos(position, InvokerSunStrikeMenu.OnMinimapItem);
+
+        var sleeping = !Sleeper.Sleeping;
+        Verification.InfoVerification(pos, minimapPos, "npc_dota_hero_invoker", AbilityId.invoker_sun_strike, 0, InvokerSunStrikeMenu.SideMessageItem && sleeping, InvokerSunStrikeMenu.SoundItem && sleeping);
+        Sleeper.Sleep(250);
+
+        if (InvokerSunStrikeMenu.WriteOnChatItem)
         {
-            var unit = EntityManager.GetEntities<Hero>().Where(x => !x.IsIllusion && x.IsAlly(LocalHero) && x.Distance2D(position) < 800).OrderBy(x => x.Distance2D(position)).FirstOrDefault();
-            if (unit == null)
-            {
-                return;
-            }
+            DisplayMessage(pos);
+        }
 
-            switch (MenuConfig.LanguageItem)
-            {
-                case "EN":
-                    {
-                        DisplayMessage($"say_team Carefully, Sun strike on {unit.GetDisplayName()}");
-                    }
-                    break;
+        return true;
+    }
 
-                case "RU":
-                    {
-                        DisplayMessage($"say_team Осторожно, Sun strike на {unit.GetDisplayName()}", true);
-                    }
-                    break;
-            }
+    private async void SunStrike(Unit unit, Vector3 position)
+    {
+        DrawRange(position.ToString(), position, 175, Color, 170);
+
+        while (unit.IsValid)
+        {
+            await Task.Delay(150);
+        }
+
+        DrawRangeRemove(position.ToString());
+    }
+
+    private void DisplayMessage(Vector3 position)
+    {
+        var unit = EntityManager.GetEntities<Hero>().Where(x => !x.IsIllusion && x.IsAlly(LocalHero) && x.Distance2D(position) < 800).OrderBy(x => x.Distance2D(position)).FirstOrDefault();
+        if (unit == null)
+        {
+            return;
+        }
+
+        switch (MenuConfig.LanguageItem)
+        {
+            case "EN":
+                {
+                    DisplayMessage($"say_team Carefully, Sun strike on {unit.GetDisplayName()}");
+                }
+                break;
+
+            case "RU":
+                {
+                    DisplayMessage($"say_team Осторожно, Sun strike на {unit.GetDisplayName()}", true);
+                }
+                break;
         }
     }
 }

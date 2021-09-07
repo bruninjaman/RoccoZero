@@ -1,4 +1,6 @@
-﻿using BeAware.MenuManager.ShowMeMore.Range;
+﻿namespace BeAware.ShowMeMore;
+
+using BeAware.MenuManager.ShowMeMore.Range;
 
 using Divine.Entity;
 using Divine.Entity.Entities.Units.Heroes;
@@ -6,108 +8,105 @@ using Divine.Numerics;
 using Divine.Particle;
 using Divine.Update;
 
-namespace BeAware.ShowMeMore
+internal sealed class Range
 {
-    internal sealed class Range
+    private readonly Hero LocalHero = EntityManager.LocalHero;
+
+    private readonly string CustomRangeName = $"CustomRange_{EntityManager.LocalHero.Handle}";
+
+    private readonly CustomRangeMenu CustomRangeMenu;
+
+    private readonly CustomRange2Menu CustomRange2Menu;
+
+    private readonly CustomRange3Menu CustomRange3Menu;
+
+    public Range(Common common)
     {
-        private readonly Hero LocalHero = EntityManager.LocalHero;
+        var rangeMenu = common.MenuConfig.ShowMeMoreMenu.RangeMenu;
+        CustomRangeMenu = rangeMenu.CustomRangeMenu;
+        CustomRange2Menu = rangeMenu.CustomRange2Menu;
+        CustomRange3Menu = rangeMenu.CustomRange3Menu;
 
-        private readonly string CustomRangeName = $"CustomRange_{EntityManager.LocalHero.Handle}";
+        CustomRangeMenu.EnableItem.ValueChanged += OnValueChanged;
+        CustomRangeMenu.RangeItem.ValueChanged += OnValueChanged;
+        CustomRangeMenu.RedItem.ValueChanged += OnValueChanged;
+        CustomRangeMenu.GreenItem.ValueChanged += OnValueChanged;
+        CustomRangeMenu.BlueItem.ValueChanged += OnValueChanged;
 
-        private readonly CustomRangeMenu CustomRangeMenu;
+        CustomRange2Menu.EnableItem.ValueChanged += OnValueChanged;
+        CustomRange2Menu.RangeItem.ValueChanged += OnValueChanged;
+        CustomRange2Menu.RedItem.ValueChanged += OnValueChanged;
+        CustomRange2Menu.GreenItem.ValueChanged += OnValueChanged;
+        CustomRange2Menu.BlueItem.ValueChanged += OnValueChanged;
 
-        private readonly CustomRange2Menu CustomRange2Menu;
+        CustomRange3Menu.EnableItem.ValueChanged += OnValueChanged;
+        CustomRange3Menu.RangeItem.ValueChanged += OnValueChanged;
+        CustomRange3Menu.RedItem.ValueChanged += OnValueChanged;
+        CustomRange3Menu.GreenItem.ValueChanged += OnValueChanged;
+        CustomRange3Menu.BlueItem.ValueChanged += OnValueChanged;
+    }
 
-        private readonly CustomRange3Menu CustomRange3Menu;
+    public void Dispose()
+    {
+        CustomRangeMenu.EnableItem.ValueChanged -= OnValueChanged;
+        CustomRangeMenu.RangeItem.ValueChanged -= OnValueChanged;
+        CustomRangeMenu.RedItem.ValueChanged -= OnValueChanged;
+        CustomRangeMenu.GreenItem.ValueChanged -= OnValueChanged;
+        CustomRangeMenu.BlueItem.ValueChanged -= OnValueChanged;
 
-        public Range(Common common)
+        CustomRange2Menu.EnableItem.ValueChanged -= OnValueChanged;
+        CustomRange2Menu.RangeItem.ValueChanged -= OnValueChanged;
+        CustomRange2Menu.RedItem.ValueChanged -= OnValueChanged;
+        CustomRange2Menu.GreenItem.ValueChanged -= OnValueChanged;
+        CustomRange2Menu.BlueItem.ValueChanged -= OnValueChanged;
+
+        CustomRange3Menu.EnableItem.ValueChanged -= OnValueChanged;
+        CustomRange3Menu.RangeItem.ValueChanged -= OnValueChanged;
+        CustomRange3Menu.RedItem.ValueChanged -= OnValueChanged;
+        CustomRange3Menu.GreenItem.ValueChanged -= OnValueChanged;
+        CustomRange3Menu.BlueItem.ValueChanged -= OnValueChanged;
+    }
+
+    private void OnValueChanged(object sender, object e)
+    {
+        UpdateManager.BeginInvoke(() =>
         {
-            var rangeMenu = common.MenuConfig.ShowMeMoreMenu.RangeMenu;
-            CustomRangeMenu = rangeMenu.CustomRangeMenu;
-            CustomRange2Menu = rangeMenu.CustomRange2Menu;
-            CustomRange3Menu = rangeMenu.CustomRange3Menu;
-
-            CustomRangeMenu.EnableItem.ValueChanged += OnValueChanged;
-            CustomRangeMenu.RangeItem.ValueChanged += OnValueChanged;
-            CustomRangeMenu.RedItem.ValueChanged += OnValueChanged;
-            CustomRangeMenu.GreenItem.ValueChanged += OnValueChanged;
-            CustomRangeMenu.BlueItem.ValueChanged += OnValueChanged;
-
-            CustomRange2Menu.EnableItem.ValueChanged += OnValueChanged;
-            CustomRange2Menu.RangeItem.ValueChanged += OnValueChanged;
-            CustomRange2Menu.RedItem.ValueChanged += OnValueChanged;
-            CustomRange2Menu.GreenItem.ValueChanged += OnValueChanged;
-            CustomRange2Menu.BlueItem.ValueChanged += OnValueChanged;
-
-            CustomRange3Menu.EnableItem.ValueChanged += OnValueChanged;
-            CustomRange3Menu.RangeItem.ValueChanged += OnValueChanged;
-            CustomRange3Menu.RedItem.ValueChanged += OnValueChanged;
-            CustomRange3Menu.GreenItem.ValueChanged += OnValueChanged;
-            CustomRange3Menu.BlueItem.ValueChanged += OnValueChanged;
-        }
-
-        public void Dispose()
-        {
-            CustomRangeMenu.EnableItem.ValueChanged -= OnValueChanged;
-            CustomRangeMenu.RangeItem.ValueChanged -= OnValueChanged;
-            CustomRangeMenu.RedItem.ValueChanged -= OnValueChanged;
-            CustomRangeMenu.GreenItem.ValueChanged -= OnValueChanged;
-            CustomRangeMenu.BlueItem.ValueChanged -= OnValueChanged;
-
-            CustomRange2Menu.EnableItem.ValueChanged -= OnValueChanged;
-            CustomRange2Menu.RangeItem.ValueChanged -= OnValueChanged;
-            CustomRange2Menu.RedItem.ValueChanged -= OnValueChanged;
-            CustomRange2Menu.GreenItem.ValueChanged -= OnValueChanged;
-            CustomRange2Menu.BlueItem.ValueChanged -= OnValueChanged;
-
-            CustomRange3Menu.EnableItem.ValueChanged -= OnValueChanged;
-            CustomRange3Menu.RangeItem.ValueChanged -= OnValueChanged;
-            CustomRange3Menu.RedItem.ValueChanged -= OnValueChanged;
-            CustomRange3Menu.GreenItem.ValueChanged -= OnValueChanged;
-            CustomRange3Menu.BlueItem.ValueChanged -= OnValueChanged;
-        }
-
-        private void OnValueChanged(object sender, object e)
-        {
-            UpdateManager.BeginInvoke(() =>
+            if (CustomRangeMenu.EnableItem)
             {
-                if (CustomRangeMenu.EnableItem)
-                {
-                    AddOrUpdate(1, CustomRangeMenu.RangeItem.Value, new Color(CustomRangeMenu.RedItem.Value, CustomRangeMenu.GreenItem.Value, CustomRangeMenu.BlueItem.Value));
-                }
-                else
-                {
-                    Remove(1);
-                }
+                AddOrUpdate(1, CustomRangeMenu.RangeItem.Value, new Color(CustomRangeMenu.RedItem.Value, CustomRangeMenu.GreenItem.Value, CustomRangeMenu.BlueItem.Value));
+            }
+            else
+            {
+                Remove(1);
+            }
 
-                if (CustomRange2Menu.EnableItem)
-                {
-                    AddOrUpdate(2, CustomRange2Menu.RangeItem.Value, new Color(CustomRange2Menu.RedItem.Value, CustomRange2Menu.GreenItem.Value, CustomRange2Menu.BlueItem.Value));
-                }
-                else
-                {
-                    Remove(2);
-                }
+            if (CustomRange2Menu.EnableItem)
+            {
+                AddOrUpdate(2, CustomRange2Menu.RangeItem.Value, new Color(CustomRange2Menu.RedItem.Value, CustomRange2Menu.GreenItem.Value, CustomRange2Menu.BlueItem.Value));
+            }
+            else
+            {
+                Remove(2);
+            }
 
-                if (CustomRange3Menu.EnableItem)
-                {
-                    AddOrUpdate(3, CustomRange3Menu.RangeItem.Value, new Color(CustomRange3Menu.RedItem.Value, CustomRange3Menu.GreenItem.Value, CustomRange3Menu.BlueItem.Value));
-                }
-                else
-                {
-                    Remove(3);
-                }
-            });
-        }
+            if (CustomRange3Menu.EnableItem)
+            {
+                AddOrUpdate(3, CustomRange3Menu.RangeItem.Value, new Color(CustomRange3Menu.RedItem.Value, CustomRange3Menu.GreenItem.Value, CustomRange3Menu.BlueItem.Value));
+            }
+            else
+            {
+                Remove(3);
+            }
+        });
+    }
 
-        private void AddOrUpdate(int index, float range, Color color)
-        {
-            ParticleManager.RangeParticle($"{CustomRangeName}_{index}", LocalHero, range, color);
-        }
+    private void AddOrUpdate(int index, float range, Color color)
+    {
+        ParticleManager.RangeParticle($"{CustomRangeName}_{index}", LocalHero, range, color);
+    }
 
-        private void Remove(int index)
-        {
-            ParticleManager.RemoveParticle($"{CustomRangeName}_{index}");
-        }
+    private void Remove(int index)
+    {
+        ParticleManager.RemoveParticle($"{CustomRangeName}_{index}");
     }
 }

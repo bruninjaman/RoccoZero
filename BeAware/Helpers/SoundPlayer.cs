@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace BeAware.Helpers;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,60 +11,57 @@ using System.Threading.Tasks;
 
 //using DivineSoundPlayer = Divine.SoundPlayer.SoundPlayer;
 
-namespace BeAware.Helpers
+public static class SoundPlayer
 {
-    public static class SoundPlayer
+    private static readonly Process CurrentProcess = Process.GetCurrentProcess();
+
+    private static Task WaitHandler;
+
+    private static readonly Dictionary<string, Stream> Sounds = new();
+
+    static SoundPlayer()
     {
-        private static readonly Process CurrentProcess = Process.GetCurrentProcess();
+        var assembly = Assembly.GetExecutingAssembly();
+        AssemblyLoadContext.GetLoadContext(assembly).LoadFromStream(assembly.GetManifestResourceStream("BeAware.Resources.Divine.SoundPlayer.dll"));
 
-        private static Task WaitHandler;
+        InitializeSounds();
+    }
 
-        private static readonly Dictionary<string, Stream> Sounds = new();
-
-        static SoundPlayer()
+    private static void InitializeSounds()
+    {
+        WaitHandler = Task.Run(() =>
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            AssemblyLoadContext.GetLoadContext(assembly).LoadFromStream(assembly.GetManifestResourceStream("BeAware.Resources.Divine.SoundPlayer.dll"));
+            /*var assembly = Assembly.GetExecutingAssembly();
+            Sounds["check_rune_en.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.check_rune_en.wav"));
+            Sounds["check_rune_ru.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.check_rune_ru.wav"));
+            Sounds["default.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.default.wav"));
+            Sounds["item_smoke_of_deceit.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.item_smoke_of_deceit.wav"));*/
+        });
+    }
 
-            InitializeSounds();
+    [DllImport("User32.dll", SetLastError = true)]
+    private static extern IntPtr GetForegroundWindow();
+
+    public static bool Play(string fileName, int volume)
+    {
+        if (!Sounds.TryGetValue(fileName, out var stream) || GetForegroundWindow() != CurrentProcess.MainWindowHandle)
+        {
+            return false;
         }
 
-        private static void InitializeSounds()
+        Task.Run(async () =>
         {
-            WaitHandler = Task.Run(() =>
+            try
             {
-                /*var assembly = Assembly.GetExecutingAssembly();
-                Sounds["check_rune_en.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.check_rune_en.wav"));
-                Sounds["check_rune_ru.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.check_rune_ru.wav"));
-                Sounds["default.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.default.wav"));
-                Sounds["item_smoke_of_deceit.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.item_smoke_of_deceit.wav"));*/
-            });
-        }
+                await WaitHandler;
 
-        [DllImport("User32.dll", SetLastError = true)]
-        private static extern IntPtr GetForegroundWindow();
-
-        public static bool Play(string fileName, int volume)
-        {
-            if (!Sounds.TryGetValue(fileName, out var stream) || GetForegroundWindow() != CurrentProcess.MainWindowHandle)
-            {
-                return false;
+                //DivineSoundPlayer.Play(stream, volume);
             }
-
-            Task.Run(async () =>
+            catch
             {
-                try
-                {
-                    await WaitHandler;
+            }
+        });
 
-                    //DivineSoundPlayer.Play(stream, volume);
-                }
-                catch
-                {
-                }
-            });
-
-            return true;
-        }
+        return true;
     }
 }

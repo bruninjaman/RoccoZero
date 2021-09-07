@@ -1,30 +1,29 @@
-﻿using System;
+﻿namespace BeAware;
 
-namespace BeAware
+using System;
+
+internal class BoolEventArgs
 {
-    internal class BoolEventArgs
+    public event EventHandler<bool> ValueChanged;
+
+    public bool IsEnable
     {
-        public event EventHandler<bool> ValueChanged;
-
-        public bool IsEnable
+        get
         {
-            get
-            {
-                return Value;
-            }
-
-            set
-            {
-                if (Value == value)
-                {
-                    return;
-                }
-
-                ValueChanged?.Invoke(null, value);
-                Value = value;
-            }
+            return Value;
         }
 
-        private bool Value { get; set; }
+        set
+        {
+            if (Value == value)
+            {
+                return;
+            }
+
+            ValueChanged?.Invoke(null, value);
+            Value = value;
+        }
     }
+
+    private bool Value { get; set; }
 }
