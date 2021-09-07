@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <Platforms>x64</Platforms>
 
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -45,9 +45,5 @@
       <HintPath>..\..\..\..\..\Desktop\Divine\bin\Divine.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-  <Target Name="Compiler" AfterTargets="PostBuildEvent">
-    <Exec Command="if exist &quot;C:\Program Files\Divine\Divine.exe&quot; call &quot;C:\Program Files\Divine\Divine.exe&quot; -PostBuildEvent -TargetPath=&quot;$(TargetPath)&quot;" />
-  </Target>
 
 </Project>
