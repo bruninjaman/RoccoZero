@@ -1,85 +1,84 @@
-﻿namespace O9K.Core.Helpers
+﻿namespace O9K.Core.Helpers;
+
+using Divine.Game;
+
+public sealed class Sleeper
 {
-    using Divine.Game;
+    private bool sleeping;
 
-    public sealed class Sleeper
+    private float sleepTime;
+
+    public Sleeper()
     {
-        private bool sleeping;
+    }
 
-        private float sleepTime;
+    public Sleeper(float seconds)
+    {
+        this.Sleep(seconds);
+    }
 
-        public Sleeper()
+    public bool IsSleeping
+    {
+        get
         {
-        }
-
-        public Sleeper(float seconds)
-        {
-            this.Sleep(seconds);
-        }
-
-        public bool IsSleeping
-        {
-            get
+            if (this.sleeping)
             {
-                if (this.sleeping)
-                {
-                    this.sleeping = GameManager.RawGameTime < this.sleepTime;
-                }
-
-                return this.sleeping;
-            }
-        }
-
-        public float RemainingSleepTime
-        {
-            get
-            {
-                if (!this.sleeping)
-                {
-                    return 0;
-                }
-
-                return this.sleepTime - GameManager.RawGameTime;
-            }
-        }
-
-        public static implicit operator bool(Sleeper sleeper)
-        {
-            return sleeper.IsSleeping;
-        }
-
-        public void ExtendSleep(float seconds)
-        {
-            var gameTime = GameManager.RawGameTime;
-
-            if (this.sleepTime > gameTime)
-            {
-                this.sleepTime += seconds;
-            }
-            else
-            {
-                this.sleepTime = gameTime + seconds;
+                this.sleeping = GameManager.RawGameTime < this.sleepTime;
             }
 
-            this.sleeping = true;
+            return this.sleeping;
+        }
+    }
+
+    public float RemainingSleepTime
+    {
+        get
+        {
+            if (!this.sleeping)
+            {
+                return 0;
+            }
+
+            return this.sleepTime - GameManager.RawGameTime;
+        }
+    }
+
+    public static implicit operator bool(Sleeper sleeper)
+    {
+        return sleeper.IsSleeping;
+    }
+
+    public void ExtendSleep(float seconds)
+    {
+        var gameTime = GameManager.RawGameTime;
+
+        if (this.sleepTime > gameTime)
+        {
+            this.sleepTime += seconds;
+        }
+        else
+        {
+            this.sleepTime = gameTime + seconds;
         }
 
-        public void Reset()
-        {
-            this.sleepTime = 0;
-            this.sleeping = false;
-        }
+        this.sleeping = true;
+    }
 
-        public void Sleep(float seconds)
-        {
-            this.sleepTime = GameManager.RawGameTime + seconds;
-            this.sleeping = true;
-        }
+    public void Reset()
+    {
+        this.sleepTime = 0;
+        this.sleeping = false;
+    }
 
-        public void SleepUntil(float rawGameTime)
-        {
-            this.sleepTime = rawGameTime;
-            this.sleeping = true;
-        }
+    public void Sleep(float seconds)
+    {
+        this.sleepTime = GameManager.RawGameTime + seconds;
+        this.sleeping = true;
+    }
+
+    public void SleepUntil(float rawGameTime)
+    {
+        this.sleepTime = rawGameTime;
+        this.sleeping = true;
     }
 }

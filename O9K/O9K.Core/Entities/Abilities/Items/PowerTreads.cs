@@ -1,117 +1,116 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_power_treads)]
+public class PowerTreads : ActiveAbility
 {
-    using Base;
+    private readonly Sleeper expectedAttributeSleeper = new Sleeper();
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-    using Divine.Entity.Entities.Units.Heroes.Components;
+    private readonly Divine.Entity.Entities.Abilities.Items.PowerTreads powerTreads;
 
-    using Helpers;
+    private Attribute expectedAttribute;
 
-    using Metadata;
-
-    [AbilityId(AbilityId.item_power_treads)]
-    public class PowerTreads : ActiveAbility
+    public PowerTreads(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly Sleeper expectedAttributeSleeper = new Sleeper();
+        this.powerTreads = (Divine.Entity.Entities.Abilities.Items.PowerTreads)baseAbility;
+    }
 
-        private readonly Divine.Entity.Entities.Abilities.Items.PowerTreads powerTreads;
-
-        private Attribute expectedAttribute;
-
-        public PowerTreads(Ability baseAbility)
-            : base(baseAbility)
+    public Attribute ActiveAttribute
+    {
+        get
         {
-            this.powerTreads = (Divine.Entity.Entities.Abilities.Items.PowerTreads)baseAbility;
+            if (this.expectedAttributeSleeper)
+            {
+                return this.expectedAttribute;
+            }
+
+            return this.powerTreads.ActiveAttribute;
+        }
+    }
+
+    public override bool CanBeCasted(bool checkChanneling = true)
+    {
+        //if (this.ActionSleeper.IsSleeping)
+        //{
+        //    return false;
+        //}
+
+        if (!this.IsReady)
+        {
+            return false;
         }
 
-        public Attribute ActiveAttribute
+        if (!this.Owner.IsAlive || !this.Owner.CanBeHealed)
         {
-            get
-            {
-                if (this.expectedAttributeSleeper)
-                {
-                    return this.expectedAttribute;
-                }
-
-                return this.powerTreads.ActiveAttribute;
-            }
+            return false;
         }
 
-        public override bool CanBeCasted(bool checkChanneling = true)
+        if (checkChanneling && !this.CanBeCastedWhileChanneling && this.Owner.IsChanneling)
         {
-            //if (this.ActionSleeper.IsSleeping)
-            //{
-            //    return false;
-            //}
-
-            if (!this.IsReady)
-            {
-                return false;
-            }
-
-            if (!this.Owner.IsAlive || !this.Owner.CanBeHealed)
-            {
-                return false;
-            }
-
-            if (checkChanneling && !this.CanBeCastedWhileChanneling && this.Owner.IsChanneling)
-            {
-                return false;
-            }
-
-            if (this.Owner.IsStunned && (this.Owner.UnitState & UnitState.OutOfGame) == 0)
-            {
-                return false;
-            }
-
-            if (this.Owner.IsMuted)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
-        public void ChangeExpectedAttribute(bool single)
+        if (this.Owner.IsStunned && (this.Owner.UnitState & UnitState.OutOfGame) == 0)
         {
-            if (!this.expectedAttributeSleeper)
-            {
-                this.expectedAttribute = this.powerTreads.ActiveAttribute;
-            }
-
-            switch (this.expectedAttribute)
-            {
-                case Attribute.Agility:
-                    this.expectedAttribute = single ? Attribute.Strength : Attribute.Intelligence;
-                    break;
-                case Attribute.Strength:
-                    this.expectedAttribute = single ? Attribute.Intelligence : Attribute.Agility;
-                    break;
-                case Attribute.Intelligence:
-                    this.expectedAttribute = single ? Attribute.Agility : Attribute.Strength;
-                    break;
-            }
-
-            this.expectedAttributeSleeper.Sleep(0.5f);
+            return false;
         }
 
-        public override bool UseAbility(bool queue = false, bool bypass = false)
+        if (this.Owner.IsMuted)
         {
-            var result = this.BaseAbility.Cast(queue, bypass);
-            if (result)
-            {
-                this.ChangeExpectedAttribute(true);
-                // this.ActionSleeper.Sleep(0.03f);
-            }
-
-            return result;
+            return false;
         }
 
-        public bool UseAbilitySimple()
+        return true;
+    }
+
+    public void ChangeExpectedAttribute(bool single)
+    {
+        if (!this.expectedAttributeSleeper)
         {
-            return this.BaseAbility.Cast();
+            this.expectedAttribute = this.powerTreads.ActiveAttribute;
         }
+
+        switch (this.expectedAttribute)
+        {
+            case Attribute.Agility:
+                this.expectedAttribute = single ? Attribute.Strength : Attribute.Intelligence;
+                break;
+            case Attribute.Strength:
+                this.expectedAttribute = single ? Attribute.Intelligence : Attribute.Agility;
+                break;
+            case Attribute.Intelligence:
+                this.expectedAttribute = single ? Attribute.Agility : Attribute.Strength;
+                break;
+        }
+
+        this.expectedAttributeSleeper.Sleep(0.5f);
+    }
+
+    public override bool UseAbility(bool queue = false, bool bypass = false)
+    {
+        var result = this.BaseAbility.Cast(queue, bypass);
+        if (result)
+        {
+            this.ChangeExpectedAttribute(true);
+            // this.ActionSleeper.Sleep(0.03f);
+        }
+
+        return result;
+    }
+
+    public bool UseAbilitySimple()
+    {
+        return this.BaseAbility.Cast();
     }
 }

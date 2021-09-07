@@ -1,51 +1,50 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Morphling
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Morphling;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.morphling_waveform)]
+public class Waveform : LineAbility, INuke, IBlink
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private bool talentLearned;
 
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.morphling_waveform)]
-    public class Waveform : LineAbility, INuke, IBlink
+    public Waveform(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.RadiusData = new SpecialData(baseAbility, "width");
+        this.SpeedData = new SpecialData(baseAbility, "speed");
+        this.castRangeData = new SpecialData(baseAbility, "abilitycastrange");
+    }
 
-        private bool talentLearned;
+    public BlinkType BlinkType { get; } = BlinkType.Blink;
 
-        public Waveform(Ability baseAbility)
-            : base(baseAbility)
+    public override bool IsDisplayingCharges
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "width");
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.castRangeData = new SpecialData(baseAbility, "abilitycastrange");
-        }
-
-        public BlinkType BlinkType { get; } = BlinkType.Blink;
-
-        public override bool IsDisplayingCharges
-        {
-            get
+            if (this.talentLearned)
             {
-                if (this.talentLearned)
-                {
-                    return true;
-                }
-
-                return this.talentLearned = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_morphling_6)?.Level > 0;
+                return true;
             }
+
+            return this.talentLearned = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_morphling_6)?.Level > 0;
         }
+    }
 
-        protected override float BaseCastRange
+    protected override float BaseCastRange
+    {
+        get
         {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
+            return this.castRangeData.GetValue(this.Level);
         }
     }
 }

@@ -1,45 +1,44 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.NyxAssassin
+﻿namespace O9K.Core.Entities.Abilities.Heroes.NyxAssassin;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.nyx_assassin_burrow)]
+public class Burrow : ActiveAbility, IHasDamageAmplify
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData amplifierData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.nyx_assassin_burrow)]
-    public class Burrow : ActiveAbility, IHasDamageAmplify
+    public Burrow(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData amplifierData;
+        this.amplifierData = new SpecialData(baseAbility, "damage_reduction");
+    }
 
-        public Burrow(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.amplifierData = new SpecialData(baseAbility, "damage_reduction");
-        }
+    public DamageType AmplifierDamageType { get; } = DamageType.Physical | DamageType.Magical | DamageType.Pure;
 
-        public DamageType AmplifierDamageType { get; } = DamageType.Physical | DamageType.Magical | DamageType.Pure;
+    public string[] AmplifierModifierNames { get; } = { "modifier_nyx_assassin_burrow" };
 
-        public string[] AmplifierModifierNames { get; } = { "modifier_nyx_assassin_burrow" };
+    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
 
-        public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
+    public bool IsAmplifierAddedToStats { get; } = false;
 
-        public bool IsAmplifierAddedToStats { get; } = false;
+    public bool IsAmplifierPermanent { get; } = false;
 
-        public bool IsAmplifierPermanent { get; } = false;
+    public override bool IsInvisibility { get; } = true;
 
-        public override bool IsInvisibility { get; } = true;
+    public override bool TargetsEnemy { get; } = false;
 
-        public override bool TargetsEnemy { get; } = false;
-
-        public float AmplifierValue(Unit9 source, Unit9 target)
-        {
-            return this.amplifierData.GetValue(this.Level) / -100;
-        }
+    public float AmplifierValue(Unit9 source, Unit9 target)
+    {
+        return this.amplifierData.GetValue(this.Level) / -100;
     }
 }

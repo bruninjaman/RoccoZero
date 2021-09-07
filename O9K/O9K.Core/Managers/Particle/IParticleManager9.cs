@@ -1,7 +1,6 @@
-﻿namespace O9K.Core.Managers.Particle
+﻿namespace O9K.Core.Managers.Particle;
+
+public interface IParticleManager9
 {
-    public interface IParticleManager9
-    {
-        event ParticleManager9.EventHandler ParticleAdded;
-    }
+    event ParticleManager9.EventHandler ParticleAdded;
 }

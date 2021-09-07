@@ -1,51 +1,50 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_bfury)]
+public class BattleFury : RangedAbility, IHasPassiveDamageIncrease
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData rangedDamageData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_bfury)]
-    public class BattleFury : RangedAbility, IHasPassiveDamageIncrease
+    public BattleFury(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData rangedDamageData;
+        this.DamageData = new SpecialData(baseAbility, "quelling_bonus");
+        this.rangedDamageData = new SpecialData(baseAbility, "quelling_bonus_ranged");
+    }
 
-        public BattleFury(Ability baseAbility)
-            : base(baseAbility)
+    public override DamageType DamageType { get; } = DamageType.Physical;
+
+    public bool IsPassiveDamagePermanent { get; } = true;
+
+    public bool MultipliedByCrit { get; } = false;
+
+    public string PassiveDamageModifierName { get; } = string.Empty;
+
+    public override bool TargetsEnemy { get; } = false;
+
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var damage = new Damage();
+
+        if (unit.IsCreep && this.IsUsable && !unit.IsAlly(this.Owner) && !this.Owner.IsIllusion)
         {
-            this.DamageData = new SpecialData(baseAbility, "quelling_bonus");
-            this.rangedDamageData = new SpecialData(baseAbility, "quelling_bonus_ranged");
+            damage[this.DamageType] =
+                this.Owner.IsRanged ? this.rangedDamageData.GetValue(this.Level) : this.DamageData.GetValue(this.Level);
         }
 
-        public override DamageType DamageType { get; } = DamageType.Physical;
-
-        public bool IsPassiveDamagePermanent { get; } = true;
-
-        public bool MultipliedByCrit { get; } = false;
-
-        public string PassiveDamageModifierName { get; } = string.Empty;
-
-        public override bool TargetsEnemy { get; } = false;
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
-        {
-            var damage = new Damage();
-
-            if (unit.IsCreep && this.IsUsable && !unit.IsAlly(this.Owner) && !this.Owner.IsIllusion)
-            {
-                damage[this.DamageType] =
-                    this.Owner.IsRanged ? this.rangedDamageData.GetValue(this.Level) : this.DamageData.GetValue(this.Level);
-            }
-
-            return damage;
-        }
+        return damage;
     }
 }

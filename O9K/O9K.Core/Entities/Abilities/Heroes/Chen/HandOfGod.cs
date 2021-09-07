@@ -1,41 +1,40 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Chen
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Chen;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.chen_hand_of_god)]
+public class HandOfGod : AreaOfEffectAbility, IHealthRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.chen_hand_of_god)]
-    public class HandOfGod : AreaOfEffectAbility, IHealthRestore
+    public HandOfGod(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthRestoreData;
+        this.healthRestoreData = new SpecialData(baseAbility, "heal_amount");
+    }
 
-        public HandOfGod(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.healthRestoreData = new SpecialData(baseAbility, "heal_amount");
-        }
+    public bool InstantRestore { get; } = true;
 
-        public bool InstantRestore { get; } = true;
+    public override float Radius { get; } = 9999999;
 
-        public override float Radius { get; } = 9999999;
+    public string RestoreModifierName { get; } = string.Empty;
 
-        public string RestoreModifierName { get; } = string.Empty;
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)this.healthRestoreData.GetValue(this.Level);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)this.healthRestoreData.GetValue(this.Level);
     }
 }

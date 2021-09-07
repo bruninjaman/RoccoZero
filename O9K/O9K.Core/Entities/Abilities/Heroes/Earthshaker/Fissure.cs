@@ -1,61 +1,60 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Earthshaker
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Earthshaker;
+
+using System.Linq;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Managers.Entity;
+
+using Metadata;
+
+[AbilityId(AbilityId.earthshaker_fissure)]
+public class Fissure : LineAbility, IDisable, INuke
 {
-    using System.Linq;
+    private Aftershock aftershock;
 
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Managers.Entity;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.earthshaker_fissure)]
-    public class Fissure : LineAbility, IDisable, INuke
+    public Fissure(Ability baseAbility)
+        : base(baseAbility)
     {
-        private Aftershock aftershock;
+        this.RadiusData = new SpecialData(baseAbility, "fissure_radius");
+    }
 
-        public Fissure(Ability baseAbility)
-            : base(baseAbility)
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var damage = base.GetRawDamage(unit, remainingHealth);
+
+        if (this.aftershock?.CanBeCasted() == true && this.Owner.Distance(unit) < this.aftershock.Radius)
         {
-            this.RadiusData = new SpecialData(baseAbility, "fissure_radius");
+            damage += this.aftershock.GetRawDamage(unit);
         }
 
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+        return damage;
+    }
 
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    internal override void SetOwner(Unit9 owner)
+    {
+        base.SetOwner(owner);
+
+        var ability = EntityManager9.BaseAbilities.FirstOrDefault(
+            x => x.Id == AbilityId.earthshaker_aftershock && x.Owner?.Handle == owner.Handle);
+
+        if (ability == null)
         {
-            var damage = base.GetRawDamage(unit, remainingHealth);
-
-            if (this.aftershock?.CanBeCasted() == true && this.Owner.Distance(unit) < this.aftershock.Radius)
-            {
-                damage += this.aftershock.GetRawDamage(unit);
-            }
-
-            return damage;
+            return;
         }
 
-        internal override void SetOwner(Unit9 owner)
-        {
-            base.SetOwner(owner);
-
-            var ability = EntityManager9.BaseAbilities.FirstOrDefault(
-                x => x.Id == AbilityId.earthshaker_aftershock && x.Owner?.Handle == owner.Handle);
-
-            if (ability == null)
-            {
-                return;
-            }
-
-            this.aftershock = (Aftershock)EntityManager9.AddAbility(ability);
-        }
+        this.aftershock = (Aftershock)EntityManager9.AddAbility(ability);
     }
 }

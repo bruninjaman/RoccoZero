@@ -1,50 +1,49 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Timbersaw
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Timbersaw;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.shredder_timber_chain)]
+public class TimberChain : LineAbility, IBlink
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData chainRadiusData;
 
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.shredder_timber_chain)]
-    public class TimberChain : LineAbility, IBlink
+    public TimberChain(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.chainRadiusData = new SpecialData(baseAbility, "chain_radius");
+        this.SpeedData = new SpecialData(baseAbility, "speed");
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.castRangeData = new SpecialData(baseAbility, "range");
+    }
 
-        private readonly SpecialData chainRadiusData;
+    public BlinkType BlinkType { get; } = BlinkType.Blink;
 
-        public TimberChain(Ability baseAbility)
-            : base(baseAbility)
+    public float ChainRadius
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.chainRadiusData = new SpecialData(baseAbility, "chain_radius");
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.castRangeData = new SpecialData(baseAbility, "range");
+            return this.chainRadiusData.GetValue(this.Level);
         }
+    }
 
-        public BlinkType BlinkType { get; } = BlinkType.Blink;
+    public override bool HasAreaOfEffect { get; } = false;
 
-        public float ChainRadius
+    protected override float BaseCastRange
+    {
+        get
         {
-            get
-            {
-                return this.chainRadiusData.GetValue(this.Level);
-            }
-        }
-
-        public override bool HasAreaOfEffect { get; } = false;
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
+            return this.castRangeData.GetValue(this.Level);
         }
     }
 }

@@ -1,53 +1,52 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.AntiMage
+﻿namespace O9K.Core.Entities.Abilities.Heroes.AntiMage;
+
+using System;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.antimage_mana_break)]
+public class ManaBreak : PassiveAbility //, IHasPassiveDamageIncrease
 {
-    using System;
+    private readonly SpecialData burnMultiplierData;
 
-    using Base;
+    private readonly SpecialData maxManaBurnData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.antimage_mana_break)]
-    public class ManaBreak : PassiveAbility //, IHasPassiveDamageIncrease
+    public ManaBreak(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData burnMultiplierData;
+        this.DamageData = new SpecialData(baseAbility, "mana_per_hit");
+        this.burnMultiplierData = new SpecialData(baseAbility, "percent_damage_per_burn");
+        this.maxManaBurnData = new SpecialData(baseAbility, "mana_per_hit_pct");
+    }
 
-        private readonly SpecialData maxManaBurnData;
+    public bool IsPassiveDamagePermanent { get; } = true;
 
-        public ManaBreak(Ability baseAbility)
-            : base(baseAbility)
+    public bool MultipliedByCrit { get; } = false;
+
+    public string PassiveDamageModifierName { get; } = string.Empty;
+
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        if (!unit.IsUnit || unit.IsMagicImmune || unit.IsAlly(this.Owner))
         {
-            this.DamageData = new SpecialData(baseAbility, "mana_per_hit");
-            this.burnMultiplierData = new SpecialData(baseAbility, "percent_damage_per_burn");
-            this.maxManaBurnData = new SpecialData(baseAbility, "mana_per_hit_pct");
+            return new Damage();
         }
 
-        public bool IsPassiveDamagePermanent { get; } = true;
+        var manaDamage = this.DamageData.GetValue(this.Level);
 
-        public bool MultipliedByCrit { get; } = false;
-
-        public string PassiveDamageModifierName { get; } = string.Empty;
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+        return new Damage
         {
-            if (!unit.IsUnit || unit.IsMagicImmune || unit.IsAlly(this.Owner))
-            {
-                return new Damage();
-            }
-
-            var manaDamage = this.DamageData.GetValue(this.Level);
-
-            return new Damage
-            {
-                [this.DamageType] = (int)((Math.Min(manaDamage, unit.Mana) * (this.burnMultiplierData.GetValue(this.Level))) / 100f)
-            };
-        }
+            [this.DamageType] = (int)((Math.Min(manaDamage, unit.Mana) * (this.burnMultiplierData.GetValue(this.Level))) / 100f)
+        };
     }
 }

@@ -1,75 +1,74 @@
-﻿namespace O9K.Core.Helpers
+﻿namespace O9K.Core.Helpers;
+
+using System.Collections.Generic;
+
+using Divine.Numerics;
+using Divine.Particle;
+using Divine.Particle.Components;
+using Divine.Particle.Particles;
+
+public static class Drawer
 {
-    using System.Collections.Generic;
+    private static readonly List<Particle> Particles = new List<Particle>();
 
-    using Divine.Numerics;
-    using Divine.Particle;
-    using Divine.Particle.Components;
-    using Divine.Particle.Particles;
+    private static Particle greenParticle;
 
-    public static class Drawer
+    private static Particle redParticle;
+
+    public static void AddGreenCircle(Vector3 position)
     {
-        private static readonly List<Particle> Particles = new List<Particle>();
+        var green = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
+        green.SetControlPoint(0, position);
+        green.SetControlPoint(1, new Vector3(0, 255, 0));
+        green.SetControlPoint(2, new Vector3(50, 255, 0));
 
-        private static Particle greenParticle;
+        Particles.Add(green);
+    }
 
-        private static Particle redParticle;
+    public static void AddRedCircle(Vector3 position)
+    {
+        var red = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
+        red.SetControlPoint(0, position);
+        red.SetControlPoint(1, new Vector3(255, 0, 0));
+        red.SetControlPoint(2, new Vector3(70, 255, 0));
 
-        public static void AddGreenCircle(Vector3 position)
+        Particles.Add(red);
+    }
+
+    public static void Dispose()
+    {
+        foreach (var particleEffect in Particles)
         {
-            var green = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
-            green.SetControlPoint(0, position);
-            green.SetControlPoint(1, new Vector3(0, 255, 0));
-            green.SetControlPoint(2, new Vector3(50, 255, 0));
-
-            Particles.Add(green);
+            particleEffect?.Dispose();
         }
 
-        public static void AddRedCircle(Vector3 position)
+        greenParticle?.Dispose();
+        redParticle?.Dispose();
+    }
+
+    public static void DrawGreenCircle(Vector3 position)
+    {
+        if (greenParticle == null)
         {
-            var red = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
-            red.SetControlPoint(0, position);
-            red.SetControlPoint(1, new Vector3(255, 0, 0));
-            red.SetControlPoint(2, new Vector3(70, 255, 0));
-
-            Particles.Add(red);
-        }
-
-        public static void Dispose()
-        {
-            foreach (var particleEffect in Particles)
-            {
-                particleEffect?.Dispose();
-            }
-
-            greenParticle?.Dispose();
-            redParticle?.Dispose();
-        }
-
-        public static void DrawGreenCircle(Vector3 position)
-        {
-            if (greenParticle == null)
-            {
-                greenParticle = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
-                greenParticle.SetControlPoint(0, position);
-                greenParticle.SetControlPoint(1, new Vector3(0, 255, 0));
-                greenParticle.SetControlPoint(2, new Vector3(50, 255, 0));
-            }
-
+            greenParticle = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
             greenParticle.SetControlPoint(0, position);
+            greenParticle.SetControlPoint(1, new Vector3(0, 255, 0));
+            greenParticle.SetControlPoint(2, new Vector3(50, 255, 0));
         }
 
-        public static void DrawRedCircle(Vector3 position)
+        greenParticle.SetControlPoint(0, position);
+    }
+
+    public static void DrawRedCircle(Vector3 position)
+    {
+        if (redParticle == null)
         {
-            if (redParticle == null)
-            {
-                redParticle = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
-                greenParticle.SetControlPoint(0, position);
-                redParticle.SetControlPoint(1, new Vector3(255, 0, 0));
-                redParticle.SetControlPoint(2, new Vector3(70, 255, 0));
-            }
-
-            redParticle.SetControlPoint(0, position);
+            redParticle = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
+            greenParticle.SetControlPoint(0, position);
+            redParticle.SetControlPoint(1, new Vector3(255, 0, 0));
+            redParticle.SetControlPoint(2, new Vector3(70, 255, 0));
         }
+
+        redParticle.SetControlPoint(0, position);
     }
 }

@@ -1,67 +1,66 @@
-﻿namespace O9K.Core.Entities.Buildings
+﻿namespace O9K.Core.Entities.Buildings;
+
+using Divine.Numerics;
+using Divine.Entity.Entities.Units.Buildings;
+
+using Helpers;
+
+using Managers.Entity;
+
+using Units;
+
+public class Tower9 : Building9
 {
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Units.Buildings;
+    private Vector2 healthBarPositionCorrection;
 
-    using Helpers;
+    private Vector2 healthBarSize;
 
-    using Managers.Entity;
-
-    using Units;
-
-    public class Tower9 : Building9
+    public Tower9(Tower baseUnit)
+        : base(baseUnit)
     {
-        private Vector2 healthBarPositionCorrection;
+        this.BaseTower = baseUnit;
+        this.IsTower = true;
+    }
 
-        private Vector2 healthBarSize;
+    public Tower BaseTower { get; }
 
-        public Tower9(Tower baseUnit)
-            : base(baseUnit)
+    public override Vector2 HealthBarSize
+    {
+        get
         {
-            this.BaseTower = baseUnit;
-            this.IsTower = true;
-        }
-
-        public Tower BaseTower { get; }
-
-        public override Vector2 HealthBarSize
-        {
-            get
+            if (this.healthBarSize.IsZero)
             {
-                if (this.healthBarSize.IsZero)
-                {
-                    this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 108, Hud.Info.ScreenRatio * 5);
-                }
-
-                return this.healthBarSize;
+                this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 108, Hud.Info.ScreenRatio * 5);
             }
+
+            return this.healthBarSize;
         }
+    }
 
-        public Unit9 TowerTarget
+    public Unit9 TowerTarget
+    {
+        get
         {
-            get
+            var target = this.BaseTower.AttackTarget;
+            if (target?.IsValid == true)
             {
-                var target = this.BaseTower.AttackTarget;
-                if (target?.IsValid == true)
-                {
-                    return EntityManager9.GetUnitFast(target.Handle);
-                }
-
-                return null;
+                return EntityManager9.GetUnitFast(target.Handle);
             }
+
+            return null;
         }
+    }
 
-        protected override Vector2 HealthBarPositionCorrection
+    protected override Vector2 HealthBarPositionCorrection
+    {
+        get
         {
-            get
+            if (this.healthBarPositionCorrection.IsZero)
             {
-                if (this.healthBarPositionCorrection.IsZero)
-                {
-                    this.healthBarPositionCorrection = new Vector2(this.HealthBarSize.X / 2f, Hud.Info.ScreenRatio * 63);
-                }
-
-                return this.healthBarPositionCorrection;
+                this.healthBarPositionCorrection = new Vector2(this.HealthBarSize.X / 2f, Hud.Info.ScreenRatio * 63);
             }
+
+            return this.healthBarPositionCorrection;
         }
     }
 }

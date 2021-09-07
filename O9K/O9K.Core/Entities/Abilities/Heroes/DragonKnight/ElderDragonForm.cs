@@ -1,38 +1,37 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.DragonKnight
+﻿namespace O9K.Core.Entities.Abilities.Heroes.DragonKnight;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Range;
+
+using Metadata;
+
+[AbilityId(AbilityId.dragon_knight_elder_dragon_form)]
+public class ElderDragonForm : ActiveAbility, IHasRangeIncrease
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData attackRange;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Range;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.dragon_knight_elder_dragon_form)]
-    public class ElderDragonForm : ActiveAbility, IHasRangeIncrease
+    public ElderDragonForm(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackRange;
+        this.attackRange = new SpecialData(baseAbility, "bonus_attack_range");
+    }
 
-        public ElderDragonForm(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.attackRange = new SpecialData(baseAbility, "bonus_attack_range");
-        }
+    public bool IsRangeIncreasePermanent { get; } = false;
 
-        public bool IsRangeIncreasePermanent { get; } = false;
+    public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
 
-        public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
+    public string RangeModifierName { get; } = "modifier_dragon_knight_dragon_form";
 
-        public string RangeModifierName { get; } = "modifier_dragon_knight_dragon_form";
-
-        public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
-        {
-            return this.attackRange.GetValue(this.Level);
-        }
+    public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+    {
+        return this.attackRange.GetValue(this.Level);
     }
 }

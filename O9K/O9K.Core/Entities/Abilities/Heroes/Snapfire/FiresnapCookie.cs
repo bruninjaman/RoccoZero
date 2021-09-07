@@ -1,96 +1,95 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Snapfire
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Snapfire;
+
+using System.Collections.Generic;
+
+using Base;
+using Base.Types;
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+using Prediction.Data;
+
+[AbilityId(AbilityId.snapfire_firesnap_cookie)]
+public class FiresnapCookie : AreaOfEffectAbility, IDisable, INuke
 {
-    using System.Collections.Generic;
+    private readonly SpecialData cookieSpeedData;
 
-    using Base;
-    using Base.Types;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
+    private readonly SpecialData jumpRangeData;
 
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    using Prediction.Data;
-
-    [AbilityId(AbilityId.snapfire_firesnap_cookie)]
-    public class FiresnapCookie : AreaOfEffectAbility, IDisable, INuke
+    public FiresnapCookie(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData cookieSpeedData;
+        this.ActivationDelayData = new SpecialData(baseAbility, "jump_duration");
+        this.RadiusData = new SpecialData(baseAbility, "impact_radius");
+        this.DamageData = new SpecialData(baseAbility, "impact_damage");
+        this.jumpRangeData = new SpecialData(baseAbility, "jump_horizontal_distance");
+        this.cookieSpeedData = new SpecialData(baseAbility, "projectile_speed");
+    }
 
-        private readonly SpecialData jumpRangeData;
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
 
-        public FiresnapCookie(Ability baseAbility)
-            : base(baseAbility)
+    public float CookieSpeed
+    {
+        get
         {
-            this.ActivationDelayData = new SpecialData(baseAbility, "jump_duration");
-            this.RadiusData = new SpecialData(baseAbility, "impact_radius");
-            this.DamageData = new SpecialData(baseAbility, "impact_damage");
-            this.jumpRangeData = new SpecialData(baseAbility, "jump_horizontal_distance");
-            this.cookieSpeedData = new SpecialData(baseAbility, "projectile_speed");
+            return this.cookieSpeedData.GetValue(this.Level);
+        }
+    }
+
+    public float JumpRange
+    {
+        get
+        {
+            return this.jumpRangeData.GetValue(this.Level);
+        }
+    }
+
+    public override float Range
+    {
+        get
+        {
+            return this.jumpRangeData.GetValue(this.Level) + this.Radius;
+        }
+    }
+
+    protected override float BaseCastRange
+    {
+        get
+        {
+            return this.BaseAbility.BaseCastRange;
+        }
+    }
+
+    public override float GetCastDelay(Vector3 position)
+    {
+        return this.GetCastDelay() + this.Owner.GetTurnTime(position) + (this.Owner.Distance(position) / this.CookieSpeed);
+    }
+
+    public override PredictionInput9 GetPredictionInput(Unit9 target, List<Unit9> aoeTargets = null)
+    {
+        var input = base.GetPredictionInput(target, aoeTargets);
+        input.CastRange = this.JumpRange;
+
+        return input;
+    }
+
+    public override bool UseAbility(bool queue = false, bool bypass = false)
+    {
+        //todo fix ?
+        var result = this.BaseAbility.Cast(this.Owner, queue, bypass);
+        if (result)
+        {
+            this.ActionSleeper.Sleep(0.1f);
         }
 
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        public float CookieSpeed
-        {
-            get
-            {
-                return this.cookieSpeedData.GetValue(this.Level);
-            }
-        }
-
-        public float JumpRange
-        {
-            get
-            {
-                return this.jumpRangeData.GetValue(this.Level);
-            }
-        }
-
-        public override float Range
-        {
-            get
-            {
-                return this.jumpRangeData.GetValue(this.Level) + this.Radius;
-            }
-        }
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.BaseAbility.BaseCastRange;
-            }
-        }
-
-        public override float GetCastDelay(Vector3 position)
-        {
-            return this.GetCastDelay() + this.Owner.GetTurnTime(position) + (this.Owner.Distance(position) / this.CookieSpeed);
-        }
-
-        public override PredictionInput9 GetPredictionInput(Unit9 target, List<Unit9> aoeTargets = null)
-        {
-            var input = base.GetPredictionInput(target, aoeTargets);
-            input.CastRange = this.JumpRange;
-
-            return input;
-        }
-
-        public override bool UseAbility(bool queue = false, bool bypass = false)
-        {
-            //todo fix ?
-            var result = this.BaseAbility.Cast(this.Owner, queue, bypass);
-            if (result)
-            {
-                this.ActionSleeper.Sleep(0.1f);
-            }
-
-            return result;
-        }
+        return result;
     }
 }

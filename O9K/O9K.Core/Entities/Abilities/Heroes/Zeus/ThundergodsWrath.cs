@@ -1,60 +1,59 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Zeus
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Zeus;
+
+using System.Linq;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Managers.Entity;
+
+using Metadata;
+
+[AbilityId(AbilityId.zuus_thundergods_wrath)]
+public class ThundergodsWrath : AreaOfEffectAbility, INuke
 {
-    using System.Linq;
+    private StaticField staticField;
 
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Managers.Entity;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.zuus_thundergods_wrath)]
-    public class ThundergodsWrath : AreaOfEffectAbility, INuke
+    public ThundergodsWrath(Ability baseAbility)
+        : base(baseAbility)
     {
-        private StaticField staticField;
+        this.DamageData = new SpecialData(baseAbility, "damage");
+    }
 
-        public ThundergodsWrath(Ability baseAbility)
-            : base(baseAbility)
+    public override float Radius { get; } = 9999999;
+
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var damage = base.GetRawDamage(unit, remainingHealth);
+
+        if (this.staticField?.CanBeCasted() == true)
         {
-            this.DamageData = new SpecialData(baseAbility, "damage");
+            damage += this.staticField.GetRawDamage(unit, remainingHealth);
         }
 
-        public override float Radius { get; } = 9999999;
+        return damage;
+    }
 
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    internal override void SetOwner(Unit9 owner)
+    {
+        base.SetOwner(owner);
+
+        var ability = EntityManager9.BaseAbilities.FirstOrDefault(
+            x => x.Id == AbilityId.zuus_static_field && x.Owner?.Handle == owner.Handle);
+
+        if (ability == null)
         {
-            var damage = base.GetRawDamage(unit, remainingHealth);
-
-            if (this.staticField?.CanBeCasted() == true)
-            {
-                damage += this.staticField.GetRawDamage(unit, remainingHealth);
-            }
-
-            return damage;
+            return;
         }
 
-        internal override void SetOwner(Unit9 owner)
-        {
-            base.SetOwner(owner);
-
-            var ability = EntityManager9.BaseAbilities.FirstOrDefault(
-                x => x.Id == AbilityId.zuus_static_field && x.Owner?.Handle == owner.Handle);
-
-            if (ability == null)
-            {
-                return;
-            }
-
-            this.staticField = (StaticField)EntityManager9.AddAbility(ability);
-        }
+        this.staticField = (StaticField)EntityManager9.AddAbility(ability);
     }
 }

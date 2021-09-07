@@ -1,25 +1,24 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Undying
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Undying;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.undying_decay)]
+public class Decay : CircleAbility, INuke, IDebuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.undying_decay)]
-    public class Decay : CircleAbility, INuke, IDebuff
+    public Decay(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Decay(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.DamageData = new SpecialData(baseAbility, "decay_damage");
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-        }
-
-        public string DebuffModifierName { get; } = string.Empty;
+        this.DamageData = new SpecialData(baseAbility, "decay_damage");
+        this.RadiusData = new SpecialData(baseAbility, "radius");
     }
+
+    public string DebuffModifierName { get; } = string.Empty;
 }

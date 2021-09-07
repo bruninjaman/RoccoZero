@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Heroes.Unique
+﻿namespace O9K.Core.Entities.Heroes.Unique;
+
+using Abilities.Base;
+using Abilities.Heroes.WraithKing;
+
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Metadata;
+
+[HeroId(HeroId.npc_dota_hero_skeleton_king)]
+internal class WraithKing : Hero9
 {
-    using Abilities.Base;
-    using Abilities.Heroes.WraithKing;
+    private Reincarnate reincarnate;
 
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Heroes;
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Metadata;
-
-    [HeroId(HeroId.npc_dota_hero_skeleton_king)]
-    internal class WraithKing : Hero9
+    public WraithKing(Hero baseHero)
+        : base(baseHero)
     {
-        private Reincarnate reincarnate;
+    }
 
-        public WraithKing(Hero baseHero)
-            : base(baseHero)
+    public override bool CanReincarnate
+    {
+        get
         {
+            return base.CanReincarnate || this.reincarnate?.CanBeCasted() == true;
         }
+    }
 
-        public override bool CanReincarnate
+    internal override void Ability(Ability9 ability, bool added)
+    {
+        base.Ability(ability, added);
+
+        if (added && ability.Id == AbilityId.skeleton_king_reincarnation)
         {
-            get
-            {
-                return base.CanReincarnate || this.reincarnate?.CanBeCasted() == true;
-            }
-        }
-
-        internal override void Ability(Ability9 ability, bool added)
-        {
-            base.Ability(ability, added);
-
-            if (added && ability.Id == AbilityId.skeleton_king_reincarnation)
-            {
-                this.reincarnate = (Reincarnate)ability;
-            }
+            this.reincarnate = (Reincarnate)ability;
         }
     }
 }

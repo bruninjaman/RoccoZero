@@ -1,15 +1,14 @@
-﻿namespace O9K.Core.Extensions
-{
-    using Divine.Update;
+﻿namespace O9K.Core.Extensions;
 
-    public static class UpdateHandlerExtensions
+using Divine.Update;
+
+public static class UpdateHandlerExtensions
+{
+    public static void SetUpdateRate(this UpdateHandler updateHandler, int rate)
     {
-        public static void SetUpdateRate(this UpdateHandler updateHandler, int rate)
+        if (updateHandler.Executor is TimeoutHandler timeoutHandler)
         {
-            if (updateHandler.Executor is TimeoutHandler timeoutHandler)
-            {
-                timeoutHandler.Timeout = rate;
-            }
+            timeoutHandler.Timeout = rate;
         }
     }
 }

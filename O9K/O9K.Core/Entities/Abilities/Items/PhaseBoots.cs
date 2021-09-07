@@ -1,42 +1,41 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_phase_boots)]
+public class PhaseBoots : ActiveAbility, ISpeedBuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData bonusMoveSpeedData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData bonusMoveSpeedRangedData;
 
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_phase_boots)]
-    public class PhaseBoots : ActiveAbility, ISpeedBuff
+    public PhaseBoots(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData bonusMoveSpeedData;
+        this.bonusMoveSpeedData = new SpecialData(baseAbility, "phase_movement_speed");
+        this.bonusMoveSpeedRangedData = new SpecialData(baseAbility, "phase_movement_speed_range");
+    }
 
-        private readonly SpecialData bonusMoveSpeedRangedData;
+    public string BuffModifierName { get; } = "modifier_item_phase_boots_active";
 
-        public PhaseBoots(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.bonusMoveSpeedData = new SpecialData(baseAbility, "phase_movement_speed");
-            this.bonusMoveSpeedRangedData = new SpecialData(baseAbility, "phase_movement_speed_range");
-        }
+    public bool BuffsAlly { get; } = false;
 
-        public string BuffModifierName { get; } = "modifier_item_phase_boots_active";
+    public bool BuffsOwner { get; } = true;
 
-        public bool BuffsAlly { get; } = false;
-
-        public bool BuffsOwner { get; } = true;
-
-        public float GetSpeedBuff(Unit9 unit)
-        {
-            return (unit.Speed * (unit.IsRanged
-                                      ? this.bonusMoveSpeedRangedData.GetValue(this.Level)
-                                      : this.bonusMoveSpeedData.GetValue(this.Level))) / 100;
-        }
+    public float GetSpeedBuff(Unit9 unit)
+    {
+        return (unit.Speed * (unit.IsRanged
+                                  ? this.bonusMoveSpeedRangedData.GetValue(this.Level)
+                                  : this.bonusMoveSpeedData.GetValue(this.Level))) / 100;
     }
 }

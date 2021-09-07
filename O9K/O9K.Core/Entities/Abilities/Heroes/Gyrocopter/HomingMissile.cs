@@ -1,48 +1,47 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Gyrocopter
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Gyrocopter;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.gyrocopter_homing_missile)]
+public class HomingMissile : RangedAbility
 {
-    using Base;
+    private readonly SpecialData speedAccelerationData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private bool talentLearned;
 
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.gyrocopter_homing_missile)]
-    public class HomingMissile : RangedAbility
+    public HomingMissile(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData speedAccelerationData;
+        this.ActivationDelayData = new SpecialData(baseAbility, "pre_flight_time");
+        this.SpeedData = new SpecialData(baseAbility, "speed");
+        this.speedAccelerationData = new SpecialData(baseAbility, "acceleration");
+    }
 
-        private bool talentLearned;
-
-        public HomingMissile(Ability baseAbility)
-            : base(baseAbility)
+    public float Acceleration
+    {
+        get
         {
-            this.ActivationDelayData = new SpecialData(baseAbility, "pre_flight_time");
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.speedAccelerationData = new SpecialData(baseAbility, "acceleration");
+            return this.speedAccelerationData.GetValue(this.Level);
         }
+    }
 
-        public float Acceleration
+    public override bool IsDisplayingCharges
+    {
+        get
         {
-            get
+            if (this.talentLearned)
             {
-                return this.speedAccelerationData.GetValue(this.Level);
+                return true;
             }
-        }
 
-        public override bool IsDisplayingCharges
-        {
-            get
-            {
-                if (this.talentLearned)
-                {
-                    return true;
-                }
-
-                return this.talentLearned = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_gyrocopter_1)?.Level > 0;
-            }
+            return this.talentLearned = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_gyrocopter_1)?.Level > 0;
         }
     }
 }

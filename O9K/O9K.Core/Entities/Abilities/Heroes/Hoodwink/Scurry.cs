@@ -1,36 +1,35 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Hoodwink
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Hoodwink;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+using O9K.Core.Entities.Abilities.Base.Types;
+using O9K.Core.Entities.Units;
+using O9K.Core.Helpers;
+
+[AbilityId(AbilityId.hoodwink_scurry)]
+public class Scurry : ActiveAbility, ISpeedBuff
 {
-    using Base;
+    private readonly SpecialData bonusMoveSpeedData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    using O9K.Core.Entities.Abilities.Base.Types;
-    using O9K.Core.Entities.Units;
-    using O9K.Core.Helpers;
-
-    [AbilityId(AbilityId.hoodwink_scurry)]
-    public class Scurry : ActiveAbility, ISpeedBuff
+    public Scurry(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData bonusMoveSpeedData;
+        this.bonusMoveSpeedData = new SpecialData(baseAbility, "movement_speed_pct");
+    }
 
-        public Scurry(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.bonusMoveSpeedData = new SpecialData(baseAbility, "movement_speed_pct");
-        }
+    public string BuffModifierName { get; } = "modifier_hoodwink_scurry_active";
 
-        public string BuffModifierName { get; } = "modifier_hoodwink_scurry_active";
+    public bool BuffsAlly { get; } = false;
 
-        public bool BuffsAlly { get; } = false;
+    public bool BuffsOwner { get; } = true;
 
-        public bool BuffsOwner { get; } = true;
-
-        public float GetSpeedBuff(Unit9 unit)
-        {
-            return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
-        }
+    public float GetSpeedBuff(Unit9 unit)
+    {
+        return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
     }
 }

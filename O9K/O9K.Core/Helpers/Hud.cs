@@ -1,125 +1,124 @@
-﻿namespace O9K.Core.Helpers
+﻿namespace O9K.Core.Helpers;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Divine.Camera;
+using Divine.Game;
+using Divine.GameConsole;
+using Divine.Numerics;
+using Divine.Renderer;
+
+using Logger;
+
+public static class Hud
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private static readonly Dictionary<string, float> Messages = new Dictionary<string, float>();
 
-    using Divine.Camera;
-    using Divine.Game;
-    using Divine.GameConsole;
-    using Divine.Numerics;
-    using Divine.Renderer;
-
-    using Logger;
-
-    public static class Hud
+    public static Vector3 CameraPosition
     {
-        private static readonly Dictionary<string, float> Messages = new Dictionary<string, float>();
-
-        public static Vector3 CameraPosition
+        get
         {
-            get
+            return CameraManager.LookAtPosition;
+        }
+        set
+        {
+            CameraManager.LookAtPosition = value;
+        }
+    }
+
+    public static void CenterCameraOnHero(bool enabled = true)
+    {
+        GameConsoleManager.ExecuteCommand((enabled ? "+" : "-") + "dota_camera_center_on_hero");
+    }
+
+    public static void DisplayWarning(string text, float time = 10)
+    {
+        try
+        {
+            if (Messages.ContainsKey(text))
             {
-                return CameraManager.LookAtPosition;
+                Messages[text] = GameManager.RawGameTime + time;
+                return;
             }
-            set
+
+            Messages.Add(text, GameManager.RawGameTime + time);
+
+            if (Messages.Count == 1)
             {
-                CameraManager.LookAtPosition = value;
+                RendererManager.Draw += OnDraw;
             }
         }
-
-        public static void CenterCameraOnHero(bool enabled = true)
+        catch (Exception e)
         {
-            GameConsoleManager.ExecuteCommand((enabled ? "+" : "-") + "dota_camera_center_on_hero");
+            Logger.Error(e);
         }
+    }
 
-        public static void DisplayWarning(string text, float time = 10)
+    public static bool IsPositionOnScreen(Vector3 position)
+    {
+        /*if (position.Z == 0)
         {
-            try
-            {
-                if (Messages.ContainsKey(text))
-                {
-                    Messages[text] = GameManager.RawGameTime + time;
-                    return;
-                }
+            //todo get proper Z
 
-                Messages.Add(text, GameManager.RawGameTime + time);
-
-                if (Messages.Count == 1)
-                {
-                    RendererManager.Draw += OnDraw;
-                }
-            }
-            catch (Exception e)
+            if (Drawing.WorldToScreen(position.SetZ(128), out _) && Drawing.WorldToScreen(position.SetZ(384), out _))
             {
-                Logger.Error(e);
+                return true;
             }
         }
-
-        public static bool IsPositionOnScreen(Vector3 position)
+        else
         {
-            /*if (position.Z == 0)
+            if (Drawing.WorldToScreen(position, out _))
             {
-                //todo get proper Z
-
-                if (Drawing.WorldToScreen(position.SetZ(128), out _) && Drawing.WorldToScreen(position.SetZ(384), out _))
-                {
-                    return true;
-                }
+                return true;
             }
-            else
-            {
-                if (Drawing.WorldToScreen(position, out _))
-                {
-                    return true;
-                }
-            }*/
+        }*/
 
-            return true;
-        }
+        return true;
+    }
 
-        private static void OnDraw()
+    private static void OnDraw()
+    {
+        try
         {
-            try
+            if (Messages.Count == 0)
             {
-                if (Messages.Count == 0)
-                {
-                    RendererManager.Draw -= OnDraw;
-                }
-
-                var position = new Vector2(Info.ScreenSize.X * 0.13f, Info.ScreenSize.Y * 0.05f);
-
-                foreach (var message in Messages.ToList())
-                {
-                    var text = message.Key;
-                    var time = message.Value;
-
-                    if (GameManager.RawGameTime > time)
-                    {
-                        Messages.Remove(text);
-                        continue;
-                    }
-
-                    position += new Vector2(0, 35);
-
-                    RendererManager.DrawText(text, position, Color.OrangeRed, 33 * Info.ScreenRatio);
-                }
+                RendererManager.Draw -= OnDraw;
             }
-            catch (Exception e)
+
+            var position = new Vector2(Info.ScreenSize.X * 0.13f, Info.ScreenSize.Y * 0.05f);
+
+            foreach (var message in Messages.ToList())
             {
-                Logger.Error(e);
+                var text = message.Key;
+                var time = message.Value;
+
+                if (GameManager.RawGameTime > time)
+                {
+                    Messages.Remove(text);
+                    continue;
+                }
+
+                position += new Vector2(0, 35);
+
+                RendererManager.DrawText(text, position, Color.OrangeRed, 33 * Info.ScreenRatio);
             }
         }
-
-        public static class Info
+        catch (Exception e)
         {
-            public static Vector2 GlyphPosition { get; } = RendererManager.ScreenSize * new Vector2(0.16f, 0.965f);
-
-            public static Vector2 ScanPosition { get; } = RendererManager.ScreenSize * new Vector2(0.16f, 0.925f);
-
-            public static float ScreenRatio { get; } = RendererManager.ScreenSize.Y / 1080f;
-
-            public static Vector2 ScreenSize { get; } = RendererManager.ScreenSize;
+            Logger.Error(e);
         }
+    }
+
+    public static class Info
+    {
+        public static Vector2 GlyphPosition { get; } = RendererManager.ScreenSize * new Vector2(0.16f, 0.965f);
+
+        public static Vector2 ScanPosition { get; } = RendererManager.ScreenSize * new Vector2(0.16f, 0.925f);
+
+        public static float ScreenRatio { get; } = RendererManager.ScreenSize.Y / 1080f;
+
+        public static Vector2 ScreenSize { get; } = RendererManager.ScreenSize;
     }
 }

@@ -1,27 +1,26 @@
-﻿namespace O9K.Core.Managers.Assembly
+﻿namespace O9K.Core.Managers.Assembly;
+
+using System;
+
+public interface IAssemblyEventManager9
 {
-    using System;
+    event EventHandler AutoSoulRingEnabled;
 
-    public interface IAssemblyEventManager9
-    {
-        event EventHandler AutoSoulRingEnabled;
+    event EventHandler EvaderPredictedDeath;
 
-        event EventHandler EvaderPredictedDeath;
+    event EventHandler ForceBlockerResubscribe;
 
-        event EventHandler ForceBlockerResubscribe;
+    event EventHandler<string> OnAssemblyLoad;
 
-        event EventHandler<string> OnAssemblyLoad;
+    event EventHandler<bool> OrderBlockerMoveCamera;
 
-        event EventHandler<bool> OrderBlockerMoveCamera;
+    void AssemblyLoaded();
 
-        void AssemblyLoaded();
+    void InvokeAutoSoulRingEnabled();
 
-        void InvokeAutoSoulRingEnabled();
+    void InvokeEvaderPredictedDeath();
 
-        void InvokeEvaderPredictedDeath();
+    void InvokeForceBlockerResubscribe();
 
-        void InvokeForceBlockerResubscribe();
-
-        void InvokeOrderBlockerMoveCamera(bool enabled);
-    }
+    void InvokeOrderBlockerMoveCamera(bool enabled);
 }

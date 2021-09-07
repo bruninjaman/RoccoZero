@@ -1,38 +1,37 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Disruptor
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Disruptor;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.disruptor_static_storm)]
+public class StaticStorm : CircleAbility, IDisable
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.disruptor_static_storm)]
-    public class StaticStorm : CircleAbility, IDisable
+    public StaticStorm(Ability baseAbility)
+        : base(baseAbility)
     {
-        public StaticStorm(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-        }
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+    }
 
-        public override float ActivationDelay { get; } = 0.25f; // hack dot delay for evader
+    public override float ActivationDelay { get; } = 0.25f; // hack dot delay for evader
 
-        public UnitState AppliesUnitState
+    public UnitState AppliesUnitState
+    {
+        get
         {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return UnitState.Silenced | UnitState.Muted;
-                }
-
-                return UnitState.Silenced;
+                return UnitState.Silenced | UnitState.Muted;
             }
+
+            return UnitState.Silenced;
         }
     }
 }

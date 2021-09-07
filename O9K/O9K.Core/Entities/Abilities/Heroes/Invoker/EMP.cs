@@ -1,110 +1,109 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Invoker
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Invoker;
+
+using System;
+using System.Collections.Generic;
+
+using Base;
+using Base.Types;
+
+using Core.Helpers;
+using Core.Helpers.Damage;
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.invoker_emp)]
+// ReSharper disable once InconsistentNaming
+public class EMP : CircleAbility, IInvokableAbility, INuke
 {
-    using System;
-    using System.Collections.Generic;
+    private readonly SpecialData damagePctData;
 
-    using Base;
-    using Base.Types;
+    private readonly InvokeHelper<EMP> invokeHelper;
 
-    using Core.Helpers;
-    using Core.Helpers.Damage;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.invoker_emp)]
-    // ReSharper disable once InconsistentNaming
-    public class EMP : CircleAbility, IInvokableAbility, INuke
+    public EMP(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData damagePctData;
+        this.invokeHelper = new InvokeHelper<EMP>(this);
 
-        private readonly InvokeHelper<EMP> invokeHelper;
+        this.ActivationDelayData = new SpecialData(baseAbility, "delay");
+        this.RadiusData = new SpecialData(baseAbility, "area_of_effect");
+        this.DamageData = new SpecialData(baseAbility, "mana_burned");
+        this.damagePctData = new SpecialData(baseAbility, "damage_per_mana_pct");
+    }
+    
+    public AbilitySlot GetAbilitySlot => invokeHelper.GetAbilitySlot;
 
-        public EMP(Ability baseAbility)
-            : base(baseAbility)
+    public bool CanBeInvoked
+    {
+        get
         {
-            this.invokeHelper = new InvokeHelper<EMP>(this);
-
-            this.ActivationDelayData = new SpecialData(baseAbility, "delay");
-            this.RadiusData = new SpecialData(baseAbility, "area_of_effect");
-            this.DamageData = new SpecialData(baseAbility, "mana_burned");
-            this.damagePctData = new SpecialData(baseAbility, "damage_per_mana_pct");
-        }
-        
-        public AbilitySlot GetAbilitySlot => invokeHelper.GetAbilitySlot;
-
-        public bool CanBeInvoked
-        {
-            get
+            if (this.IsInvoked)
             {
-                if (this.IsInvoked)
-                {
-                    return true;
-                }
-
-                return this.invokeHelper.CanInvoke(false);
-            }
-        }
-
-        public bool IsInvoked
-        {
-            get
-            {
-                return this.invokeHelper.IsInvoked;
-            }
-        }
-
-        public override bool IsUsable
-        {
-            get
-            {
-                if (!this.IsAvailable)
-                {
-                    return false;
-                }
-
                 return true;
             }
+
+            return this.invokeHelper.CanInvoke(false);
         }
+    }
 
-        public AbilityId[] RequiredOrbs { get; } = { AbilityId.invoker_wex, AbilityId.invoker_wex, AbilityId.invoker_wex };
-
-        public override bool CanBeCasted(bool checkChanneling = true)
+    public bool IsInvoked
+    {
+        get
         {
-            return base.CanBeCasted(checkChanneling) && this.invokeHelper.CanInvoke(!this.IsInvoked);
+            return this.invokeHelper.IsInvoked;
         }
+    }
 
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    public override bool IsUsable
+    {
+        get
         {
-            var manaBurn = this.DamageData.GetValue(this.invokeHelper.Wex.Level);
-            var manaDamagePercentage = this.damagePctData.GetValue(this.Level) / 100;
-
-            return new Damage
+            if (!this.IsAvailable)
             {
-                [this.DamageType] = (int)(Math.Min(unit.Mana, manaBurn) * manaDamagePercentage)
-            };
-        }
+                return false;
+            }
 
-        public bool Invoke(List<AbilityId> currentOrbs = null, bool queue = false, bool bypass = false, bool invokeIfOnLastPosition = false)
-        {
-            return this.invokeHelper.Invoke(currentOrbs, queue, bypass, invokeIfOnLastPosition);
+            return true;
         }
+    }
 
-        public override bool UseAbility(Vector3 position, bool queue = false, bool bypass = false)
-        {
-            return this.Invoke(null, false, bypass) && base.UseAbility(position, queue, bypass);
-        }
+    public AbilityId[] RequiredOrbs { get; } = { AbilityId.invoker_wex, AbilityId.invoker_wex, AbilityId.invoker_wex };
 
-        internal override void SetOwner(Unit9 owner)
+    public override bool CanBeCasted(bool checkChanneling = true)
+    {
+        return base.CanBeCasted(checkChanneling) && this.invokeHelper.CanInvoke(!this.IsInvoked);
+    }
+
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var manaBurn = this.DamageData.GetValue(this.invokeHelper.Wex.Level);
+        var manaDamagePercentage = this.damagePctData.GetValue(this.Level) / 100;
+
+        return new Damage
         {
-            base.SetOwner(owner);
-            this.invokeHelper.SetOwner(owner);
-        }
+            [this.DamageType] = (int)(Math.Min(unit.Mana, manaBurn) * manaDamagePercentage)
+        };
+    }
+
+    public bool Invoke(List<AbilityId> currentOrbs = null, bool queue = false, bool bypass = false, bool invokeIfOnLastPosition = false)
+    {
+        return this.invokeHelper.Invoke(currentOrbs, queue, bypass, invokeIfOnLastPosition);
+    }
+
+    public override bool UseAbility(Vector3 position, bool queue = false, bool bypass = false)
+    {
+        return this.Invoke(null, false, bypass) && base.UseAbility(position, queue, bypass);
+    }
+
+    internal override void SetOwner(Unit9 owner)
+    {
+        base.SetOwner(owner);
+        this.invokeHelper.SetOwner(owner);
     }
 }

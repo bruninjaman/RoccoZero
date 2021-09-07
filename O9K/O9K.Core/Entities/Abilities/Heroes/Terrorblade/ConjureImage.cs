@@ -1,25 +1,24 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Terrorblade
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Terrorblade;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.terrorblade_conjure_image)]
+public class ConjureImage : ActiveAbility, IBuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.terrorblade_conjure_image)]
-    public class ConjureImage : ActiveAbility, IBuff
+    public ConjureImage(Ability baseAbility)
+        : base(baseAbility)
     {
-        public ConjureImage(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
-
-        public string BuffModifierName { get; } = string.Empty;
-
-        public bool BuffsAlly { get; } = false;
-
-        public bool BuffsOwner { get; } = true;
     }
+
+    public string BuffModifierName { get; } = string.Empty;
+
+    public bool BuffsAlly { get; } = false;
+
+    public bool BuffsOwner { get; } = true;
 }

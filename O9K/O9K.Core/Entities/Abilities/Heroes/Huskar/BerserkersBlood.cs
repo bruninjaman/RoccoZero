@@ -1,18 +1,17 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Huskar
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Huskar;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.huskar_berserkers_blood)]
+public class BerserkersBlood : PassiveAbility
 {
-    using Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.huskar_berserkers_blood)]
-    public class BerserkersBlood : PassiveAbility
+    public BerserkersBlood(Ability baseAbility)
+        : base(baseAbility)
     {
-        public BerserkersBlood(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
     }
 }

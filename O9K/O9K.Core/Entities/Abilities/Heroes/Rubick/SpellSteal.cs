@@ -1,37 +1,36 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Rubick
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Rubick;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.rubick_spell_steal)]
+public class SpellSteal : RangedAbility
 {
-    using Base;
+    private readonly SpecialData scepterCastRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.rubick_spell_steal)]
-    public class SpellSteal : RangedAbility
+    public SpellSteal(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData scepterCastRangeData;
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+        this.scepterCastRangeData = new SpecialData(baseAbility, "cast_range_scepter");
+    }
 
-        public SpellSteal(Ability baseAbility)
-            : base(baseAbility)
+    protected override float BaseCastRange
+    {
+        get
         {
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-            this.scepterCastRangeData = new SpecialData(baseAbility, "cast_range_scepter");
-        }
-
-        protected override float BaseCastRange
-        {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return this.scepterCastRangeData.GetValue(this.Level);
-                }
-
-                return base.BaseCastRange;
+                return this.scepterCastRangeData.GetValue(this.Level);
             }
+
+            return base.BaseCastRange;
         }
     }
 }

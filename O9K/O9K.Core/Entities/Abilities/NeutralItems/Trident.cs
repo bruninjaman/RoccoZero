@@ -1,47 +1,46 @@
-﻿namespace O9K.Core.Entities.Abilities.NeutralItems
+﻿namespace O9K.Core.Entities.Abilities.NeutralItems;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_trident)]
+public class Trident : PassiveAbility, IHasDamageAmplify
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData amplifierData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_trident)]
-    public class Trident : PassiveAbility, IHasDamageAmplify
+    public Trident(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData amplifierData;
+        //  this.amplifierData = new SpecialData(baseAbility, "spell_amp");
+    }
 
-        public Trident(Ability baseAbility)
-            : base(baseAbility)
+    public DamageType AmplifierDamageType { get; } = DamageType.Magical;
+
+    public string[] AmplifierModifierNames { get; } = { "modifier_item_trident" };
+
+    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Outgoing;
+
+    public bool IsAmplifierAddedToStats { get; } = false;
+
+    public bool IsAmplifierPermanent { get; } = true;
+
+    public float AmplifierValue(Unit9 source, Unit9 target)
+    {
+        if (!this.IsUsable)
         {
-            //  this.amplifierData = new SpecialData(baseAbility, "spell_amp");
+            return 0;
         }
 
-        public DamageType AmplifierDamageType { get; } = DamageType.Magical;
-
-        public string[] AmplifierModifierNames { get; } = { "modifier_item_trident" };
-
-        public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Outgoing;
-
-        public bool IsAmplifierAddedToStats { get; } = false;
-
-        public bool IsAmplifierPermanent { get; } = true;
-
-        public float AmplifierValue(Unit9 source, Unit9 target)
-        {
-            if (!this.IsUsable)
-            {
-                return 0;
-            }
-
-            return 0.33f;
-            //   return this.amplifierData.GetValue(this.Level) / 100f;
-        }
+        return 0.33f;
+        //   return this.amplifierData.GetValue(this.Level) / 100f;
     }
 }

@@ -1,6 +1,5 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Components
+﻿namespace O9K.Core.Entities.Abilities.Base.Components;
+
+public interface IHasLifeSteal
 {
-    public interface IHasLifeSteal
-    {
-    }
 }

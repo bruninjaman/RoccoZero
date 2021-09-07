@@ -1,23 +1,22 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Batrider
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Batrider;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.batrider_flamebreak)]
+public class Flamebreak : CircleAbility
 {
-    using Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.batrider_flamebreak)]
-    public class Flamebreak : CircleAbility
+    public Flamebreak(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Flamebreak(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "explosion_radius");
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.DamageData = new SpecialData(baseAbility, "damage_impact");
-        }
+        this.RadiusData = new SpecialData(baseAbility, "explosion_radius");
+        this.SpeedData = new SpecialData(baseAbility, "speed");
+        this.DamageData = new SpecialData(baseAbility, "damage_impact");
     }
 }

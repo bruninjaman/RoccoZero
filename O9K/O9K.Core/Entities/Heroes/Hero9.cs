@@ -1,265 +1,264 @@
-﻿namespace O9K.Core.Entities.Heroes
+﻿namespace O9K.Core.Entities.Heroes;
+
+using System;
+using Divine.Game;
+using Divine.Numerics;
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Helpers;
+
+using Units;
+
+public class Hero9 : Unit9
 {
-    using System;
-    using Divine.Game;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Units.Heroes;
-    using Divine.Entity.Entities.Units.Heroes.Components;
+    private Vector2 healthBarPositionCorrection;
 
-    using Helpers;
+    private Vector2 healthBarSize;
 
-    using Units;
-
-    public class Hero9 : Unit9
+    public Hero9(Hero baseHero)
+        : base(baseHero)
     {
-        private Vector2 healthBarPositionCorrection;
+        this.IsHero = true;
+        this.BaseHero = baseHero;
+        this.Id = baseHero.HeroId;
+        this.PrimaryAttribute = baseHero.PrimaryAttribute;
+        this.IsIllusion = baseHero.IsIllusion;
+        this.IsImportant = !this.IsIllusion;
+        this.CanUseAbilities = !this.IsIllusion;
+        this.CanUseItems = this.CanUseAbilities;
+    }
 
-        private Vector2 healthBarSize;
-
-        public Hero9(Hero baseHero)
-            : base(baseHero)
+    public override float Agility
+    {
+        get
         {
-            this.IsHero = true;
-            this.BaseHero = baseHero;
-            this.Id = baseHero.HeroId;
-            this.PrimaryAttribute = baseHero.PrimaryAttribute;
-            this.IsIllusion = baseHero.IsIllusion;
-            this.IsImportant = !this.IsIllusion;
-            this.CanUseAbilities = !this.IsIllusion;
-            this.CanUseItems = this.CanUseAbilities;
+            return this.BaseHero.Agility;
         }
+    }
 
-        public override float Agility
+    public Hero BaseHero { get; }
+
+    public override float Health
+    {
+        get
         {
-            get
+            if (!this.IsVisible)
             {
-                return this.BaseHero.Agility;
+                return Math.Min(
+                    this.BaseHealth + ((GameManager.RawGameTime - this.LastVisibleTime) * this.HealthRegeneration),
+                    this.MaximumHealth);
             }
+
+            return this.BaseHealth;
         }
+    }
 
-        public Hero BaseHero { get; }
-
-        public override float Health
+    public override Vector2 HealthBarSize
+    {
+        get
         {
-            get
+            if (this.healthBarSize.IsZero)
             {
-                if (!this.IsVisible)
+                if (this.IsMyHero)
                 {
-                    return Math.Min(
-                        this.BaseHealth + ((GameManager.RawGameTime - this.LastVisibleTime) * this.HealthRegeneration),
-                        this.MaximumHealth);
+                    this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 106, Hud.Info.ScreenRatio * 10);
+                }
+                else if (this.IsAlly())
+                {
+                    this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 98, Hud.Info.ScreenRatio * 8);
+                }
+                else
+                {
+                    this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 98, Hud.Info.ScreenRatio * 10);
+                }
+            }
+
+            return this.healthBarSize;
+        }
+    }
+
+    public override float HealthRegeneration
+    {
+        get
+        {
+            return this.BaseUnit.BaseHealthRegeneration;
+        }
+    }
+
+    public HeroId Id { get; }
+
+    public override float Intelligence
+    {
+        get
+        {
+            return this.BaseHero.Intelligence;
+        }
+    }
+
+    public override bool IsAlive
+    {
+        get
+        {
+            return base.IsAlive || this.IsReincarnating;
+        }
+    }
+
+    public override bool IsInvulnerable
+    {
+        get
+        {
+            return base.IsInvulnerable || this.IsReincarnating;
+        }
+    }
+
+    public bool IsReincarnating { get; internal set; } = false;
+
+    public override float Mana
+    {
+        get
+        {
+            if (!this.IsVisible)
+            {
+                return Math.Min(this.BaseMana + ((GameManager.RawGameTime - this.LastVisibleTime) * this.ManaRegeneration), this.MaximumMana);
+            }
+
+            return this.BaseMana;
+        }
+    }
+
+    public override float ManaRegeneration
+    {
+        get
+        {
+            return this.BaseUnit.BaseManaRegeneration;
+        }
+    }
+
+    public override Vector3 Position
+    {
+        get
+        {
+            if (!this.IsVisible)
+            {
+                return this.GetPredictedPosition();
+            }
+
+            return this.BasePosition;
+        }
+    }
+
+    public override float Strength
+    {
+        get
+        {
+            return this.BaseHero.Strength;
+        }
+    }
+
+    public override float TotalAgility
+    {
+        get
+        {
+            return this.BaseHero.TotalAgility;
+        }
+    }
+
+    public override float TotalIntelligence
+    {
+        get
+        {
+            return this.BaseHero.TotalIntelligence;
+        }
+    }
+
+    public override float TotalStrength
+    {
+        get
+        {
+            return this.BaseHero.TotalStrength;
+        }
+    }
+
+    protected override Vector2 HealthBarPositionCorrection
+    {
+        get
+        {
+            if (this.healthBarPositionCorrection.IsZero)
+            {
+                if (this.IsMyHero)
+                {
+                    this.healthBarPositionCorrection = new Vector2(this.HealthBarSize.X / 1.98f, Hud.Info.ScreenRatio * 35.5f);
+                }
+                else
+                {
+                    this.healthBarPositionCorrection = new Vector2(this.HealthBarSize.X / 1.92f, Hud.Info.ScreenRatio * 30.5f);
                 }
 
-                return this.BaseHealth;
+                //if (this.IsAlly())
+                //{
+                //    this.healthBarPositionCorrection = new Vector2(this.HealthBarSize.X / 1.98f, Hud.Info.ScreenRatio * 30);
+                //}
+                //else
+                //{
+                //    this.healthBarPositionCorrection =new Vector2(this.HealthBarSize.X / 1.92f, Hud.Info.ScreenRatio * 30);
+                //}
             }
-        }
 
-        public override Vector2 HealthBarSize
+            return this.healthBarPositionCorrection;
+        }
+    }
+
+    public override float GetAngle(Vector3 position, bool rotationDifference = false)
+    {
+        var rotation = this.BaseUnit.NetworkRotationRad;
+        if (rotationDifference)
         {
-            get
-            {
-                if (this.healthBarSize.IsZero)
-                {
-                    if (this.IsMyHero)
-                    {
-                        this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 106, Hud.Info.ScreenRatio * 10);
-                    }
-                    else if (this.IsAlly())
-                    {
-                        this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 98, Hud.Info.ScreenRatio * 8);
-                    }
-                    else
-                    {
-                        this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 98, Hud.Info.ScreenRatio * 10);
-                    }
-                }
-
-                return this.healthBarSize;
-            }
+            rotation += MathUtil.DegreesToRadians(this.BaseUnit.RotationDifference);
         }
 
-        public override float HealthRegeneration
+        var angle = Math.Abs(Math.Atan2(position.Y - this.Position.Y, position.X - this.Position.X) - rotation);
+        if (angle > Math.PI)
         {
-            get
-            {
-                return this.BaseUnit.BaseHealthRegeneration;
-            }
+            angle = Math.Abs((Math.PI * 2) - angle);
         }
 
-        public HeroId Id { get; }
+        return (float)angle;
+    }
 
-        public override float Intelligence
+    public override float GetImmobilityDuration()
+    {
+        if (this.IsReincarnating)
         {
-            get
-            {
-                return this.BaseHero.Intelligence;
-            }
+            return (this.BaseHero.RespawnTime - GameManager.RawGameTime) + 0.1f;
         }
 
-        public override bool IsAlive
+        return base.GetImmobilityDuration();
+    }
+
+    public override float GetInvulnerabilityDuration()
+    {
+        if (this.IsReincarnating)
         {
-            get
-            {
-                return base.IsAlive || this.IsReincarnating;
-            }
+            return (this.BaseHero.RespawnTime - GameManager.RawGameTime) + 0.1f;
         }
 
-        public override bool IsInvulnerable
+        return base.GetInvulnerabilityDuration();
+    }
+
+    public override Vector3 GetPredictedPosition(float delay = 0, bool forceMovement = false)
+    {
+        if (!forceMovement && !this.IsMoving)
         {
-            get
-            {
-                return base.IsInvulnerable || this.IsReincarnating;
-            }
+            return this.BasePosition;
         }
 
-        public bool IsReincarnating { get; internal set; } = false;
+        var rotationDifference = MathUtil.DegreesToRadians(this.BaseUnit.RotationDifference);
+        delay = Math.Max(delay - this.GetTurnTime(Math.Abs(rotationDifference)), 0);
 
-        public override float Mana
-        {
-            get
-            {
-                if (!this.IsVisible)
-                {
-                    return Math.Min(this.BaseMana + ((GameManager.RawGameTime - this.LastVisibleTime) * this.ManaRegeneration), this.MaximumMana);
-                }
+        var rotation = this.BaseUnit.NetworkRotationRad + rotationDifference;
+        var polar = new Vector3((float)Math.Cos(rotation), (float)Math.Sin(rotation), 0);
 
-                return this.BaseMana;
-            }
-        }
-
-        public override float ManaRegeneration
-        {
-            get
-            {
-                return this.BaseUnit.BaseManaRegeneration;
-            }
-        }
-
-        public override Vector3 Position
-        {
-            get
-            {
-                if (!this.IsVisible)
-                {
-                    return this.GetPredictedPosition();
-                }
-
-                return this.BasePosition;
-            }
-        }
-
-        public override float Strength
-        {
-            get
-            {
-                return this.BaseHero.Strength;
-            }
-        }
-
-        public override float TotalAgility
-        {
-            get
-            {
-                return this.BaseHero.TotalAgility;
-            }
-        }
-
-        public override float TotalIntelligence
-        {
-            get
-            {
-                return this.BaseHero.TotalIntelligence;
-            }
-        }
-
-        public override float TotalStrength
-        {
-            get
-            {
-                return this.BaseHero.TotalStrength;
-            }
-        }
-
-        protected override Vector2 HealthBarPositionCorrection
-        {
-            get
-            {
-                if (this.healthBarPositionCorrection.IsZero)
-                {
-                    if (this.IsMyHero)
-                    {
-                        this.healthBarPositionCorrection = new Vector2(this.HealthBarSize.X / 1.98f, Hud.Info.ScreenRatio * 35.5f);
-                    }
-                    else
-                    {
-                        this.healthBarPositionCorrection = new Vector2(this.HealthBarSize.X / 1.92f, Hud.Info.ScreenRatio * 30.5f);
-                    }
-
-                    //if (this.IsAlly())
-                    //{
-                    //    this.healthBarPositionCorrection = new Vector2(this.HealthBarSize.X / 1.98f, Hud.Info.ScreenRatio * 30);
-                    //}
-                    //else
-                    //{
-                    //    this.healthBarPositionCorrection =new Vector2(this.HealthBarSize.X / 1.92f, Hud.Info.ScreenRatio * 30);
-                    //}
-                }
-
-                return this.healthBarPositionCorrection;
-            }
-        }
-
-        public override float GetAngle(Vector3 position, bool rotationDifference = false)
-        {
-            var rotation = this.BaseUnit.NetworkRotationRad;
-            if (rotationDifference)
-            {
-                rotation += MathUtil.DegreesToRadians(this.BaseUnit.RotationDifference);
-            }
-
-            var angle = Math.Abs(Math.Atan2(position.Y - this.Position.Y, position.X - this.Position.X) - rotation);
-            if (angle > Math.PI)
-            {
-                angle = Math.Abs((Math.PI * 2) - angle);
-            }
-
-            return (float)angle;
-        }
-
-        public override float GetImmobilityDuration()
-        {
-            if (this.IsReincarnating)
-            {
-                return (this.BaseHero.RespawnTime - GameManager.RawGameTime) + 0.1f;
-            }
-
-            return base.GetImmobilityDuration();
-        }
-
-        public override float GetInvulnerabilityDuration()
-        {
-            if (this.IsReincarnating)
-            {
-                return (this.BaseHero.RespawnTime - GameManager.RawGameTime) + 0.1f;
-            }
-
-            return base.GetInvulnerabilityDuration();
-        }
-
-        public override Vector3 GetPredictedPosition(float delay = 0, bool forceMovement = false)
-        {
-            if (!forceMovement && !this.IsMoving)
-            {
-                return this.BasePosition;
-            }
-
-            var rotationDifference = MathUtil.DegreesToRadians(this.BaseUnit.RotationDifference);
-            delay = Math.Max(delay - this.GetTurnTime(Math.Abs(rotationDifference)), 0);
-
-            var rotation = this.BaseUnit.NetworkRotationRad + rotationDifference;
-            var polar = new Vector3((float)Math.Cos(rotation), (float)Math.Sin(rotation), 0);
-
-            return this.BasePosition + (polar * ((GameManager.RawGameTime - this.LastPositionUpdateTime) + delay) * this.Speed);
-        }
+        return this.BasePosition + (polar * ((GameManager.RawGameTime - this.LastPositionUpdateTime) + delay) * this.Speed);
     }
 }

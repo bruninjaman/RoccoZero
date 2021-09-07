@@ -1,38 +1,37 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.DarkWillow
+﻿namespace O9K.Core.Entities.Abilities.Heroes.DarkWillow;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+using O9K.Core.Entities.Abilities.Base.Types;
+using O9K.Core.Helpers;
+
+[AbilityId(AbilityId.dawnbreaker_celestial_hammer)]
+public class CelestialHammer : LineAbility, INuke
 {
-    using Base;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData castRangeBonusData;
 
-    using Metadata;
-
-    using O9K.Core.Entities.Abilities.Base.Types;
-    using O9K.Core.Helpers;
-
-    [AbilityId(AbilityId.dawnbreaker_celestial_hammer)]
-    public class CelestialHammer : LineAbility, INuke
+    public CelestialHammer(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.castRangeData = new SpecialData(baseAbility, "range");
+        this.castRangeBonusData = new SpecialData(baseAbility.Owner, AbilityId.special_bonus_unique_dawnbreaker_celestial_hammer_cast_range);
+        this.RadiusData = new SpecialData(baseAbility, "hammer_aoe_radius");
+        this.DamageData = new SpecialData(baseAbility, "hammer_damage");
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+    }
 
-        private readonly SpecialData castRangeBonusData;
-
-        public CelestialHammer(Ability baseAbility)
-            : base(baseAbility)
+    protected override float BaseCastRange
+    {
+        get
         {
-            this.castRangeData = new SpecialData(baseAbility, "range");
-            this.castRangeBonusData = new SpecialData(baseAbility.Owner, AbilityId.special_bonus_unique_dawnbreaker_celestial_hammer_cast_range);
-            this.RadiusData = new SpecialData(baseAbility, "hammer_aoe_radius");
-            this.DamageData = new SpecialData(baseAbility, "hammer_damage");
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-        }
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level) + castRangeBonusData.GetValue(0);
-            }
+            return this.castRangeData.GetValue(this.Level) + castRangeBonusData.GetValue(0);
         }
     }
 }

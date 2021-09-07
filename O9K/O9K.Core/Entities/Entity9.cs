@@ -1,107 +1,106 @@
-﻿namespace O9K.Core.Entities
+﻿namespace O9K.Core.Entities;
+
+using System;
+using Divine.Helpers;
+using Divine.Entity.Entities;
+
+using Extensions;
+
+using Units;
+
+public abstract class Entity9 : IEquatable<Entity9>
 {
-    using System;
-    using Divine.Helpers;
-    using Divine.Entity.Entities;
+    private string defaultName;
 
-    using Extensions;
+    private string displayName;
 
-    using Units;
-
-    public abstract class Entity9 : IEquatable<Entity9>
+    protected Entity9(Entity entity)
     {
-        private string defaultName;
+        this.Name = entity.Name;
+        this.TextureName = entity.Name;
+        this.BaseEntity = entity;
+        this.Handle = entity.Handle;
+    }
 
-        private string displayName;
+    public Entity BaseEntity { get; }
 
-        protected Entity9(Entity entity)
+    public float DeathTime { get; internal set; }
+
+    public string DefaultName
+    {
+        get
         {
-            this.Name = entity.Name;
-            this.TextureName = entity.Name;
-            this.BaseEntity = entity;
-            this.Handle = entity.Handle;
-        }
-
-        public Entity BaseEntity { get; }
-
-        public float DeathTime { get; internal set; }
-
-        public string DefaultName
-        {
-            get
+            if (this.defaultName == null)
             {
-                if (this.defaultName == null)
-                {
-                    this.defaultName = this.Name.RemoveAbilityLevel();
-                }
-
-                return this.defaultName;
+                this.defaultName = this.Name.RemoveAbilityLevel();
             }
-        }
 
-        public virtual string DisplayName
+            return this.defaultName;
+        }
+    }
+
+    public virtual string DisplayName
+    {
+        get
         {
-            get
+            if (this.displayName == null)
             {
-                if (this.displayName == null)
+                try
                 {
-                    try
-                    {
-                        this.displayName = LocalizationHelper.LocalizeName(this.Name);
-                    }
-                    catch
-                    {
-                        this.displayName = this.Name;
-                    }
+                    this.displayName = LocalizationHelper.LocalizeName(this.Name);
                 }
-
-                return this.displayName;
+                catch
+                {
+                    this.displayName = this.Name;
+                }
             }
+
+            return this.displayName;
         }
+    }
 
-        public uint Handle { get; }
+    public uint Handle { get; }
 
-        public bool IsValid { get; internal set; } = true;
+    public bool IsValid { get; internal set; } = true;
 
-        public string Name { get; protected set; }
+    public string Name { get; protected set; }
 
-        public Unit9 Owner { get; internal set; }
+    public Unit9 Owner { get; internal set; }
 
-        public virtual string TextureName { get; }
+    public virtual string TextureName { get; }
 
-        public static bool operator ==(Entity9 obj1, Entity9 obj2)
-        {
-            return obj1?.Handle == obj2?.Handle;
-        }
+    public static bool operator ==(Entity9 obj1, Entity9 obj2)
+    {
+        return obj1?.Handle == obj2?.Handle;
+    }
 
-        public static implicit operator Entity(Entity9 entity)
-        {
-            return entity.BaseEntity;
-        }
+    public static implicit operator Entity(Entity9 entity)
+    {
+        return entity.BaseEntity;
+    }
 
-        public static bool operator !=(Entity9 obj1, Entity9 obj2)
-        {
-            return obj1?.Handle != obj2?.Handle;
-        }
+    public static bool operator !=(Entity9 obj1, Entity9 obj2)
+    {
+        return obj1?.Handle != obj2?.Handle;
+    }
 
-        public bool Equals(Entity9 other)
-        {
-            return this.Handle == other?.Handle;
-        }
+    public bool Equals(Entity9 other)
+    {
+        return this.Handle == other?.Handle;
+    }
 
-        public override bool Equals(object obj)
-        {
-            return this.Equals(obj as Entity9);
-        }
+    public override bool Equals(object obj)
+    {
+        return this.Equals(obj as Entity9);
+    }
 
-        public override int GetHashCode()
-        {
-            return (int)this.Handle;
-        }
+    public override int GetHashCode()
+    {
+        return (int)this.Handle;
+    }
 
-        public override string ToString()
-        {
-            return this.Name;
-        }
+    public override string ToString()
+    {
+        return this.Name;
     }
 }

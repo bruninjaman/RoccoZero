@@ -1,51 +1,50 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Clinkz
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Clinkz;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.clinkz_wind_walk)]
+public class SkeletonWalk : ActiveAbility, ISpeedBuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData bonusMoveSpeedData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.clinkz_wind_walk)]
-    public class SkeletonWalk : ActiveAbility, ISpeedBuff
+    public SkeletonWalk(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData bonusMoveSpeedData;
+        this.ActivationDelayData = new SpecialData(baseAbility, "fade_time");
+        this.bonusMoveSpeedData = new SpecialData(baseAbility, "move_speed_bonus_pct");
+    }
 
-        public SkeletonWalk(Ability baseAbility)
-            : base(baseAbility)
+    public string BuffModifierName { get; } = "modifier_clinkz_wind_walk";
+
+    public bool BuffsAlly { get; } = false;
+
+    public bool BuffsOwner { get; } = true;
+
+    public override bool IsInvisibility { get; } = true;
+
+    public float GetSpeedBuff(Unit9 unit)
+    {
+        return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
+    }
+
+    public override bool UseAbility(bool queue = false, bool bypass = false)
+    {
+        if (!Owner.HasAghanimShard)
         {
-            this.ActivationDelayData = new SpecialData(baseAbility, "fade_time");
-            this.bonusMoveSpeedData = new SpecialData(baseAbility, "move_speed_bonus_pct");
+            return false;
         }
 
-        public string BuffModifierName { get; } = "modifier_clinkz_wind_walk";
-
-        public bool BuffsAlly { get; } = false;
-
-        public bool BuffsOwner { get; } = true;
-
-        public override bool IsInvisibility { get; } = true;
-
-        public float GetSpeedBuff(Unit9 unit)
-        {
-            return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
-        }
-
-        public override bool UseAbility(bool queue = false, bool bypass = false)
-        {
-            if (!Owner.HasAghanimShard)
-            {
-                return false;
-            }
-
-            base.UseAbility(queue, bypass);
-            return true;
-        }
+        base.UseAbility(queue, bypass);
+        return true;
     }
 }

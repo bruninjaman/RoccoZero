@@ -1,34 +1,33 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.LoneDruid
+﻿namespace O9K.Core.Entities.Abilities.Heroes.LoneDruid;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers.Range;
+
+using Metadata;
+
+[AbilityId(AbilityId.lone_druid_true_form)]
+public class TrueForm : ActiveAbility, IHasRangeIncrease
 {
-    using Base;
-    using Base.Components;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers.Range;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.lone_druid_true_form)]
-    public class TrueForm : ActiveAbility, IHasRangeIncrease
+    public TrueForm(Ability baseAbility)
+        : base(baseAbility)
     {
-        public TrueForm(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
+    }
 
-        public bool IsRangeIncreasePermanent { get; } = false;
+    public bool IsRangeIncreasePermanent { get; } = false;
 
-        public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
+    public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
 
-        public string RangeModifierName { get; } = "modifier_lone_druid_true_form";
+    public string RangeModifierName { get; } = "modifier_lone_druid_true_form";
 
-        public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
-        {
-            return -400; // no special data
-        }
+    public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+    {
+        return -400; // no special data
     }
 }

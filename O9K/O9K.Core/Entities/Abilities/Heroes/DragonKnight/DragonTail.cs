@@ -1,43 +1,42 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.DragonKnight
+﻿namespace O9K.Core.Entities.Abilities.Heroes.DragonKnight;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.dragon_knight_dragon_tail)]
+public class DragonTail : RangedAbility, IDisable
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.dragon_knight_dragon_tail)]
-    public class DragonTail : RangedAbility, IDisable
+    public DragonTail(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        //todo fix cast range
 
-        public DragonTail(Ability baseAbility)
-            : base(baseAbility)
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+        this.castRangeData = new SpecialData(baseAbility, "dragon_cast_range");
+    }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+
+    protected override float BaseCastRange
+    {
+        get
         {
-            //todo fix cast range
-
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-            this.castRangeData = new SpecialData(baseAbility, "dragon_cast_range");
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        protected override float BaseCastRange
-        {
-            get
+            if (this.Owner.HasModifier("modifier_dragon_knight_dragon_form"))
             {
-                if (this.Owner.HasModifier("modifier_dragon_knight_dragon_form"))
-                {
-                    return this.castRangeData.GetValue(this.Level);
-                }
-
-                return base.BaseCastRange + 100;
+                return this.castRangeData.GetValue(this.Level);
             }
+
+            return base.BaseCastRange + 100;
         }
     }
 }

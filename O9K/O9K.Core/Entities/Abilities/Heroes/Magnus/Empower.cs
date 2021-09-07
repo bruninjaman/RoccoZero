@@ -1,25 +1,24 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Magnus
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Magnus;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.magnataur_empower)]
+public class Empower : RangedAbility, IBuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.magnataur_empower)]
-    public class Empower : RangedAbility, IBuff
+    public Empower(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Empower(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
-
-        public string BuffModifierName { get; } = "modifier_magnataur_empower";
-
-        public bool BuffsAlly { get; } = true;
-
-        public bool BuffsOwner { get; } = true;
     }
+
+    public string BuffModifierName { get; } = "modifier_magnataur_empower";
+
+    public bool BuffsAlly { get; } = true;
+
+    public bool BuffsOwner { get; } = true;
 }

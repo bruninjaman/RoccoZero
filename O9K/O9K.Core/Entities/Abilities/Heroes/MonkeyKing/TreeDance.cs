@@ -1,26 +1,25 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.MonkeyKing
+﻿namespace O9K.Core.Entities.Abilities.Heroes.MonkeyKing;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.monkey_king_tree_dance)]
+public class TreeDance : RangedAbility, IBlink
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.monkey_king_tree_dance)]
-    public class TreeDance : RangedAbility, IBlink
+    public TreeDance(Ability baseAbility)
+        : base(baseAbility)
     {
-        public TreeDance(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.SpeedData = new SpecialData(baseAbility, "leap_speed");
-        }
-
-        public BlinkType BlinkType { get; } = BlinkType.Targetable;
-
-        public override bool TargetsEnemy { get; } = false;
+        this.SpeedData = new SpecialData(baseAbility, "leap_speed");
     }
+
+    public BlinkType BlinkType { get; } = BlinkType.Targetable;
+
+    public override bool TargetsEnemy { get; } = false;
 }

@@ -1,65 +1,64 @@
-﻿namespace O9K.Core.Managers.Assembly
+﻿namespace O9K.Core.Managers.Assembly;
+
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+
+public sealed class AssemblyEventManager9 : IAssemblyEventManager9
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Reflection;
+    private readonly List<string> loadedAssemblies = new List<string>();
 
-    public sealed class AssemblyEventManager9 : IAssemblyEventManager9
+    public event EventHandler AutoSoulRingEnabled;
+
+    public event EventHandler EvaderPredictedDeath;
+
+    public event EventHandler ForceBlockerResubscribe;
+
+    public event EventHandler<string> OnAssemblyLoad
     {
-        private readonly List<string> loadedAssemblies = new List<string>();
-
-        public event EventHandler AutoSoulRingEnabled;
-
-        public event EventHandler EvaderPredictedDeath;
-
-        public event EventHandler ForceBlockerResubscribe;
-
-        public event EventHandler<string> OnAssemblyLoad
+        add
         {
-            add
-            {
-                this.AssemblyLoad += value;
+            this.AssemblyLoad += value;
 
-                foreach (var assembly in this.loadedAssemblies)
-                {
-                    value(this, assembly);
-                }
-            }
-            remove
+            foreach (var assembly in this.loadedAssemblies)
             {
-                this.AssemblyLoad -= value;
+                value(this, assembly);
             }
         }
-
-        public event EventHandler<bool> OrderBlockerMoveCamera;
-
-        private event EventHandler<string> AssemblyLoad;
-
-        public void AssemblyLoaded()
+        remove
         {
-            var name = Assembly.GetCallingAssembly().GetName().Name;
-            this.loadedAssemblies.Add(name);
-            this.AssemblyLoad?.Invoke(this, name);
+            this.AssemblyLoad -= value;
         }
+    }
 
-        public void InvokeAutoSoulRingEnabled()
-        {
-            this.AutoSoulRingEnabled?.Invoke(this, EventArgs.Empty);
-        }
+    public event EventHandler<bool> OrderBlockerMoveCamera;
 
-        public void InvokeEvaderPredictedDeath()
-        {
-            this.EvaderPredictedDeath?.Invoke(this, EventArgs.Empty);
-        }
+    private event EventHandler<string> AssemblyLoad;
 
-        public void InvokeForceBlockerResubscribe()
-        {
-            this.ForceBlockerResubscribe?.Invoke(this, EventArgs.Empty);
-        }
+    public void AssemblyLoaded()
+    {
+        var name = Assembly.GetCallingAssembly().GetName().Name;
+        this.loadedAssemblies.Add(name);
+        this.AssemblyLoad?.Invoke(this, name);
+    }
 
-        public void InvokeOrderBlockerMoveCamera(bool enabled)
-        {
-            this.OrderBlockerMoveCamera?.Invoke(this, enabled);
-        }
+    public void InvokeAutoSoulRingEnabled()
+    {
+        this.AutoSoulRingEnabled?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokeEvaderPredictedDeath()
+    {
+        this.EvaderPredictedDeath?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokeForceBlockerResubscribe()
+    {
+        this.ForceBlockerResubscribe?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokeOrderBlockerMoveCamera(bool enabled)
+    {
+        this.OrderBlockerMoveCamera?.Invoke(this, enabled);
     }
 }

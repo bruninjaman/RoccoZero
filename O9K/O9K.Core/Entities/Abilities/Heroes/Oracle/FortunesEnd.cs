@@ -1,51 +1,50 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Oracle
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Oracle;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.oracle_fortunes_end)]
+public class FortunesEnd : RangedAbility, IDisable, IChanneled, IAppliesImmobility
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData aghanimsBonusCastRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.oracle_fortunes_end)]
-    public class FortunesEnd : RangedAbility, IDisable, IChanneled, IAppliesImmobility
+    public FortunesEnd(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData aghanimsBonusCastRangeData;
-
-        public FortunesEnd(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.SpeedData = new SpecialData(baseAbility, "bolt_speed");
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.aghanimsBonusCastRangeData = new SpecialData(baseAbility, "scepter_bonus_range");
-            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Rooted;
-
-        public override float CastRange
-        {
-            get
-            {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return base.CastRange + this.aghanimsBonusCastRangeData.GetValue(this.Level);
-                }
-
-                return base.CastRange;
-            }
-        }
-
-        public float ChannelTime { get; }
-
-        public string ImmobilityModifierName { get; } = "modifier_oracle_fortunes_end_purge";
-
-        public bool IsActivatesOnChannelStart { get; } = true;
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.SpeedData = new SpecialData(baseAbility, "bolt_speed");
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.aghanimsBonusCastRangeData = new SpecialData(baseAbility, "scepter_bonus_range");
+        this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
     }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Rooted;
+
+    public override float CastRange
+    {
+        get
+        {
+            if (this.Owner.HasAghanimsScepter)
+            {
+                return base.CastRange + this.aghanimsBonusCastRangeData.GetValue(this.Level);
+            }
+
+            return base.CastRange;
+        }
+    }
+
+    public float ChannelTime { get; }
+
+    public string ImmobilityModifierName { get; } = "modifier_oracle_fortunes_end_purge";
+
+    public bool IsActivatesOnChannelStart { get; } = true;
 }

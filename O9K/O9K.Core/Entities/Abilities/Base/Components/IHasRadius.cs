@@ -1,7 +1,6 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Components
+﻿namespace O9K.Core.Entities.Abilities.Base.Components;
+
+public interface IHasRadius
 {
-    public interface IHasRadius
-    {
-        float Radius { get; }
-    }
+    float Radius { get; }
 }

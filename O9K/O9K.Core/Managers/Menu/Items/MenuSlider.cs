@@ -1,215 +1,214 @@
-﻿namespace O9K.Core.Managers.Menu.Items
+﻿namespace O9K.Core.Managers.Menu.Items;
+
+using System;
+
+using Divine.Input;
+using Divine.Input.EventArgs;
+using Divine.Numerics;
+using Divine.Renderer;
+
+using EventArgs;
+
+using Logger;
+
+using Newtonsoft.Json.Linq;
+
+public class MenuSlider : MenuItem
 {
-    using System;
+    private readonly int defaultValue;
 
-    using Divine.Input;
-    using Divine.Input.EventArgs;
-    using Divine.Numerics;
-    using Divine.Renderer;
+    private bool drag;
 
-    using EventArgs;
+    private int value;
 
-    using Logger;
+    private EventHandler<SliderEventArgs> valueChange;
 
-    using Newtonsoft.Json.Linq;
+    private Vector2 valueTextSize;
 
-    public class MenuSlider : MenuItem
+    public MenuSlider(string displayName, int value, int minValue, int maxValue, bool heroUnique = false)
+        : this(displayName, displayName, value, minValue, maxValue, heroUnique)
     {
-        private readonly int defaultValue;
+    }
 
-        private bool drag;
+    public MenuSlider(string displayName, string name, int value, int minValue, int maxValue, bool heroUnique = false)
+        : base(displayName, name, heroUnique)
+    {
+        this.MinValue = minValue;
+        this.MaxValue = maxValue;
+        this.Value = value;
+        this.defaultValue = value;
+    }
 
-        private int value;
-
-        private EventHandler<SliderEventArgs> valueChange;
-
-        private Vector2 valueTextSize;
-
-        public MenuSlider(string displayName, int value, int minValue, int maxValue, bool heroUnique = false)
-            : this(displayName, displayName, value, minValue, maxValue, heroUnique)
+    public event EventHandler<SliderEventArgs> ValueChange
+    {
+        add
         {
+            value(this, new SliderEventArgs(this.value, this.value));
+            this.valueChange += value;
         }
-
-        public MenuSlider(string displayName, string name, int value, int minValue, int maxValue, bool heroUnique = false)
-            : base(displayName, name, heroUnique)
+        remove
         {
-            this.MinValue = minValue;
-            this.MaxValue = maxValue;
-            this.Value = value;
-            this.defaultValue = value;
+            this.valueChange -= value;
         }
+    }
 
-        public event EventHandler<SliderEventArgs> ValueChange
+    public int MaxValue { get; set; }
+
+    public int MinValue { get; set; }
+
+    public int Value
+    {
+        get
         {
-            add
-            {
-                value(this, new SliderEventArgs(this.value, this.value));
-                this.valueChange += value;
-            }
-            remove
-            {
-                this.valueChange -= value;
-            }
+            return this.value;
         }
-
-        public int MaxValue { get; set; }
-
-        public int MinValue { get; set; }
-
-        public int Value
+        set
         {
-            get
+            var setValue = Math.Max(Math.Min(value, this.MaxValue), this.MinValue);
+            if (setValue == this.value)
             {
-                return this.value;
+                return;
             }
-            set
+
+            this.valueChange?.Invoke(this, new SliderEventArgs(setValue, this.value));
+            this.value = setValue;
+
+            if (this.SizeCalculated)
             {
-                var setValue = Math.Max(Math.Min(value, this.MaxValue), this.MinValue);
-                if (setValue == this.value)
-                {
-                    return;
-                }
-
-                this.valueChange?.Invoke(this, new SliderEventArgs(setValue, this.value));
-                this.value = setValue;
-
-                if (this.SizeCalculated)
-                {
-                    this.valueTextSize = RendererManager.MeasureText(this.value.ToString(), this.MenuStyle.Font, this.MenuStyle.TextSize);
-                }
+                this.valueTextSize = RendererManager.MeasureText(this.value.ToString(), this.MenuStyle.Font, this.MenuStyle.TextSize);
             }
         }
+    }
 
-        public static implicit operator int(MenuSlider item)
-        {
-            return item.value;
-        }
+    public static implicit operator int(MenuSlider item)
+    {
+        return item.value;
+    }
 
-        public static implicit operator float(MenuSlider item)
-        {
-            return item.value;
-        }
+    public static implicit operator float(MenuSlider item)
+    {
+        return item.value;
+    }
 
-        public MenuSlider SetTooltip(string tooltip)
+    public MenuSlider SetTooltip(string tooltip)
+    {
+        this.LocalizedTooltip[Lang.En] = tooltip;
+        return this;
+    }
+
+    internal override void CalculateSize()
+    {
+        base.CalculateSize();
+        var maxTextSize = RendererManager.MeasureText(this.MaxValue.ToString(), this.MenuStyle.Font, this.MenuStyle.TextSize);
+        this.Size = new Vector2(this.Size.X + maxTextSize.X, this.Size.Y);
+    }
+
+    internal override MenuItem GetItemUnder(Vector2 position)
+    {
+        if (this.drag)
         {
-            this.LocalizedTooltip[Lang.En] = tooltip;
             return this;
         }
 
-        internal override void CalculateSize()
+        return base.GetItemUnder(position);
+    }
+
+    internal override object GetSaveValue()
+    {
+        if (this.value == this.defaultValue)
         {
-            base.CalculateSize();
-            var maxTextSize = RendererManager.MeasureText(this.MaxValue.ToString(), this.MenuStyle.Font, this.MenuStyle.TextSize);
-            this.Size = new Vector2(this.Size.X + maxTextSize.X, this.Size.Y);
+            return null;
         }
 
-        internal override MenuItem GetItemUnder(Vector2 position)
+        return this.Value;
+    }
+
+    internal override void Load(JToken token)
+    {
+        try
         {
-            if (this.drag)
+            token = token?[this.Name];
+            if (token == null)
             {
-                return this;
+                return;
             }
 
-            return base.GetItemUnder(position);
+            this.Value = (int)token;
         }
-
-        internal override object GetSaveValue()
+        catch (Exception e)
         {
-            if (this.value == this.defaultValue)
-            {
-                return null;
-            }
-
-            return this.Value;
+            Logger.Error(e);
         }
+    }
 
-        internal override void Load(JToken token)
-        {
-            try
-            {
-                token = token?[this.Name];
-                if (token == null)
-                {
-                    return;
-                }
+    internal override bool OnMousePress(Vector2 position)
+    {
+        this.drag = true;
+        this.SetValue(position);
 
-                this.Value = (int)token;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
+        InputManager.MouseMove += this.OnMouseMove;
+        InputManager.MouseKeyUp += this.OnMouseKeyUp;
 
-        internal override bool OnMousePress(Vector2 position)
-        {
-            this.drag = true;
-            this.SetValue(position);
+        return true;
+    }
 
-            InputManager.MouseMove += this.OnMouseMove;
-            InputManager.MouseKeyUp += this.OnMouseKeyUp;
+    internal override bool OnMouseWheel(Vector2 position, bool up)
+    {
+        this.Value += up ? 1 : -1;
+        return true;
+    }
 
-            return true;
-        }
+    internal override void Remove()
+    {
+        InputManager.MouseKeyUp -= this.OnMouseKeyUp;
+        InputManager.MouseMove -= this.OnMouseMove;
+    }
 
-        internal override bool OnMouseWheel(Vector2 position, bool up)
-        {
-            this.Value += up ? 1 : -1;
-            return true;
-        }
+    internal override void SetRenderer()
+    {
+        base.SetRenderer();
+        this.valueTextSize = RendererManager.MeasureText(this.value.ToString(), this.MenuStyle.Font, this.MenuStyle.TextSize);
+    }
 
-        internal override void Remove()
-        {
-            InputManager.MouseKeyUp -= this.OnMouseKeyUp;
-            InputManager.MouseMove -= this.OnMouseMove;
-        }
+    protected override void Draw()
+    {
+        //value fill
+        var fillPct = ((float)this.Value - this.MinValue) / (this.MaxValue - this.MinValue);
 
-        internal override void SetRenderer()
-        {
-            base.SetRenderer();
-            this.valueTextSize = RendererManager.MeasureText(this.value.ToString(), this.MenuStyle.Font, this.MenuStyle.TextSize);
-        }
+        RendererManager.DrawLine(
+            this.Position + new Vector2(0, this.Size.Y / 2),
+            this.Position + new Vector2(this.Size.X * fillPct, this.Size.Y / 2),
+            this.MenuStyle.BackgroundColor,
+            this.Size.Y);
 
-        protected override void Draw()
-        {
-            //value fill
-            var fillPct = ((float)this.Value - this.MinValue) / (this.MaxValue - this.MinValue);
+        base.Draw();
 
-            RendererManager.DrawLine(
-                this.Position + new Vector2(0, this.Size.Y / 2),
-                this.Position + new Vector2(this.Size.X * fillPct, this.Size.Y / 2),
-                this.MenuStyle.BackgroundColor,
-                this.Size.Y);
+        //value text
+        var valuePosition = new Vector2(
+            (this.Position.X + this.Size.X) - this.MenuStyle.RightIndent - this.valueTextSize.X,
+            this.Position.Y + ((this.Size.Y - this.MenuStyle.TextSize) / 3.3f));
 
-            base.Draw();
+        RendererManager.DrawText(this.Value.ToString(), valuePosition, Color.White, this.MenuStyle.Font, this.MenuStyle.TextSize);
+    }
 
-            //value text
-            var valuePosition = new Vector2(
-                (this.Position.X + this.Size.X) - this.MenuStyle.RightIndent - this.valueTextSize.X,
-                this.Position.Y + ((this.Size.Y - this.MenuStyle.TextSize) / 3.3f));
+    private void OnMouseKeyUp(MouseEventArgs e)
+    {
+        this.drag = false;
+        InputManager.MouseKeyUp -= this.OnMouseKeyUp;
+        InputManager.MouseMove -= this.OnMouseMove;
+    }
 
-            RendererManager.DrawText(this.Value.ToString(), valuePosition, Color.White, this.MenuStyle.Font, this.MenuStyle.TextSize);
-        }
+    private void OnMouseMove(MouseMoveEventArgs e)
+    {
+        this.SetValue(e.Position);
+    }
 
-        private void OnMouseKeyUp(MouseEventArgs e)
-        {
-            this.drag = false;
-            InputManager.MouseKeyUp -= this.OnMouseKeyUp;
-            InputManager.MouseMove -= this.OnMouseMove;
-        }
+    private void SetValue(Vector2 position)
+    {
+        var start = this.Position.X;
+        var end = start + this.Size.X;
+        var pct = (position.X - start) / (end - start);
 
-        private void OnMouseMove(MouseMoveEventArgs e)
-        {
-            this.SetValue(e.Position);
-        }
-
-        private void SetValue(Vector2 position)
-        {
-            var start = this.Position.X;
-            var end = start + this.Size.X;
-            var pct = (position.X - start) / (end - start);
-
-            this.Value = (int)((pct * (this.MaxValue - this.MinValue)) + this.MinValue);
-        }
+        this.Value = (int)((pct * (this.MaxValue - this.MinValue)) + this.MinValue);
     }
 }

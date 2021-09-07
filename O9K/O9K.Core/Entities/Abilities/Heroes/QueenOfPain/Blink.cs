@@ -1,34 +1,33 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.QueenOfPain
+﻿namespace O9K.Core.Entities.Abilities.Heroes.QueenOfPain;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.queenofpain_blink)]
+public class Blink : RangedAbility, IBlink
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.queenofpain_blink)]
-    public class Blink : RangedAbility, IBlink
+    public Blink(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.castRangeData = new SpecialData(baseAbility, "blink_range");
+    }
 
-        public Blink(Ability baseAbility)
-            : base(baseAbility)
+    public BlinkType BlinkType { get; } = BlinkType.Blink;
+
+    protected override float BaseCastRange
+    {
+        get
         {
-            this.castRangeData = new SpecialData(baseAbility, "blink_range");
-        }
-
-        public BlinkType BlinkType { get; } = BlinkType.Blink;
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
+            return this.castRangeData.GetValue(this.Level);
         }
     }
 }

@@ -1,21 +1,20 @@
-﻿namespace O9K.Core.Entities.Abilities.NeutralItems
+﻿namespace O9K.Core.Entities.Abilities.NeutralItems;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_flicker)]
+public class Flicker : ActiveAbility, IBlink
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_flicker)]
-    public class Flicker : ActiveAbility, IBlink
+    public Flicker(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Flicker(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
-
-        public BlinkType BlinkType { get; } = BlinkType.Blink;
     }
+
+    public BlinkType BlinkType { get; } = BlinkType.Blink;
 }

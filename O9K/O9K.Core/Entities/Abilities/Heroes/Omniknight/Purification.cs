@@ -1,38 +1,37 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Omniknight
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Omniknight;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.omniknight_purification)]
+public class Purification : RangedAreaOfEffectAbility, IHealthRestore, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.omniknight_purification)]
-    public class Purification : RangedAreaOfEffectAbility, IHealthRestore, INuke
+    public Purification(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Purification(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.DamageData = new SpecialData(baseAbility, "heal");
-        }
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.DamageData = new SpecialData(baseAbility, "heal");
+    }
 
-        public bool InstantRestore { get; } = true;
+    public bool InstantRestore { get; } = true;
 
-        public string RestoreModifierName { get; } = string.Empty;
+    public string RestoreModifierName { get; } = string.Empty;
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)this.DamageData.GetValue(this.Level);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)this.DamageData.GetValue(this.Level);
     }
 }

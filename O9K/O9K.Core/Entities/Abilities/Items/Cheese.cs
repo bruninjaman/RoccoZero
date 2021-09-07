@@ -1,47 +1,46 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_cheese)]
+public class Cheese : ActiveAbility, IHealthRestore, IManaRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData manaRestoreData;
 
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_cheese)]
-    public class Cheese : ActiveAbility, IHealthRestore, IManaRestore
+    public Cheese(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthRestoreData;
+        this.healthRestoreData = new SpecialData(baseAbility, "health_restore");
+        this.manaRestoreData = new SpecialData(baseAbility, "mana_restore");
+    }
 
-        private readonly SpecialData manaRestoreData;
+    public bool InstantRestore { get; } = true;
 
-        public Cheese(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.healthRestoreData = new SpecialData(baseAbility, "health_restore");
-            this.manaRestoreData = new SpecialData(baseAbility, "mana_restore");
-        }
+    public string RestoreModifierName { get; } = string.Empty;
 
-        public bool InstantRestore { get; } = true;
+    public bool RestoresAlly { get; } = false;
 
-        public string RestoreModifierName { get; } = string.Empty;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresAlly { get; } = false;
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)this.healthRestoreData.GetValue(this.Level);
+    }
 
-        public bool RestoresOwner { get; } = true;
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)this.healthRestoreData.GetValue(this.Level);
-        }
-
-        public int GetManaRestore(Unit9 unit)
-        {
-            return (int)this.manaRestoreData.GetValue(this.Level);
-        }
+    public int GetManaRestore(Unit9 unit)
+    {
+        return (int)this.manaRestoreData.GetValue(this.Level);
     }
 }

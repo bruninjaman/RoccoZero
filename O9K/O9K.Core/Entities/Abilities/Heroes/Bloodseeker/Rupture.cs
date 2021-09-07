@@ -1,42 +1,41 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Bloodseeker
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Bloodseeker;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.bloodseeker_rupture)]
+public class Rupture : RangedAbility, IDebuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.bloodseeker_rupture)]
-    public class Rupture : RangedAbility, IDebuff
+    public Rupture(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.castRangeData = new SpecialData(baseAbility, "abilitycastrange");
+    }
 
-        public Rupture(Ability baseAbility)
-            : base(baseAbility)
+    public string DebuffModifierName { get; } = "modifier_bloodseeker_rupture";
+
+    public override bool IsDisplayingCharges
+    {
+        get
         {
-            this.castRangeData = new SpecialData(baseAbility, "abilitycastrange");
+            return this.Owner.HasAghanimsScepter;
         }
+    }
 
-        public string DebuffModifierName { get; } = "modifier_bloodseeker_rupture";
-
-        public override bool IsDisplayingCharges
+    protected override float BaseCastRange
+    {
+        get
         {
-            get
-            {
-                return this.Owner.HasAghanimsScepter;
-            }
-        }
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
+            return this.castRangeData.GetValue(this.Level);
         }
     }
 }

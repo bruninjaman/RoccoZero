@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_clarity)]
+public class Clarity : RangedAbility, IManaRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData manaRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_clarity)]
-    public class Clarity : RangedAbility, IManaRestore
+    public Clarity(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData manaRestoreData;
+        this.DurationData = new SpecialData(baseAbility, "buff_duration");
+        this.manaRestoreData = new SpecialData(baseAbility, "mana_regen");
+    }
 
-        public Clarity(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.DurationData = new SpecialData(baseAbility, "buff_duration");
-            this.manaRestoreData = new SpecialData(baseAbility, "mana_regen");
-        }
+    public bool InstantRestore { get; } = false;
 
-        public bool InstantRestore { get; } = false;
+    public string RestoreModifierName { get; } = "modifier_clarity_potion";
 
-        public string RestoreModifierName { get; } = "modifier_clarity_potion";
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
-
-        public int GetManaRestore(Unit9 unit)
-        {
-            return (int)(this.manaRestoreData.GetValue(this.Level) * this.Duration);
-        }
+    public int GetManaRestore(Unit9 unit)
+    {
+        return (int)(this.manaRestoreData.GetValue(this.Level) * this.Duration);
     }
 }

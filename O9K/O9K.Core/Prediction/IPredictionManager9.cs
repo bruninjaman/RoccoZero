@@ -1,11 +1,10 @@
-﻿namespace O9K.Core.Prediction
+﻿namespace O9K.Core.Prediction;
+
+using Data;
+
+public interface IPredictionManager9
 {
-    using Data;
+    PredictionOutput9 GetPrediction(PredictionInput9 input);
 
-    public interface IPredictionManager9
-    {
-        PredictionOutput9 GetPrediction(PredictionInput9 input);
-
-        PredictionOutput9 GetSimplePrediction(PredictionInput9 input);
-    }
+    PredictionOutput9 GetSimplePrediction(PredictionInput9 input);
 }

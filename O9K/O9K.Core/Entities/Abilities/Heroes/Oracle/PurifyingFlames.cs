@@ -1,41 +1,40 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Oracle
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Oracle;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.oracle_purifying_flames)]
+public class PurifyingFlames : RangedAbility, INuke, IHealthRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.oracle_purifying_flames)]
-    public class PurifyingFlames : RangedAbility, INuke, IHealthRestore
+    public PurifyingFlames(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthRestoreData;
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.DurationData = new SpecialData(baseAbility, "duration");
+        this.healthRestoreData = new SpecialData(baseAbility, "heal_per_second");
+    }
 
-        public PurifyingFlames(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.DurationData = new SpecialData(baseAbility, "duration");
-            this.healthRestoreData = new SpecialData(baseAbility, "heal_per_second");
-        }
+    public bool InstantRestore { get; } = false;
 
-        public bool InstantRestore { get; } = false;
+    public string RestoreModifierName { get; } = string.Empty;
 
-        public string RestoreModifierName { get; } = string.Empty;
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)(this.healthRestoreData.GetValue(this.Level) * this.Duration);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)(this.healthRestoreData.GetValue(this.Level) * this.Duration);
     }
 }

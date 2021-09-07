@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Viper
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Viper;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.viper_nethertoxin)]
+public class Nethertoxin : CircleAbility, IDisable
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.viper_nethertoxin)]
-    public class Nethertoxin : CircleAbility, IDisable
+    public Nethertoxin(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Nethertoxin(Ability baseAbility)
-            : base(baseAbility)
-        {
-            //todo fix applies state ?
+        //todo fix applies state ?
 
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-        }
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+    }
 
-        public UnitState AppliesUnitState
+    public UnitState AppliesUnitState
+    {
+        get
         {
-            get
+            var talent = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_viper_3);
+            if (talent?.Level > 0)
             {
-                var talent = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_viper_3);
-                if (talent?.Level > 0)
-                {
-                    return UnitState.PassivesDisabled | UnitState.Silenced;
-                }
-
-                return UnitState.PassivesDisabled;
+                return UnitState.PassivesDisabled | UnitState.Silenced;
             }
+
+            return UnitState.PassivesDisabled;
         }
     }
 }

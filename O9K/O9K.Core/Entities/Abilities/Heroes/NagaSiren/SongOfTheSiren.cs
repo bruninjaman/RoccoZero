@@ -1,32 +1,31 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.NagaSiren
+﻿namespace O9K.Core.Entities.Abilities.Heroes.NagaSiren;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.naga_siren_song_of_the_siren)]
+public class SongOfTheSiren : AreaOfEffectAbility, IShield
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.naga_siren_song_of_the_siren)]
-    public class SongOfTheSiren : AreaOfEffectAbility, IShield
+    public SongOfTheSiren(Ability baseAbility)
+        : base(baseAbility)
     {
-        public SongOfTheSiren(Ability baseAbility)
-            : base(baseAbility)
-        {
-            //todo add to immobile ?
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-        }
-
-        public UnitState AppliesUnitState { get; } = 0;
-
-        public string ShieldModifierName { get; } = "modifier_naga_siren_song_of_the_siren_aura";
-
-        public bool ShieldsAlly { get; } = true;
-
-        public bool ShieldsOwner { get; } = true;
+        //todo add to immobile ?
+        this.RadiusData = new SpecialData(baseAbility, "radius");
     }
+
+    public UnitState AppliesUnitState { get; } = 0;
+
+    public string ShieldModifierName { get; } = "modifier_naga_siren_song_of_the_siren_aura";
+
+    public bool ShieldsAlly { get; } = true;
+
+    public bool ShieldsOwner { get; } = true;
 }

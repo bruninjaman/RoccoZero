@@ -1,81 +1,80 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Tiny
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Tiny;
+
+using System.Linq;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Managers.Entity;
+
+using Metadata;
+
+[AbilityId(AbilityId.tiny_toss)]
+public class Toss : RangedAbility, INuke
 {
-    using System.Linq;
+    private bool talentLearned;
 
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Managers.Entity;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.tiny_toss)]
-    public class Toss : RangedAbility, INuke
+    public Toss(Ability baseAbility)
+        : base(baseAbility)
     {
-        private bool talentLearned;
+        this.DamageData = new SpecialData(baseAbility, "toss_damage");
+        this.RadiusData = new SpecialData(baseAbility, "grab_radius");
+    }
 
-        public Toss(Ability baseAbility)
-            : base(baseAbility)
+    public override bool BreaksLinkens { get; } = false;
+
+    public override bool CanHitSpellImmuneEnemy { get; } = false;
+
+    public override bool IsDisplayingCharges
+    {
+        get
         {
-            this.DamageData = new SpecialData(baseAbility, "toss_damage");
-            this.RadiusData = new SpecialData(baseAbility, "grab_radius");
+            if (this.talentLearned)
+            {
+                return true;
+            }
+
+            return this.talentLearned = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_tiny_2)?.Level > 0;
+        }
+    }
+
+    public override bool CanHit(Unit9 target)
+    {
+        if (target.IsMagicImmune && ((target.IsEnemy(this.Owner) && !this.CanHitSpellImmuneEnemy)
+                                     || (target.IsAlly(this.Owner) && !this.CanHitSpellImmuneAlly)))
+        {
+            return false;
         }
 
-        public override bool BreaksLinkens { get; } = false;
-
-        public override bool CanHitSpellImmuneEnemy { get; } = false;
-
-        public override bool IsDisplayingCharges
+        if (this.Owner.Distance(target) > this.CastRange)
         {
-            get
-            {
-                if (this.talentLearned)
-                {
-                    return true;
-                }
-
-                return this.talentLearned = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_tiny_2)?.Level > 0;
-            }
+            return false;
         }
 
-        public override bool CanHit(Unit9 target)
+        var grabTarget = EntityManager9.Units
+            .Where(
+                x => x.IsUnit && x.IsAlive && x.IsVisible && !x.IsMagicImmune && !x.IsInvulnerable && !x.Equals(this.Owner)
+                     && x.Distance(this.Owner) < this.RadiusData.GetValue(this.Level))
+            .OrderBy(x => x.Distance(this.Owner))
+            .FirstOrDefault();
+
+        if (grabTarget == null)
         {
-            if (target.IsMagicImmune && ((target.IsEnemy(this.Owner) && !this.CanHitSpellImmuneEnemy)
-                                         || (target.IsAlly(this.Owner) && !this.CanHitSpellImmuneAlly)))
-            {
-                return false;
-            }
-
-            if (this.Owner.Distance(target) > this.CastRange)
-            {
-                return false;
-            }
-
-            var grabTarget = EntityManager9.Units
-                .Where(
-                    x => x.IsUnit && x.IsAlive && x.IsVisible && !x.IsMagicImmune && !x.IsInvulnerable && !x.Equals(this.Owner)
-                         && x.Distance(this.Owner) < this.RadiusData.GetValue(this.Level))
-                .OrderBy(x => x.Distance(this.Owner))
-                .FirstOrDefault();
-
-            if (grabTarget == null)
-            {
-                return false;
-            }
-
-            if (grabTarget.IsHero && !grabTarget.IsIllusion && grabTarget.IsAlly(this.Owner))
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
+
+        if (grabTarget.IsHero && !grabTarget.IsIllusion && grabTarget.IsAlly(this.Owner))
+        {
+            return false;
+        }
+
+        return true;
     }
 }

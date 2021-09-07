@@ -1,46 +1,45 @@
-﻿namespace O9K.Core.Entities.Abilities.Base
+﻿namespace O9K.Core.Entities.Abilities.Base;
+
+using Components;
+
+using Divine.Entity.Entities.Abilities;
+
+public abstract class AutoCastAbility : RangedAbility, IToggleable
 {
-    using Components;
-
-    using Divine.Entity.Entities.Abilities;
-
-    public abstract class AutoCastAbility : RangedAbility, IToggleable
+    protected AutoCastAbility(Ability baseAbility)
+        : base(baseAbility)
     {
-        protected AutoCastAbility(Ability baseAbility)
-            : base(baseAbility)
+    }
+
+    public override bool BreaksLinkens { get; } = false;
+
+    public virtual bool Enabled
+    {
+        get
         {
+            return this.BaseAbility.IsAutoCastEnabled;
         }
-
-        public override bool BreaksLinkens { get; } = false;
-
-        public virtual bool Enabled
+        set
         {
-            get
+            var result = false;
+            if (value)
             {
-                return this.BaseAbility.IsAutoCastEnabled;
+                if (!this.Enabled)
+                {
+                    result = this.BaseAbility.CastToggleAutocast();
+                }
             }
-            set
+            else
             {
-                var result = false;
-                if (value)
+                if (this.Enabled)
                 {
-                    if (!this.Enabled)
-                    {
-                        result = this.BaseAbility.CastToggleAutocast();
-                    }
+                    result = this.BaseAbility.CastToggleAutocast();
                 }
-                else
-                {
-                    if (this.Enabled)
-                    {
-                        result = this.BaseAbility.CastToggleAutocast();
-                    }
-                }
+            }
 
-                if (result)
-                {
-                    this.ActionSleeper.Sleep(0.1f);
-                }
+            if (result)
+            {
+                this.ActionSleeper.Sleep(0.1f);
             }
         }
     }

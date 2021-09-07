@@ -1,37 +1,36 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Slardar
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Slardar;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.slardar_sprint)]
+public class GuardianSprint : ActiveAbility, ISpeedBuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData bonusMoveSpeedData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.slardar_sprint)]
-    public class GuardianSprint : ActiveAbility, ISpeedBuff
+    public GuardianSprint(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData bonusMoveSpeedData;
+        this.bonusMoveSpeedData = new SpecialData(baseAbility, "bonus_speed");
+    }
 
-        public GuardianSprint(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.bonusMoveSpeedData = new SpecialData(baseAbility, "bonus_speed");
-        }
+    public string BuffModifierName { get; } = "modifier_slardar_sprint";
 
-        public string BuffModifierName { get; } = "modifier_slardar_sprint";
+    public bool BuffsAlly { get; } = false;
 
-        public bool BuffsAlly { get; } = false;
+    public bool BuffsOwner { get; } = true;
 
-        public bool BuffsOwner { get; } = true;
-
-        public float GetSpeedBuff(Unit9 unit)
-        {
-            return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
-        }
+    public float GetSpeedBuff(Unit9 unit)
+    {
+        return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
     }
 }

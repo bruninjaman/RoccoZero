@@ -1,23 +1,22 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.ElderTitan
+﻿namespace O9K.Core.Entities.Abilities.Heroes.ElderTitan;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.elder_titan_ancestral_spirit)]
+public class AstralSpirit : CircleAbility, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.elder_titan_ancestral_spirit)]
-    public class AstralSpirit : CircleAbility, INuke
+    public AstralSpirit(Ability baseAbility)
+        : base(baseAbility)
     {
-        public AstralSpirit(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.DamageData = new SpecialData(baseAbility, "pass_damage");
-        }
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.DamageData = new SpecialData(baseAbility, "pass_damage");
     }
 }

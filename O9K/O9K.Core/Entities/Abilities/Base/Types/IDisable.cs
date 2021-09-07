@@ -1,11 +1,10 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Types
+﻿namespace O9K.Core.Entities.Abilities.Base.Types;
+
+using Components.Base;
+
+using Divine.Entity.Entities.Units.Components;
+
+public interface IDisable : IActiveAbility
 {
-    using Components.Base;
-
-    using Divine.Entity.Entities.Units.Components;
-
-    public interface IDisable : IActiveAbility
-    {
-        UnitState AppliesUnitState { get; }
-    }
+    UnitState AppliesUnitState { get; }
 }

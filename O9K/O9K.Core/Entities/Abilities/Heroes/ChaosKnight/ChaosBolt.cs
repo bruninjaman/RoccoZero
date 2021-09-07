@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.ChaosKnight
+﻿namespace O9K.Core.Entities.Abilities.Heroes.ChaosKnight;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.chaos_knight_chaos_bolt)]
+public class ChaosBolt : RangedAbility, IDisable, INuke
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData maxDamageData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.chaos_knight_chaos_bolt)]
-    public class ChaosBolt : RangedAbility, IDisable, INuke
+    public ChaosBolt(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData maxDamageData;
+        this.SpeedData = new SpecialData(baseAbility, "chaos_bolt_speed");
+        this.DamageData = new SpecialData(baseAbility, "damage_min");
+        this.maxDamageData = new SpecialData(baseAbility, "damage_max");
+    }
 
-        public ChaosBolt(Ability baseAbility)
-            : base(baseAbility)
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        return new Damage
         {
-            this.SpeedData = new SpecialData(baseAbility, "chaos_bolt_speed");
-            this.DamageData = new SpecialData(baseAbility, "damage_min");
-            this.maxDamageData = new SpecialData(baseAbility, "damage_max");
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
-        {
-            return new Damage
-            {
-                [this.DamageType] = (int)((this.DamageData.GetValue(this.Level) + this.maxDamageData.GetValue(this.Level)) / 2)
-            };
-        }
+            [this.DamageType] = (int)((this.DamageData.GetValue(this.Level) + this.maxDamageData.GetValue(this.Level)) / 2)
+        };
     }
 }

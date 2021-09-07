@@ -1,56 +1,55 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.MonkeyKing
+﻿namespace O9K.Core.Entities.Abilities.Heroes.MonkeyKing;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.monkey_king_primal_spring)]
+public class PrimalSpring : CircleAbility, IChanneled
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.monkey_king_primal_spring)]
-    public class PrimalSpring : CircleAbility, IChanneled
+    public PrimalSpring(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
+        this.RadiusData = new SpecialData(baseAbility, "impact_radius");
+        this.DamageData = new SpecialData(baseAbility, "impact_damage");
+        this.castRangeData = new SpecialData(baseAbility, "max_distance");
+    }
 
-        public PrimalSpring(Ability baseAbility)
-            : base(baseAbility)
+    public override float ActivationDelay
+    {
+        get
         {
-            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
-            this.RadiusData = new SpecialData(baseAbility, "impact_radius");
-            this.DamageData = new SpecialData(baseAbility, "impact_damage");
-            this.castRangeData = new SpecialData(baseAbility, "max_distance");
+            return this.ChannelTime;
         }
+    }
 
-        public override float ActivationDelay
+    public float ChannelTime { get; }
+
+    public bool IsActivatesOnChannelStart { get; } = true;
+
+    public override float Speed { get; } = 1300;
+
+    protected override float BaseCastRange
+    {
+        get
         {
-            get
-            {
-                return this.ChannelTime;
-            }
+            return this.castRangeData.GetValue(this.Level);
         }
+    }
 
-        public float ChannelTime { get; }
-
-        public bool IsActivatesOnChannelStart { get; } = true;
-
-        public override float Speed { get; } = 1300;
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
-        }
-
-        public int GetCurrentDamage(Unit9 unit)
-        {
-            return (int)(this.GetDamage(unit) * (this.BaseAbility.ChannelTime / this.ChannelTime));
-        }
+    public int GetCurrentDamage(Unit9 unit)
+    {
+        return (int)(this.GetDamage(unit) * (this.BaseAbility.ChannelTime / this.ChannelTime));
     }
 }

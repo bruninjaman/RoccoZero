@@ -1,23 +1,22 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowDemon
+﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowDemon;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.shadow_demon_shadow_poison)]
+public class ShadowPoison : LineAbility, IHarass
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.shadow_demon_shadow_poison)]
-    public class ShadowPoison : LineAbility, IHarass
+    public ShadowPoison(Ability baseAbility)
+        : base(baseAbility)
     {
-        public ShadowPoison(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-        }
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.SpeedData = new SpecialData(baseAbility, "speed");
     }
 }

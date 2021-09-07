@@ -1,20 +1,19 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Types
+﻿namespace O9K.Core.Entities.Abilities.Base.Types;
+
+using Components.Base;
+
+public enum BlinkType
 {
-    using Components.Base;
+    Blink,
 
-    public enum BlinkType
-    {
-        Blink,
+    Leap,
 
-        Leap,
+    Targetable
+}
 
-        Targetable
-    }
+public interface IBlink : IActiveAbility
+{
+    BlinkType BlinkType { get; }
 
-    public interface IBlink : IActiveAbility
-    {
-        BlinkType BlinkType { get; }
-
-        float Range { get; }
-    }
+    float Range { get; }
 }

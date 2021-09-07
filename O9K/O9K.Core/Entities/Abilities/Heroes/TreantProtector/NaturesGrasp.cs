@@ -1,24 +1,23 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.TreantProtector
+﻿namespace O9K.Core.Entities.Abilities.Heroes.TreantProtector;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.treant_natures_grasp)]
+public class NaturesGrasp : LineAbility, IHarass
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.treant_natures_grasp)]
-    public class NaturesGrasp : LineAbility, IHarass
+    public NaturesGrasp(Ability baseAbility)
+        : base(baseAbility)
     {
-        public NaturesGrasp(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.ActivationDelayData = new SpecialData(baseAbility, "initial_latch_delay");
-            this.DamageData = new SpecialData(baseAbility, "damage_per_second");
-            this.RadiusData = new SpecialData(baseAbility, "latch_range");
-        }
+        this.ActivationDelayData = new SpecialData(baseAbility, "initial_latch_delay");
+        this.DamageData = new SpecialData(baseAbility, "damage_per_second");
+        this.RadiusData = new SpecialData(baseAbility, "latch_range");
     }
 }

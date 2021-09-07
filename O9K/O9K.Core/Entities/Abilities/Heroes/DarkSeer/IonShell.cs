@@ -1,28 +1,27 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.DarkSeer
+﻿namespace O9K.Core.Entities.Abilities.Heroes.DarkSeer;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.dark_seer_ion_shell)]
+public class IonShell : RangedAbility, IBuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.dark_seer_ion_shell)]
-    public class IonShell : RangedAbility, IBuff
+    public IonShell(Ability baseAbility)
+        : base(baseAbility)
     {
-        public IonShell(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-        }
-
-        public string BuffModifierName { get; } = "modifier_dark_seer_ion_shell";
-
-        public bool BuffsAlly { get; } = true;
-
-        public bool BuffsOwner { get; } = true;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
     }
+
+    public string BuffModifierName { get; } = "modifier_dark_seer_ion_shell";
+
+    public bool BuffsAlly { get; } = true;
+
+    public bool BuffsOwner { get; } = true;
 }

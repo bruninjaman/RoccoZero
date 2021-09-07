@@ -1,100 +1,99 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Kunkka
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Kunkka;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.kunkka_tidebringer)]
+public class Tidebringer : AutoCastAbility, IHasPassiveDamageIncrease
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData endRadiusData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.kunkka_tidebringer)]
-    public class Tidebringer : AutoCastAbility, IHasPassiveDamageIncrease
+    public Tidebringer(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData endRadiusData;
+        this.RadiusData = new SpecialData(baseAbility, "cleave_starting_width");
+        this.endRadiusData = new SpecialData(baseAbility, "cleave_ending_width");
+        this.RangeData = new SpecialData(baseAbility, "cleave_distance");
+        this.DamageData = new SpecialData(baseAbility, "damage_bonus");
+        //todo add cleave dmg talent ?
+    }
 
-        public Tidebringer(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastRange
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "cleave_starting_width");
-            this.endRadiusData = new SpecialData(baseAbility, "cleave_ending_width");
-            this.RangeData = new SpecialData(baseAbility, "cleave_distance");
-            this.DamageData = new SpecialData(baseAbility, "damage_bonus");
-            //todo add cleave dmg talent ?
+            return base.CastRange + 100;
+        }
+    }
+
+    public float EndRadius
+    {
+        get
+        {
+            return this.endRadiusData.GetValue(this.Level);
+        }
+    }
+
+    public bool IsPassiveDamagePermanent { get; } = true;
+
+    public bool MultipliedByCrit { get; } = false;
+
+    public string PassiveDamageModifierName { get; } = string.Empty;
+
+    public override float Range
+    {
+        get
+        {
+            return this.RangeData.GetValue(this.Level);
+        }
+    }
+
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var damage = new Damage();
+
+        if (!this.Enabled)
+        {
+            damage[this.DamageType] = this.GetOrbDamage(unit);
         }
 
-        public override float CastRange
+        return damage + this.Owner.GetRawAttackDamage(unit);
+    }
+
+    public bool IsTidebringerAnimation(string name)
+    {
+        return name == "tidebringer" || name == "attack1_gunsword_anim";
+    }
+
+    Damage IHasPassiveDamageIncrease.GetRawDamage(Unit9 unit, float? remainingHealth)
+    {
+        var damage = new Damage();
+
+        if (this.Enabled)
         {
-            get
-            {
-                return base.CastRange + 100;
-            }
+            damage[this.DamageType] = this.GetOrbDamage(unit);
         }
 
-        public float EndRadius
+        return damage;
+    }
+
+    private float GetOrbDamage(Unit9 unit)
+    {
+        if (unit.IsBuilding || !this.CanBeCasted())
         {
-            get
-            {
-                return this.endRadiusData.GetValue(this.Level);
-            }
+            return 0;
         }
 
-        public bool IsPassiveDamagePermanent { get; } = true;
-
-        public bool MultipliedByCrit { get; } = false;
-
-        public string PassiveDamageModifierName { get; } = string.Empty;
-
-        public override float Range
-        {
-            get
-            {
-                return this.RangeData.GetValue(this.Level);
-            }
-        }
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
-        {
-            var damage = new Damage();
-
-            if (!this.Enabled)
-            {
-                damage[this.DamageType] = this.GetOrbDamage(unit);
-            }
-
-            return damage + this.Owner.GetRawAttackDamage(unit);
-        }
-
-        public bool IsTidebringerAnimation(string name)
-        {
-            return name == "tidebringer" || name == "attack1_gunsword_anim";
-        }
-
-        Damage IHasPassiveDamageIncrease.GetRawDamage(Unit9 unit, float? remainingHealth)
-        {
-            var damage = new Damage();
-
-            if (this.Enabled)
-            {
-                damage[this.DamageType] = this.GetOrbDamage(unit);
-            }
-
-            return damage;
-        }
-
-        private float GetOrbDamage(Unit9 unit)
-        {
-            if (unit.IsBuilding || !this.CanBeCasted())
-            {
-                return 0;
-            }
-
-            return this.DamageData.GetValue(this.Level);
-        }
+        return this.DamageData.GetValue(this.Level);
     }
 }

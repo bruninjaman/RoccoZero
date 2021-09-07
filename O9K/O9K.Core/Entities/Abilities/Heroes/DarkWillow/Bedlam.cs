@@ -1,35 +1,34 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.DarkWillow
+﻿namespace O9K.Core.Entities.Abilities.Heroes.DarkWillow;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.dark_willow_bedlam)]
+public class Bedlam : AreaOfEffectAbility, INuke
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData attackRadius;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.dark_willow_bedlam)]
-    public class Bedlam : AreaOfEffectAbility, INuke
+    public Bedlam(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackRadius;
+        this.attackRadius = new SpecialData(baseAbility, "attack_radius");
+        this.RadiusData = new SpecialData(baseAbility, "roaming_radius");
+        this.DamageData = new SpecialData(baseAbility, "attack_damage");
+        this.IsUltimate = false;
+    }
 
-        public Bedlam(Ability baseAbility)
-            : base(baseAbility)
+    public override float Radius
+    {
+        get
         {
-            this.attackRadius = new SpecialData(baseAbility, "attack_radius");
-            this.RadiusData = new SpecialData(baseAbility, "roaming_radius");
-            this.DamageData = new SpecialData(baseAbility, "attack_damage");
-            this.IsUltimate = false;
-        }
-
-        public override float Radius
-        {
-            get
-            {
-                return this.RadiusData.GetValue(this.Level) + this.attackRadius.GetValue(this.Level);
-            }
+            return this.RadiusData.GetValue(this.Level) + this.attackRadius.GetValue(this.Level);
         }
     }
 }

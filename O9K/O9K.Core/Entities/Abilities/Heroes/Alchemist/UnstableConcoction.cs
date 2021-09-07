@@ -1,31 +1,30 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Alchemist
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Alchemist;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.alchemist_unstable_concoction)]
+public class UnstableConcoction : ActiveAbility
 {
-    using Base;
+    private readonly SpecialData brewExplosionTimeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.alchemist_unstable_concoction)]
-    public class UnstableConcoction : ActiveAbility
+    public UnstableConcoction(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData brewExplosionTimeData;
+        this.brewExplosionTimeData = new SpecialData(baseAbility, "brew_explosion");
+    }
 
-        public UnstableConcoction(Ability baseAbility)
-            : base(baseAbility)
+    public float BrewExplosion
+    {
+        get
         {
-            this.brewExplosionTimeData = new SpecialData(baseAbility, "brew_explosion");
-        }
-
-        public float BrewExplosion
-        {
-            get
-            {
-                return this.brewExplosionTimeData.GetValue(this.Level);
-            }
+            return this.brewExplosionTimeData.GetValue(this.Level);
         }
     }
 }

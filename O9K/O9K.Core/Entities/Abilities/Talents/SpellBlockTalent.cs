@@ -1,31 +1,30 @@
-﻿namespace O9K.Core.Entities.Abilities.Talents
+﻿namespace O9K.Core.Entities.Abilities.Talents;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.special_bonus_spell_block_15)]
+internal class SpellBlockTalent : Talent
 {
-    using Base;
+    private readonly SpecialData spellBlockCooldownData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.special_bonus_spell_block_15)]
-    internal class SpellBlockTalent : Talent
+    public SpellBlockTalent(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData spellBlockCooldownData;
+        this.spellBlockCooldownData = new SpecialData(baseAbility, "block_cooldown");
+    }
 
-        public SpellBlockTalent(Ability baseAbility)
-            : base(baseAbility)
+    public float SpellBlockCooldown
+    {
+        get
         {
-            this.spellBlockCooldownData = new SpecialData(baseAbility, "block_cooldown");
-        }
-
-        public float SpellBlockCooldown
-        {
-            get
-            {
-                return this.spellBlockCooldownData.GetValue(1);
-            }
+            return this.spellBlockCooldownData.GetValue(1);
         }
     }
 }

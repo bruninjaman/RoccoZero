@@ -1,9 +1,8 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Types
-{
-    using Entities.Units;
+﻿namespace O9K.Core.Entities.Abilities.Base.Types;
 
-    public interface ISpeedBuff : IBuff
-    {
-        float GetSpeedBuff(Unit9 unit);
-    }
+using Entities.Units;
+
+public interface ISpeedBuff : IBuff
+{
+    float GetSpeedBuff(Unit9 unit);
 }

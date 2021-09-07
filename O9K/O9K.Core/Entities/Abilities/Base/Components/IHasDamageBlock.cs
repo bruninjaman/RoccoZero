@@ -1,21 +1,20 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Components
+﻿namespace O9K.Core.Entities.Abilities.Base.Components;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+public interface IHasDamageBlock
 {
-    using Divine.Entity.Entities.Abilities.Components;
+    DamageType BlockDamageType { get; }
 
-    using Entities.Units;
+    string BlockModifierName { get; }
 
-    public interface IHasDamageBlock
-    {
-        DamageType BlockDamageType { get; }
+    bool BlocksDamageAfterReduction { get; }
 
-        string BlockModifierName { get; }
+    bool IsDamageBlockPermanent { get; }
 
-        bool BlocksDamageAfterReduction { get; }
+    bool IsValid { get; }
 
-        bool IsDamageBlockPermanent { get; }
-
-        bool IsValid { get; }
-
-        float BlockValue(Unit9 target);
-    }
+    float BlockValue(Unit9 target);
 }

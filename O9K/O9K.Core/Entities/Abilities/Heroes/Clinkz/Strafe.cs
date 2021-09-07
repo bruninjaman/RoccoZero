@@ -1,26 +1,25 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Clinkz
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Clinkz;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.clinkz_strafe)]
+public class Strafe : ActiveAbility, IBuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.clinkz_strafe)]
-    public class Strafe : ActiveAbility, IBuff
+    public Strafe(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Strafe(Ability baseAbility)
-            : base(baseAbility)
-        {
 
-        }
-
-        public string BuffModifierName { get; } = "modifier_clinkz_strafe";
-
-        public bool BuffsAlly { get; } = false;
-
-        public bool BuffsOwner { get; } = true;
     }
+
+    public string BuffModifierName { get; } = "modifier_clinkz_strafe";
+
+    public bool BuffsAlly { get; } = false;
+
+    public bool BuffsOwner { get; } = true;
 }

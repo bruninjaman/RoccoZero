@@ -1,36 +1,35 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Rubick
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Rubick;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.rubick_telekinesis)]
+public class Telekinesis : RangedAbility, IDisable
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData landDistanceData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.rubick_telekinesis)]
-    public class Telekinesis : RangedAbility, IDisable
+    public Telekinesis(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData landDistanceData;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.landDistanceData = new SpecialData(baseAbility, "max_land_distance");
+    }
 
-        public Telekinesis(Ability baseAbility)
-            : base(baseAbility)
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+
+    public override float Radius
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.landDistanceData = new SpecialData(baseAbility, "max_land_distance");
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        public override float Radius
-        {
-            get
-            {
-                return base.Radius + this.landDistanceData.GetValue(this.Level);
-            }
+            return base.Radius + this.landDistanceData.GetValue(this.Level);
         }
     }
 }

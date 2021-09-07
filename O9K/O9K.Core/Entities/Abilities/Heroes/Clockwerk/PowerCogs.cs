@@ -1,35 +1,34 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Clockwerk
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Clockwerk;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.rattletrap_power_cogs)]
+public class PowerCogs : AreaOfEffectAbility
 {
-    using Base;
+    private readonly SpecialData triggerRadiusData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.rattletrap_power_cogs)]
-    public class PowerCogs : AreaOfEffectAbility
+    public PowerCogs(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData triggerRadiusData;
+        this.RadiusData = new SpecialData(baseAbility, "cogs_radius");
+        this.triggerRadiusData = new SpecialData(baseAbility, "trigger_distance");
+    }
 
-        public PowerCogs(Ability baseAbility)
-            : base(baseAbility)
+    public override float ActivationDelay { get; } = 0.1f;
+
+    public override float Radius
+
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "cogs_radius");
-            this.triggerRadiusData = new SpecialData(baseAbility, "trigger_distance");
-        }
-
-        public override float ActivationDelay { get; } = 0.1f;
-
-        public override float Radius
-
-        {
-            get
-            {
-                return (this.RadiusData.GetValue(this.Level) + this.triggerRadiusData.GetValue(this.Level)) - 25;
-            }
+            return (this.RadiusData.GetValue(this.Level) + this.triggerRadiusData.GetValue(this.Level)) - 25;
         }
     }
 }

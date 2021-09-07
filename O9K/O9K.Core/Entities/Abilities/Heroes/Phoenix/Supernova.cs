@@ -1,77 +1,76 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Phoenix
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Phoenix;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.phoenix_supernova)]
+public class Supernova : AreaOfEffectAbility, IShield
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.phoenix_supernova)]
-    public class Supernova : AreaOfEffectAbility, IShield
+    public Supernova(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.RadiusData = new SpecialData(baseAbility, "aura_radius");
+        this.DamageData = new SpecialData(baseAbility, "damage_per_sec");
+        this.castRangeData = new SpecialData(baseAbility, "cast_range_tooltip_scepter");
+    }
 
-        public Supernova(Ability baseAbility)
-            : base(baseAbility)
+    public override AbilityBehavior AbilityBehavior
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "aura_radius");
-            this.DamageData = new SpecialData(baseAbility, "damage_per_sec");
-            this.castRangeData = new SpecialData(baseAbility, "cast_range_tooltip_scepter");
-        }
+            var behavior = base.AbilityBehavior;
 
-        public override AbilityBehavior AbilityBehavior
-        {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                var behavior = base.AbilityBehavior;
-
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    behavior = (behavior & ~AbilityBehavior.NoTarget) | AbilityBehavior.UnitTarget;
-                }
-
-                return behavior;
-            }
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Invulnerable;
-
-        public string ShieldModifierName { get; } = "modifier_phoenix_sun";
-
-        public bool ShieldsAlly { get; } = false;
-
-        public bool ShieldsOwner { get; } = true;
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return this.castRangeData.GetValue(this.Level);
-                }
-
-                return 0;
-            }
-        }
-
-        public override bool UseAbility(bool queue = false, bool bypass = false)
-        {
-            var result = this.UnitTargetCast
-                             ? this.BaseAbility.Cast(this.Owner.BaseUnit, queue, bypass)
-                             : this.BaseAbility.Cast(queue, bypass);
-
-            if (result)
-            {
-                this.ActionSleeper.Sleep(0.1f);
+                behavior = (behavior & ~AbilityBehavior.NoTarget) | AbilityBehavior.UnitTarget;
             }
 
-            return result;
+            return behavior;
         }
+    }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Invulnerable;
+
+    public string ShieldModifierName { get; } = "modifier_phoenix_sun";
+
+    public bool ShieldsAlly { get; } = false;
+
+    public bool ShieldsOwner { get; } = true;
+
+    protected override float BaseCastRange
+    {
+        get
+        {
+            if (this.Owner.HasAghanimsScepter)
+            {
+                return this.castRangeData.GetValue(this.Level);
+            }
+
+            return 0;
+        }
+    }
+
+    public override bool UseAbility(bool queue = false, bool bypass = false)
+    {
+        var result = this.UnitTargetCast
+                         ? this.BaseAbility.Cast(this.Owner.BaseUnit, queue, bypass)
+                         : this.BaseAbility.Cast(queue, bypass);
+
+        if (result)
+        {
+            this.ActionSleeper.Sleep(0.1f);
+        }
+
+        return result;
     }
 }

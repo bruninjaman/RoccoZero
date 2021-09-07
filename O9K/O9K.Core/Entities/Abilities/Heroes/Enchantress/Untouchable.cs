@@ -1,31 +1,30 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Enchantress
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Enchantress;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.enchantress_untouchable)]
+public class Untouchable : PassiveAbility
 {
-    using Base;
+    private readonly SpecialData attackSpeedSlowData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.enchantress_untouchable)]
-    public class Untouchable : PassiveAbility
+    public Untouchable(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackSpeedSlowData;
+        this.attackSpeedSlowData = new SpecialData(baseAbility, "slow_attack_speed");
+    }
 
-        public Untouchable(Ability baseAbility)
-            : base(baseAbility)
+    public float AttackSpeedSlow
+    {
+        get
         {
-            this.attackSpeedSlowData = new SpecialData(baseAbility, "slow_attack_speed");
-        }
-
-        public float AttackSpeedSlow
-        {
-            get
-            {
-                return this.attackSpeedSlowData.GetValue(this.Level);
-            }
+            return this.attackSpeedSlowData.GetValue(this.Level);
         }
     }
 }

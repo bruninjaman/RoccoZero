@@ -1,26 +1,25 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Jakiro
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Jakiro;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.jakiro_dual_breath)]
+public class DualBreath : ConeAbility, IDebuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.jakiro_dual_breath)]
-    public class DualBreath : ConeAbility, IDebuff
+    public DualBreath(Ability baseAbility)
+        : base(baseAbility)
     {
-        public DualBreath(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "start_radius");
-            this.EndRadiusData = new SpecialData(baseAbility, "end_radius");
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-        }
-
-        public string DebuffModifierName { get; } = "modifier_jakiro_dual_breath_slow";
+        this.RadiusData = new SpecialData(baseAbility, "start_radius");
+        this.EndRadiusData = new SpecialData(baseAbility, "end_radius");
+        this.SpeedData = new SpecialData(baseAbility, "speed");
     }
+
+    public string DebuffModifierName { get; } = "modifier_jakiro_dual_breath_slow";
 }

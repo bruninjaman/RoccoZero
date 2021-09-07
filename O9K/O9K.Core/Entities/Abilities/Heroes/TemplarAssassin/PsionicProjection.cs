@@ -1,24 +1,23 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.TemplarAssassin
+﻿namespace O9K.Core.Entities.Abilities.Heroes.TemplarAssassin;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.templar_assassin_trap_teleport)]
+public class PsionicProjection : RangedAbility, IChanneled
 {
-    using Base;
-    using Base.Components;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.templar_assassin_trap_teleport)]
-    public class PsionicProjection : RangedAbility, IChanneled
+    public PsionicProjection(Ability baseAbility)
+        : base(baseAbility)
     {
-        public PsionicProjection(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
-        }
-
-        public float ChannelTime { get; }
-
-        public bool IsActivatesOnChannelStart { get; } = false;
+        this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
     }
+
+    public float ChannelTime { get; }
+
+    public bool IsActivatesOnChannelStart { get; } = false;
 }

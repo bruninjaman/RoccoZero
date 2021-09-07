@@ -1,305 +1,304 @@
-﻿namespace O9K.Core.Managers.Menu.Items
+﻿namespace O9K.Core.Managers.Menu.Items;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Divine.Numerics;
+using Divine.Renderer;
+using Divine.Entity.Entities.Abilities.Components;
+
+using EventArgs;
+
+using Logger;
+
+using Newtonsoft.Json.Linq;
+
+public class MenuAbilityToggler : MenuItem
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Divine.Numerics;
-    using Divine.Renderer;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly Dictionary<string, (ImageType, bool)> abilities = new Dictionary<string, (ImageType, bool)>();
 
-    using EventArgs;
+    private readonly bool defaultValue;
 
-    using Logger;
+    private readonly List<AbilityId> loadTextures = new List<AbilityId>();
 
-    using Newtonsoft.Json.Linq;
+    private readonly List<(string, ImageType)> loadTextures2 = new List<(string, ImageType)>();
 
-    public class MenuAbilityToggler : MenuItem
+    private readonly Dictionary<string, bool> savedAbilities = new Dictionary<string, bool>();
+
+    private bool loaded;
+
+    private EventHandler<AbilityEventArgs> valueChange;
+
+    public MenuAbilityToggler(
+        string displayName,
+        IDictionary<AbilityId, bool> abilities = null,
+        bool defaultValue = true,
+        bool heroUnique = false)
+        : this(displayName, displayName, abilities, defaultValue, heroUnique)
     {
-        private readonly Dictionary<string, (ImageType, bool)> abilities = new Dictionary<string, (ImageType, bool)>();
+    }
 
-        private readonly bool defaultValue;
+    public MenuAbilityToggler(
+        string displayName,
+        string name,
+        IDictionary<AbilityId, bool> abilities = null,
+        bool defaultValue = true,
+        bool heroUnique = false)
+        : base(displayName, name, heroUnique)
+    {
+        this.defaultValue = defaultValue;
 
-        private readonly List<AbilityId> loadTextures = new List<AbilityId>();
-
-        private readonly List<(string, ImageType)> loadTextures2 = new List<(string, ImageType)>();
-
-        private readonly Dictionary<string, bool> savedAbilities = new Dictionary<string, bool>();
-
-        private bool loaded;
-
-        private EventHandler<AbilityEventArgs> valueChange;
-
-        public MenuAbilityToggler(
-            string displayName,
-            IDictionary<AbilityId, bool> abilities = null,
-            bool defaultValue = true,
-            bool heroUnique = false)
-            : this(displayName, displayName, abilities, defaultValue, heroUnique)
+        if (abilities == null)
         {
+            return;
         }
 
-        public MenuAbilityToggler(
-            string displayName,
-            string name,
-            IDictionary<AbilityId, bool> abilities = null,
-            bool defaultValue = true,
-            bool heroUnique = false)
-            : base(displayName, name, heroUnique)
+        foreach (var ability in abilities)
         {
-            this.defaultValue = defaultValue;
-
-            if (abilities == null)
-            {
-                return;
-            }
-
-            foreach (var ability in abilities)
-            {
-                this.abilities[ability.Key.ToString()] = (ImageType.Ability, ability.Value);
-                this.loadTextures.Add(ability.Key);
-            }
+            this.abilities[ability.Key.ToString()] = (ImageType.Ability, ability.Value);
+            this.loadTextures.Add(ability.Key);
         }
+    }
 
-        public event EventHandler<AbilityEventArgs> ValueChange
+    public event EventHandler<AbilityEventArgs> ValueChange
+    {
+        add
         {
-            add
+            if (this.loaded)
             {
-                if (this.loaded)
-                {
-                    foreach (var ability in this.Abilities)
-                    {
-                        value(this, new AbilityEventArgs(ability, true, true));
-                    }
-                }
-
-                this.valueChange += value;
-            }
-            remove
-            {
-                this.valueChange -= value;
-            }
-        }
-
-        public IEnumerable<string> Abilities
-        {
-            get
-            {
-                return this.abilities.Where(x => x.Value.Item2).Select(x => x.Key);
-            }
-        }
-
-        public IReadOnlyDictionary<string, bool> AllAbilities
-        {
-            get
-            {
-                return this.abilities.ToDictionary(x => x.Key, x => x.Value.Item2);
-            }
-        }
-
-        public void AddAbility(AbilityId id, bool? value = null)
-        {
-            if (this.Renderer == null)
-            {
-                this.loadTextures.Add(id);
-            }
-            else
-            {
-                RendererManager.LoadImage(id);
-            }
-
-            this.AddAbility(id.ToString(), value);
-        }
-
-        public void AddAbility(string name, bool? value = null)
-        {
-            if (this.abilities.ContainsKey(name))
-            {
-                return;
-            }
-
-            var imageType = ImageType.Default;
-
-            if (name.Contains("npc_dota"))
-            {
-                imageType = ImageType.Unit;
-            }
-            else if (Enum.IsDefined(typeof(AbilityId), name))
-            {
-                imageType = ImageType.Ability;
-            }
-
-            if (this.Renderer == null)
-            {
-                this.loadTextures2.Add((name, imageType));
-            }
-            else
-            {
-                RendererManager.LoadImage(name, imageType);
-            }
-
-            if (this.savedAbilities.TryGetValue(name, out var savedValue))
-            {
-                this.abilities[name] = (imageType, savedValue);
-            }
-            else
-            {
-                this.abilities[name] = (imageType, value ?? this.defaultValue);
-            }
-
-            if (this.abilities[name].Item2)
-            {
-                this.valueChange?.Invoke(this, new AbilityEventArgs(name, true, true));
-            }
-
-            if (this.SizeCalculated)
-            {
-                this.CalculateSize();
-            }
-        }
-
-        public bool IsEnabled(string name)
-        {
-            this.abilities.TryGetValue(name, out var value);
-            return value.Item2;
-        }
-
-        public MenuAbilityToggler SetTooltip(string tooltip)
-        {
-            this.LocalizedTooltip[Lang.En] = tooltip;
-            return this;
-        }
-
-        internal override void CalculateSize()
-        {
-            this.DisplayNameSize = RendererManager.MeasureText(this.DisplayName, this.MenuStyle.Font, this.MenuStyle.TextSize);
-            var width = this.DisplayNameSize.X + this.MenuStyle.LeftIndent + this.MenuStyle.RightIndent + 10
-                        + (this.MenuStyle.TextureArrowSize * 2) + (this.abilities.Count * this.MenuStyle.TextureAbilitySize);
-            this.Size = new Vector2(width, this.MenuStyle.Height);
-            this.ParentMenu.CalculateWidth();
-
-            this.SizeCalculated = true;
-        }
-
-        internal override object GetSaveValue()
-        {
-            foreach (var ability in this.abilities)
-            {
-                this.savedAbilities[ability.Key] = ability.Value.Item2;
-            }
-
-            return this.savedAbilities;
-        }
-
-        internal override void Load(JToken token)
-        {
-            try
-            {
-                token = token?[this.Name];
-                if (token == null)
-                {
-                    return;
-                }
-
-                foreach (var item in token.ToObject<JObject>())
-                {
-                    var key = item.Key;
-                    var value = (bool)item.Value;
-
-                    this.savedAbilities[key] = value;
-
-                    if (this.abilities.TryGetValue(key, out var v))
-                    {
-                        this.abilities[key] = (v.Item1, value);
-                    }
-                }
-
                 foreach (var ability in this.Abilities)
                 {
-                    this.valueChange?.Invoke(this, new AbilityEventArgs(ability, true, true));
+                    value(this, new AbilityEventArgs(ability, true, true));
                 }
+            }
 
-                this.loaded = true;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            this.valueChange += value;
+        }
+        remove
+        {
+            this.valueChange -= value;
+        }
+    }
+
+    public IEnumerable<string> Abilities
+    {
+        get
+        {
+            return this.abilities.Where(x => x.Value.Item2).Select(x => x.Key);
+        }
+    }
+
+    public IReadOnlyDictionary<string, bool> AllAbilities
+    {
+        get
+        {
+            return this.abilities.ToDictionary(x => x.Key, x => x.Value.Item2);
+        }
+    }
+
+    public void AddAbility(AbilityId id, bool? value = null)
+    {
+        if (this.Renderer == null)
+        {
+            this.loadTextures.Add(id);
+        }
+        else
+        {
+            RendererManager.LoadImage(id);
         }
 
-        internal override bool OnMouseRelease(Vector2 position)
+        this.AddAbility(id.ToString(), value);
+    }
+
+    public void AddAbility(string name, bool? value = null)
+    {
+        if (this.abilities.ContainsKey(name))
         {
-            if (this.abilities.Count == 0)
+            return;
+        }
+
+        var imageType = ImageType.Default;
+
+        if (name.Contains("npc_dota"))
+        {
+            imageType = ImageType.Unit;
+        }
+        else if (Enum.IsDefined(typeof(AbilityId), name))
+        {
+            imageType = ImageType.Ability;
+        }
+
+        if (this.Renderer == null)
+        {
+            this.loadTextures2.Add((name, imageType));
+        }
+        else
+        {
+            RendererManager.LoadImage(name, imageType);
+        }
+
+        if (this.savedAbilities.TryGetValue(name, out var savedValue))
+        {
+            this.abilities[name] = (imageType, savedValue);
+        }
+        else
+        {
+            this.abilities[name] = (imageType, value ?? this.defaultValue);
+        }
+
+        if (this.abilities[name].Item2)
+        {
+            this.valueChange?.Invoke(this, new AbilityEventArgs(name, true, true));
+        }
+
+        if (this.SizeCalculated)
+        {
+            this.CalculateSize();
+        }
+    }
+
+    public bool IsEnabled(string name)
+    {
+        this.abilities.TryGetValue(name, out var value);
+        return value.Item2;
+    }
+
+    public MenuAbilityToggler SetTooltip(string tooltip)
+    {
+        this.LocalizedTooltip[Lang.En] = tooltip;
+        return this;
+    }
+
+    internal override void CalculateSize()
+    {
+        this.DisplayNameSize = RendererManager.MeasureText(this.DisplayName, this.MenuStyle.Font, this.MenuStyle.TextSize);
+        var width = this.DisplayNameSize.X + this.MenuStyle.LeftIndent + this.MenuStyle.RightIndent + 10
+                    + (this.MenuStyle.TextureArrowSize * 2) + (this.abilities.Count * this.MenuStyle.TextureAbilitySize);
+        this.Size = new Vector2(width, this.MenuStyle.Height);
+        this.ParentMenu.CalculateWidth();
+
+        this.SizeCalculated = true;
+    }
+
+    internal override object GetSaveValue()
+    {
+        foreach (var ability in this.abilities)
+        {
+            this.savedAbilities[ability.Key] = ability.Value.Item2;
+        }
+
+        return this.savedAbilities;
+    }
+
+    internal override void Load(JToken token)
+    {
+        try
+        {
+            token = token?[this.Name];
+            if (token == null)
             {
-                return false;
+                return;
             }
 
-            var startPosition = new Vector2(
-                (this.Position.X + this.Size.X) - this.MenuStyle.TextureAbilitySize - 4,
-                this.Position.Y + ((this.Size.Y - this.MenuStyle.TextureAbilitySize) / 2.2f));
-
-            foreach (var ability in this.abilities.Reverse())
+            foreach (var item in token.ToObject<JObject>())
             {
-                var abilityPosition = new RectangleF(
-                    startPosition.X - 1.5f,
-                    startPosition.Y - 1.5f,
-                    this.MenuStyle.TextureAbilitySize + 3,
-                    this.MenuStyle.TextureAbilitySize + 3);
+                var key = item.Key;
+                var value = (bool)item.Value;
 
-                if (abilityPosition.Contains(position))
+                this.savedAbilities[key] = value;
+
+                if (this.abilities.TryGetValue(key, out var v))
                 {
-                    var value = this.abilities[ability.Key];
-                    this.abilities[ability.Key] = (value.Item1, !value.Item2);
-                    this.valueChange?.Invoke(this, new AbilityEventArgs(ability.Key, !value.Item2, value.Item2));
-                    return true;
+                    this.abilities[key] = (v.Item1, value);
                 }
-
-                startPosition -= new Vector2(this.MenuStyle.TextureAbilitySize + 4, 0);
             }
 
+            foreach (var ability in this.Abilities)
+            {
+                this.valueChange?.Invoke(this, new AbilityEventArgs(ability, true, true));
+            }
+
+            this.loaded = true;
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    internal override bool OnMouseRelease(Vector2 position)
+    {
+        if (this.abilities.Count == 0)
+        {
             return false;
         }
 
-        internal override void SetRenderer()
+        var startPosition = new Vector2(
+            (this.Position.X + this.Size.X) - this.MenuStyle.TextureAbilitySize - 4,
+            this.Position.Y + ((this.Size.Y - this.MenuStyle.TextureAbilitySize) / 2.2f));
+
+        foreach (var ability in this.abilities.Reverse())
         {
-            base.SetRenderer();
+            var abilityPosition = new RectangleF(
+                startPosition.X - 1.5f,
+                startPosition.Y - 1.5f,
+                this.MenuStyle.TextureAbilitySize + 3,
+                this.MenuStyle.TextureAbilitySize + 3);
 
-            foreach (var texture in this.loadTextures)
+            if (abilityPosition.Contains(position))
             {
-                RendererManager.LoadImage(texture);
+                var value = this.abilities[ability.Key];
+                this.abilities[ability.Key] = (value.Item1, !value.Item2);
+                this.valueChange?.Invoke(this, new AbilityEventArgs(ability.Key, !value.Item2, value.Item2));
+                return true;
             }
 
-            foreach (var texture in this.loadTextures2)
-            {
-                RendererManager.LoadImage(texture.Item1, texture.Item2);
-            }
+            startPosition -= new Vector2(this.MenuStyle.TextureAbilitySize + 4, 0);
         }
 
-        protected override void Draw()
+        return false;
+    }
+
+    internal override void SetRenderer()
+    {
+        base.SetRenderer();
+
+        foreach (var texture in this.loadTextures)
         {
-            base.Draw();
+            RendererManager.LoadImage(texture);
+        }
 
-            //abilities
-            var startPosition = new Vector2(
-                (this.Position.X + this.Size.X) - this.MenuStyle.TextureAbilitySize - 4,
-                this.Position.Y + ((this.Size.Y - this.MenuStyle.TextureAbilitySize) / 2.2f));
+        foreach (var texture in this.loadTextures2)
+        {
+            RendererManager.LoadImage(texture.Item1, texture.Item2);
+        }
+    }
 
-            foreach (var ability in this.abilities.Reverse())
-            {
-                RendererManager.DrawRectangle(
-                    new RectangleF(
-                        startPosition.X - 1.5f,
-                        startPosition.Y - 1.5f,
-                        this.MenuStyle.TextureAbilitySize + 3,
-                        this.MenuStyle.TextureAbilitySize + 3),
-                    ability.Value.Item2 ? Color.LightGreen : Color.Red,
-                    1.5f);
-                RendererManager.DrawImage(
-                    ability.Key,
-                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureAbilitySize, this.MenuStyle.TextureAbilitySize),
-                    ability.Value.Item1);
+    protected override void Draw()
+    {
+        base.Draw();
 
-                startPosition -= new Vector2(this.MenuStyle.TextureAbilitySize + 4, 0);
-            }
+        //abilities
+        var startPosition = new Vector2(
+            (this.Position.X + this.Size.X) - this.MenuStyle.TextureAbilitySize - 4,
+            this.Position.Y + ((this.Size.Y - this.MenuStyle.TextureAbilitySize) / 2.2f));
+
+        foreach (var ability in this.abilities.Reverse())
+        {
+            RendererManager.DrawRectangle(
+                new RectangleF(
+                    startPosition.X - 1.5f,
+                    startPosition.Y - 1.5f,
+                    this.MenuStyle.TextureAbilitySize + 3,
+                    this.MenuStyle.TextureAbilitySize + 3),
+                ability.Value.Item2 ? Color.LightGreen : Color.Red,
+                1.5f);
+            RendererManager.DrawImage(
+                ability.Key,
+                new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureAbilitySize, this.MenuStyle.TextureAbilitySize),
+                ability.Value.Item1);
+
+            startPosition -= new Vector2(this.MenuStyle.TextureAbilitySize + 4, 0);
         }
     }
 }

@@ -1,79 +1,78 @@
-﻿namespace O9K.Core.Entities.Heroes.Unique
+﻿namespace O9K.Core.Entities.Heroes.Unique;
+
+using System;
+
+using Abilities.Base;
+using Abilities.Talents;
+
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Entity.Entities.Units.Heroes.Components;
+using Divine.Particle;
+using Divine.Particle.EventArgs;
+
+using Helpers;
+
+using Logger;
+
+using Metadata;
+
+[HeroId(HeroId.npc_dota_hero_queenofpain)]
+internal class QueenOfPain : Hero9, IDisposable
 {
-    using System;
+    private readonly Sleeper talentSleeper = new Sleeper();
 
-    using Abilities.Base;
-    using Abilities.Talents;
+    private SpellBlockTalent linkensSphereTalent;
 
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Heroes;
-    using Divine.Entity.Entities.Units.Heroes.Components;
-    using Divine.Particle;
-    using Divine.Particle.EventArgs;
-
-    using Helpers;
-
-    using Logger;
-
-    using Metadata;
-
-    [HeroId(HeroId.npc_dota_hero_queenofpain)]
-    internal class QueenOfPain : Hero9, IDisposable
+    public QueenOfPain(Hero baseHero)
+        : base(baseHero)
     {
-        private readonly Sleeper talentSleeper = new Sleeper();
+    }
 
-        private SpellBlockTalent linkensSphereTalent;
-
-        public QueenOfPain(Hero baseHero)
-            : base(baseHero)
+    public override bool IsLinkensProtected
+    {
+        get
         {
+            return base.IsLinkensProtected || (this.linkensSphereTalent?.Level > 0 && !this.talentSleeper.IsSleeping);
         }
+    }
 
-        public override bool IsLinkensProtected
+    public void Dispose()
+    {
+        ParticleManager.ParticleAdded -= this.OnParticleAdded;
+    }
+
+    internal override void Ability(Ability9 ability, bool added)
+    {
+        base.Ability(ability, added);
+
+        if (added && ability.Id == AbilityId.special_bonus_spell_block_15)
         {
-            get
-            {
-                return base.IsLinkensProtected || (this.linkensSphereTalent?.Level > 0 && !this.talentSleeper.IsSleeping);
-            }
+            this.linkensSphereTalent = (SpellBlockTalent)ability;
+            ParticleManager.ParticleAdded += this.OnParticleAdded;
         }
+    }
 
-        public void Dispose()
+    private void OnParticleAdded(ParticleAddedEventArgs e)
+    {
+        try
         {
-            ParticleManager.ParticleAdded -= this.OnParticleAdded;
+            var owner = e.Particle.Owner;
+            if (owner == null || owner.Handle != this.Handle || e.Particle.Name != "particles/items_fx/immunity_sphere.vpcf")
+            {
+                return;
+            }
+
+            if (this.linkensSphereTalent?.IsValid != true || this.linkensSphereTalent.Level <= 0)
+            {
+                return;
+            }
+
+            this.talentSleeper.Sleep(this.linkensSphereTalent.SpellBlockCooldown);
         }
-
-        internal override void Ability(Ability9 ability, bool added)
+        catch (Exception ex)
         {
-            base.Ability(ability, added);
-
-            if (added && ability.Id == AbilityId.special_bonus_spell_block_15)
-            {
-                this.linkensSphereTalent = (SpellBlockTalent)ability;
-                ParticleManager.ParticleAdded += this.OnParticleAdded;
-            }
-        }
-
-        private void OnParticleAdded(ParticleAddedEventArgs e)
-        {
-            try
-            {
-                var owner = e.Particle.Owner;
-                if (owner == null || owner.Handle != this.Handle || e.Particle.Name != "particles/items_fx/immunity_sphere.vpcf")
-                {
-                    return;
-                }
-
-                if (this.linkensSphereTalent?.IsValid != true || this.linkensSphereTalent.Level <= 0)
-                {
-                    return;
-                }
-
-                this.talentSleeper.Sleep(this.linkensSphereTalent.SpellBlockCooldown);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
+            Logger.Error(ex);
         }
     }
 }

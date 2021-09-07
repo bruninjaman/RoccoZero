@@ -1,50 +1,49 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_magic_stick)]
+[AbilityId(AbilityId.item_magic_wand)]
+public class MagicWand : ActiveAbility, IHealthRestore, IManaRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData restoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_magic_stick)]
-    [AbilityId(AbilityId.item_magic_wand)]
-    public class MagicWand : ActiveAbility, IHealthRestore, IManaRestore
+    public MagicWand(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData restoreData;
+        this.restoreData = new SpecialData(baseAbility, "restore_per_charge");
+    }
 
-        public MagicWand(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.restoreData = new SpecialData(baseAbility, "restore_per_charge");
-        }
+    public bool InstantRestore { get; } = true;
 
-        public bool InstantRestore { get; } = true;
+    public string RestoreModifierName { get; } = string.Empty;
 
-        public string RestoreModifierName { get; } = string.Empty;
+    public bool RestoresAlly { get; } = false;
 
-        public bool RestoresAlly { get; } = false;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
+    public override bool CanBeCasted(bool checkChanneling = true)
+    {
+        return this.Charges > 0 && base.CanBeCasted(checkChanneling);
+    }
 
-        public override bool CanBeCasted(bool checkChanneling = true)
-        {
-            return this.Charges > 0 && base.CanBeCasted(checkChanneling);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)(this.Charges * this.restoreData.GetValue(this.Level));
+    }
 
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)(this.Charges * this.restoreData.GetValue(this.Level));
-        }
-
-        public int GetManaRestore(Unit9 unit)
-        {
-            return (int)(this.Charges * this.restoreData.GetValue(this.Level));
-        }
+    public int GetManaRestore(Unit9 unit)
+    {
+        return (int)(this.Charges * this.restoreData.GetValue(this.Level));
     }
 }

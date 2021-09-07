@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Invoker.BaseAbilities
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Invoker.BaseAbilities;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.invoker_wex)]
+public class Wex : ActiveAbility
 {
-    using Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.invoker_wex)]
-    public class Wex : ActiveAbility
+    public Wex(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Wex(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
+    }
 
-        public override uint Level
+    public override uint Level
+    {
+        get
         {
-            get
+            var level = base.Level;
+            if (this.Owner.HasAghanimsScepter)
             {
-                var level = base.Level;
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    level++;
-                }
-
-                return level;
+                level++;
             }
-        }
 
-        public string ModifierName { get; } = "modifier_invoker_wex_instance";
-
-        public override bool UseAbility(bool queue = false, bool bypass = false)
-        {
-            //todo this.ActionSleeper.Sleep(0.03f)?
-            return this.BaseAbility.Cast(queue, bypass);
+            return level;
         }
+    }
+
+    public string ModifierName { get; } = "modifier_invoker_wex_instance";
+
+    public override bool UseAbility(bool queue = false, bool bypass = false)
+    {
+        //todo this.ActionSleeper.Sleep(0.03f)?
+        return this.BaseAbility.Cast(queue, bypass);
     }
 }

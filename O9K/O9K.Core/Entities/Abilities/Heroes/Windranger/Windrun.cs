@@ -1,78 +1,77 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Windranger
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Windranger;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.windrunner_windrun)]
+public class Windrun : ActiveAbility, IShield, ISpeedBuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData bonusMoveSpeedData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
+    private bool isInvisibility;
 
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.windrunner_windrun)]
-    public class Windrun : ActiveAbility, IShield, ISpeedBuff
+    public Windrun(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData bonusMoveSpeedData;
+        this.bonusMoveSpeedData = new SpecialData(baseAbility, "movespeed_bonus_pct");
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+    }
 
-        private bool isInvisibility;
+    public UnitState AppliesUnitState { get; } = UnitState.AttackImmune;
 
-        public Windrun(Ability baseAbility)
-            : base(baseAbility)
+    public string BuffModifierName { get; } = "modifier_windrunner_windrun";
+
+    public bool BuffsAlly { get; } = false;
+
+    public bool BuffsOwner { get; } = true;
+
+    public override float CastPoint
+    {
+        get
         {
-            this.bonusMoveSpeedData = new SpecialData(baseAbility, "movespeed_bonus_pct");
-            this.RadiusData = new SpecialData(baseAbility, "radius");
+            return 0;
         }
+    }
 
-        public UnitState AppliesUnitState { get; } = UnitState.AttackImmune;
-
-        public string BuffModifierName { get; } = "modifier_windrunner_windrun";
-
-        public bool BuffsAlly { get; } = false;
-
-        public bool BuffsOwner { get; } = true;
-
-        public override float CastPoint
+    public override bool IsDisplayingCharges
+    {
+        get
         {
-            get
+            return this.Owner.HasAghanimsScepter;
+        }
+    }
+
+    public override bool IsInvisibility
+    {
+        get
+        {
+            if (this.isInvisibility)
             {
-                return 0;
+                return true;
             }
+
+            return this.isInvisibility = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_windranger)?.Level > 0;
         }
+    }
 
-        public override bool IsDisplayingCharges
-        {
-            get
-            {
-                return this.Owner.HasAghanimsScepter;
-            }
-        }
+    public string ShieldModifierName { get; } = "modifier_windrunner_windrun";
 
-        public override bool IsInvisibility
-        {
-            get
-            {
-                if (this.isInvisibility)
-                {
-                    return true;
-                }
+    public bool ShieldsAlly { get; } = false;
 
-                return this.isInvisibility = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_windranger)?.Level > 0;
-            }
-        }
+    public bool ShieldsOwner { get; } = true;
 
-        public string ShieldModifierName { get; } = "modifier_windrunner_windrun";
-
-        public bool ShieldsAlly { get; } = false;
-
-        public bool ShieldsOwner { get; } = true;
-
-        public float GetSpeedBuff(Unit9 unit)
-        {
-            return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
-        }
+    public float GetSpeedBuff(Unit9 unit)
+    {
+        return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
     }
 }

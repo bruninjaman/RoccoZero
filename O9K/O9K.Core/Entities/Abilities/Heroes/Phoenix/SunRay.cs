@@ -1,94 +1,93 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Phoenix
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Phoenix;
+
+using System;
+using System.Linq;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Managers.Entity;
+
+using Metadata;
+
+using Prediction.Data;
+
+[AbilityId(AbilityId.phoenix_sun_ray)]
+public class SunRay : LineAbility
 {
-    using System;
-    using System.Linq;
+    private SunRayStop sunRayStop;
 
-    using Base;
+    private SunRayToggleMovement sunRayToggleMovement;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Managers.Entity;
-
-    using Metadata;
-
-    using Prediction.Data;
-
-    [AbilityId(AbilityId.phoenix_sun_ray)]
-    public class SunRay : LineAbility
+    public SunRay(Ability baseAbility)
+        : base(baseAbility)
     {
-        private SunRayStop sunRayStop;
+        this.DamageData = new SpecialData(baseAbility, "base_damage");
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+    }
 
-        private SunRayToggleMovement sunRayToggleMovement;
+    public override bool HasAreaOfEffect { get; } = false;
 
-        public SunRay(Ability baseAbility)
-            : base(baseAbility)
+    public bool IsSunRayActive
+    {
+        get
         {
-            this.DamageData = new SpecialData(baseAbility, "base_damage");
-            this.RadiusData = new SpecialData(baseAbility, "radius");
+            return this.IsHidden;
+        }
+    }
+
+    public bool IsSunRayMoving { get; private set; }
+
+    public bool Stop()
+    {
+        return this.sunRayStop.UseAbility();
+    }
+
+    public bool ToggleMovement()
+    {
+        if (this.sunRayToggleMovement.UseAbility())
+        {
+            this.IsSunRayMoving = !this.IsSunRayMoving;
+            return true;
         }
 
-        public override bool HasAreaOfEffect { get; } = false;
+        return false;
+    }
 
-        public bool IsSunRayActive
+    public override bool UseAbility(Unit9 target, HitChance minimumChance, bool queue = false, bool bypass = false)
+    {
+        this.IsSunRayMoving = false;
+        return base.UseAbility(target, minimumChance, queue, bypass);
+    }
+
+    internal override void SetOwner(Unit9 owner)
+    {
+        base.SetOwner(owner);
+
+        var ability = EntityManager9.BaseAbilities.FirstOrDefault(
+            x => x.Id == AbilityId.phoenix_sun_ray_stop && x.Owner?.Handle == owner.Handle);
+
+        if (ability == null)
         {
-            get
-            {
-                return this.IsHidden;
-            }
+            throw new ArgumentNullException(nameof(this.sunRayStop));
         }
 
-        public bool IsSunRayMoving { get; private set; }
+        this.sunRayStop = (SunRayStop)EntityManager9.AddAbility(ability);
 
-        public bool Stop()
+        ability = EntityManager9.BaseAbilities.FirstOrDefault(
+            x => x.Id == AbilityId.phoenix_sun_ray_toggle_move && x.Owner?.Handle == owner.Handle);
+
+        if (ability == null)
         {
-            return this.sunRayStop.UseAbility();
+            throw new ArgumentNullException(nameof(this.sunRayToggleMovement));
         }
 
-        public bool ToggleMovement()
-        {
-            if (this.sunRayToggleMovement.UseAbility())
-            {
-                this.IsSunRayMoving = !this.IsSunRayMoving;
-                return true;
-            }
-
-            return false;
-        }
-
-        public override bool UseAbility(Unit9 target, HitChance minimumChance, bool queue = false, bool bypass = false)
-        {
-            this.IsSunRayMoving = false;
-            return base.UseAbility(target, minimumChance, queue, bypass);
-        }
-
-        internal override void SetOwner(Unit9 owner)
-        {
-            base.SetOwner(owner);
-
-            var ability = EntityManager9.BaseAbilities.FirstOrDefault(
-                x => x.Id == AbilityId.phoenix_sun_ray_stop && x.Owner?.Handle == owner.Handle);
-
-            if (ability == null)
-            {
-                throw new ArgumentNullException(nameof(this.sunRayStop));
-            }
-
-            this.sunRayStop = (SunRayStop)EntityManager9.AddAbility(ability);
-
-            ability = EntityManager9.BaseAbilities.FirstOrDefault(
-                x => x.Id == AbilityId.phoenix_sun_ray_toggle_move && x.Owner?.Handle == owner.Handle);
-
-            if (ability == null)
-            {
-                throw new ArgumentNullException(nameof(this.sunRayToggleMovement));
-            }
-
-            this.sunRayToggleMovement = (SunRayToggleMovement)EntityManager9.AddAbility(ability);
-        }
+        this.sunRayToggleMovement = (SunRayToggleMovement)EntityManager9.AddAbility(ability);
     }
 }

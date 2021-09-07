@@ -1,24 +1,23 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.FacelessVoid
+﻿namespace O9K.Core.Entities.Abilities.Heroes.FacelessVoid;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.faceless_void_time_dilation)]
+public class TimeDilation : AreaOfEffectAbility, IDebuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.faceless_void_time_dilation)]
-    public class TimeDilation : AreaOfEffectAbility, IDebuff
+    public TimeDilation(Ability baseAbility)
+        : base(baseAbility)
     {
-        public TimeDilation(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-        }
-
-        public string DebuffModifierName { get; } = "modifier_faceless_void_time_dilation_slow";
+        this.RadiusData = new SpecialData(baseAbility, "radius");
     }
+
+    public string DebuffModifierName { get; } = "modifier_faceless_void_time_dilation_slow";
 }

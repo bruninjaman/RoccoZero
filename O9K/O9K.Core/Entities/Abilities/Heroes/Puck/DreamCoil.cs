@@ -1,39 +1,38 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Puck
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Puck;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.puck_dream_coil)]
+public class DreamCoil : CircleAbility, IDisable
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.puck_dream_coil)]
-    public class DreamCoil : CircleAbility, IDisable
+    public DreamCoil(Ability baseAbility)
+        : base(baseAbility)
     {
-        public DreamCoil(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "coil_radius");
-            this.DamageData = new SpecialData(baseAbility, "coil_initial_damage");
-        }
+        this.RadiusData = new SpecialData(baseAbility, "coil_radius");
+        this.DamageData = new SpecialData(baseAbility, "coil_initial_damage");
+    }
 
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
 
-        public override bool CanHitSpellImmuneEnemy
+    public override bool CanHitSpellImmuneEnemy
+    {
+        get
         {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return true;
-                }
-
-                return false;
+                return true;
             }
+
+            return false;
         }
     }
 }

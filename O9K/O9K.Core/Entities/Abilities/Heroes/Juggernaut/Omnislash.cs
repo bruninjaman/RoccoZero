@@ -1,22 +1,21 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Juggernaut
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Juggernaut;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.juggernaut_omni_slash)]
+public class Omnislash : RangedAbility
 {
-    using Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.juggernaut_omni_slash)]
-    public class Omnislash : RangedAbility
+    public Omnislash(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Omnislash(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "omni_slash_radius");
-            this.DamageData = new SpecialData(baseAbility, "bonus_damage");
-        }
+        this.RadiusData = new SpecialData(baseAbility, "omni_slash_radius");
+        this.DamageData = new SpecialData(baseAbility, "bonus_damage");
     }
 }

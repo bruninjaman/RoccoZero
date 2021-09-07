@@ -1,12 +1,11 @@
-﻿namespace O9K.Core.Extensions
-{
-    using Divine.Projectile.Projectiles;
+﻿namespace O9K.Core.Extensions;
 
-    public static class ProjectileExtensions
+using Divine.Projectile.Projectiles;
+
+public static class ProjectileExtensions
+{
+    public static bool IsAutoAttackProjectile(this TrackingProjectile projectile)
     {
-        public static bool IsAutoAttackProjectile(this TrackingProjectile projectile)
-        {
-            return projectile.IsAttack;
-        }
+        return projectile.IsAttack;
     }
 }

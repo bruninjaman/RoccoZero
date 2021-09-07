@@ -1,18 +1,17 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_quarterstaff)]
+public class Quarterstaff : PassiveAbility
 {
-    using Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_quarterstaff)]
-    public class Quarterstaff : PassiveAbility
+    public Quarterstaff(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Quarterstaff(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
     }
 }

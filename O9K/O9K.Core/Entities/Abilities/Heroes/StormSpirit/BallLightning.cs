@@ -1,64 +1,63 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.StormSpirit
+﻿namespace O9K.Core.Entities.Abilities.Heroes.StormSpirit;
+
+using System;
+
+using Base;
+using Base.Types;
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.storm_spirit_ball_lightning)]
+public class BallLightning : LineAbility, IBlink
 {
-    using System;
+    private readonly SpecialData travelCostBase;
 
-    using Base;
-    using Base.Types;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData travelCostPercent;
 
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.storm_spirit_ball_lightning)]
-    public class BallLightning : LineAbility, IBlink
+    public BallLightning(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData travelCostBase;
+        this.SpeedData = new SpecialData(baseAbility, "ball_lightning_move_speed");
+        this.RadiusData = new SpecialData(baseAbility, "ball_lightning_aoe");
+        this.travelCostBase = new SpecialData(baseAbility, "ball_lightning_travel_cost_base");
+        this.travelCostPercent = new SpecialData(baseAbility, "ball_lightning_travel_cost_percent");
+    }
 
-        private readonly SpecialData travelCostPercent;
+    public BlinkType BlinkType { get; } = BlinkType.Blink;
 
-        public BallLightning(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastRange { get; } = 600; //hack for auto usage
+
+    public float MaxCastRange
+    {
+        get
         {
-            this.SpeedData = new SpecialData(baseAbility, "ball_lightning_move_speed");
-            this.RadiusData = new SpecialData(baseAbility, "ball_lightning_aoe");
-            this.travelCostBase = new SpecialData(baseAbility, "ball_lightning_travel_cost_base");
-            this.travelCostPercent = new SpecialData(baseAbility, "ball_lightning_travel_cost_percent");
+            var mana = this.Owner.Mana - this.ManaCost;
+            return (float)Math.Ceiling(mana / this.TravelCost) * 100;
         }
+    }
 
-        public BlinkType BlinkType { get; } = BlinkType.Blink;
-
-        public override float CastRange { get; } = 600; //hack for auto usage
-
-        public float MaxCastRange
+    private float TravelCost
+    {
+        get
         {
-            get
-            {
-                var mana = this.Owner.Mana - this.ManaCost;
-                return (float)Math.Ceiling(mana / this.TravelCost) * 100;
-            }
+            return this.travelCostBase.GetValue(this.Level)
+                   + (this.Owner.MaximumMana * (this.travelCostPercent.GetValue(this.Level) / 100));
         }
+    }
 
-        private float TravelCost
-        {
-            get
-            {
-                return this.travelCostBase.GetValue(this.Level)
-                       + (this.Owner.MaximumMana * (this.travelCostPercent.GetValue(this.Level) / 100));
-            }
-        }
+    public int GetRemainingMana(Vector3 position)
+    {
+        return (int)(this.Owner.Mana - this.GetRequiredMana(position));
+    }
 
-        public int GetRemainingMana(Vector3 position)
-        {
-            return (int)(this.Owner.Mana - this.GetRequiredMana(position));
-        }
-
-        public int GetRequiredMana(Vector3 position)
-        {
-            var distance = this.Owner.Distance(position);
-            return (int)(this.ManaCost + ((float)Math.Floor(distance / 100) * this.TravelCost));
-        }
+    public int GetRequiredMana(Vector3 position)
+    {
+        var distance = this.Owner.Distance(position);
+        return (int)(this.ManaCost + ((float)Math.Floor(distance / 100) * this.TravelCost));
     }
 }

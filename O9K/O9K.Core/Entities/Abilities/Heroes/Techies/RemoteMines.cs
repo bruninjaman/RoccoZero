@@ -1,42 +1,41 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Techies
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Techies;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.techies_remote_mines)]
+public class RemoteMines : CircleAbility
 {
-    using Base;
+    private readonly SpecialData scepterDamageData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.techies_remote_mines)]
-    public class RemoteMines : CircleAbility
+    public RemoteMines(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData scepterDamageData;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.ActivationDelayData = new SpecialData(baseAbility, "detonate_delay");
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.scepterDamageData = new SpecialData(baseAbility, "damage_scepter");
+    }
 
-        public RemoteMines(Ability baseAbility)
-            : base(baseAbility)
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        if (this.Owner.HasAghanimsScepter)
         {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.ActivationDelayData = new SpecialData(baseAbility, "detonate_delay");
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.scepterDamageData = new SpecialData(baseAbility, "damage_scepter");
-        }
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
-        {
-            if (this.Owner.HasAghanimsScepter)
+            return new Damage
             {
-                return new Damage
-                {
-                    [this.DamageType] = this.scepterDamageData.GetValue(this.Level)
-                };
-            }
-
-            return base.GetRawDamage(unit, remainingHealth);
+                [this.DamageType] = this.scepterDamageData.GetValue(this.Level)
+            };
         }
+
+        return base.GetRawDamage(unit, remainingHealth);
     }
 }

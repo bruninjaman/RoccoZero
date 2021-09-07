@@ -1,39 +1,38 @@
-﻿namespace O9K.Core.Entities.Abilities.NeutralItems
+﻿namespace O9K.Core.Entities.Abilities.NeutralItems;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+using O9K.Core.Entities.Abilities.Base.Types;
+using O9K.Core.Entities.Units;
+using O9K.Core.Helpers;
+
+[AbilityId(AbilityId.item_bullwhip)]
+public class Bullwhip : RangedAbility, IBuff, IDebuff, ISpeedBuff
 {
-    using Base;
+    private readonly SpecialData bonusMoveSpeedData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    using O9K.Core.Entities.Abilities.Base.Types;
-    using O9K.Core.Entities.Units;
-    using O9K.Core.Helpers;
-
-    [AbilityId(AbilityId.item_bullwhip)]
-    public class Bullwhip : RangedAbility, IBuff, IDebuff, ISpeedBuff
+    public Bullwhip(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData bonusMoveSpeedData;
+        this.ActivationDelayData = new SpecialData(baseAbility, "bullwhip_delay_time");
+        this.bonusMoveSpeedData = new SpecialData(baseAbility, "speed");
+    }
 
-        public Bullwhip(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.ActivationDelayData = new SpecialData(baseAbility, "bullwhip_delay_time");
-            this.bonusMoveSpeedData = new SpecialData(baseAbility, "speed");
-        }
+    public string BuffModifierName { get; } = "modifier_item_bullwhip_buff";
 
-        public string BuffModifierName { get; } = "modifier_item_bullwhip_buff";
+    public bool BuffsAlly { get; } = true;
 
-        public bool BuffsAlly { get; } = true;
+    public bool BuffsOwner { get; } = true;
 
-        public bool BuffsOwner { get; } = true;
+    public string DebuffModifierName { get; } = "modifier_item_bullwhip_buff";
 
-        public string DebuffModifierName { get; } = "modifier_item_bullwhip_buff";
-
-        public float GetSpeedBuff(Unit9 unit)
-        {
-            return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
-        }
+    public float GetSpeedBuff(Unit9 unit)
+    {
+        return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
     }
 }

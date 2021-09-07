@@ -1,262 +1,261 @@
-﻿namespace O9K.Core.Managers.Menu.Items
+﻿namespace O9K.Core.Managers.Menu.Items;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Divine.Numerics;
+using Divine.Renderer;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Entities.Heroes;
+using Entities.Units;
+
+using Entity;
+
+using EventArgs;
+
+using Logger;
+
+using Newtonsoft.Json.Linq;
+
+public class MenuHeroToggler : MenuItem
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Divine.Numerics;
-    using Divine.Renderer;
-    using Divine.Entity.Entities.Units.Heroes.Components;
+    private readonly bool allies;
 
-    using Entities.Heroes;
-    using Entities.Units;
+    private readonly bool defaultValue;
 
-    using Entity;
+    private readonly bool enemies;
 
-    using EventArgs;
+    private readonly Dictionary<string, bool> heroes = new Dictionary<string, bool>();
 
-    using Logger;
+    private readonly List<HeroId> loadTextures = new List<HeroId>();
 
-    using Newtonsoft.Json.Linq;
+    private readonly Dictionary<string, bool> savedHeroes = new Dictionary<string, bool>();
 
-    public class MenuHeroToggler : MenuItem
+    public MenuHeroToggler(
+        string displayName,
+        bool allies = false,
+        bool enemies = false,
+        bool defaultValue = true,
+        bool heroUnique = false)
+        : this(displayName, displayName, allies, enemies, defaultValue, heroUnique)
     {
-        private readonly bool allies;
+    }
 
-        private readonly bool defaultValue;
+    public MenuHeroToggler(
+        string displayName,
+        string name,
+        bool allies = false,
+        bool enemies = false,
+        bool defaultValue = true,
+        bool heroUnique = false)
+        : base(displayName, name, heroUnique)
+    {
+        this.allies = allies;
+        this.enemies = enemies;
+        this.defaultValue = defaultValue;
+    }
 
-        private readonly bool enemies;
+    public event EventHandler<HeroEventArgs> ValueChange;
 
-        private readonly Dictionary<string, bool> heroes = new Dictionary<string, bool>();
+    public bool IsEnabled(string name)
+    {
+        this.heroes.TryGetValue(name, out var value);
+        return value;
+    }
 
-        private readonly List<HeroId> loadTextures = new List<HeroId>();
+    public MenuHeroToggler SetTooltip(string tooltip)
+    {
+        this.LocalizedTooltip[Lang.En] = tooltip;
+        return this;
+    }
 
-        private readonly Dictionary<string, bool> savedHeroes = new Dictionary<string, bool>();
+    internal override void CalculateSize()
+    {
+        this.DisplayNameSize = RendererManager.MeasureText(this.DisplayName, this.MenuStyle.Font, this.MenuStyle.TextSize);
+        var width = this.DisplayNameSize.X + this.MenuStyle.LeftIndent + this.MenuStyle.RightIndent + 10
+                    + (this.MenuStyle.TextureArrowSize * 2) + (this.heroes.Count * this.MenuStyle.TextureHeroSize.X);
+        this.Size = new Vector2(width, this.MenuStyle.Height);
+        this.ParentMenu.CalculateWidth();
 
-        public MenuHeroToggler(
-            string displayName,
-            bool allies = false,
-            bool enemies = false,
-            bool defaultValue = true,
-            bool heroUnique = false)
-            : this(displayName, displayName, allies, enemies, defaultValue, heroUnique)
+        this.SizeCalculated = true;
+    }
+
+    internal override object GetSaveValue()
+    {
+        foreach (var ability in this.heroes)
         {
+            this.savedHeroes[ability.Key] = ability.Value;
         }
 
-        public MenuHeroToggler(
-            string displayName,
-            string name,
-            bool allies = false,
-            bool enemies = false,
-            bool defaultValue = true,
-            bool heroUnique = false)
-            : base(displayName, name, heroUnique)
+        return this.savedHeroes;
+    }
+
+    internal override void Load(JToken token)
+    {
+        try
         {
-            this.allies = allies;
-            this.enemies = enemies;
-            this.defaultValue = defaultValue;
-        }
-
-        public event EventHandler<HeroEventArgs> ValueChange;
-
-        public bool IsEnabled(string name)
-        {
-            this.heroes.TryGetValue(name, out var value);
-            return value;
-        }
-
-        public MenuHeroToggler SetTooltip(string tooltip)
-        {
-            this.LocalizedTooltip[Lang.En] = tooltip;
-            return this;
-        }
-
-        internal override void CalculateSize()
-        {
-            this.DisplayNameSize = RendererManager.MeasureText(this.DisplayName, this.MenuStyle.Font, this.MenuStyle.TextSize);
-            var width = this.DisplayNameSize.X + this.MenuStyle.LeftIndent + this.MenuStyle.RightIndent + 10
-                        + (this.MenuStyle.TextureArrowSize * 2) + (this.heroes.Count * this.MenuStyle.TextureHeroSize.X);
-            this.Size = new Vector2(width, this.MenuStyle.Height);
-            this.ParentMenu.CalculateWidth();
-
-            this.SizeCalculated = true;
-        }
-
-        internal override object GetSaveValue()
-        {
-            foreach (var ability in this.heroes)
-            {
-                this.savedHeroes[ability.Key] = ability.Value;
-            }
-
-            return this.savedHeroes;
-        }
-
-        internal override void Load(JToken token)
-        {
-            try
-            {
-                token = token?[this.Name];
-                if (token == null)
-                {
-                    return;
-                }
-
-                foreach (var item in token.ToObject<JObject>())
-                {
-                    var key = item.Key;
-                    var value = (bool)item.Value;
-
-                    this.savedHeroes[key] = value;
-
-                    if (this.heroes.ContainsKey(key))
-                    {
-                        this.heroes[key] = value;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
-
-        internal override bool OnMouseRelease(Vector2 position)
-        {
-            if (this.heroes.Count == 0)
-            {
-                return false;
-            }
-
-            var startPosition = new Vector2(
-                (this.Position.X + this.Size.X) - this.MenuStyle.TextureHeroSize.X - 4,
-                this.Position.Y + ((this.Size.Y - this.MenuStyle.TextureHeroSize.Y) / 2.2f));
-
-            foreach (var hero in this.heroes.Reverse())
-            {
-                var abilityPosition = new RectangleF(
-                    startPosition.X - 1.5f,
-                    startPosition.Y - 1.5f,
-                    this.MenuStyle.TextureHeroSize.X + 3,
-                    this.MenuStyle.TextureHeroSize.Y + 3);
-
-                if (abilityPosition.Contains(position))
-                {
-                    var value = this.heroes[hero.Key];
-                    this.heroes[hero.Key] = !value;
-                    this.ValueChange?.Invoke(this, new HeroEventArgs(hero.Key, !value, value));
-                    return true;
-                }
-
-                startPosition -= new Vector2(this.MenuStyle.TextureHeroSize.X + 4, 0);
-            }
-
-            return false;
-        }
-
-        internal override void SetRenderer()
-        {
-            base.SetRenderer();
-
-            foreach (var texture in this.loadTextures)
-            {
-                RendererManager.LoadImage(texture);
-            }
-
-            EntityManager9.UnitAdded += this.OnUnitAdded;
-        }
-
-        protected override void Draw()
-        {
-            base.Draw();
-
-            //abilities
-            var startPosition = new Vector2(
-                (this.Position.X + this.Size.X) - this.MenuStyle.TextureHeroSize.X - 4,
-                this.Position.Y + ((this.Size.Y - this.MenuStyle.TextureHeroSize.Y) / 2.2f));
-
-            foreach (var ability in this.heroes.Reverse())
-            {
-                RendererManager.DrawFilledRectangle(
-                    new RectangleF(
-                        startPosition.X - 1.5f,
-                        startPosition.Y - 1.5f,
-                        this.MenuStyle.TextureHeroSize.X + 3,
-                        this.MenuStyle.TextureHeroSize.Y + 3),
-                    Color.Zero,
-                    ability.Value ? Color.LightGreen : Color.Red,
-                    0);
-
-                RendererManager.DrawImage(
-                    ability.Key,
-                    new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureHeroSize.X, this.MenuStyle.TextureHeroSize.Y),
-                    ImageType.Unit);
-
-                startPosition -= new Vector2(this.MenuStyle.TextureHeroSize.X + 4, 0);
-            }
-        }
-
-        private void AddHero(HeroId id)
-        {
-            var name = id.ToString();
-
-            if (this.heroes.ContainsKey(name))
+            token = token?[this.Name];
+            if (token == null)
             {
                 return;
             }
 
-            if (this.Renderer == null)
+            foreach (var item in token.ToObject<JObject>())
             {
-                this.loadTextures.Add(id);
-            }
-            else
-            {
-                RendererManager.LoadImage(id);
-            }
+                var key = item.Key;
+                var value = (bool)item.Value;
 
-            if (this.savedHeroes.TryGetValue(name, out var savedValue))
-            {
-                this.heroes[name] = savedValue;
-            }
-            else
-            {
-                this.heroes[name] = this.defaultValue;
-            }
+                this.savedHeroes[key] = value;
 
-            if (this.SizeCalculated)
-            {
-                this.CalculateSize();
-                this.ParentMenu.CalculateWidth();
-            }
-
-            if (this.heroes.Count >= 5)
-            {
-                EntityManager9.UnitAdded -= this.OnUnitAdded;
+                if (this.heroes.ContainsKey(key))
+                {
+                    this.heroes[key] = value;
+                }
             }
         }
-
-        private void OnUnitAdded(Unit9 entity)
+        catch (Exception e)
         {
-            try
-            {
-                if (entity.IsIllusion)
-                {
-                    return;
-                }
+            Logger.Error(e);
+        }
+    }
 
-                if (!(entity is Hero9 hero))
-                {
-                    return;
-                }
+    internal override bool OnMouseRelease(Vector2 position)
+    {
+        if (this.heroes.Count == 0)
+        {
+            return false;
+        }
 
-                if ((this.allies && hero.IsAlly()) || (this.enemies && hero.IsEnemy()))
-                {
-                    this.AddHero(hero.Id);
-                }
-            }
-            catch (Exception e)
+        var startPosition = new Vector2(
+            (this.Position.X + this.Size.X) - this.MenuStyle.TextureHeroSize.X - 4,
+            this.Position.Y + ((this.Size.Y - this.MenuStyle.TextureHeroSize.Y) / 2.2f));
+
+        foreach (var hero in this.heroes.Reverse())
+        {
+            var abilityPosition = new RectangleF(
+                startPosition.X - 1.5f,
+                startPosition.Y - 1.5f,
+                this.MenuStyle.TextureHeroSize.X + 3,
+                this.MenuStyle.TextureHeroSize.Y + 3);
+
+            if (abilityPosition.Contains(position))
             {
-                Logger.Error(e);
+                var value = this.heroes[hero.Key];
+                this.heroes[hero.Key] = !value;
+                this.ValueChange?.Invoke(this, new HeroEventArgs(hero.Key, !value, value));
+                return true;
             }
+
+            startPosition -= new Vector2(this.MenuStyle.TextureHeroSize.X + 4, 0);
+        }
+
+        return false;
+    }
+
+    internal override void SetRenderer()
+    {
+        base.SetRenderer();
+
+        foreach (var texture in this.loadTextures)
+        {
+            RendererManager.LoadImage(texture);
+        }
+
+        EntityManager9.UnitAdded += this.OnUnitAdded;
+    }
+
+    protected override void Draw()
+    {
+        base.Draw();
+
+        //abilities
+        var startPosition = new Vector2(
+            (this.Position.X + this.Size.X) - this.MenuStyle.TextureHeroSize.X - 4,
+            this.Position.Y + ((this.Size.Y - this.MenuStyle.TextureHeroSize.Y) / 2.2f));
+
+        foreach (var ability in this.heroes.Reverse())
+        {
+            RendererManager.DrawFilledRectangle(
+                new RectangleF(
+                    startPosition.X - 1.5f,
+                    startPosition.Y - 1.5f,
+                    this.MenuStyle.TextureHeroSize.X + 3,
+                    this.MenuStyle.TextureHeroSize.Y + 3),
+                Color.Zero,
+                ability.Value ? Color.LightGreen : Color.Red,
+                0);
+
+            RendererManager.DrawImage(
+                ability.Key,
+                new RectangleF(startPosition.X, startPosition.Y, this.MenuStyle.TextureHeroSize.X, this.MenuStyle.TextureHeroSize.Y),
+                ImageType.Unit);
+
+            startPosition -= new Vector2(this.MenuStyle.TextureHeroSize.X + 4, 0);
+        }
+    }
+
+    private void AddHero(HeroId id)
+    {
+        var name = id.ToString();
+
+        if (this.heroes.ContainsKey(name))
+        {
+            return;
+        }
+
+        if (this.Renderer == null)
+        {
+            this.loadTextures.Add(id);
+        }
+        else
+        {
+            RendererManager.LoadImage(id);
+        }
+
+        if (this.savedHeroes.TryGetValue(name, out var savedValue))
+        {
+            this.heroes[name] = savedValue;
+        }
+        else
+        {
+            this.heroes[name] = this.defaultValue;
+        }
+
+        if (this.SizeCalculated)
+        {
+            this.CalculateSize();
+            this.ParentMenu.CalculateWidth();
+        }
+
+        if (this.heroes.Count >= 5)
+        {
+            EntityManager9.UnitAdded -= this.OnUnitAdded;
+        }
+    }
+
+    private void OnUnitAdded(Unit9 entity)
+    {
+        try
+        {
+            if (entity.IsIllusion)
+            {
+                return;
+            }
+
+            if (!(entity is Hero9 hero))
+            {
+                return;
+            }
+
+            if ((this.allies && hero.IsAlly()) || (this.enemies && hero.IsEnemy()))
+            {
+                this.AddHero(hero.Id);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
         }
     }
 }

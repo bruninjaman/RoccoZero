@@ -1,180 +1,179 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using System;
+
+using Base;
+using Base.Components;
+using Base.Types;
+using Divine.Modifier;
+using Divine.Numerics;
+using Divine.Order;
+using Divine.Modifier.EventArgs;
+using Divine.Order.EventArgs;
+using Divine.Entity.Entities.Abilities;
+using Divine.Order.Orders.Components;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Range;
+
+using Logger;
+
+using Managers.Entity;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_hurricane_pike)]
+public class HurricanePike : RangedAbility, IBlink, IHasRangeIncrease
 {
-    using System;
+    private readonly SpecialData attackRange;
 
-    using Base;
-    using Base.Components;
-    using Base.Types;
-    using Divine.Modifier;
-    using Divine.Numerics;
-    using Divine.Order;
-    using Divine.Modifier.EventArgs;
-    using Divine.Order.EventArgs;
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Order.Orders.Components;
-    using Divine.Entity.Entities.Abilities.Components;
+    private Unit9 pikeTarget;
 
-    using Entities.Units;
+    private bool subbed;
 
-    using Helpers;
-    using Helpers.Range;
-
-    using Logger;
-
-    using Managers.Entity;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_hurricane_pike)]
-    public class HurricanePike : RangedAbility, IBlink, IHasRangeIncrease
+    public HurricanePike(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackRange;
+        this.attackRange = new SpecialData(baseAbility, "base_attack_range");
+        this.RangeData = new SpecialData(baseAbility, "push_length");
+    }
 
-        private Unit9 pikeTarget;
+    public BlinkType BlinkType { get; } = BlinkType.Leap;
 
-        private bool subbed;
+    public bool IsRangeIncreasePermanent { get; } = true;
 
-        public HurricanePike(Ability baseAbility)
-            : base(baseAbility)
+    public override float Range
+    {
+        get
         {
-            this.attackRange = new SpecialData(baseAbility, "base_attack_range");
-            this.RangeData = new SpecialData(baseAbility, "push_length");
+            return this.RangeData.GetValue(this.Level);
+        }
+    }
+
+    public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
+
+    public string RangeModifierName { get; } = "modifier_item_hurricane_pike";
+
+    public override float Speed { get; } = 1200;
+
+    public override bool CanHit(Unit9 target)
+    {
+        if (!base.CanHit(target))
+        {
+            return false;
         }
 
-        public BlinkType BlinkType { get; } = BlinkType.Leap;
-
-        public bool IsRangeIncreasePermanent { get; } = true;
-
-        public override float Range
+        if (!this.Owner.IsAlly(target) && this.Owner.Distance(target) > this.CastRange / 2)
         {
-            get
-            {
-                return this.RangeData.GetValue(this.Level);
-            }
+            return false;
         }
 
-        public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
+        return true;
+    }
 
-        public string RangeModifierName { get; } = "modifier_item_hurricane_pike";
+    public override void Dispose()
+    {
+        base.Dispose();
 
-        public override float Speed { get; } = 1200;
+        OrderManager.OrderAdding -= this.OnOrderAdding;
+        ModifierManager.ModifierAdded -= this.OnModifierAdded;
+        ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
+    }
 
-        public override bool CanHit(Unit9 target)
+    public override float GetHitTime(Vector3 position)
+    {
+        return this.GetCastDelay(position) + this.ActivationDelay + (this.Range / this.Speed);
+    }
+
+    public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+    {
+        if (!this.IsUsable || !this.Owner.IsRanged)
         {
-            if (!base.CanHit(target))
-            {
-                return false;
-            }
-
-            if (!this.Owner.IsAlly(target) && this.Owner.Distance(target) > this.CastRange / 2)
-            {
-                return false;
-            }
-
-            return true;
+            return 0;
         }
 
-        public override void Dispose()
-        {
-            base.Dispose();
+        return this.attackRange.GetValue(this.Level);
+    }
 
-            OrderManager.OrderAdding -= this.OnOrderAdding;
+    internal override void SetOwner(Unit9 owner)
+    {
+        base.SetOwner(owner);
+
+        if (this.IsControllable)
+        {
+            OrderManager.OrderAdding += this.OnOrderAdding;
+        }
+    }
+
+    private void OnOrderAdding(OrderAddingEventArgs e)
+    {
+        try
+        {
+            var order = e.Order;
+            if (this.subbed || order.Type != OrderType.CastTarget || order.Ability.Id != this.Id || !e.Process)
+            {
+                return;
+            }
+
+            this.pikeTarget = EntityManager9.GetUnit(order.Target.Handle);
+            if (this.pikeTarget == null || this.pikeTarget.IsLinkensProtected || this.pikeTarget.IsSpellShieldProtected)
+            {
+                return;
+            }
+
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
+            this.subbed = true;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+    private void OnModifierAdded(ModifierAddedEventArgs e)
+    {
+        try
+        {
+            var modifier = e.Modifier;
+            if (modifier.Owner.Handle != this.Owner.Handle || modifier.Name != "modifier_item_hurricane_pike_range")
+            {
+                return;
+            }
+
+            this.Owner.HurricanePikeTarget = this.pikeTarget;
+
             ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ModifierManager.ModifierRemoved += this.OnModifierRemoved;
+        }
+        catch (Exception ex)
+        {
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            Logger.Error(ex);
+        }
+    }
+
+    private void OnModifierRemoved(ModifierRemovedEventArgs e)
+    {
+        try
+        {
+            var modifier = e.Modifier;
+            if (modifier.Owner.Handle != this.Owner.Handle || modifier.Name != "modifier_item_hurricane_pike_range")
+            {
+                return;
+            }
+
+            this.Owner.HurricanePikeTarget = null;
+
             ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
+            this.subbed = false;
         }
-
-        public override float GetHitTime(Vector3 position)
+        catch (Exception ex)
         {
-            return this.GetCastDelay(position) + this.ActivationDelay + (this.Range / this.Speed);
-        }
-
-        public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
-        {
-            if (!this.IsUsable || !this.Owner.IsRanged)
-            {
-                return 0;
-            }
-
-            return this.attackRange.GetValue(this.Level);
-        }
-
-        internal override void SetOwner(Unit9 owner)
-        {
-            base.SetOwner(owner);
-
-            if (this.IsControllable)
-            {
-                OrderManager.OrderAdding += this.OnOrderAdding;
-            }
-        }
-
-        private void OnOrderAdding(OrderAddingEventArgs e)
-        {
-            try
-            {
-                var order = e.Order;
-                if (this.subbed || order.Type != OrderType.CastTarget || order.Ability.Id != this.Id || !e.Process)
-                {
-                    return;
-                }
-
-                this.pikeTarget = EntityManager9.GetUnit(order.Target.Handle);
-                if (this.pikeTarget == null || this.pikeTarget.IsLinkensProtected || this.pikeTarget.IsSpellShieldProtected)
-                {
-                    return;
-                }
-
-                ModifierManager.ModifierAdded += this.OnModifierAdded;
-                this.subbed = true;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
-        }
-
-        private void OnModifierAdded(ModifierAddedEventArgs e)
-        {
-            try
-            {
-                var modifier = e.Modifier;
-                if (modifier.Owner.Handle != this.Owner.Handle || modifier.Name != "modifier_item_hurricane_pike_range")
-                {
-                    return;
-                }
-
-                this.Owner.HurricanePikeTarget = this.pikeTarget;
-
-                ModifierManager.ModifierAdded -= this.OnModifierAdded;
-                ModifierManager.ModifierRemoved += this.OnModifierRemoved;
-            }
-            catch (Exception ex)
-            {
-                ModifierManager.ModifierAdded -= this.OnModifierAdded;
-                Logger.Error(ex);
-            }
-        }
-
-        private void OnModifierRemoved(ModifierRemovedEventArgs e)
-        {
-            try
-            {
-                var modifier = e.Modifier;
-                if (modifier.Owner.Handle != this.Owner.Handle || modifier.Name != "modifier_item_hurricane_pike_range")
-                {
-                    return;
-                }
-
-                this.Owner.HurricanePikeTarget = null;
-
-                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
-                this.subbed = false;
-            }
-            catch (Exception ex)
-            {
-                ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
-                Logger.Error(ex);
-            }
+            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
+            Logger.Error(ex);
         }
     }
 }

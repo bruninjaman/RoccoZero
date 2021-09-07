@@ -1,108 +1,107 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Slark
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Slark;
+
+using System.Collections.Generic;
+
+using Base;
+using Base.Types;
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+using Prediction.Data;
+
+[AbilityId(AbilityId.slark_pounce)]
+public class Pounce : LineAbility, IBlink
 {
-    using System.Collections.Generic;
+    private readonly SpecialData castRangeData;
 
-    using Base;
-    using Base.Types;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData scepterRangeData;
 
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    using Prediction.Data;
-
-    [AbilityId(AbilityId.slark_pounce)]
-    public class Pounce : LineAbility, IBlink
+    public Pounce(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.RadiusData = new SpecialData(baseAbility, "pounce_radius");
+        this.SpeedData = new SpecialData(baseAbility, "pounce_speed");
+        this.castRangeData = new SpecialData(baseAbility, "pounce_distance");
+        this.scepterRangeData = new SpecialData(baseAbility, "pounce_distance_scepter");
+    }
 
-        private readonly SpecialData scepterRangeData;
+    public BlinkType BlinkType { get; } = BlinkType.Leap;
 
-        public Pounce(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastRange
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "pounce_radius");
-            this.SpeedData = new SpecialData(baseAbility, "pounce_speed");
-            this.castRangeData = new SpecialData(baseAbility, "pounce_distance");
-            this.scepterRangeData = new SpecialData(baseAbility, "pounce_distance_scepter");
-        }
-
-        public BlinkType BlinkType { get; } = BlinkType.Leap;
-
-        public override float CastRange
-        {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return this.scepterRangeData.GetValue(this.Level);
-                }
-
-                return this.castRangeData.GetValue(this.Level);
-            }
-        }
-
-        public override bool HasAreaOfEffect { get; } = false;
-
-        public override bool IsDisplayingCharges
-        {
-            get
-            {
-                return this.Owner.HasAghanimsScepter;
-            }
-        }
-
-        public override float Speed
-        {
-            get
-            {
-                var speed = this.SpeedData.GetValue(this.Level);
-
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    speed *= 2f;
-                }
-
-                return speed;
-            }
-        }
-
-        public override bool CanHit(Unit9 target)
-        {
-            if (target.IsMagicImmune && ((target.IsEnemy(this.Owner) && !this.CanHitSpellImmuneEnemy)
-                                         || (target.IsAlly(this.Owner) && !this.CanHitSpellImmuneAlly)))
-            {
-                return false;
+                return this.scepterRangeData.GetValue(this.Level);
             }
 
-            var predictionInput = this.GetPredictionInput(target);
-            var output = this.GetPredictionOutput(predictionInput);
+            return this.castRangeData.GetValue(this.Level);
+        }
+    }
 
-            if (output.HitChance <= HitChance.Impossible || this.Owner.GetAngle(output.CastPosition) > 0.1f)
+    public override bool HasAreaOfEffect { get; } = false;
+
+    public override bool IsDisplayingCharges
+    {
+        get
+        {
+            return this.Owner.HasAghanimsScepter;
+        }
+    }
+
+    public override float Speed
+    {
+        get
+        {
+            var speed = this.SpeedData.GetValue(this.Level);
+
+            if (this.Owner.HasAghanimsScepter)
             {
-                return false;
+                speed *= 2f;
             }
 
-            return true;
+            return speed;
         }
+    }
 
-        public override float GetHitTime(Vector3 position)
+    public override bool CanHit(Unit9 target)
+    {
+        if (target.IsMagicImmune && ((target.IsEnemy(this.Owner) && !this.CanHitSpellImmuneEnemy)
+                                     || (target.IsAlly(this.Owner) && !this.CanHitSpellImmuneAlly)))
         {
-            return this.GetCastDelay(position) + this.ActivationDelay + (this.Range / this.Speed);
+            return false;
         }
 
-        public override PredictionInput9 GetPredictionInput(Unit9 target, List<Unit9> aoeTargets = null)
+        var predictionInput = this.GetPredictionInput(target);
+        var output = this.GetPredictionOutput(predictionInput);
+
+        if (output.HitChance <= HitChance.Impossible || this.Owner.GetAngle(output.CastPosition) > 0.1f)
         {
-            var input = base.GetPredictionInput(target, aoeTargets);
-            input.CastRange -= 100;
-            input.Range -= 100;
-
-            return input;
+            return false;
         }
+
+        return true;
+    }
+
+    public override float GetHitTime(Vector3 position)
+    {
+        return this.GetCastDelay(position) + this.ActivationDelay + (this.Range / this.Speed);
+    }
+
+    public override PredictionInput9 GetPredictionInput(Unit9 target, List<Unit9> aoeTargets = null)
+    {
+        var input = base.GetPredictionInput(target, aoeTargets);
+        input.CastRange -= 100;
+        input.Range -= 100;
+
+        return input;
     }
 }

@@ -1,52 +1,51 @@
-﻿namespace O9K.Core.Entities.Heroes.Unique
+﻿namespace O9K.Core.Entities.Heroes.Unique;
+
+using Abilities.Base;
+using Abilities.Heroes.Alchemist;
+
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Metadata;
+
+[HeroId(HeroId.npc_dota_hero_alchemist)]
+internal class Alchemist : Hero9
 {
-    using Abilities.Base;
-    using Abilities.Heroes.Alchemist;
+    private ChemicalRage chemicalRage;
 
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Heroes;
-    using Divine.Entity.Entities.Units.Heroes.Components;
+    private bool useRageAttackTime;
 
-    using Metadata;
-
-    [HeroId(HeroId.npc_dota_hero_alchemist)]
-    internal class Alchemist : Hero9
+    public Alchemist(Hero baseHero)
+        : base(baseHero)
     {
-        private ChemicalRage chemicalRage;
+    }
 
-        private bool useRageAttackTime;
-
-        public Alchemist(Hero baseHero)
-            : base(baseHero)
+    protected override float BaseAttackTime
+    {
+        get
         {
-        }
-
-        protected override float BaseAttackTime
-        {
-            get
+            if (this.useRageAttackTime && this.chemicalRage != null)
             {
-                if (this.useRageAttackTime && this.chemicalRage != null)
-                {
-                    return this.chemicalRage.AttackTime;
-                }
-
-                return base.BaseAttackTime;
+                return this.chemicalRage.AttackTime;
             }
-        }
 
-        internal override void Ability(Ability9 ability, bool added)
+            return base.BaseAttackTime;
+        }
+    }
+
+    internal override void Ability(Ability9 ability, bool added)
+    {
+        base.Ability(ability, added);
+
+        if (added && ability.Id == AbilityId.alchemist_chemical_rage)
         {
-            base.Ability(ability, added);
-
-            if (added && ability.Id == AbilityId.alchemist_chemical_rage)
-            {
-                this.chemicalRage = (ChemicalRage)ability;
-            }
+            this.chemicalRage = (ChemicalRage)ability;
         }
+    }
 
-        internal void Raged(bool value)
-        {
-            this.useRageAttackTime = value;
-        }
+    internal void Raged(bool value)
+    {
+        this.useRageAttackTime = value;
     }
 }

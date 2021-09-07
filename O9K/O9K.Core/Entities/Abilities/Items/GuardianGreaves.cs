@@ -1,48 +1,47 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_guardian_greaves)]
+public class GuardianGreaves : AreaOfEffectAbility, IHealthRestore, IManaRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData manaRestoreData;
 
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_guardian_greaves)]
-    public class GuardianGreaves : AreaOfEffectAbility, IHealthRestore, IManaRestore
+    public GuardianGreaves(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthRestoreData;
+        this.RadiusData = new SpecialData(baseAbility, "replenish_radius");
+        this.healthRestoreData = new SpecialData(baseAbility, "replenish_health");
+        this.manaRestoreData = new SpecialData(baseAbility, "replenish_mana");
+    }
 
-        private readonly SpecialData manaRestoreData;
+    public bool InstantRestore { get; } = true;
 
-        public GuardianGreaves(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "replenish_radius");
-            this.healthRestoreData = new SpecialData(baseAbility, "replenish_health");
-            this.manaRestoreData = new SpecialData(baseAbility, "replenish_mana");
-        }
+    public string RestoreModifierName { get; } = "modifier_item_mekansm_noheal";
 
-        public bool InstantRestore { get; } = true;
+    public bool RestoresAlly { get; } = true;
 
-        public string RestoreModifierName { get; } = "modifier_item_mekansm_noheal";
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresAlly { get; } = true;
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)this.healthRestoreData.GetValue(this.Level);
+    }
 
-        public bool RestoresOwner { get; } = true;
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)this.healthRestoreData.GetValue(this.Level);
-        }
-
-        public int GetManaRestore(Unit9 unit)
-        {
-            return (int)this.manaRestoreData.GetValue(this.Level);
-        }
+    public int GetManaRestore(Unit9 unit)
+    {
+        return (int)this.manaRestoreData.GetValue(this.Level);
     }
 }

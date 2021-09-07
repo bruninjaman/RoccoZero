@@ -1,47 +1,46 @@
-﻿namespace O9K.Core.Entities.Abilities.NeutralItems
+﻿namespace O9K.Core.Entities.Abilities.NeutralItems;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_vambrace)]
+public class Vambrace : PassiveAbility, IHasDamageAmplify
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData amplifierData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_vambrace)]
-    public class Vambrace : PassiveAbility, IHasDamageAmplify
+    public Vambrace(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData amplifierData;
+        this.amplifierData = new SpecialData(baseAbility, "bonus_spell_amp");
+    }
 
-        public Vambrace(Ability baseAbility)
-            : base(baseAbility)
+    public DamageType AmplifierDamageType { get; } = DamageType.Magical;
+
+    public string[] AmplifierModifierNames { get; } = { "modifier_item_vambrace" };
+
+    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Outgoing;
+
+    public bool IsAmplifierAddedToStats { get; } = false;
+
+    public bool IsAmplifierPermanent { get; } = true;
+
+    public float AmplifierValue(Unit9 source, Unit9 target)
+    {
+        if (!this.IsUsable || this.Owner.PrimaryAttribute != Attribute.Intelligence)
         {
-            this.amplifierData = new SpecialData(baseAbility, "bonus_spell_amp");
+            return 0;
         }
 
-        public DamageType AmplifierDamageType { get; } = DamageType.Magical;
-
-        public string[] AmplifierModifierNames { get; } = { "modifier_item_vambrace" };
-
-        public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Outgoing;
-
-        public bool IsAmplifierAddedToStats { get; } = false;
-
-        public bool IsAmplifierPermanent { get; } = true;
-
-        public float AmplifierValue(Unit9 source, Unit9 target)
-        {
-            if (!this.IsUsable || this.Owner.PrimaryAttribute != Attribute.Intelligence)
-            {
-                return 0;
-            }
-
-            return this.amplifierData.GetValue(this.Level) / 100f;
-        }
+        return this.amplifierData.GetValue(this.Level) / 100f;
     }
 }

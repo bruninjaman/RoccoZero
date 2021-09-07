@@ -1,42 +1,41 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Puck
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Puck;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.puck_illusory_orb)]
+public class IllusoryOrb : LineAbility, INuke
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.puck_illusory_orb)]
-    public class IllusoryOrb : LineAbility, INuke
+    public IllusoryOrb(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.SpeedData = new SpecialData(baseAbility, "orb_speed");
+        this.castRangeData = new SpecialData(baseAbility, "max_distance");
+    }
 
-        public IllusoryOrb(Ability baseAbility)
-            : base(baseAbility)
+    public override float Speed
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.SpeedData = new SpecialData(baseAbility, "orb_speed");
-            this.castRangeData = new SpecialData(baseAbility, "max_distance");
+            return this.SpeedData.GetValueWithTalentMultiply(this.Level);
         }
+    }
 
-        public override float Speed
+    protected override float BaseCastRange
+    {
+        get
         {
-            get
-            {
-                return this.SpeedData.GetValueWithTalentMultiply(this.Level);
-            }
-        }
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValueWithTalentMultiply(this.Level);
-            }
+            return this.castRangeData.GetValueWithTalentMultiply(this.Level);
         }
     }
 }

@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_mekansm)]
+public class Mekansm : AreaOfEffectAbility, IHealthRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_mekansm)]
-    public class Mekansm : AreaOfEffectAbility, IHealthRestore
+    public Mekansm(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthRestoreData;
+        this.RadiusData = new SpecialData(baseAbility, "heal_radius");
+        this.healthRestoreData = new SpecialData(baseAbility, "heal_amount");
+    }
 
-        public Mekansm(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "heal_radius");
-            this.healthRestoreData = new SpecialData(baseAbility, "heal_amount");
-        }
+    public bool InstantRestore { get; } = true;
 
-        public bool InstantRestore { get; } = true;
+    public string RestoreModifierName { get; } = "modifier_item_mekansm_noheal";
 
-        public string RestoreModifierName { get; } = "modifier_item_mekansm_noheal";
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)this.healthRestoreData.GetValue(this.Level);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)this.healthRestoreData.GetValue(this.Level);
     }
 }

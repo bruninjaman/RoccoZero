@@ -1,60 +1,59 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.SandKing
+﻿namespace O9K.Core.Entities.Abilities.Heroes.SandKing;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.sandking_burrowstrike)]
+public class Burrowstrike : LineAbility, IDisable, INuke, IBlink
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData scepterCastRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
+    private readonly SpecialData scepterSpeedData;
 
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.sandking_burrowstrike)]
-    public class Burrowstrike : LineAbility, IDisable, INuke, IBlink
+    public Burrowstrike(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData scepterCastRangeData;
+        this.RadiusData = new SpecialData(baseAbility, "burrow_width");
+        this.SpeedData = new SpecialData(baseAbility, "burrow_speed");
+        this.scepterSpeedData = new SpecialData(baseAbility, "burrow_speed_scepter");
+        this.scepterCastRangeData = new SpecialData(baseAbility, "cast_range_scepter");
+    }
 
-        private readonly SpecialData scepterSpeedData;
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
 
-        public Burrowstrike(Ability baseAbility)
-            : base(baseAbility)
+    public BlinkType BlinkType { get; } = BlinkType.Blink;
+
+    public override float Speed
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "burrow_width");
-            this.SpeedData = new SpecialData(baseAbility, "burrow_speed");
-            this.scepterSpeedData = new SpecialData(baseAbility, "burrow_speed_scepter");
-            this.scepterCastRangeData = new SpecialData(baseAbility, "cast_range_scepter");
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        public BlinkType BlinkType { get; } = BlinkType.Blink;
-
-        public override float Speed
-        {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return this.scepterSpeedData.GetValue(this.Level);
-                }
-
-                return base.Speed;
+                return this.scepterSpeedData.GetValue(this.Level);
             }
+
+            return base.Speed;
         }
+    }
 
-        protected override float BaseCastRange
+    protected override float BaseCastRange
+    {
+        get
         {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return this.scepterCastRangeData.GetValue(this.Level);
-                }
-
-                return base.BaseCastRange;
+                return this.scepterCastRangeData.GetValue(this.Level);
             }
+
+            return base.BaseCastRange;
         }
     }
 }

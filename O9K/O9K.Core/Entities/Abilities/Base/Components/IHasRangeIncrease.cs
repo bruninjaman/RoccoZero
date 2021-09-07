@@ -1,19 +1,18 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Components
+﻿namespace O9K.Core.Entities.Abilities.Base.Components;
+
+using Entities.Units;
+
+using Helpers.Range;
+
+public interface IHasRangeIncrease
 {
-    using Entities.Units;
+    bool IsRangeIncreasePermanent { get; }
 
-    using Helpers.Range;
+    bool IsValid { get; }
 
-    public interface IHasRangeIncrease
-    {
-        bool IsRangeIncreasePermanent { get; }
+    RangeIncreaseType RangeIncreaseType { get; }
 
-        bool IsValid { get; }
+    string RangeModifierName { get; }
 
-        RangeIncreaseType RangeIncreaseType { get; }
-
-        string RangeModifierName { get; }
-
-        float GetRangeIncrease(Unit9 unit, RangeIncreaseType type);
-    }
+    float GetRangeIncrease(Unit9 unit, RangeIncreaseType type);
 }

@@ -1,38 +1,37 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Bane
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Bane;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.bane_fiends_grip)]
+public class FiendsGrip : RangedAbility, IChanneled, IDisable
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData channelTimeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.bane_fiends_grip)]
-    public class FiendsGrip : RangedAbility, IChanneled, IDisable
+    public FiendsGrip(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData channelTimeData;
-
-        public FiendsGrip(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.channelTimeData = new SpecialData(baseAbility, "abilitychanneltime");
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        public float ChannelTime
-        {
-            get
-            {
-                return this.channelTimeData.GetValue(this.Level);
-            }
-        }
-
-        public bool IsActivatesOnChannelStart { get; } = true;
+        this.channelTimeData = new SpecialData(baseAbility, "abilitychanneltime");
     }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+
+    public float ChannelTime
+    {
+        get
+        {
+            return this.channelTimeData.GetValue(this.Level);
+        }
+    }
+
+    public bool IsActivatesOnChannelStart { get; } = true;
 }

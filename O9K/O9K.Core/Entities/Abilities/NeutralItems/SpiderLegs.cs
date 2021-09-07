@@ -1,37 +1,36 @@
-﻿namespace O9K.Core.Entities.Abilities.NeutralItems
+﻿namespace O9K.Core.Entities.Abilities.NeutralItems;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_spider_legs)]
+public class SpiderLegs : ActiveAbility, ISpeedBuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData speedBuffData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_spider_legs)]
-    public class SpiderLegs : ActiveAbility, ISpeedBuff
+    public SpiderLegs(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData speedBuffData;
+        this.speedBuffData = new SpecialData(baseAbility, "bonus_movement_speed_active");
+    }
 
-        public SpiderLegs(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.speedBuffData = new SpecialData(baseAbility, "bonus_movement_speed_active");
-        }
+    public string BuffModifierName { get; } = "modifier_item_spider_legs_active";
 
-        public string BuffModifierName { get; } = "modifier_item_spider_legs_active";
+    public bool BuffsAlly { get; } = false;
 
-        public bool BuffsAlly { get; } = false;
+    public bool BuffsOwner { get; } = true;
 
-        public bool BuffsOwner { get; } = true;
-
-        public float GetSpeedBuff(Unit9 unit)
-        {
-            return (unit.Speed * this.speedBuffData.GetValue(this.Level)) / 100;
-        }
+    public float GetSpeedBuff(Unit9 unit)
+    {
+        return (unit.Speed * this.speedBuffData.GetValue(this.Level)) / 100;
     }
 }

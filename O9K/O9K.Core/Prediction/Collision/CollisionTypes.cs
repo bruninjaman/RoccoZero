@@ -1,28 +1,27 @@
-﻿namespace O9K.Core.Prediction.Collision
+﻿namespace O9K.Core.Prediction.Collision;
+
+using System;
+
+[Flags]
+public enum CollisionTypes
 {
-    using System;
+    None = 0,
 
-    [Flags]
-    public enum CollisionTypes
-    {
-        None = 0,
+    AllyCreeps = 1 << 1,
 
-        AllyCreeps = 1 << 1,
+    EnemyCreeps = 1 << 2,
 
-        EnemyCreeps = 1 << 2,
+    AllyHeroes = 1 << 3,
 
-        AllyHeroes = 1 << 3,
+    EnemyHeroes = 1 << 4,
 
-        EnemyHeroes = 1 << 4,
+    Runes = 1 << 5,
 
-        Runes = 1 << 5,
+    Trees = 1 << 6,
 
-        Trees = 1 << 6,
+    AllUnits = AllyCreeps | AllyHeroes | EnemyCreeps | EnemyHeroes,
 
-        AllUnits = AllyCreeps | AllyHeroes | EnemyCreeps | EnemyHeroes,
+    AlliedUnits = AllyCreeps | AllyHeroes,
 
-        AlliedUnits = AllyCreeps | AllyHeroes,
-
-        EnemyUnits = EnemyCreeps | EnemyHeroes,
-    }
+    EnemyUnits = EnemyCreeps | EnemyHeroes,
 }

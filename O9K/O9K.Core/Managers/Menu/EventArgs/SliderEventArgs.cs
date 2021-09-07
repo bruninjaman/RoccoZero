@@ -1,10 +1,9 @@
-﻿namespace O9K.Core.Managers.Menu.EventArgs
+﻿namespace O9K.Core.Managers.Menu.EventArgs;
+
+public sealed class SliderEventArgs : MenuEventArgs<int>
 {
-    public sealed class SliderEventArgs : MenuEventArgs<int>
+    public SliderEventArgs(int newValue, int oldValue)
+        : base(newValue, oldValue)
     {
-        public SliderEventArgs(int newValue, int oldValue)
-            : base(newValue, oldValue)
-        {
-        }
     }
 }

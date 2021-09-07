@@ -1,24 +1,23 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Grimstroke
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Grimstroke;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.grimstroke_soul_chain)]
+public class Soulbind : RangedAreaOfEffectAbility, IDebuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.grimstroke_soul_chain)]
-    public class Soulbind : RangedAreaOfEffectAbility, IDebuff
+    public Soulbind(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Soulbind(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "chain_latch_radius");
-        }
-
-        public string DebuffModifierName { get; } = "modifier_grimstroke_soul_chain";
+        this.RadiusData = new SpecialData(baseAbility, "chain_latch_radius");
     }
+
+    public string DebuffModifierName { get; } = "modifier_grimstroke_soul_chain";
 }

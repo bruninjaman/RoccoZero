@@ -1,37 +1,36 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Components
+﻿namespace O9K.Core.Entities.Abilities.Base.Components;
+
+using System;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+[Flags]
+public enum AmplifiesDamage
 {
-    using System;
+    None = 0,
 
-    using Divine.Entity.Entities.Abilities.Components;
+    Incoming = 1 << 0,
 
-    using Entities.Units;
+    Outgoing = 1 << 1,
 
-    [Flags]
-    public enum AmplifiesDamage
-    {
-        None = 0,
+    All = Incoming | Outgoing
+}
 
-        Incoming = 1 << 0,
+public interface IHasDamageAmplify
+{
+    DamageType AmplifierDamageType { get; }
 
-        Outgoing = 1 << 1,
+    string[] AmplifierModifierNames { get; }
 
-        All = Incoming | Outgoing
-    }
+    AmplifiesDamage AmplifiesDamage { get; }
 
-    public interface IHasDamageAmplify
-    {
-        DamageType AmplifierDamageType { get; }
+    bool IsAmplifierAddedToStats { get; }
 
-        string[] AmplifierModifierNames { get; }
+    bool IsAmplifierPermanent { get; }
 
-        AmplifiesDamage AmplifiesDamage { get; }
+    bool IsValid { get; }
 
-        bool IsAmplifierAddedToStats { get; }
-
-        bool IsAmplifierPermanent { get; }
-
-        bool IsValid { get; }
-
-        float AmplifierValue(Unit9 source, Unit9 target);
-    }
+    float AmplifierValue(Unit9 source, Unit9 target);
 }

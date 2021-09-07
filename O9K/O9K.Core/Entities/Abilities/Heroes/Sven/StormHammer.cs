@@ -1,59 +1,58 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Sven
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Sven;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.sven_storm_bolt)]
+public class StormHammer : RangedAreaOfEffectAbility, IDisable, INuke
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData scepterBonusCastRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.sven_storm_bolt)]
-    public class StormHammer : RangedAreaOfEffectAbility, IDisable, INuke
+    public StormHammer(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData scepterBonusCastRangeData;
+        this.RadiusData = new SpecialData(baseAbility, "bolt_aoe");
+        this.SpeedData = new SpecialData(baseAbility, "bolt_speed");
+        this.scepterBonusCastRangeData = new SpecialData(baseAbility, "cast_range_bonus_scepter");
+    }
 
-        public StormHammer(Ability baseAbility)
-            : base(baseAbility)
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+
+    public override float CastRange
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "bolt_aoe");
-            this.SpeedData = new SpecialData(baseAbility, "bolt_speed");
-            this.scepterBonusCastRangeData = new SpecialData(baseAbility, "cast_range_bonus_scepter");
-        }
+            var range = base.CastRange;
 
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        public override float CastRange
-        {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                var range = base.CastRange;
-
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    range += this.scepterBonusCastRangeData.GetValue(this.Level);
-                }
-
-                return range;
+                range += this.scepterBonusCastRangeData.GetValue(this.Level);
             }
+
+            return range;
         }
+    }
 
-        public bool IsDispelActive
+    public bool IsDispelActive
+    {
+        get
         {
-            get
+            //todo change
+            var talent = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_sven_3);
+            if (talent?.Level > 0)
             {
-                //todo change
-                var talent = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_sven_3);
-                if (talent?.Level > 0)
-                {
-                    return true;
-                }
-
-                return false;
+                return true;
             }
+
+            return false;
         }
     }
 }

@@ -1,19 +1,18 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Types
+﻿namespace O9K.Core.Entities.Abilities.Base.Types;
+
+using Components.Base;
+
+using Entities.Units;
+
+public interface IHealthRestore : IActiveAbility
 {
-    using Components.Base;
+    bool InstantRestore { get; }
 
-    using Entities.Units;
+    string RestoreModifierName { get; }
 
-    public interface IHealthRestore : IActiveAbility
-    {
-        bool InstantRestore { get; }
+    bool RestoresAlly { get; }
 
-        string RestoreModifierName { get; }
+    bool RestoresOwner { get; }
 
-        bool RestoresAlly { get; }
-
-        bool RestoresOwner { get; }
-
-        int GetHealthRestore(Unit9 unit);
-    }
+    int GetHealthRestore(Unit9 unit);
 }

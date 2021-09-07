@@ -1,38 +1,37 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.StormSpirit
+﻿namespace O9K.Core.Entities.Abilities.Heroes.StormSpirit;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.storm_spirit_electric_vortex)]
+public class ElectricVortex : RangedAbility, IDisable
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.storm_spirit_electric_vortex)]
-    public class ElectricVortex : RangedAbility, IDisable
+    public ElectricVortex(Ability baseAbility)
+        : base(baseAbility)
     {
-        public ElectricVortex(Ability baseAbility)
-            : base(baseAbility)
-        {
-            //todo better aghanim calcs
-        }
-
-        public override AbilityBehavior AbilityBehavior
-        {
-            get
-            {
-                var behavior = base.AbilityBehavior;
-
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    behavior = (behavior & ~AbilityBehavior.UnitTarget) | AbilityBehavior.NoTarget;
-                }
-
-                return behavior;
-            }
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+        //todo better aghanim calcs
     }
+
+    public override AbilityBehavior AbilityBehavior
+    {
+        get
+        {
+            var behavior = base.AbilityBehavior;
+
+            if (this.Owner.HasAghanimsScepter)
+            {
+                behavior = (behavior & ~AbilityBehavior.UnitTarget) | AbilityBehavior.NoTarget;
+            }
+
+            return behavior;
+        }
+    }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
 }

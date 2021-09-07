@@ -1,46 +1,45 @@
-﻿namespace O9K.Core.Helpers.Particles
+﻿namespace O9K.Core.Helpers.Particles;
+
+using System;
+
+using Divine.Numerics;
+using Divine.Particle;
+using Divine.Particle.Particles;
+
+using Entities.Units;
+
+public class RadiusParticle : IDisposable
 {
-    using System;
+    private const string ParticleName = "particles/ui_mouseactions/drag_selected_ring.vpcf";
 
-    using Divine.Numerics;
-    using Divine.Particle;
-    using Divine.Particle.Particles;
+    private readonly Particle particle;
 
-    using Entities.Units;
-
-    public class RadiusParticle : IDisposable
+    public RadiusParticle(Vector3 position, Vector3 color, float radius)
     {
-        private const string ParticleName = "particles/ui_mouseactions/drag_selected_ring.vpcf";
+        this.particle = ParticleManager.CreateParticle(ParticleName, position);
+        this.SetData(color, radius);
+    }
 
-        private readonly Particle particle;
+    public RadiusParticle(Unit9 unit, Vector3 color, float radius)
+    {
+        this.particle = ParticleManager.CreateParticle(ParticleName, unit.BaseUnit);
+        this.SetData(color, radius);
+    }
 
-        public RadiusParticle(Vector3 position, Vector3 color, float radius)
-        {
-            this.particle = ParticleManager.CreateParticle(ParticleName, position);
-            this.SetData(color, radius);
-        }
+    public void ChangePosition(Vector3 position)
+    {
+        this.particle.SetControlPoint(0, position);
+        this.particle.FullRestart();
+    }
 
-        public RadiusParticle(Unit9 unit, Vector3 color, float radius)
-        {
-            this.particle = ParticleManager.CreateParticle(ParticleName, unit.BaseUnit);
-            this.SetData(color, radius);
-        }
+    public void Dispose()
+    {
+        this.particle.Dispose();
+    }
 
-        public void ChangePosition(Vector3 position)
-        {
-            this.particle.SetControlPoint(0, position);
-            this.particle.FullRestart();
-        }
-
-        public void Dispose()
-        {
-            this.particle.Dispose();
-        }
-
-        private void SetData(Vector3 color, float radius)
-        {
-            this.particle.SetControlPoint(1, color);
-            this.particle.SetControlPoint(2, new Vector3(-radius, 255, 0));
-        }
+    private void SetData(Vector3 color, float radius)
+    {
+        this.particle.SetControlPoint(1, color);
+        this.particle.SetControlPoint(2, new Vector3(-radius, 255, 0));
     }
 }

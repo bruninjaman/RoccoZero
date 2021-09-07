@@ -1,28 +1,27 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.NagaSiren
+﻿namespace O9K.Core.Entities.Abilities.Heroes.NagaSiren;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.naga_siren_ensnare)]
+public class Ensnare : RangedAbility, IDisable, IAppliesImmobility
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.naga_siren_ensnare)]
-    public class Ensnare : RangedAbility, IDisable, IAppliesImmobility
+    public Ensnare(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Ensnare(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.SpeedData = new SpecialData(baseAbility, "net_speed");
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Rooted;
-
-        public string ImmobilityModifierName { get; } = "modifier_naga_siren_ensnare";
+        this.SpeedData = new SpecialData(baseAbility, "net_speed");
     }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Rooted;
+
+    public string ImmobilityModifierName { get; } = "modifier_naga_siren_ensnare";
 }

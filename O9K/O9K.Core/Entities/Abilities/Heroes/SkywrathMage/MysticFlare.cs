@@ -1,25 +1,24 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.SkywrathMage
+﻿namespace O9K.Core.Entities.Abilities.Heroes.SkywrathMage;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.skywrath_mage_mystic_flare)]
+public class MysticFlare : CircleAbility, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.skywrath_mage_mystic_flare)]
-    public class MysticFlare : CircleAbility, INuke
+    public MysticFlare(Ability baseAbility)
+        : base(baseAbility)
     {
-        public MysticFlare(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-        }
-
-        public override bool HasAreaOfEffect { get; } = false;
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.RadiusData = new SpecialData(baseAbility, "radius");
     }
+
+    public override bool HasAreaOfEffect { get; } = false;
 }

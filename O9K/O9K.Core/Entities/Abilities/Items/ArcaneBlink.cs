@@ -1,46 +1,45 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using System;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_arcane_blink)]
+public class ArcaneBlink : RangedAbility, IBlink
 {
-    using System;
+    private readonly SpecialData castRangeData;
 
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_arcane_blink)]
-    public class ArcaneBlink : RangedAbility, IBlink
+    public ArcaneBlink(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.castRangeData = new SpecialData(baseAbility, "blink_range");
+    }
 
-        public ArcaneBlink(Ability baseAbility)
-            : base(baseAbility)
+    public BlinkType BlinkType { get; } = BlinkType.Blink;
+
+    public override float TimeSinceCasted
+    {
+        get
         {
-            this.castRangeData = new SpecialData(baseAbility, "blink_range");
+            //prevent damage 3s cd to consider as casted
+            var cooldownLength = this.BaseAbility.CooldownLength;
+            return cooldownLength <= 0 ? 9999999 : Math.Max(cooldownLength, 10) - this.BaseAbility.Cooldown;
         }
+    }
 
-        public BlinkType BlinkType { get; } = BlinkType.Blink;
-
-        public override float TimeSinceCasted
+    protected override float BaseCastRange
+    {
+        get
         {
-            get
-            {
-                //prevent damage 3s cd to consider as casted
-                var cooldownLength = this.BaseAbility.CooldownLength;
-                return cooldownLength <= 0 ? 9999999 : Math.Max(cooldownLength, 10) - this.BaseAbility.Cooldown;
-            }
-        }
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level) - 25;
-            }
+            return this.castRangeData.GetValue(this.Level) - 25;
         }
     }
 }

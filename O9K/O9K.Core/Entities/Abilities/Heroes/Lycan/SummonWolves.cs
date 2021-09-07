@@ -1,25 +1,24 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Lycan
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Lycan;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.lycan_summon_wolves)]
+public class SummonWolves : ActiveAbility, IBuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.lycan_summon_wolves)]
-    public class SummonWolves : ActiveAbility, IBuff
+    public SummonWolves(Ability baseAbility)
+        : base(baseAbility)
     {
-        public SummonWolves(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
-
-        public string BuffModifierName { get; } = string.Empty;
-
-        public bool BuffsAlly { get; } = false;
-
-        public bool BuffsOwner { get; } = true;
     }
+
+    public string BuffModifierName { get; } = string.Empty;
+
+    public bool BuffsAlly { get; } = false;
+
+    public bool BuffsOwner { get; } = true;
 }

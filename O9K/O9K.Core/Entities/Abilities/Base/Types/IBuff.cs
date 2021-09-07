@@ -1,13 +1,12 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Types
+﻿namespace O9K.Core.Entities.Abilities.Base.Types;
+
+using Components.Base;
+
+public interface IBuff : IActiveAbility
 {
-    using Components.Base;
+    string BuffModifierName { get; }
 
-    public interface IBuff : IActiveAbility
-    {
-        string BuffModifierName { get; }
+    bool BuffsAlly { get; }
 
-        bool BuffsAlly { get; }
-
-        bool BuffsOwner { get; }
-    }
+    bool BuffsOwner { get; }
 }

@@ -1,15 +1,14 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Components
+﻿namespace O9K.Core.Entities.Abilities.Base.Components;
+
+using Entities.Units;
+
+public interface IToggleable
 {
-    using Entities.Units;
+    bool Enabled { get; set; }
 
-    public interface IToggleable
-    {
-        bool Enabled { get; set; }
+    bool IsValid { get; }
 
-        bool IsValid { get; }
+    Unit9 Owner { get; }
 
-        Unit9 Owner { get; }
-
-        bool CanBeCasted(bool checkChanneling = true);
-    }
+    bool CanBeCasted(bool checkChanneling = true);
 }

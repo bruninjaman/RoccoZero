@@ -1,88 +1,87 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowDemon
+﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowDemon;
+
+using System;
+using System.Linq;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Managers.Entity;
+
+using Metadata;
+
+[AbilityId(AbilityId.shadow_demon_shadow_poison_release)]
+public class ShadowPoisonRelease : ActiveAbility, INuke
 {
-    using System;
-    using System.Linq;
+    private SpecialData maxStacksData;
 
-    using Base;
-    using Base.Types;
+    private SpecialData overflowDamageData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private ShadowPoison shadowPoison;
 
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Managers.Entity;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.shadow_demon_shadow_poison_release)]
-    public class ShadowPoisonRelease : ActiveAbility, INuke
+    public ShadowPoisonRelease(Ability baseAbility)
+        : base(baseAbility)
     {
-        private SpecialData maxStacksData;
+    }
 
-        private SpecialData overflowDamageData;
-
-        private ShadowPoison shadowPoison;
-
-        public ShadowPoisonRelease(Ability baseAbility)
-            : base(baseAbility)
+    public override DamageType DamageType
+    {
+        get
         {
+            return this.shadowPoison.DamageType;
+        }
+    }
+
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var stacks = unit.GetModifierStacks("modifier_shadow_demon_shadow_poison");
+        if (stacks <= 0)
+        {
+            return new Damage();
         }
 
-        public override DamageType DamageType
+        var lvl = this.Owner.Abilities.FirstOrDefault(x => x.Id == AbilityId.shadow_demon_shadow_poison)?.Level ?? 1;
+        var stackDamage = this.DamageData.GetValue(lvl);
+        var maxStacks = this.maxStacksData.GetValue(lvl);
+        var multiplyStacks = Math.Min(stacks, maxStacks);
+        var damage = (int)Math.Pow(2, multiplyStacks - 1) * stackDamage;
+
+        var overflowStacks = Math.Max(stacks - maxStacks, 0);
+        if (overflowStacks > 0)
         {
-            get
-            {
-                return this.shadowPoison.DamageType;
-            }
+            var overflowDamage = this.overflowDamageData.GetValue(this.Level);
+            damage += overflowStacks * overflowDamage;
         }
 
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+        return new Damage
         {
-            var stacks = unit.GetModifierStacks("modifier_shadow_demon_shadow_poison");
-            if (stacks <= 0)
-            {
-                return new Damage();
-            }
+            [this.DamageType] = (int)damage
+        };
+    }
 
-            var lvl = this.Owner.Abilities.FirstOrDefault(x => x.Id == AbilityId.shadow_demon_shadow_poison)?.Level ?? 1;
-            var stackDamage = this.DamageData.GetValue(lvl);
-            var maxStacks = this.maxStacksData.GetValue(lvl);
-            var multiplyStacks = Math.Min(stacks, maxStacks);
-            var damage = (int)Math.Pow(2, multiplyStacks - 1) * stackDamage;
+    internal override void SetOwner(Unit9 owner)
+    {
+        base.SetOwner(owner);
 
-            var overflowStacks = Math.Max(stacks - maxStacks, 0);
-            if (overflowStacks > 0)
-            {
-                var overflowDamage = this.overflowDamageData.GetValue(this.Level);
-                damage += overflowStacks * overflowDamage;
-            }
+        var ability = EntityManager9.BaseAbilities.FirstOrDefault(
+            x => x.Id == AbilityId.shadow_demon_shadow_poison && x.Owner?.Handle == owner.Handle);
 
-            return new Damage
-            {
-                [this.DamageType] = (int)damage
-            };
+        if (ability == null)
+        {
+            throw new ArgumentNullException(nameof(this.shadowPoison));
         }
 
-        internal override void SetOwner(Unit9 owner)
-        {
-            base.SetOwner(owner);
-
-            var ability = EntityManager9.BaseAbilities.FirstOrDefault(
-                x => x.Id == AbilityId.shadow_demon_shadow_poison && x.Owner?.Handle == owner.Handle);
-
-            if (ability == null)
-            {
-                throw new ArgumentNullException(nameof(this.shadowPoison));
-            }
-
-            this.shadowPoison = (ShadowPoison)EntityManager9.AddAbility(ability);
-            this.DamageData = new SpecialData(this.shadowPoison.BaseAbility, "stack_damage");
-            this.maxStacksData = new SpecialData(this.shadowPoison.BaseAbility, "max_multiply_stacks");
-            this.overflowDamageData = new SpecialData(this.shadowPoison.BaseAbility, "bonus_stack_damage");
-        }
+        this.shadowPoison = (ShadowPoison)EntityManager9.AddAbility(ability);
+        this.DamageData = new SpecialData(this.shadowPoison.BaseAbility, "stack_damage");
+        this.maxStacksData = new SpecialData(this.shadowPoison.BaseAbility, "max_multiply_stacks");
+        this.overflowDamageData = new SpecialData(this.shadowPoison.BaseAbility, "bonus_stack_damage");
     }
 }

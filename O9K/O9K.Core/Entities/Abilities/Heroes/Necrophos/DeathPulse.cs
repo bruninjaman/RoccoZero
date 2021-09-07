@@ -1,42 +1,41 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Necrophos
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Necrophos;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.necrolyte_death_pulse)]
+public class DeathPulse : AreaOfEffectAbility, IHealthRestore, INuke
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.necrolyte_death_pulse)]
-    public class DeathPulse : AreaOfEffectAbility, IHealthRestore, INuke
+    public DeathPulse(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthRestoreData;
+        //todo add talent heal
+        this.RadiusData = new SpecialData(baseAbility, "area_of_effect");
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+        this.healthRestoreData = new SpecialData(baseAbility, "heal");
+    }
 
-        public DeathPulse(Ability baseAbility)
-            : base(baseAbility)
-        {
-            //todo add talent heal
-            this.RadiusData = new SpecialData(baseAbility, "area_of_effect");
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-            this.healthRestoreData = new SpecialData(baseAbility, "heal");
-        }
+    public bool InstantRestore { get; } = true;
 
-        public bool InstantRestore { get; } = true;
+    public string RestoreModifierName { get; } = string.Empty;
 
-        public string RestoreModifierName { get; } = string.Empty;
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)this.healthRestoreData.GetValue(this.Level);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)this.healthRestoreData.GetValue(this.Level);
     }
 }

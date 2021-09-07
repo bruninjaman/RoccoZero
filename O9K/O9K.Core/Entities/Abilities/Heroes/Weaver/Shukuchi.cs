@@ -1,42 +1,41 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Weaver
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Weaver;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.weaver_shukuchi)]
+public class Shukuchi : ActiveAbility, ISpeedBuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData speedBuffData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.weaver_shukuchi)]
-    public class Shukuchi : ActiveAbility, ISpeedBuff
+    public Shukuchi(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData speedBuffData;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.speedBuffData = new SpecialData(baseAbility, "speed");
+        this.ActivationDelayData = new SpecialData(baseAbility, "fade_time");
+    }
 
-        public Shukuchi(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.speedBuffData = new SpecialData(baseAbility, "speed");
-            this.ActivationDelayData = new SpecialData(baseAbility, "fade_time");
-        }
+    public string BuffModifierName { get; } = "modifier_weaver_shukuchi";
 
-        public string BuffModifierName { get; } = "modifier_weaver_shukuchi";
+    public bool BuffsAlly { get; } = false;
 
-        public bool BuffsAlly { get; } = false;
+    public bool BuffsOwner { get; } = true;
 
-        public bool BuffsOwner { get; } = true;
+    public override bool IsInvisibility { get; } = true;
 
-        public override bool IsInvisibility { get; } = true;
-
-        public float GetSpeedBuff(Unit9 unit)
-        {
-            return this.speedBuffData.GetValue(this.Level);
-        }
+    public float GetSpeedBuff(Unit9 unit)
+    {
+        return this.speedBuffData.GetValue(this.Level);
     }
 }

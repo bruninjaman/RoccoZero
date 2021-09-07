@@ -1,49 +1,48 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Tusk
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Tusk;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.tusk_tag_team)]
+public class TagTeam : AreaOfEffectAbility, IDebuff, IHasPassiveDamageIncrease
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData buffDamageData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.tusk_tag_team)]
-    public class TagTeam : AreaOfEffectAbility, IDebuff, IHasPassiveDamageIncrease
+    public TagTeam(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData buffDamageData;
+        this.buffDamageData = new SpecialData(baseAbility, "bonus_damage");
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+    }
 
-        public TagTeam(Ability baseAbility)
-            : base(baseAbility)
+    public string DebuffModifierName { get; } = "modifier_tusk_tag_team_aura";
+
+    public bool IsPassiveDamagePermanent { get; } = false;
+
+    public bool MultipliedByCrit { get; } = false;
+
+    public string PassiveDamageModifierName { get; } = "modifier_tusk_tag_team_aura";
+
+    Damage IHasPassiveDamageIncrease.GetRawDamage(Unit9 unit, float? remainingHealth)
+    {
+        var damage = new Damage();
+
+        if (!unit.IsBuilding && !unit.IsAlly(this.Owner))
         {
-            this.buffDamageData = new SpecialData(baseAbility, "bonus_damage");
-            this.RadiusData = new SpecialData(baseAbility, "radius");
+            damage[this.DamageType] = this.buffDamageData.GetValue(this.Level);
         }
 
-        public string DebuffModifierName { get; } = "modifier_tusk_tag_team_aura";
-
-        public bool IsPassiveDamagePermanent { get; } = false;
-
-        public bool MultipliedByCrit { get; } = false;
-
-        public string PassiveDamageModifierName { get; } = "modifier_tusk_tag_team_aura";
-
-        Damage IHasPassiveDamageIncrease.GetRawDamage(Unit9 unit, float? remainingHealth)
-        {
-            var damage = new Damage();
-
-            if (!unit.IsBuilding && !unit.IsAlly(this.Owner))
-            {
-                damage[this.DamageType] = this.buffDamageData.GetValue(this.Level);
-            }
-
-            return damage;
-        }
+        return damage;
     }
 }

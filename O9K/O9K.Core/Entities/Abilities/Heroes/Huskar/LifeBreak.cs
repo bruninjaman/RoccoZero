@@ -1,51 +1,50 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Huskar
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Huskar;
+
+using System;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.huskar_life_break)]
+public class LifeBreak : RangedAbility, INuke
 {
-    using System;
+    private readonly SpecialData castRangeBonusData;
 
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.huskar_life_break)]
-    public class LifeBreak : RangedAbility, INuke
+    public LifeBreak(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeBonusData;
+        //todo aghanims idisable ?
+        this.SpeedData = new SpecialData(baseAbility, "charge_speed");
+        this.DamageData = new SpecialData(baseAbility, "health_damage");
+        this.castRangeBonusData = new SpecialData(baseAbility.Owner, AbilityId.special_bonus_unique_huskar);
+    }
 
-        public LifeBreak(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastRange
+    {
+        get
         {
-            //todo aghanims idisable ?
-            this.SpeedData = new SpecialData(baseAbility, "charge_speed");
-            this.DamageData = new SpecialData(baseAbility, "health_damage");
-            this.castRangeBonusData = new SpecialData(baseAbility.Owner, AbilityId.special_bonus_unique_huskar);
+            return base.CastRange + this.castRangeBonusData.GetValue(0);
         }
+    }
 
-        public override float CastRange
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var health = Math.Max(remainingHealth ?? unit.Health, 0);
+        var multiplier = this.DamageData.GetValue(this.Level);
+
+        return new Damage
         {
-            get
-            {
-                return base.CastRange + this.castRangeBonusData.GetValue(0);
-            }
-        }
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
-        {
-            var health = Math.Max(remainingHealth ?? unit.Health, 0);
-            var multiplier = this.DamageData.GetValue(this.Level);
-
-            return new Damage
-            {
-                [this.DamageType] = health * multiplier
-            };
-        }
+            [this.DamageType] = health * multiplier
+        };
     }
 }

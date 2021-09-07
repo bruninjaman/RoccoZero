@@ -1,227 +1,226 @@
-﻿namespace O9K.Core.Managers.Menu
+﻿namespace O9K.Core.Managers.Menu;
+
+using System;
+using System.Threading.Tasks;
+
+using Divine.Input;
+using Divine.Input.EventArgs;
+using Divine.Menu;
+using Divine.Renderer;
+
+using Items;
+
+using Logger;
+
+public sealed class MenuManager9 : IMenuManager9, IDisposable
 {
-    using System;
-    using System.Threading.Tasks;
+    private readonly MainMenu mainMenu;
 
-    using Divine.Input;
-    using Divine.Input.EventArgs;
-    using Divine.Menu;
-    using Divine.Renderer;
+    private bool menuVisible;
 
-    using Items;
-
-    using Logger;
-
-    public sealed class MenuManager9 : IMenuManager9, IDisposable
+    public MenuManager9()
     {
-        private readonly MainMenu mainMenu;
+        this.mainMenu = new MainMenu();
 
-        private bool menuVisible;
+        var menu = new Menu("General Settings");
 
-        public MenuManager9()
+        var language = menu.Add(new MenuSelector("Language", "En", new[] { "En", "Ru", "Cn" }));
+        language.ValueChange += (sender, e) =>
         {
-            this.mainMenu = new MainMenu();
-
-            var menu = new Menu("General Settings");
-
-            var language = menu.Add(new MenuSelector("Language", "En", new[] { "En", "Ru", "Cn" }));
-            language.ValueChange += (sender, e) =>
+            switch (e.NewValue)
             {
-                switch (e.NewValue)
-                {
-                    case "Ru":
-                        this.mainMenu.SetLanguage(Lang.Ru);
-                        break;
-                    case "Cn":
-                        this.mainMenu.SetLanguage(Lang.Cn);
-                        break;
-                    default:
-                        this.mainMenu.SetLanguage(Lang.En);
-                        break;
-                }
+                case "Ru":
+                    this.mainMenu.SetLanguage(Lang.Ru);
+                    break;
+                case "Cn":
+                    this.mainMenu.SetLanguage(Lang.Cn);
+                    break;
+                default:
+                    this.mainMenu.SetLanguage(Lang.En);
+                    break;
+            }
 
-                this.mainMenu.CalculateSize();
-                this.mainMenu.CalculateWidth(true);
-            };
+            this.mainMenu.CalculateSize();
+            this.mainMenu.CalculateWidth(true);
+        };
 
-            AddRootMenu(menu);
+        AddRootMenu(menu);
 
-            InputManager.KeyDown += this.OnKeyDown;
+        InputManager.KeyDown += this.OnKeyDown;
+    }
+
+    public void AddRootMenu(Menu menu)
+    {
+        try
+        {
+            this.mainMenu.Add(menu);
         }
-
-        public void AddRootMenu(Menu menu)
+        catch (Exception e)
         {
-            try
-            {
-                this.mainMenu.Add(menu);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            Logger.Error(e);
         }
+    }
 
-        public void Dispose()
+    public void Dispose()
+    {
+        InputManager.MouseKeyDown -= this.OnMouseKeyDown;
+        InputManager.MouseKeyUp -= this.OnMouseKeyUp;
+        InputManager.MouseMove -= this.OnMouseMove;
+        InputManager.MouseWheel -= this.OnMouseWheel;
+        InputManager.KeyDown -= this.OnKeyDown;
+        InputManager.KeyUp -= this.OnKeyUp;
+        RendererManager.Draw -= this.OnDraw;
+    }
+
+    public void RemoveRootMenu(Menu menu)
+    {
+        try
         {
-            InputManager.MouseKeyDown -= this.OnMouseKeyDown;
-            InputManager.MouseKeyUp -= this.OnMouseKeyUp;
-            InputManager.MouseMove -= this.OnMouseMove;
-            InputManager.MouseWheel -= this.OnMouseWheel;
-            InputManager.KeyDown -= this.OnKeyDown;
-            InputManager.KeyUp -= this.OnKeyUp;
-            RendererManager.Draw -= this.OnDraw;
+            this.mainMenu.Remove(menu);
         }
-
-        public void RemoveRootMenu(Menu menu)
+        catch (Exception e)
         {
-            try
-            {
-                this.mainMenu.Remove(menu);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            Logger.Error(e);
         }
+    }
 
-        private void OnDraw()
+    private void OnDraw()
+    {
+        try
         {
-            try
-            {
-                this.mainMenu.DrawMenu();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
+            this.mainMenu.DrawMenu();
         }
-
-        private void OnKeyDown(KeyEventArgs e)
+        catch (Exception ex)
         {
-            if (e.Key == MenuManager.MenuToggleKey.Key)
+            Logger.Error(ex);
+        }
+    }
+
+    private void OnKeyDown(KeyEventArgs e)
+    {
+        if (e.Key == MenuManager.MenuToggleKey.Key)
+        {
+            if (this.menuVisible)
             {
-                if (this.menuVisible)
-                {
-                    this.Unsubscribe();
-                    this.SaveMenu();
-                }
-                else
-                {
-                    this.Subscribe();
-                }
+                this.Unsubscribe();
+                this.SaveMenu();
             }
-            else if (!this.menuVisible && e.Key == MenuManager.MenuHoldKey.Key)
+            else
             {
                 this.Subscribe();
             }
         }
-
-        private void OnKeyUp(KeyEventArgs e)
+        else if (!this.menuVisible && e.Key == MenuManager.MenuHoldKey.Key)
         {
-            if (e.Key != MenuManager.MenuHoldKey.Key)
-            {
-                return;
-            }
+            this.Subscribe();
+        }
+    }
 
-            this.Unsubscribe();
-            this.SaveMenu();
+    private void OnKeyUp(KeyEventArgs e)
+    {
+        if (e.Key != MenuManager.MenuHoldKey.Key)
+        {
+            return;
         }
 
-        private void OnMouseKeyDown(MouseEventArgs e)
-        {
-            if (e.MouseKey != MouseKey.Left)
-            {
-                return;
-            }
+        this.Unsubscribe();
+        this.SaveMenu();
+    }
 
-            if (this.mainMenu.OnMousePress(e.Position))
+    private void OnMouseKeyDown(MouseEventArgs e)
+    {
+        if (e.MouseKey != MouseKey.Left)
+        {
+            return;
+        }
+
+        if (this.mainMenu.OnMousePress(e.Position))
+        {
+            e.Process = false;
+        }
+    }
+
+    private void OnMouseKeyUp(MouseEventArgs e)
+    {
+        if (e.MouseKey != MouseKey.Left)
+        {
+            return;
+        }
+
+        if (this.mainMenu.OnMouseRelease(e.Position))
+        {
+            e.Process = false;
+        }
+    }
+
+    private void OnMouseMove(MouseMoveEventArgs e)
+    {
+        try
+        {
+            if (this.mainMenu.OnMouseMove(e.Position))
             {
                 e.Process = false;
             }
         }
-
-        private void OnMouseKeyUp(MouseEventArgs e)
+        catch (Exception ex)
         {
-            if (e.MouseKey != MouseKey.Left)
-            {
-                return;
-            }
+            Logger.Error(ex);
+        }
+    }
 
-            if (this.mainMenu.OnMouseRelease(e.Position))
+    private void OnMouseWheel(MouseWheelEventArgs e)
+    {
+        try
+        {
+            if (this.mainMenu.OnMouseWheel(e.Position, e.Up))
             {
                 e.Process = false;
             }
         }
-
-        private void OnMouseMove(MouseMoveEventArgs e)
+        catch (Exception ex)
         {
-            try
-            {
-                if (this.mainMenu.OnMouseMove(e.Position))
-                {
-                    e.Process = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
+            Logger.Error(ex);
         }
+    }
 
-        private void OnMouseWheel(MouseWheelEventArgs e)
-        {
-            try
-            {
-                if (this.mainMenu.OnMouseWheel(e.Position, e.Up))
+    private void SaveMenu()
+    {
+        Task.Run(
+            () =>
                 {
-                    e.Process = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
-        }
-
-        private void SaveMenu()
-        {
-            Task.Run(
-                () =>
+                    try
                     {
-                        try
+                        lock (this.mainMenu)
                         {
-                            lock (this.mainMenu)
-                            {
-                                this.mainMenu.Save();
-                            }
+                            this.mainMenu.Save();
                         }
-                        catch (Exception e)
-                        {
-                            Logger.Error(e);
-                        }
-                    });
-        }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e);
+                    }
+                });
+    }
 
-        private void Subscribe()
-        {
-            InputManager.MouseKeyDown += this.OnMouseKeyDown;
-            InputManager.MouseKeyUp += this.OnMouseKeyUp;
-            InputManager.MouseMove += this.OnMouseMove;
-            InputManager.MouseWheel += this.OnMouseWheel;
-            InputManager.KeyUp += this.OnKeyUp;
-            RendererManager.Draw += this.OnDraw;
-            this.menuVisible = true;
-        }
+    private void Subscribe()
+    {
+        InputManager.MouseKeyDown += this.OnMouseKeyDown;
+        InputManager.MouseKeyUp += this.OnMouseKeyUp;
+        InputManager.MouseMove += this.OnMouseMove;
+        InputManager.MouseWheel += this.OnMouseWheel;
+        InputManager.KeyUp += this.OnKeyUp;
+        RendererManager.Draw += this.OnDraw;
+        this.menuVisible = true;
+    }
 
-        private void Unsubscribe()
-        {
-            InputManager.MouseKeyDown -= this.OnMouseKeyDown;
-            InputManager.MouseKeyUp -= this.OnMouseKeyUp;
-            InputManager.MouseMove -= this.OnMouseMove;
-            InputManager.MouseWheel -= this.OnMouseWheel;
-            InputManager.KeyUp -= this.OnKeyUp;
-            RendererManager.Draw -= this.OnDraw;
-            this.menuVisible = false;
-        }
+    private void Unsubscribe()
+    {
+        InputManager.MouseKeyDown -= this.OnMouseKeyDown;
+        InputManager.MouseKeyUp -= this.OnMouseKeyUp;
+        InputManager.MouseMove -= this.OnMouseMove;
+        InputManager.MouseWheel -= this.OnMouseWheel;
+        InputManager.KeyUp -= this.OnKeyUp;
+        RendererManager.Draw -= this.OnDraw;
+        this.menuVisible = false;
     }
 }

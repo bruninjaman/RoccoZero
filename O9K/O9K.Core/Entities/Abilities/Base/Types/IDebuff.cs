@@ -1,9 +1,8 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Types
-{
-    using Components.Base;
+﻿namespace O9K.Core.Entities.Abilities.Base.Types;
 
-    public interface IDebuff : IActiveAbility
-    {
-        string DebuffModifierName { get; }
-    }
+using Components.Base;
+
+public interface IDebuff : IActiveAbility
+{
+    string DebuffModifierName { get; }
 }

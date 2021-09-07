@@ -1,39 +1,38 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Sniper
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Sniper;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.sniper_assassinate)]
+public class Assassinate : RangedAbility, INuke
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData scepterCastPointData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.sniper_assassinate)]
-    public class Assassinate : RangedAbility, INuke
+    public Assassinate(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData scepterCastPointData;
+        //todo add stun?
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+        this.scepterCastPointData = new SpecialData(baseAbility, "scepter_cast_point");
+    }
 
-        public Assassinate(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastPoint
+    {
+        get
         {
-            //todo add stun?
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-            this.scepterCastPointData = new SpecialData(baseAbility, "scepter_cast_point");
-        }
-
-        public override float CastPoint
-        {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return this.scepterCastPointData.GetValue(this.Level);
-                }
-
-                return base.CastPoint;
+                return this.scepterCastPointData.GetValue(this.Level);
             }
+
+            return base.CastPoint;
         }
     }
 }

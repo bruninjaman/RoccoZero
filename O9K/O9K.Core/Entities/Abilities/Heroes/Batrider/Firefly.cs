@@ -1,39 +1,38 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Batrider
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Batrider;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.batrider_firefly)]
+public class Firefly : ActiveAbility, ISpeedBuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData bonusMoveSpeedData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.batrider_firefly)]
-    public class Firefly : ActiveAbility, ISpeedBuff
+    public Firefly(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData bonusMoveSpeedData;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.DamageData = new SpecialData(baseAbility, "damage_per_second");
+        this.bonusMoveSpeedData = new SpecialData(baseAbility, "movement_speed");
+    }
 
-        public Firefly(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.DamageData = new SpecialData(baseAbility, "damage_per_second");
-            this.bonusMoveSpeedData = new SpecialData(baseAbility, "movement_speed");
-        }
+    public string BuffModifierName { get; } = "modifier_batrider_firefly";
 
-        public string BuffModifierName { get; } = "modifier_batrider_firefly";
+    public bool BuffsAlly { get; } = false;
 
-        public bool BuffsAlly { get; } = false;
+    public bool BuffsOwner { get; } = true;
 
-        public bool BuffsOwner { get; } = true;
-
-        public float GetSpeedBuff(Unit9 unit)
-        {
-            return unit.Speed * (this.bonusMoveSpeedData.GetValue(this.Level) / 100f);
-        }
+    public float GetSpeedBuff(Unit9 unit)
+    {
+        return unit.Speed * (this.bonusMoveSpeedData.GetValue(this.Level) / 100f);
     }
 }

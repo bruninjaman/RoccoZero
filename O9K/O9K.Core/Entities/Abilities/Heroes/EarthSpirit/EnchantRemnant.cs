@@ -1,52 +1,51 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.EarthSpirit
+﻿namespace O9K.Core.Entities.Abilities.Heroes.EarthSpirit;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.earth_spirit_petrify)]
+public class EnchantRemnant : RangedAbility, IShield
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.earth_spirit_petrify)]
-    public class EnchantRemnant : RangedAbility, IShield
+    public EnchantRemnant(Ability baseAbility)
+        : base(baseAbility)
     {
-        public EnchantRemnant(Ability baseAbility)
-            : base(baseAbility)
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.DurationData = new SpecialData(baseAbility, "duration");
+    }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Invulnerable;
+
+    public override float CastRange
+    {
+        get
         {
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.DurationData = new SpecialData(baseAbility, "duration");
+            return base.CastRange + 100;
         }
+    }
 
-        public UnitState AppliesUnitState { get; } = UnitState.Invulnerable;
+    public string ShieldModifierName { get; } = "modifier_earthspirit_petrify";
 
-        public override float CastRange
-        {
-            get
-            {
-                return base.CastRange + 100;
-            }
-        }
+    public bool ShieldsAlly { get; } = true;
 
-        public string ShieldModifierName { get; } = "modifier_earthspirit_petrify";
+    public bool ShieldsOwner { get; } = false;
 
-        public bool ShieldsAlly { get; } = true;
+    public override int GetDamage(Unit9 unit)
+    {
+        var healthRegen = unit.HealthRegeneration * this.Duration;
+        var damage = this.DamageData.GetValue(this.Level) - healthRegen;
+        var amplify = unit.GetDamageAmplification(this.Owner, this.DamageType, true);
+        var block = unit.GetDamageBlock(this.DamageType);
 
-        public bool ShieldsOwner { get; } = false;
-
-        public override int GetDamage(Unit9 unit)
-        {
-            var healthRegen = unit.HealthRegeneration * this.Duration;
-            var damage = this.DamageData.GetValue(this.Level) - healthRegen;
-            var amplify = unit.GetDamageAmplification(this.Owner, this.DamageType, true);
-            var block = unit.GetDamageBlock(this.DamageType);
-
-            return (int)((damage - block) * amplify);
-        }
+        return (int)((damage - block) * amplify);
     }
 }

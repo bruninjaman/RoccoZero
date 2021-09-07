@@ -1,41 +1,40 @@
-﻿namespace O9K.Core.Entities.Abilities.NeutralItems
+﻿namespace O9K.Core.Entities.Abilities.NeutralItems;
+
+using Base;
+using Base.Types;
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_force_boots)]
+public class ForceBoots : ActiveAbility, IBlink
 {
-    using Base;
-    using Base.Types;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData rangeData;
 
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_force_boots)]
-    public class ForceBoots : ActiveAbility, IBlink
+    public ForceBoots(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData rangeData;
+        this.rangeData = new SpecialData(baseAbility, "push_length");
+    }
 
-        public ForceBoots(Ability baseAbility)
-            : base(baseAbility)
+    public BlinkType BlinkType { get; } = BlinkType.Leap;
+
+    public override float Range
+    {
+        get
         {
-            this.rangeData = new SpecialData(baseAbility, "push_length");
+            return this.rangeData.GetValue(this.Level);
         }
+    }
 
-        public BlinkType BlinkType { get; } = BlinkType.Leap;
+    public override float Speed { get; } = 1200;
 
-        public override float Range
-        {
-            get
-            {
-                return this.rangeData.GetValue(this.Level);
-            }
-        }
-
-        public override float Speed { get; } = 1200;
-
-        public override float GetHitTime(Vector3 position)
-        {
-            return this.GetCastDelay(position) + this.ActivationDelay + (this.Range / this.Speed);
-        }
+    public override float GetHitTime(Vector3 position)
+    {
+        return this.GetCastDelay(position) + this.ActivationDelay + (this.Range / this.Speed);
     }
 }

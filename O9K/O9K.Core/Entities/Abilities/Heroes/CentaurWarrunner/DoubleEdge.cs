@@ -1,45 +1,44 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.CentaurWarrunner
+﻿namespace O9K.Core.Entities.Abilities.Heroes.CentaurWarrunner;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.centaur_double_edge)]
+public class DoubleEdge : RangedAbility, INuke
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData strengthDamageData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.centaur_double_edge)]
-    public class DoubleEdge : RangedAbility, INuke
+    public DoubleEdge(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData strengthDamageData;
+        this.DamageData = new SpecialData(baseAbility, "edge_damage");
+        this.strengthDamageData = new SpecialData(baseAbility, "strength_damage");
+    }
 
-        public DoubleEdge(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastRange
+    {
+        get
         {
-            this.DamageData = new SpecialData(baseAbility, "edge_damage");
-            this.strengthDamageData = new SpecialData(baseAbility, "strength_damage");
+            return base.CastRange + 100;
         }
+    }
 
-        public override float CastRange
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        return new Damage
         {
-            get
-            {
-                return base.CastRange + 100;
-            }
-        }
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
-        {
-            return new Damage
-            {
-                [this.DamageType] = this.DamageData.GetValue(this.Level)
-                                    + ((this.Owner.TotalStrength * this.strengthDamageData.GetValue(this.Level)) / 100)
-            };
-        }
+            [this.DamageType] = this.DamageData.GetValue(this.Level)
+                                + ((this.Owner.TotalStrength * this.strengthDamageData.GetValue(this.Level)) / 100)
+        };
     }
 }

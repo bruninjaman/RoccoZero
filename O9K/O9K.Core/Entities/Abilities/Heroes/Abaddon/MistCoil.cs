@@ -1,44 +1,43 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Abaddon
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Abaddon;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.abaddon_death_coil)]
+public class MistCoil : RangedAbility, IHealthRestore, INuke
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthCostData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData healthRestoreData;
 
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.abaddon_death_coil)]
-    public class MistCoil : RangedAbility, IHealthRestore, INuke
+    public MistCoil(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthCostData;
+        this.SpeedData = new SpecialData(baseAbility, "missile_speed");
+        this.DamageData = new SpecialData(baseAbility, "target_damage");
+        this.healthCostData = new SpecialData(baseAbility, "self_damage");
+        this.healthRestoreData = new SpecialData(baseAbility, "heal_amount");
+    }
 
-        private readonly SpecialData healthRestoreData;
+    public bool InstantRestore { get; } = true;
 
-        public MistCoil(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.SpeedData = new SpecialData(baseAbility, "missile_speed");
-            this.DamageData = new SpecialData(baseAbility, "target_damage");
-            this.healthCostData = new SpecialData(baseAbility, "self_damage");
-            this.healthRestoreData = new SpecialData(baseAbility, "heal_amount");
-        }
+    public string RestoreModifierName { get; } = string.Empty;
 
-        public bool InstantRestore { get; } = true;
+    public bool RestoresAlly { get; } = true;
 
-        public string RestoreModifierName { get; } = string.Empty;
+    public bool RestoresOwner { get; } = false;
 
-        public bool RestoresAlly { get; } = true;
-
-        public bool RestoresOwner { get; } = false;
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)this.healthRestoreData.GetValue(this.Level);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)this.healthRestoreData.GetValue(this.Level);
     }
 }

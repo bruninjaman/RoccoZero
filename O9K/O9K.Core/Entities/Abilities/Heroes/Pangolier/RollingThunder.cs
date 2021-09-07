@@ -1,33 +1,32 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Pangolier
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Pangolier;
+
+using Base;
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.pangolier_gyroshell)]
+public class RollingThunder : ActiveAbility
 {
-    using Base;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData turnRateData;
 
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.pangolier_gyroshell)]
-    public class RollingThunder : ActiveAbility
+    public RollingThunder(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData turnRateData;
+        this.RadiusData = new SpecialData(baseAbility, "hit_radius");
+        this.SpeedData = new SpecialData(baseAbility, "forward_move_speed");
+        this.turnRateData = new SpecialData(baseAbility, "turn_rate");
+    }
 
-        public RollingThunder(Ability baseAbility)
-            : base(baseAbility)
+    public float TurnRate
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "hit_radius");
-            this.SpeedData = new SpecialData(baseAbility, "forward_move_speed");
-            this.turnRateData = new SpecialData(baseAbility, "turn_rate");
-        }
-
-        public float TurnRate
-        {
-            get
-            {
-                return MathUtil.DegreesToRadians(this.turnRateData.GetValue(this.Level));
-            }
+            return MathUtil.DegreesToRadians(this.turnRateData.GetValue(this.Level));
         }
     }
 }

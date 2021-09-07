@@ -1,18 +1,17 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Brewmaster.Spirits
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Brewmaster.Spirits;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.brewmaster_earth_spell_immunity)]
+public class SpellImmunity : PassiveAbility
 {
-    using Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.brewmaster_earth_spell_immunity)]
-    public class SpellImmunity : PassiveAbility
+    public SpellImmunity(Ability baseAbility)
+        : base(baseAbility)
     {
-        public SpellImmunity(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
     }
 }

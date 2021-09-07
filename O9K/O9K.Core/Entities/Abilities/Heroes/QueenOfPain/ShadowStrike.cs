@@ -1,25 +1,24 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.QueenOfPain
+﻿namespace O9K.Core.Entities.Abilities.Heroes.QueenOfPain;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.queenofpain_shadow_strike)]
+public class ShadowStrike : RangedAbility, IDebuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.queenofpain_shadow_strike)]
-    public class ShadowStrike : RangedAbility, IDebuff
+    public ShadowStrike(Ability baseAbility)
+        : base(baseAbility)
     {
-        public ShadowStrike(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-            this.DamageData = new SpecialData(baseAbility, "strike_damage");
-        }
-
-        public string DebuffModifierName { get; } = "modifier_queenofpain_shadow_strike";
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+        this.DamageData = new SpecialData(baseAbility, "strike_damage");
     }
+
+    public string DebuffModifierName { get; } = "modifier_queenofpain_shadow_strike";
 }

@@ -1,14 +1,13 @@
-﻿namespace O9K.Core.Helpers.Range
+﻿namespace O9K.Core.Helpers.Range;
+
+using System;
+
+[Flags]
+public enum RangeIncreaseType
 {
-    using System;
+    None,
 
-    [Flags]
-    public enum RangeIncreaseType
-    {
-        None,
+    Ability,
 
-        Ability,
-
-        Attack
-    }
+    Attack
 }

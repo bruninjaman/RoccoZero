@@ -1,53 +1,52 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Invoker.BaseAbilities
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Invoker.BaseAbilities;
+
+using Base;
+
+using Core.Helpers;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.invoker_exort)]
+public class Exort : ActiveAbility
 {
-    using Base;
+    private readonly SpecialData orbDamage;
 
-    using Core.Helpers;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.invoker_exort)]
-    public class Exort : ActiveAbility
+    public Exort(Ability ability)
+        : base(ability)
     {
-        private readonly SpecialData orbDamage;
+        this.orbDamage = new SpecialData(ability, "bonus_damage_per_instance");
+    }
 
-        public Exort(Ability ability)
-            : base(ability)
+    public int DamagePerOrb
+    {
+        get
         {
-            this.orbDamage = new SpecialData(ability, "bonus_damage_per_instance");
+            return (int)this.orbDamage.GetValue(base.Level);
         }
+    }
 
-        public int DamagePerOrb
+    public override uint Level
+    {
+        get
         {
-            get
+            var level = base.Level;
+            if (this.Owner.HasAghanimsScepter)
             {
-                return (int)this.orbDamage.GetValue(base.Level);
+                level++;
             }
+
+            return level;
         }
+    }
 
-        public override uint Level
-        {
-            get
-            {
-                var level = base.Level;
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    level++;
-                }
+    public string ModifierName { get; } = "modifier_invoker_exort_instance";
 
-                return level;
-            }
-        }
-
-        public string ModifierName { get; } = "modifier_invoker_exort_instance";
-
-        public override bool UseAbility(bool queue = false, bool bypass = false)
-        {
-            //todo this.ActionSleeper.Sleep(0.03f)?
-            return this.BaseAbility.Cast(queue, bypass);
-        }
+    public override bool UseAbility(bool queue = false, bool bypass = false)
+    {
+        //todo this.ActionSleeper.Sleep(0.03f)?
+        return this.BaseAbility.Cast(queue, bypass);
     }
 }

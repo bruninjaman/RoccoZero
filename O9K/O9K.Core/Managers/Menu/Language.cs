@@ -1,29 +1,28 @@
-﻿namespace O9K.Core.Managers.Menu
+﻿namespace O9K.Core.Managers.Menu;
+
+//using EnsageSharp.Sandbox;
+
+public enum Lang
 {
-    //using EnsageSharp.Sandbox;
+    En,
 
-    public enum Lang
+    Ru,
+
+    Cn
+}
+
+internal static class Language
+{
+    public static Lang GetLanguage()
     {
-        En,
-
-        Ru,
-
-        Cn
-    }
-
-    internal static class Language
-    {
-        public static Lang GetLanguage()
+        //switch (language.Selected)
         {
-            //switch (language.Selected)
-            {
-                /*case "RU":
-                    return Lang.Ru;
-                case "ZH":
-                    return Lang.Cn;
-                default:*/
-                    return Lang.En;
-            }
+            /*case "RU":
+                return Lang.Ru;
+            case "ZH":
+                return Lang.Cn;
+            default:*/
+                return Lang.En;
         }
     }
 }

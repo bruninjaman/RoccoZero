@@ -1,79 +1,78 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.AncientApparition
+﻿namespace O9K.Core.Entities.Abilities.Heroes.AncientApparition;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.ancient_apparition_chilling_touch)]
+public class ChillingTouch : OrbAbility, IHarass, IHasPassiveDamageIncrease
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData attackRangeIncrease;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.ancient_apparition_chilling_touch)]
-    public class ChillingTouch : OrbAbility, IHarass, IHasPassiveDamageIncrease
+    public ChillingTouch(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackRangeIncrease;
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.attackRangeIncrease = new SpecialData(baseAbility, "attack_range_bonus");
+    }
 
-        public ChillingTouch(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastRange
+    {
+        get
         {
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.attackRangeIncrease = new SpecialData(baseAbility, "attack_range_bonus");
+            return this.Owner.GetAttackRange() + this.attackRangeIncrease.GetValue(this.Level);
+        }
+    }
+
+    public override DamageType DamageType { get; } = DamageType.Magical; //todo delete?
+
+    public bool IsPassiveDamagePermanent { get; } = true;
+
+    public bool MultipliedByCrit { get; } = false;
+
+    public string PassiveDamageModifierName { get; } = string.Empty;
+
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var damage = new Damage();
+
+        if (!this.Enabled)
+        {
+            damage[this.DamageType] = this.GetOrbDamage(unit);
         }
 
-        public override float CastRange
+        return damage + this.Owner.GetRawAttackDamage(unit);
+    }
+
+    Damage IHasPassiveDamageIncrease.GetRawDamage(Unit9 unit, float? remainingHealth)
+    {
+        var damage = new Damage();
+
+        if (this.Enabled)
         {
-            get
-            {
-                return this.Owner.GetAttackRange() + this.attackRangeIncrease.GetValue(this.Level);
-            }
+            damage[this.DamageType] = this.GetOrbDamage(unit);
         }
 
-        public override DamageType DamageType { get; } = DamageType.Magical; //todo delete?
+        return damage;
+    }
 
-        public bool IsPassiveDamagePermanent { get; } = true;
-
-        public bool MultipliedByCrit { get; } = false;
-
-        public string PassiveDamageModifierName { get; } = string.Empty;
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    private float GetOrbDamage(Unit9 unit)
+    {
+        if (unit.IsBuilding || unit.IsAlly(this.Owner))
         {
-            var damage = new Damage();
-
-            if (!this.Enabled)
-            {
-                damage[this.DamageType] = this.GetOrbDamage(unit);
-            }
-
-            return damage + this.Owner.GetRawAttackDamage(unit);
+            return 0;
         }
 
-        Damage IHasPassiveDamageIncrease.GetRawDamage(Unit9 unit, float? remainingHealth)
-        {
-            var damage = new Damage();
-
-            if (this.Enabled)
-            {
-                damage[this.DamageType] = this.GetOrbDamage(unit);
-            }
-
-            return damage;
-        }
-
-        private float GetOrbDamage(Unit9 unit)
-        {
-            if (unit.IsBuilding || unit.IsAlly(this.Owner))
-            {
-                return 0;
-            }
-
-            return this.DamageData.GetValue(this.Level);
-        }
+        return this.DamageData.GetValue(this.Level);
     }
 }

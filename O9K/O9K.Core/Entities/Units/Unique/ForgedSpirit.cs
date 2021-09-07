@@ -1,30 +1,29 @@
-﻿namespace O9K.Core.Entities.Units.Unique
+﻿namespace O9K.Core.Entities.Units.Unique;
+
+using System.Linq;
+
+using Abilities.Heroes.Invoker;
+using Divine.Entity.Entities.Units;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Managers.Entity;
+
+using Metadata;
+
+[UnitName("npc_dota_invoker_forged_spirit")]
+internal class ForgedSpirit : Unit9
 {
-    using System.Linq;
-
-    using Abilities.Heroes.Invoker;
-    using Divine.Entity.Entities.Units;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Managers.Entity;
-
-    using Metadata;
-
-    [UnitName("npc_dota_invoker_forged_spirit")]
-    internal class ForgedSpirit : Unit9
+    public ForgedSpirit(Unit baseUnit)
+        : base(baseUnit)
     {
-        public ForgedSpirit(Unit baseUnit)
-            : base(baseUnit)
+        var forgeSpirit = (ForgeSpirit)EntityManager9.Abilities.FirstOrDefault(x => x.Id == AbilityId.invoker_forge_spirit);
+        if (forgeSpirit == null)
         {
-            var forgeSpirit = (ForgeSpirit)EntityManager9.Abilities.FirstOrDefault(x => x.Id == AbilityId.invoker_forge_spirit);
-            if (forgeSpirit == null)
-            {
-                return;
-            }
-
-            this.BaseAttackRange = forgeSpirit.ForgeSpiritAttackRange;
+            return;
         }
 
-        internal override float BaseAttackRange { get; } = 900;
+        this.BaseAttackRange = forgeSpirit.ForgeSpiritAttackRange;
     }
+
+    internal override float BaseAttackRange { get; } = 900;
 }

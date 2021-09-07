@@ -1,35 +1,34 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Bane
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Bane;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.bane_brain_sap)]
+public class BrainSap : RangedAbility, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.bane_brain_sap)]
-    public class BrainSap : RangedAbility, INuke
+    public BrainSap(Ability baseAbility)
+        : base(baseAbility)
     {
-        public BrainSap(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.DamageData = new SpecialData(baseAbility, "brain_sap_damage");
-        }
+        this.DamageData = new SpecialData(baseAbility, "brain_sap_damage");
+    }
 
-        public override float CastPoint
+    public override float CastPoint
+    {
+        get
         {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return base.CastPoint / 2f;
-                }
-
-                return base.CastPoint;
+                return base.CastPoint / 2f;
             }
+
+            return base.CastPoint;
         }
     }
 }

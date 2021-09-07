@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_flask)]
+public class HealingSalve : RangedAbility, IHealthRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_flask)]
-    public class HealingSalve : RangedAbility, IHealthRestore
+    public HealingSalve(Ability ability)
+        : base(ability)
     {
-        private readonly SpecialData healthRestoreData;
+        this.DurationData = new SpecialData(ability, "buff_duration");
+        this.healthRestoreData = new SpecialData(ability, "health_regen");
+    }
 
-        public HealingSalve(Ability ability)
-            : base(ability)
-        {
-            this.DurationData = new SpecialData(ability, "buff_duration");
-            this.healthRestoreData = new SpecialData(ability, "health_regen");
-        }
+    public bool InstantRestore { get; } = false;
 
-        public bool InstantRestore { get; } = false;
+    public string RestoreModifierName { get; } = "modifier_flask_healing";
 
-        public string RestoreModifierName { get; } = "modifier_flask_healing";
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)(this.healthRestoreData.GetValue(this.Level) * this.Duration);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)(this.healthRestoreData.GetValue(this.Level) * this.Duration);
     }
 }

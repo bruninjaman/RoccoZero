@@ -1,53 +1,52 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Windranger
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Windranger;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.windrunner_shackleshot)]
+public class Shackleshot : RangedAbility, IDisable
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData angleData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.windrunner_shackleshot)]
-    public class Shackleshot : RangedAbility, IDisable
+    public Shackleshot(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData angleData;
+        this.SpeedData = new SpecialData(baseAbility, "arrow_speed");
+        this.RangeData = new SpecialData(baseAbility, "shackle_distance");
+        this.angleData = new SpecialData(baseAbility, "shackle_angle");
+    }
 
-        public Shackleshot(Ability baseAbility)
-            : base(baseAbility)
+    public float Angle
+    {
+        get
         {
-            this.SpeedData = new SpecialData(baseAbility, "arrow_speed");
-            this.RangeData = new SpecialData(baseAbility, "shackle_distance");
-            this.angleData = new SpecialData(baseAbility, "shackle_angle");
+            return this.angleData.GetValue(this.Level);
         }
+    }
 
-        public float Angle
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+
+    public override float Range
+    {
+        get
         {
-            get
-            {
-                return this.angleData.GetValue(this.Level);
-            }
+            return base.Range + this.ShackleRange;
         }
+    }
 
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        public override float Range
+    public float ShackleRange
+    {
+        get
         {
-            get
-            {
-                return base.Range + this.ShackleRange;
-            }
-        }
-
-        public float ShackleRange
-        {
-            get
-            {
-                return this.RangeData.GetValue(this.Level) - 100;
-            }
+            return this.RangeData.GetValue(this.Level) - 100;
         }
     }
 }

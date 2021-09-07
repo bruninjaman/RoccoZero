@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Mirana
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Mirana;
+
+using Base;
+using Base.Types;
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.mirana_leap)]
+public class Leap : ActiveAbility, IBlink
 {
-    using Base;
-    using Base.Types;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData castRangeData;
 
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.mirana_leap)]
-    public class Leap : ActiveAbility, IBlink
+    public Leap(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.SpeedData = new SpecialData(baseAbility, "leap_speed");
+        this.castRangeData = new SpecialData(baseAbility, "leap_distance");
+    }
 
-        public Leap(Ability baseAbility)
-            : base(baseAbility)
+    public BlinkType BlinkType { get; } = BlinkType.Leap;
+
+    public override float CastRange
+    {
+        get
         {
-            this.SpeedData = new SpecialData(baseAbility, "leap_speed");
-            this.castRangeData = new SpecialData(baseAbility, "leap_distance");
+            return this.castRangeData.GetValue(this.Level);
         }
+    }
 
-        public BlinkType BlinkType { get; } = BlinkType.Leap;
-
-        public override float CastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
-        }
-
-        public override float GetHitTime(Vector3 position)
-        {
-            return this.GetCastDelay(position) + this.ActivationDelay + (this.Range / this.Speed);
-        }
+    public override float GetHitTime(Vector3 position)
+    {
+        return this.GetCastDelay(position) + this.ActivationDelay + (this.Range / this.Speed);
     }
 }

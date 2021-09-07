@@ -1,55 +1,54 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowFiend
+﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowFiend;
+
+using System.Linq;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.nevermore_shadowraze1)]
+[AbilityId(AbilityId.nevermore_shadowraze2)]
+[AbilityId(AbilityId.nevermore_shadowraze3)]
+public class Shadowraze : AreaOfEffectAbility, INuke
 {
-    using System.Linq;
+    private readonly SpecialData bonusDamageData;
 
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.nevermore_shadowraze1)]
-    [AbilityId(AbilityId.nevermore_shadowraze2)]
-    [AbilityId(AbilityId.nevermore_shadowraze3)]
-    public class Shadowraze : AreaOfEffectAbility, INuke
+    public Shadowraze(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData bonusDamageData;
+        this.RadiusData = new SpecialData(baseAbility, "shadowraze_radius");
+        this.DamageData = new SpecialData(baseAbility, "shadowraze_damage");
+        this.castRangeData = new SpecialData(baseAbility, "shadowraze_range");
+        this.bonusDamageData = new SpecialData(baseAbility, "stack_bonus_damage");
+    }
 
-        private readonly SpecialData castRangeData;
-
-        public Shadowraze(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastRange
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "shadowraze_radius");
-            this.DamageData = new SpecialData(baseAbility, "shadowraze_damage");
-            this.castRangeData = new SpecialData(baseAbility, "shadowraze_range");
-            this.bonusDamageData = new SpecialData(baseAbility, "stack_bonus_damage");
+            return this.castRangeData.GetValue(this.Level);
         }
+    }
 
-        public override float CastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
-        }
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var damage = base.GetRawDamage(unit, remainingHealth);
+        var stacks = unit.BaseModifiers.FirstOrDefault(x => x.Name == "modifier_nevermore_shadowraze_debuff")?.StackCount ?? 0;
+        var bonus = this.bonusDamageData.GetValue(this.Level);
 
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
-        {
-            var damage = base.GetRawDamage(unit, remainingHealth);
-            var stacks = unit.BaseModifiers.FirstOrDefault(x => x.Name == "modifier_nevermore_shadowraze_debuff")?.StackCount ?? 0;
-            var bonus = this.bonusDamageData.GetValue(this.Level);
+        damage[this.DamageType] += stacks * bonus;
 
-            damage[this.DamageType] += stacks * bonus;
-
-            return damage;
-        }
+        return damage;
     }
 }

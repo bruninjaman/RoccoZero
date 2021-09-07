@@ -1,53 +1,52 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.TrollWarlord
+﻿namespace O9K.Core.Entities.Abilities.Heroes.TrollWarlord;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Range;
+
+using Metadata;
+
+[AbilityId(AbilityId.troll_warlord_berserkers_rage)]
+public class BerserkersRage : ToggleAbility, IHasRangeIncrease, ISpeedBuff
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData attackRange;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData bonusMoveSpeedData;
 
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Range;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.troll_warlord_berserkers_rage)]
-    public class BerserkersRage : ToggleAbility, IHasRangeIncrease, ISpeedBuff
+    public BerserkersRage(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackRange;
+        this.attackRange = new SpecialData(baseAbility, "bonus_range");
+        this.bonusMoveSpeedData = new SpecialData(baseAbility, "bonus_move_speed");
+    }
 
-        private readonly SpecialData bonusMoveSpeedData;
+    public string BuffModifierName { get; } = "modifier_troll_warlord_berserkers_rage";
 
-        public BerserkersRage(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.attackRange = new SpecialData(baseAbility, "bonus_range");
-            this.bonusMoveSpeedData = new SpecialData(baseAbility, "bonus_move_speed");
-        }
+    public bool BuffsAlly { get; } = false;
 
-        public string BuffModifierName { get; } = "modifier_troll_warlord_berserkers_rage";
+    public bool BuffsOwner { get; } = true;
 
-        public bool BuffsAlly { get; } = false;
+    public bool IsRangeIncreasePermanent { get; } = false;
 
-        public bool BuffsOwner { get; } = true;
+    public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
 
-        public bool IsRangeIncreasePermanent { get; } = false;
+    public string RangeModifierName { get; } = "modifier_troll_warlord_berserkers_rage";
 
-        public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
+    public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+    {
+        return -this.attackRange.GetValue(this.Level);
+    }
 
-        public string RangeModifierName { get; } = "modifier_troll_warlord_berserkers_rage";
-
-        public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
-        {
-            return -this.attackRange.GetValue(this.Level);
-        }
-
-        public float GetSpeedBuff(Unit9 unit)
-        {
-            return this.bonusMoveSpeedData.GetValue(this.Level);
-        }
+    public float GetSpeedBuff(Unit9 unit)
+    {
+        return this.bonusMoveSpeedData.GetValue(this.Level);
     }
 }

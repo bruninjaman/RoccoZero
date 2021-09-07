@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Viper
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Viper;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.viper_viper_strike)]
+public class ViperStrike : RangedAbility, IDebuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.viper_viper_strike)]
-    public class ViperStrike : RangedAbility, IDebuff
+    public ViperStrike(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+        this.castRangeData = new SpecialData(baseAbility, "cast_range_scepter");
+    }
 
-        public ViperStrike(Ability baseAbility)
-            : base(baseAbility)
+    public string DebuffModifierName { get; } = "modifier_viper_viper_strike_slow";
+
+    protected override float BaseCastRange
+    {
+        get
         {
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-            this.castRangeData = new SpecialData(baseAbility, "cast_range_scepter");
-        }
-
-        public string DebuffModifierName { get; } = "modifier_viper_viper_strike_slow";
-
-        protected override float BaseCastRange
-        {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return this.castRangeData.GetValue(this.Level);
-                }
-
-                return base.BaseCastRange;
+                return this.castRangeData.GetValue(this.Level);
             }
+
+            return base.BaseCastRange;
         }
     }
 }

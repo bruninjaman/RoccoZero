@@ -1,58 +1,57 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.TreantProtector
+﻿namespace O9K.Core.Entities.Abilities.Heroes.TreantProtector;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.treant_living_armor)]
+public class LivingArmor : RangedAbility, IHealthRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.treant_living_armor)]
-    public class LivingArmor : RangedAbility, IHealthRestore
+    public LivingArmor(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthRestoreData;
+        this.DurationData = new SpecialData(baseAbility, "duration");
+        this.healthRestoreData = new SpecialData(baseAbility, "total_heal");
+    }
 
-        public LivingArmor(Ability baseAbility)
-            : base(baseAbility)
+    public override AbilityBehavior AbilityBehavior
+    {
+        get
         {
-            this.DurationData = new SpecialData(baseAbility, "duration");
-            this.healthRestoreData = new SpecialData(baseAbility, "total_heal");
-        }
+            var behavior = base.AbilityBehavior;
+            var talent = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_treant_7);
 
-        public override AbilityBehavior AbilityBehavior
-        {
-            get
+            if (talent?.Level > 0)
             {
-                var behavior = base.AbilityBehavior;
-                var talent = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_treant_7);
-
-                if (talent?.Level > 0)
-                {
-                    behavior = (behavior & ~AbilityBehavior.UnitTarget) | AbilityBehavior.Point;
-                }
-
-                return behavior;
+                behavior = (behavior & ~AbilityBehavior.UnitTarget) | AbilityBehavior.Point;
             }
+
+            return behavior;
         }
+    }
 
-        public override float CastRange { get; } = 9999999;
+    public override float CastRange { get; } = 9999999;
 
-        public bool InstantRestore { get; } = false;
+    public bool InstantRestore { get; } = false;
 
-        public string RestoreModifierName { get; } = "modifier_treant_living_armor";
+    public string RestoreModifierName { get; } = "modifier_treant_living_armor";
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)this.healthRestoreData.GetValue(this.Level);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)this.healthRestoreData.GetValue(this.Level);
     }
 }

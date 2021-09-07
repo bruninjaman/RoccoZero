@@ -1,33 +1,32 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowFiend
+﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowFiend;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.nevermore_requiem)]
+public class RequiemOfSouls : AreaOfEffectAbility
 {
-    using Base;
+    private readonly SpecialData endRadiusData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.nevermore_requiem)]
-    public class RequiemOfSouls : AreaOfEffectAbility
+    public RequiemOfSouls(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData endRadiusData;
+        this.RadiusData = new SpecialData(baseAbility, "requiem_radius");
+        this.SpeedData = new SpecialData(baseAbility, "requiem_line_speed");
+        this.endRadiusData = new SpecialData(baseAbility, "requiem_line_width_end");
+    }
 
-        public RequiemOfSouls(Ability baseAbility)
-            : base(baseAbility)
+    public override float Radius
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "requiem_radius");
-            this.SpeedData = new SpecialData(baseAbility, "requiem_line_speed");
-            this.endRadiusData = new SpecialData(baseAbility, "requiem_line_width_end");
-        }
-
-        public override float Radius
-        {
-            get
-            {
-                return base.Radius + this.endRadiusData.GetValue(this.Level);
-            }
+            return base.Radius + this.endRadiusData.GetValue(this.Level);
         }
     }
 }

@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Juggernaut
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Juggernaut;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.juggernaut_healing_ward)]
+public class HealingWard : CircleAbility, IHealthRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.juggernaut_healing_ward)]
-    public class HealingWard : CircleAbility, IHealthRestore
+    public HealingWard(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthRestoreData;
+        this.RadiusData = new SpecialData(baseAbility, "healing_ward_aura_radius");
+        this.healthRestoreData = new SpecialData(baseAbility, "healing_ward_heal_amount");
+    }
 
-        public HealingWard(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "healing_ward_aura_radius");
-            this.healthRestoreData = new SpecialData(baseAbility, "healing_ward_heal_amount");
-        }
+    public bool InstantRestore { get; } = false;
 
-        public bool InstantRestore { get; } = false;
+    public string RestoreModifierName { get; } = string.Empty;
 
-        public string RestoreModifierName { get; } = string.Empty;
+    public bool RestoresAlly { get; set; }
 
-        public bool RestoresAlly { get; set; }
+    public bool RestoresOwner { get; set; }
 
-        public bool RestoresOwner { get; set; }
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)((this.healthRestoreData.GetValue(this.Level) / 100f) * unit.MaximumHealth * this.Duration);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)((this.healthRestoreData.GetValue(this.Level) / 100f) * unit.MaximumHealth * this.Duration);
     }
 }

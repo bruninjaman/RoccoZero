@@ -1,25 +1,24 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_mask_of_madness)]
+public class MaskOfMadness : ActiveAbility, IBuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_mask_of_madness)]
-    public class MaskOfMadness : ActiveAbility, IBuff
+    public MaskOfMadness(Ability baseAbility)
+        : base(baseAbility)
     {
-        public MaskOfMadness(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
-
-        public string BuffModifierName { get; } = "modifier_item_mask_of_madness_berserk";
-
-        public bool BuffsAlly { get; } = false;
-
-        public bool BuffsOwner { get; } = true;
     }
+
+    public string BuffModifierName { get; } = "modifier_item_mask_of_madness_berserk";
+
+    public bool BuffsAlly { get; } = false;
+
+    public bool BuffsOwner { get; } = true;
 }

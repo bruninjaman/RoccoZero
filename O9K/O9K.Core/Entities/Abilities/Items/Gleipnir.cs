@@ -1,31 +1,30 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Metadata;
+
+using O9K.Core.Helpers;
+
+[AbilityId(AbilityId.item_gungir)]
+public class Gleipnir : CircleAbility, IDisable, IAppliesImmobility
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Metadata;
-
-    using O9K.Core.Helpers;
-
-    [AbilityId(AbilityId.item_gungir)]
-    public class Gleipnir : CircleAbility, IDisable, IAppliesImmobility
+    public Gleipnir(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Gleipnir(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.DamageData = new SpecialData(baseAbility, "active_damage");
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Rooted;
-
-        public string ImmobilityModifierName { get; } = "modifier_gungnir_debuff";
-
-        public override float Speed { get; } = 1750;
+        this.DamageData = new SpecialData(baseAbility, "active_damage");
+        this.RadiusData = new SpecialData(baseAbility, "radius");
     }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Rooted;
+
+    public string ImmobilityModifierName { get; } = "modifier_gungnir_debuff";
+
+    public override float Speed { get; } = 1750;
 }

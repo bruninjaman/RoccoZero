@@ -1,45 +1,44 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Terrorblade
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Terrorblade;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Range;
+
+using Metadata;
+
+[AbilityId(AbilityId.terrorblade_metamorphosis)]
+public class Metamorphosis : ActiveAbility, IHasRangeIncrease, IBuff
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData attackRange;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Range;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.terrorblade_metamorphosis)]
-    public class Metamorphosis : ActiveAbility, IHasRangeIncrease, IBuff
+    public Metamorphosis(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackRange;
+        this.attackRange = new SpecialData(baseAbility, "bonus_range");
+    }
 
-        public Metamorphosis(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.attackRange = new SpecialData(baseAbility, "bonus_range");
-        }
+    public string BuffModifierName { get; } = "modifier_terrorblade_metamorphosis";
 
-        public string BuffModifierName { get; } = "modifier_terrorblade_metamorphosis";
+    public bool BuffsAlly { get; } = false;
 
-        public bool BuffsAlly { get; } = false;
+    public bool BuffsOwner { get; } = true;
 
-        public bool BuffsOwner { get; } = true;
+    public bool IsRangeIncreasePermanent { get; } = false;
 
-        public bool IsRangeIncreasePermanent { get; } = false;
+    public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
 
-        public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
+    public string RangeModifierName { get; } = "modifier_terrorblade_metamorphosis";
 
-        public string RangeModifierName { get; } = "modifier_terrorblade_metamorphosis";
-
-        public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
-        {
-            return this.attackRange.GetValue(this.Level);
-        }
+    public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+    {
+        return this.attackRange.GetValue(this.Level);
     }
 }

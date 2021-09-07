@@ -1,33 +1,32 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Magnus
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Magnus;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.magnataur_shockwave)]
+public class Shockwave : LineAbility, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.magnataur_shockwave)]
-    public class Shockwave : LineAbility, INuke
+    public Shockwave(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Shockwave(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "shock_width");
-            this.DamageData = new SpecialData(baseAbility, "shock_damage");
-            this.SpeedData = new SpecialData(baseAbility, "shock_speed");
-        }
+        this.RadiusData = new SpecialData(baseAbility, "shock_width");
+        this.DamageData = new SpecialData(baseAbility, "shock_damage");
+        this.SpeedData = new SpecialData(baseAbility, "shock_speed");
+    }
 
-        public override AbilityBehavior AbilityBehavior
+    public override AbilityBehavior AbilityBehavior
+    {
+        get
         {
-            get
-            {
-                // disable casting on target
-                return base.AbilityBehavior & ~AbilityBehavior.UnitTarget;
-            }
+            // disable casting on target
+            return base.AbilityBehavior & ~AbilityBehavior.UnitTarget;
         }
     }
 }

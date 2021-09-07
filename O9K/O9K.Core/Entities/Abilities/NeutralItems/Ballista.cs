@@ -1,43 +1,42 @@
-﻿namespace O9K.Core.Entities.Abilities.NeutralItems
+﻿namespace O9K.Core.Entities.Abilities.NeutralItems;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Range;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_ballista)]
+public class Ballista : PassiveAbility, IHasRangeIncrease
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData attackRange;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Range;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_ballista)]
-    public class Ballista : PassiveAbility, IHasRangeIncrease
+    public Ballista(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackRange;
+        this.attackRange = new SpecialData(baseAbility, "attack_range_bonus");
+    }
 
-        public Ballista(Ability baseAbility)
-            : base(baseAbility)
+    public bool IsRangeIncreasePermanent { get; } = true;
+
+    public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
+
+    public string RangeModifierName { get; } = "modifier_item_dragon_lance";
+
+    public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+    {
+        if (!this.IsUsable || !this.Owner.IsRanged)
         {
-            this.attackRange = new SpecialData(baseAbility, "attack_range_bonus");
+            return 0;
         }
 
-        public bool IsRangeIncreasePermanent { get; } = true;
-
-        public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
-
-        public string RangeModifierName { get; } = "modifier_item_dragon_lance";
-
-        public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
-        {
-            if (!this.IsUsable || !this.Owner.IsRanged)
-            {
-                return 0;
-            }
-
-            return this.attackRange.GetValue(this.Level);
-        }
+        return this.attackRange.GetValue(this.Level);
     }
 }

@@ -1,24 +1,23 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Warlock
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Warlock;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.warlock_fatal_bonds)]
+public class FatalBonds : RangedAreaOfEffectAbility, IDebuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.warlock_fatal_bonds)]
-    public class FatalBonds : RangedAreaOfEffectAbility, IDebuff
+    public FatalBonds(Ability baseAbility)
+        : base(baseAbility)
     {
-        public FatalBonds(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "search_aoe");
-        }
-
-        public string DebuffModifierName { get; } = "modifier_warlock_fatal_bonds";
+        this.RadiusData = new SpecialData(baseAbility, "search_aoe");
     }
+
+    public string DebuffModifierName { get; } = "modifier_warlock_fatal_bonds";
 }

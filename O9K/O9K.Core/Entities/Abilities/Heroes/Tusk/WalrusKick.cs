@@ -1,30 +1,29 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Tusk
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Tusk;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.tusk_walrus_kick)]
+public class WalrusKick : RangedAbility, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.tusk_walrus_kick)]
-    public class WalrusKick : RangedAbility, INuke
+    public WalrusKick(Ability baseAbility)
+        : base(baseAbility)
     {
-        public WalrusKick(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.DamageData = new SpecialData(baseAbility, "damage");
-        }
+        this.DamageData = new SpecialData(baseAbility, "damage");
+    }
 
-        public override float CastRange
+    public override float CastRange
+    {
+        get
         {
-            get
-            {
-                return base.CastRange + 100;
-            }
+            return base.CastRange + 100;
         }
     }
 }

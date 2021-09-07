@@ -1,51 +1,50 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Tusk
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Tusk;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.tusk_walrus_punch)]
+public class WalrusPunch : RangedAbility, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.tusk_walrus_punch)]
-    public class WalrusPunch : RangedAbility, INuke
+    public WalrusPunch(Ability baseAbility)
+        : base(baseAbility)
     {
-        public WalrusPunch(Ability baseAbility)
-            : base(baseAbility)
+        this.DamageData = new SpecialData(baseAbility, "crit_multiplier");
+    }
+
+    public override float CastPoint
+    {
+        get
         {
-            this.DamageData = new SpecialData(baseAbility, "crit_multiplier");
+            return this.Owner.GetAttackPoint();
         }
+    }
 
-        public override float CastPoint
+    public override float CastRange
+    {
+        get
         {
-            get
-            {
-                return this.Owner.GetAttackPoint();
-            }
+            return base.CastRange + 100;
         }
+    }
 
-        public override float CastRange
-        {
-            get
-            {
-                return base.CastRange + 100;
-            }
-        }
+    public override DamageType DamageType { get; } = DamageType.Physical;
 
-        public override DamageType DamageType { get; } = DamageType.Physical;
+    public override bool IntelligenceAmplify { get; } = false;
 
-        public override bool IntelligenceAmplify { get; } = false;
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
-        {
-            var crit = this.DamageData.GetValue(this.Level) / 100;
-            return this.Owner.GetRawAttackDamage(unit, DamageValue.Minimum, crit);
-        }
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var crit = this.DamageData.GetValue(this.Level) / 100;
+        return this.Owner.GetRawAttackDamage(unit, DamageValue.Minimum, crit);
     }
 }

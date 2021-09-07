@@ -1,48 +1,47 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.WinterWyvern
+﻿namespace O9K.Core.Entities.Abilities.Heroes.WinterWyvern;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.winter_wyvern_winters_curse)]
+public class WintersCurse : RangedAreaOfEffectAbility, IHasDamageAmplify, IDisable
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.winter_wyvern_winters_curse)]
-    public class WintersCurse : RangedAreaOfEffectAbility, IHasDamageAmplify, IDisable
+    public WintersCurse(Ability baseAbility)
+        : base(baseAbility)
     {
-        public WintersCurse(Ability baseAbility)
-            : base(baseAbility)
-        {
-            //todo fix main target owner damage
+        //todo fix main target owner damage
 
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-        }
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+    }
 
-        public DamageType AmplifierDamageType { get; } = DamageType.Physical | DamageType.Magical | DamageType.Pure;
+    public DamageType AmplifierDamageType { get; } = DamageType.Physical | DamageType.Magical | DamageType.Pure;
 
-        public string[] AmplifierModifierNames { get; } =
-        {
-            "modifier_winter_wyvern_winters_curse", "modifier_winter_wyvern_winters_curse_aura"
-        };
+    public string[] AmplifierModifierNames { get; } =
+    {
+        "modifier_winter_wyvern_winters_curse", "modifier_winter_wyvern_winters_curse_aura"
+    };
 
-        public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
+    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
 
-        public UnitState AppliesUnitState { get; } = UnitState.Invulnerable;
+    public UnitState AppliesUnitState { get; } = UnitState.Invulnerable;
 
-        public bool IsAmplifierAddedToStats { get; } = false;
+    public bool IsAmplifierAddedToStats { get; } = false;
 
-        public bool IsAmplifierPermanent { get; } = false;
+    public bool IsAmplifierPermanent { get; } = false;
 
-        public float AmplifierValue(Unit9 source, Unit9 target)
-        {
-            return -1;
-        }
+    public float AmplifierValue(Unit9 source, Unit9 target)
+    {
+        return -1;
     }
 }

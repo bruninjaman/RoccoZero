@@ -1,45 +1,44 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.EarthSpirit
+﻿namespace O9K.Core.Entities.Abilities.Heroes.EarthSpirit;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+using Prediction.Collision;
+
+[AbilityId(AbilityId.earth_spirit_rolling_boulder)]
+public class RollingBoulder : LineAbility, IBlink, IDisable
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    using Prediction.Collision;
-
-    [AbilityId(AbilityId.earth_spirit_rolling_boulder)]
-    public class RollingBoulder : LineAbility, IBlink, IDisable
+    public RollingBoulder(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.ActivationDelayData = new SpecialData(baseAbility, "delay");
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.SpeedData = new SpecialData(baseAbility, "speed");
+        this.castRangeData = new SpecialData(baseAbility, "distance");
+    }
 
-        public RollingBoulder(Ability baseAbility)
-            : base(baseAbility)
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+
+    public BlinkType BlinkType { get; } = BlinkType.Blink;
+
+    public override CollisionTypes CollisionTypes { get; } = CollisionTypes.EnemyHeroes;
+
+    protected override float BaseCastRange
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.ActivationDelayData = new SpecialData(baseAbility, "delay");
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.castRangeData = new SpecialData(baseAbility, "distance");
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        public BlinkType BlinkType { get; } = BlinkType.Blink;
-
-        public override CollisionTypes CollisionTypes { get; } = CollisionTypes.EnemyHeroes;
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
+            return this.castRangeData.GetValue(this.Level);
         }
     }
 }

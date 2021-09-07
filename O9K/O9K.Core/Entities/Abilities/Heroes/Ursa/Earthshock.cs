@@ -1,34 +1,33 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Ursa
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Ursa;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.ursa_earthshock)]
+public class Earthshock : AreaOfEffectAbility, INuke
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.ursa_earthshock)]
-    public class Earthshock : AreaOfEffectAbility, INuke
+    public Earthshock(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.ActivationDelayData = new SpecialData(baseAbility, "hop_duration");
+        this.RadiusData = new SpecialData(baseAbility, "shock_radius");
+        this.castRangeData = new SpecialData(baseAbility, "hop_distance");
+    }
 
-        public Earthshock(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastRange
+    {
+        get
         {
-            this.ActivationDelayData = new SpecialData(baseAbility, "hop_duration");
-            this.RadiusData = new SpecialData(baseAbility, "shock_radius");
-            this.castRangeData = new SpecialData(baseAbility, "hop_distance");
-        }
-
-        public override float CastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
+            return this.castRangeData.GetValue(this.Level);
         }
     }
 }

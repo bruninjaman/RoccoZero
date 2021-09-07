@@ -1,25 +1,24 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Clockwerk
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Clockwerk;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.rattletrap_rocket_flare)]
+public class RocketFlare : CircleAbility, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.rattletrap_rocket_flare)]
-    public class RocketFlare : CircleAbility, INuke
+    public RocketFlare(Ability baseAbility)
+        : base(baseAbility)
     {
-        public RocketFlare(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-        }
-
-        public override float CastRange { get; } = 9999999;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.SpeedData = new SpecialData(baseAbility, "speed");
     }
+
+    public override float CastRange { get; } = 9999999;
 }

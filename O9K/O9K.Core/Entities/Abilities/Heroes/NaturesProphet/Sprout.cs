@@ -1,33 +1,32 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.NaturesProphet
+﻿namespace O9K.Core.Entities.Abilities.Heroes.NaturesProphet;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.furion_sprout)]
+public class Sprout : RangedAbility, IDisable
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.furion_sprout)]
-    public class Sprout : RangedAbility, IDisable
+    public Sprout(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Sprout(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.DurationData = new SpecialData(baseAbility, "duration");
-        }
+        this.DurationData = new SpecialData(baseAbility, "duration");
+    }
 
-        public UnitState AppliesUnitState { get; } = UnitState.Rooted;
+    public UnitState AppliesUnitState { get; } = UnitState.Rooted;
 
-        public override float Radius
+    public override float Radius
+    {
+        get
         {
-            get
-            {
-                return 200;
-            }
+            return 200;
         }
     }
 }

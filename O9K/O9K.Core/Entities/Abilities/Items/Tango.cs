@@ -1,43 +1,42 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_tango)]
+[AbilityId(AbilityId.item_tango_single)]
+public class Tango : RangedAbility, IHealthRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_tango)]
-    [AbilityId(AbilityId.item_tango_single)]
-    public class Tango : RangedAbility, IHealthRestore
+    public Tango(Ability ability)
+        : base(ability)
     {
-        private readonly SpecialData healthRestoreData;
+        this.DurationData = new SpecialData(ability, "buff_duration");
+        this.healthRestoreData = new SpecialData(ability, "health_regen");
+    }
 
-        public Tango(Ability ability)
-            : base(ability)
-        {
-            this.DurationData = new SpecialData(ability, "buff_duration");
-            this.healthRestoreData = new SpecialData(ability, "health_regen");
-        }
+    public bool InstantRestore { get; } = false;
 
-        public bool InstantRestore { get; } = false;
+    public string RestoreModifierName { get; } = "modifier_tango_heal";
 
-        public string RestoreModifierName { get; } = "modifier_tango_heal";
+    public bool RestoresAlly { get; } = false;
 
-        public bool RestoresAlly { get; } = false;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
+    public override bool TargetsEnemy { get; } = false;
 
-        public override bool TargetsEnemy { get; } = false;
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)(this.healthRestoreData.GetValue(this.Level) * this.Duration);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)(this.healthRestoreData.GetValue(this.Level) * this.Duration);
     }
 }

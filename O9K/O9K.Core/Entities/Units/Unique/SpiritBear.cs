@@ -1,59 +1,58 @@
-﻿namespace O9K.Core.Entities.Units.Unique
+﻿namespace O9K.Core.Entities.Units.Unique;
+
+using Divine.Numerics;
+using Divine.Entity.Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[UnitName("npc_dota_lone_druid_bear1")]
+[UnitName("npc_dota_lone_druid_bear2")]
+[UnitName("npc_dota_lone_druid_bear3")]
+[UnitName("npc_dota_lone_druid_bear4")]
+public class SpiritBear : Unit9
 {
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Units;
+    private Vector2 healthBarPositionCorrection;
 
-    using Helpers;
+    private Vector2 healthBarSize;
 
-    using Metadata;
-
-    [UnitName("npc_dota_lone_druid_bear1")]
-    [UnitName("npc_dota_lone_druid_bear2")]
-    [UnitName("npc_dota_lone_druid_bear3")]
-    [UnitName("npc_dota_lone_druid_bear4")]
-    public class SpiritBear : Unit9
+    public SpiritBear(Unit baseUnit)
+        : base(baseUnit)
     {
-        private Vector2 healthBarPositionCorrection;
+        this.CanUseItems = true;
+    }
 
-        private Vector2 healthBarSize;
-
-        public SpiritBear(Unit baseUnit)
-            : base(baseUnit)
+    public override Vector2 HealthBarSize
+    {
+        get
         {
-            this.CanUseItems = true;
-        }
-
-        public override Vector2 HealthBarSize
-        {
-            get
+            if (this.healthBarSize.IsZero)
             {
-                if (this.healthBarSize.IsZero)
+                if (this.IsAlly())
                 {
-                    if (this.IsAlly())
-                    {
-                        this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 100, Hud.Info.ScreenRatio * 6);
-                    }
-                    else
-                    {
-                        this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 100, Hud.Info.ScreenRatio * 8);
-                    }
+                    this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 100, Hud.Info.ScreenRatio * 6);
                 }
-
-                return this.healthBarSize;
+                else
+                {
+                    this.healthBarSize = new Vector2(Hud.Info.ScreenRatio * 100, Hud.Info.ScreenRatio * 8);
+                }
             }
+
+            return this.healthBarSize;
         }
+    }
 
-        protected override Vector2 HealthBarPositionCorrection
+    protected override Vector2 HealthBarPositionCorrection
+    {
+        get
         {
-            get
+            if (this.healthBarPositionCorrection.IsZero)
             {
-                if (this.healthBarPositionCorrection.IsZero)
-                {
-                    this.healthBarPositionCorrection = new Vector2(this.HealthBarSize.X / 2f, Hud.Info.ScreenRatio * 23);
-                }
-
-                return this.healthBarPositionCorrection;
+                this.healthBarPositionCorrection = new Vector2(this.HealthBarSize.X / 2f, Hud.Info.ScreenRatio * 23);
             }
+
+            return this.healthBarPositionCorrection;
         }
     }
 }

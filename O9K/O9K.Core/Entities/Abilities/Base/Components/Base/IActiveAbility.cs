@@ -1,95 +1,94 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Components.Base
+﻿namespace O9K.Core.Entities.Abilities.Base.Components.Base;
+
+using System.Collections.Generic;
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Runes;
+using Divine.Entity.Entities.Trees;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Prediction.Collision;
+using Prediction.Data;
+
+public interface IActiveAbility
 {
-    using System.Collections.Generic;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Runes;
-    using Divine.Entity.Entities.Trees;
-    using Divine.Entity.Entities.Abilities.Components;
+    Ability BaseAbility { get; }
 
-    using Entities.Units;
+    bool BreaksLinkens { get; }
 
-    using Prediction.Collision;
-    using Prediction.Data;
+    float CastPoint { get; }
 
-    public interface IActiveAbility
-    {
-        Ability BaseAbility { get; }
+    float CastRange { get; }
 
-        bool BreaksLinkens { get; }
+    CollisionTypes CollisionTypes { get; }
 
-        float CastPoint { get; }
+    string DefaultName { get; }
 
-        float CastRange { get; }
+    string DisplayName { get; }
 
-        CollisionTypes CollisionTypes { get; }
+    uint Handle { get; }
 
-        string DefaultName { get; }
+    AbilityId Id { get; }
 
-        string DisplayName { get; }
+    bool IsItem { get; }
 
-        uint Handle { get; }
+    bool IsValid { get; }
 
-        AbilityId Id { get; }
+    string Name { get; }
 
-        bool IsItem { get; }
+    bool NoTargetCast { get; }
 
-        bool IsValid { get; }
+    Unit9 Owner { get; }
 
-        string Name { get; }
+    bool PositionCast { get; }
 
-        bool NoTargetCast { get; }
+    float Radius { get; }
 
-        Unit9 Owner { get; }
+    float Speed { get; }
 
-        bool PositionCast { get; }
+    bool UnitTargetCast { get; }
 
-        float Radius { get; }
+    bool CanBeCasted(bool checkChanneling = true);
 
-        float Speed { get; }
+    bool CanHit(Unit9 mainTarget, List<Unit9> aoeTargets, int minCount);
 
-        bool UnitTargetCast { get; }
+    bool CanHit(Unit9 target);
 
-        bool CanBeCasted(bool checkChanneling = true);
+    float GetCastDelay(Vector3 position);
 
-        bool CanHit(Unit9 mainTarget, List<Unit9> aoeTargets, int minCount);
+    float GetCastDelay(Unit9 unit);
 
-        bool CanHit(Unit9 target);
+    float GetCastDelay();
 
-        float GetCastDelay(Vector3 position);
+    float GetHitTime(Vector3 position);
 
-        float GetCastDelay(Unit9 unit);
+    float GetHitTime(Unit9 unit);
 
-        float GetCastDelay();
+    PredictionInput9 GetPredictionInput(Unit9 target, List<Unit9> aoeTargets = null);
 
-        float GetHitTime(Vector3 position);
+    PredictionOutput9 GetPredictionOutput(PredictionInput9 input);
 
-        float GetHitTime(Unit9 unit);
+    bool PiercesMagicImmunity(Unit9 target);
 
-        PredictionInput9 GetPredictionInput(Unit9 target, List<Unit9> aoeTargets = null);
+    bool UseAbility(
+        Unit9 mainTarget,
+        List<Unit9> aoeTargets,
+        HitChance minimumChance,
+        int minAOETargets = 0,
+        bool queue = false,
+        bool bypass = false);
 
-        PredictionOutput9 GetPredictionOutput(PredictionInput9 input);
+    bool UseAbility(Unit9 target, HitChance minimumChance, bool queue = false, bool bypass = false);
 
-        bool PiercesMagicImmunity(Unit9 target);
+    bool UseAbility(bool queue = false, bool bypass = false);
 
-        bool UseAbility(
-            Unit9 mainTarget,
-            List<Unit9> aoeTargets,
-            HitChance minimumChance,
-            int minAOETargets = 0,
-            bool queue = false,
-            bool bypass = false);
+    bool UseAbility(Unit9 target, bool queue = false, bool bypass = false);
 
-        bool UseAbility(Unit9 target, HitChance minimumChance, bool queue = false, bool bypass = false);
+    bool UseAbility(Tree target, bool queue = false, bool bypass = false);
 
-        bool UseAbility(bool queue = false, bool bypass = false);
+    bool UseAbility(Vector3 position, bool queue = false, bool bypass = false);
 
-        bool UseAbility(Unit9 target, bool queue = false, bool bypass = false);
-
-        bool UseAbility(Tree target, bool queue = false, bool bypass = false);
-
-        bool UseAbility(Vector3 position, bool queue = false, bool bypass = false);
-
-        bool UseAbility(Rune target, bool queue = false, bool bypass = false);
-    }
+    bool UseAbility(Rune target, bool queue = false, bool bypass = false);
 }

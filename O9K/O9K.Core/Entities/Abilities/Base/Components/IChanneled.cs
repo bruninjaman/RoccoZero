@@ -1,11 +1,10 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Components
+﻿namespace O9K.Core.Entities.Abilities.Base.Components;
+
+using Base;
+
+public interface IChanneled : IActiveAbility
 {
-    using Base;
+    float ChannelTime { get; }
 
-    public interface IChanneled : IActiveAbility
-    {
-        float ChannelTime { get; }
-
-        bool IsActivatesOnChannelStart { get; }
-    }
+    bool IsActivatesOnChannelStart { get; }
 }

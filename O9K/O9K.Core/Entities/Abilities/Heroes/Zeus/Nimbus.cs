@@ -1,78 +1,77 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Zeus
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Zeus;
+
+using System.Linq;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Managers.Entity;
+
+using Metadata;
+
+[AbilityId(AbilityId.zuus_cloud)]
+public class Nimbus : CircleAbility, IDisable, INuke
 {
-    using System.Linq;
+    private LightningBolt lightningBolt;
 
-    using Base;
-    using Base.Types;
+    private StaticField staticField;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Managers.Entity;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.zuus_cloud)]
-    public class Nimbus : CircleAbility, IDisable, INuke
+    public Nimbus(Ability baseAbility)
+        : base(baseAbility)
     {
-        private LightningBolt lightningBolt;
+        this.RadiusData = new SpecialData(baseAbility, "cloud_radius");
+    }
 
-        private StaticField staticField;
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
 
-        public Nimbus(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastRange { get; } = 9999999;
+
+    public override bool IntelligenceAmplify { get; } = false;
+
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var damage = new Damage();
+
+        if (this.staticField?.CanBeCasted() == true)
         {
-            this.RadiusData = new SpecialData(baseAbility, "cloud_radius");
+            damage += this.staticField.GetRawDamage(unit, remainingHealth);
         }
 
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        public override float CastRange { get; } = 9999999;
-
-        public override bool IntelligenceAmplify { get; } = false;
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+        if (this.lightningBolt?.IsValid == true)
         {
-            var damage = new Damage();
-
-            if (this.staticField?.CanBeCasted() == true)
-            {
-                damage += this.staticField.GetRawDamage(unit, remainingHealth);
-            }
-
-            if (this.lightningBolt?.IsValid == true)
-            {
-                damage += this.lightningBolt.GetBaseDamage();
-            }
-
-            return damage;
+            damage += this.lightningBolt.GetBaseDamage();
         }
 
-        internal override void SetOwner(Unit9 owner)
+        return damage;
+    }
+
+    internal override void SetOwner(Unit9 owner)
+    {
+        base.SetOwner(owner);
+
+        var ability = EntityManager9.BaseAbilities.FirstOrDefault(
+            x => x.Id == AbilityId.zuus_static_field && x.Owner?.Handle == owner.Handle);
+
+        if (ability != null)
         {
-            base.SetOwner(owner);
+            this.staticField = (StaticField)EntityManager9.AddAbility(ability);
+        }
 
-            var ability = EntityManager9.BaseAbilities.FirstOrDefault(
-                x => x.Id == AbilityId.zuus_static_field && x.Owner?.Handle == owner.Handle);
+        ability = EntityManager9.BaseAbilities.FirstOrDefault(
+            x => x.Id == AbilityId.zuus_lightning_bolt && x.Owner?.Handle == owner.Handle);
 
-            if (ability != null)
-            {
-                this.staticField = (StaticField)EntityManager9.AddAbility(ability);
-            }
-
-            ability = EntityManager9.BaseAbilities.FirstOrDefault(
-                x => x.Id == AbilityId.zuus_lightning_bolt && x.Owner?.Handle == owner.Handle);
-
-            if (ability != null)
-            {
-                this.lightningBolt = (LightningBolt)EntityManager9.AddAbility(ability);
-            }
+        if (ability != null)
+        {
+            this.lightningBolt = (LightningBolt)EntityManager9.AddAbility(ability);
         }
     }
 }

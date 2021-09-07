@@ -1,47 +1,46 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Morphling
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Morphling;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Range;
+
+using Metadata;
+
+[AbilityId(AbilityId.morphling_replicate)]
+public class Morph : RangedAbility, IHasRangeIncrease
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData castRangeIncrease;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Range;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.morphling_replicate)]
-    public class Morph : RangedAbility, IHasRangeIncrease
+    public Morph(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeIncrease;
+        this.castRangeIncrease = new SpecialData(baseAbility, "scepter_cast_range_bonus");
+    }
 
-        public Morph(Ability baseAbility)
-            : base(baseAbility)
+    public bool CanTargetAlly
+    {
+        get
         {
-            this.castRangeIncrease = new SpecialData(baseAbility, "scepter_cast_range_bonus");
+            //todo change
+            return this.Owner.GetAbilityById(AbilityId.special_bonus_unique_morphling_5)?.Level > 0;
         }
+    }
 
-        public bool CanTargetAlly
-        {
-            get
-            {
-                //todo change
-                return this.Owner.GetAbilityById(AbilityId.special_bonus_unique_morphling_5)?.Level > 0;
-            }
-        }
+    public bool IsRangeIncreasePermanent { get; } = false;
 
-        public bool IsRangeIncreasePermanent { get; } = false;
+    public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Ability;
 
-        public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Ability;
+    public string RangeModifierName { get; } = "modifier_morphling_scepter";
 
-        public string RangeModifierName { get; } = "modifier_morphling_scepter";
-
-        public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
-        {
-            return this.castRangeIncrease.GetValue(this.Level);
-        }
+    public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+    {
+        return this.castRangeIncrease.GetValue(this.Level);
     }
 }

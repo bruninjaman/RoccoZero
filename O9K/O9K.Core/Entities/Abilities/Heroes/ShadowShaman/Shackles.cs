@@ -1,39 +1,38 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowShaman
+﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowShaman;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.shadow_shaman_shackles)]
+public class Shackles : RangedAbility, IChanneled, IDisable
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData channelTimeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.shadow_shaman_shackles)]
-    public class Shackles : RangedAbility, IChanneled, IDisable
+    public Shackles(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData channelTimeData;
-
-        public Shackles(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.channelTimeData = new SpecialData(baseAbility, "channel_time");
-            this.DamageData = new SpecialData(baseAbility, "total_damage");
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        public float ChannelTime
-        {
-            get
-            {
-                return this.channelTimeData.GetValue(this.Level);
-            }
-        }
-
-        public bool IsActivatesOnChannelStart { get; } = true;
+        this.channelTimeData = new SpecialData(baseAbility, "channel_time");
+        this.DamageData = new SpecialData(baseAbility, "total_damage");
     }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+
+    public float ChannelTime
+    {
+        get
+        {
+            return this.channelTimeData.GetValue(this.Level);
+        }
+    }
+
+    public bool IsActivatesOnChannelStart { get; } = true;
 }

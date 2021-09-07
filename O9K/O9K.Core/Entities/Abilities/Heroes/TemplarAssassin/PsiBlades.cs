@@ -1,57 +1,56 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.TemplarAssassin
+﻿namespace O9K.Core.Entities.Abilities.Heroes.TemplarAssassin;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Range;
+
+using Metadata;
+
+[AbilityId(AbilityId.templar_assassin_psi_blades)]
+public class PsiBlades : PassiveAbility, IHasRangeIncrease
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData attackRange;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData splitRange;
 
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Range;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.templar_assassin_psi_blades)]
-    public class PsiBlades : PassiveAbility, IHasRangeIncrease
+    public PsiBlades(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackRange;
+        this.attackRange = new SpecialData(baseAbility, "bonus_attack_range");
+        this.splitRange = new SpecialData(baseAbility, "attack_spill_range");
+    }
 
-        private readonly SpecialData splitRange;
-
-        public PsiBlades(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastRange
+    {
+        get
         {
-            this.attackRange = new SpecialData(baseAbility, "bonus_attack_range");
-            this.splitRange = new SpecialData(baseAbility, "attack_spill_range");
+            return this.Owner.GetAttackRange() + this.SplitRange;
         }
+    }
 
-        public override float CastRange
+    public bool IsRangeIncreasePermanent { get; } = true;
+
+    public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
+
+    public string RangeModifierName { get; } = "modifier_templar_assassin_psi_blades";
+
+    public float SplitRange
+    {
+        get
         {
-            get
-            {
-                return this.Owner.GetAttackRange() + this.SplitRange;
-            }
+            return this.splitRange.GetValue(this.Level);
         }
+    }
 
-        public bool IsRangeIncreasePermanent { get; } = true;
-
-        public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
-
-        public string RangeModifierName { get; } = "modifier_templar_assassin_psi_blades";
-
-        public float SplitRange
-        {
-            get
-            {
-                return this.splitRange.GetValue(this.Level);
-            }
-        }
-
-        public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
-        {
-            return this.attackRange.GetValue(this.Level);
-        }
+    public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+    {
+        return this.attackRange.GetValue(this.Level);
     }
 }

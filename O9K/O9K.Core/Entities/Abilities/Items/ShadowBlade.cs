@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_invis_sword)]
+public class ShadowBlade : ActiveAbility, ISpeedBuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData bonusMoveSpeedData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_invis_sword)]
-    public class ShadowBlade : ActiveAbility, ISpeedBuff
+    public ShadowBlade(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData bonusMoveSpeedData;
+        this.ActivationDelayData = new SpecialData(baseAbility, "windwalk_fade_time");
+        this.bonusMoveSpeedData = new SpecialData(baseAbility, "windwalk_movement_speed");
+    }
 
-        public ShadowBlade(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.ActivationDelayData = new SpecialData(baseAbility, "windwalk_fade_time");
-            this.bonusMoveSpeedData = new SpecialData(baseAbility, "windwalk_movement_speed");
-        }
+    public string BuffModifierName { get; } = "modifier_item_invisibility_edge_windwalk";
 
-        public string BuffModifierName { get; } = "modifier_item_invisibility_edge_windwalk";
+    public bool BuffsAlly { get; } = false;
 
-        public bool BuffsAlly { get; } = false;
+    public bool BuffsOwner { get; } = true;
 
-        public bool BuffsOwner { get; } = true;
+    public override bool IsInvisibility { get; } = true;
 
-        public override bool IsInvisibility { get; } = true;
-
-        public float GetSpeedBuff(Unit9 unit)
-        {
-            return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
-        }
+    public float GetSpeedBuff(Unit9 unit)
+    {
+        return (unit.Speed * this.bonusMoveSpeedData.GetValue(this.Level)) / 100;
     }
 }

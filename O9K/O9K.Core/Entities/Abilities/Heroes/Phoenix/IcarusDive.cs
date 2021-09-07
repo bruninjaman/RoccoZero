@@ -1,74 +1,73 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Phoenix
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Phoenix;
+
+using System;
+using System.Linq;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Managers.Entity;
+
+using Metadata;
+
+[AbilityId(AbilityId.phoenix_icarus_dive)]
+public class IcarusDive : LineAbility
 {
-    using System;
-    using System.Linq;
+    private readonly SpecialData castRangeData;
 
-    using Base;
+    private IcarusDiveStop icarusDiveStop;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Managers.Entity;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.phoenix_icarus_dive)]
-    public class IcarusDive : LineAbility
+    public IcarusDive(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.RadiusData = new SpecialData(baseAbility, "dash_width");
+        this.castRangeData = new SpecialData(baseAbility, "dash_length");
+        this.DamageData = new SpecialData(baseAbility, "damage_per_second");
+    }
 
-        private IcarusDiveStop icarusDiveStop;
+    public override bool HasAreaOfEffect { get; } = false;
 
-        public IcarusDive(Ability baseAbility)
-            : base(baseAbility)
+    public bool IsFlying
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "dash_width");
-            this.castRangeData = new SpecialData(baseAbility, "dash_length");
-            this.DamageData = new SpecialData(baseAbility, "damage_per_second");
+            return this.icarusDiveStop.IsUsable;
+        }
+    }
+
+    public override float Speed { get; } = 1500;
+
+    protected override float BaseCastRange
+    {
+        get
+        {
+            return this.castRangeData.GetValue(this.Level);
+        }
+    }
+
+    public override bool UseAbility(bool queue = false, bool bypass = false)
+    {
+        return this.icarusDiveStop.UseAbility(queue, bypass);
+    }
+
+    internal override void SetOwner(Unit9 owner)
+    {
+        base.SetOwner(owner);
+
+        var ability = EntityManager9.BaseAbilities.FirstOrDefault(
+            x => x.Id == AbilityId.phoenix_icarus_dive_stop && x.Owner?.Handle == owner.Handle);
+
+        if (ability == null)
+        {
+            throw new ArgumentNullException(nameof(this.icarusDiveStop));
         }
 
-        public override bool HasAreaOfEffect { get; } = false;
-
-        public bool IsFlying
-        {
-            get
-            {
-                return this.icarusDiveStop.IsUsable;
-            }
-        }
-
-        public override float Speed { get; } = 1500;
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
-        }
-
-        public override bool UseAbility(bool queue = false, bool bypass = false)
-        {
-            return this.icarusDiveStop.UseAbility(queue, bypass);
-        }
-
-        internal override void SetOwner(Unit9 owner)
-        {
-            base.SetOwner(owner);
-
-            var ability = EntityManager9.BaseAbilities.FirstOrDefault(
-                x => x.Id == AbilityId.phoenix_icarus_dive_stop && x.Owner?.Handle == owner.Handle);
-
-            if (ability == null)
-            {
-                throw new ArgumentNullException(nameof(this.icarusDiveStop));
-            }
-
-            this.icarusDiveStop = (IcarusDiveStop)EntityManager9.AddAbility(ability);
-        }
+        this.icarusDiveStop = (IcarusDiveStop)EntityManager9.AddAbility(ability);
     }
 }

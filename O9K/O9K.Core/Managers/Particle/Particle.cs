@@ -1,57 +1,56 @@
-﻿namespace O9K.Core.Managers.Particle
+﻿namespace O9K.Core.Managers.Particle;
+
+using Divine.Numerics;
+using Divine.Entity.Entities;
+using Divine.Particle.Particles;
+using Divine.Entity.Entities.Players;
+
+public sealed class Particle9
 {
-    using Divine.Numerics;
-    using Divine.Entity.Entities;
-    using Divine.Particle.Particles;
-    using Divine.Entity.Entities.Players;
-
-    public sealed class Particle9
+    internal Particle9(Particle effect, string effectName, Entity sender, bool isReleased)
     {
-        internal Particle9(Particle effect, string effectName, Entity sender, bool isReleased)
+        this.Effect = effect;
+        this.Name = effectName;
+        //this.Released = isReleased;
+        // this.CreateTime = Game.RawGameTime;
+
+        if (sender != null && !(sender is Player))
         {
-            this.Effect = effect;
-            this.Name = effectName;
-            //this.Released = isReleased;
-            // this.CreateTime = Game.RawGameTime;
-
-            if (sender != null && !(sender is Player))
-            {
-                this.Sender = sender;
-                this.SenderHandle = sender.Handle;
-            }
+            this.Sender = sender;
+            this.SenderHandle = sender.Handle;
         }
+    }
 
-        //   public float CreateTime { get; }
+    //   public float CreateTime { get; }
 
-        public Particle Effect { get; }
+    public Particle Effect { get; }
 
-        public bool IsValid
+    public bool IsValid
+    {
+        get
         {
-            get
-            {
-                return this.Effect.IsValid;
-            }
+            return this.Effect.IsValid;
         }
+    }
 
-        public string Name { get; }
+    public string Name { get; }
 
-        public Vector3 Position
+    public Vector3 Position
+    {
+        get
         {
-            get
-            {
-                return this.Effect.Position;
-            }
+            return this.Effect.Position;
         }
+    }
 
-        //public bool Released { get; }
+    //public bool Released { get; }
 
-        public Entity Sender { get; }
+    public Entity Sender { get; }
 
-        public uint? SenderHandle { get; }
+    public uint? SenderHandle { get; }
 
-        public Vector3 GetControlPoint(int id)
-        {
-            return this.Effect.GetControlPoint(id);
-        }
+    public Vector3 GetControlPoint(int id)
+    {
+        return this.Effect.GetControlPoint(id);
     }
 }

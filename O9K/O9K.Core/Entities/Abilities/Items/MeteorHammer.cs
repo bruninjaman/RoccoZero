@@ -1,48 +1,47 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_meteor_hammer)]
+public class MeteorHammer : CircleAbility, IChanneled, IDisable
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_meteor_hammer)]
-    public class MeteorHammer : CircleAbility, IChanneled, IDisable
+    public MeteorHammer(Ability baseAbility)
+        : base(baseAbility)
     {
-        public MeteorHammer(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
-            this.RadiusData = new SpecialData(baseAbility, "impact_radius");
-            this.ActivationDelayData = new SpecialData(baseAbility, "land_time");
-        }
-
-        public override float ActivationDelay
-        {
-            get
-            {
-                return base.ActivationDelay + this.ChannelTime;
-            }
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
-
-        public float ChannelTime { get; }
-
-        public override DamageType DamageType
-        {
-            get
-            {
-                return DamageType.Magical;
-            }
-        }
-
-        public bool IsActivatesOnChannelStart { get; } = false;
+        this.ChannelTime = baseAbility.AbilityData.GetChannelMaximumTime(0);
+        this.RadiusData = new SpecialData(baseAbility, "impact_radius");
+        this.ActivationDelayData = new SpecialData(baseAbility, "land_time");
     }
+
+    public override float ActivationDelay
+    {
+        get
+        {
+            return base.ActivationDelay + this.ChannelTime;
+        }
+    }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+
+    public float ChannelTime { get; }
+
+    public override DamageType DamageType
+    {
+        get
+        {
+            return DamageType.Magical;
+        }
+    }
+
+    public bool IsActivatesOnChannelStart { get; } = false;
 }

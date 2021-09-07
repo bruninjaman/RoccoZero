@@ -1,45 +1,44 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.AncientApparition
+﻿namespace O9K.Core.Entities.Abilities.Heroes.AncientApparition;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.ancient_apparition_ice_vortex)]
+public class IceVortex : CircleAbility, IHasDamageAmplify, IDebuff
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData amplifierData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.ancient_apparition_ice_vortex)]
-    public class IceVortex : CircleAbility, IHasDamageAmplify, IDebuff
+    public IceVortex(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData amplifierData;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.amplifierData = new SpecialData(baseAbility, "spell_resist_pct");
+    }
 
-        public IceVortex(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.amplifierData = new SpecialData(baseAbility, "spell_resist_pct");
-        }
+    public DamageType AmplifierDamageType { get; } = DamageType.Magical;
 
-        public DamageType AmplifierDamageType { get; } = DamageType.Magical;
+    public string[] AmplifierModifierNames { get; } = { "modifier_ice_vortex" };
 
-        public string[] AmplifierModifierNames { get; } = { "modifier_ice_vortex" };
+    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
 
-        public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
+    public string DebuffModifierName { get; } = "modifier_ice_vortex";
 
-        public string DebuffModifierName { get; } = "modifier_ice_vortex";
+    public bool IsAmplifierAddedToStats { get; } = true;
 
-        public bool IsAmplifierAddedToStats { get; } = true;
+    public bool IsAmplifierPermanent { get; } = false;
 
-        public bool IsAmplifierPermanent { get; } = false;
-
-        public float AmplifierValue(Unit9 source, Unit9 target)
-        {
-            return this.amplifierData.GetValue(this.Level) / -100;
-        }
+    public float AmplifierValue(Unit9 source, Unit9 target)
+    {
+        return this.amplifierData.GetValue(this.Level) / -100;
     }
 }

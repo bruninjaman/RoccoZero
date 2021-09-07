@@ -1,322 +1,321 @@
-﻿namespace O9K.Core.Managers.Menu.Items
+﻿namespace O9K.Core.Managers.Menu.Items;
+
+using System;
+
+using Divine.Input;
+using Divine.Input.EventArgs;
+using Divine.Numerics;
+using Divine.Renderer;
+
+using Logger;
+
+using Newtonsoft.Json.Linq;
+
+using Key = System.Windows.Input.Key;
+using KeyEventArgs = EventArgs.KeyEventArgs;
+
+public class MenuToggleKey : MenuItem
 {
-    using System;
+    private readonly bool defaultValue;
 
-    using Divine.Input;
-    using Divine.Input.EventArgs;
-    using Divine.Numerics;
-    using Divine.Renderer;
+    private bool changingKey;
 
-    using Logger;
+    private bool isActive;
 
-    using Newtonsoft.Json.Linq;
+    private string keyText;
 
-    using Key = System.Windows.Input.Key;
-    using KeyEventArgs = EventArgs.KeyEventArgs;
+    private Vector2 keyTextSize;
 
-    public class MenuToggleKey : MenuItem
+    private Key keyValue;
+
+    private MouseKey mouseKeyValue;
+
+    private EventHandler<KeyEventArgs> valueChange;
+
+    public MenuToggleKey(string displayName, Key key = Key.None, bool defaultValue = true, bool heroUnique = false)
+        : this(displayName, displayName, key, defaultValue, heroUnique)
     {
-        private readonly bool defaultValue;
+    }
 
-        private bool changingKey;
+    public MenuToggleKey(string displayName, string name, Key key = Key.None, bool defaultValue = true, bool heroUnique = false)
+        : base(displayName, name, heroUnique)
+    {
+        this.IsActive = defaultValue;
+        this.defaultValue = defaultValue;
+        this.keyText = key.ToString();
+        this.keyValue = key;
+    }
 
-        private bool isActive;
-
-        private string keyText;
-
-        private Vector2 keyTextSize;
-
-        private Key keyValue;
-
-        private MouseKey mouseKeyValue;
-
-        private EventHandler<KeyEventArgs> valueChange;
-
-        public MenuToggleKey(string displayName, Key key = Key.None, bool defaultValue = true, bool heroUnique = false)
-            : this(displayName, displayName, key, defaultValue, heroUnique)
+    public event EventHandler<KeyEventArgs> ValueChange
+    {
+        add
         {
-        }
-
-        public MenuToggleKey(string displayName, string name, Key key = Key.None, bool defaultValue = true, bool heroUnique = false)
-            : base(displayName, name, heroUnique)
-        {
-            this.IsActive = defaultValue;
-            this.defaultValue = defaultValue;
-            this.keyText = key.ToString();
-            this.keyValue = key;
-        }
-
-        public event EventHandler<KeyEventArgs> ValueChange
-        {
-            add
+            if (this.isActive)
             {
-                if (this.isActive)
-                {
-                    value(this, new KeyEventArgs(this.isActive, this.isActive));
-                }
-
-                this.valueChange += value;
-            }
-            remove
-            {
-                this.valueChange -= value;
-            }
-        }
-
-        public bool IsActive
-        {
-            get
-            {
-                return this.isActive;
-            }
-            set
-            {
-                if (this.isActive == value)
-                {
-                    return;
-                }
-
-                this.isActive = value;
-                this.valueChange?.Invoke(this, new KeyEventArgs(this.isActive, !this.isActive));
-            }
-        }
-
-        public Key Key
-        {
-            get
-            {
-                return this.keyValue;
-            }
-            set
-            {
-                this.keyValue = value;
-
-                if (this.SizeCalculated)
-                {
-                    this.keyText = this.keyValue.ToString();
-                    this.keyTextSize = RendererManager.MeasureText(this.keyText, this.MenuStyle.Font, this.MenuStyle.TextSize);
-                }
-            }
-        }
-
-        public MouseKey MouseKey
-        {
-            get
-            {
-                return this.mouseKeyValue;
-            }
-            set
-            {
-                this.mouseKeyValue = value;
-
-                if (this.SizeCalculated)
-                {
-                    this.keyText = this.mouseKeyValue.ToString();
-                    this.keyTextSize = RendererManager.MeasureText(this.keyText, this.MenuStyle.Font, this.MenuStyle.TextSize);
-                }
-            }
-        }
-
-        public static implicit operator bool(MenuToggleKey item)
-        {
-            return item.IsActive;
-        }
-
-        public MenuToggleKey SetTooltip(string tooltip)
-        {
-            this.LocalizedTooltip[Lang.En] = tooltip;
-            return this;
-        }
-
-        internal override void CalculateSize()
-        {
-            base.CalculateSize();
-            this.Size = new Vector2(this.Size.X + 40, this.Size.Y);
-        }
-
-        internal override object GetSaveValue()
-        {
-            if (this.MouseKey != MouseKey.None)
-            {
-                return new
-                {
-                    this.MouseKey,
-                    this.IsActive
-                };
+                value(this, new KeyEventArgs(this.isActive, this.isActive));
             }
 
+            this.valueChange += value;
+        }
+        remove
+        {
+            this.valueChange -= value;
+        }
+    }
+
+    public bool IsActive
+    {
+        get
+        {
+            return this.isActive;
+        }
+        set
+        {
+            if (this.isActive == value)
+            {
+                return;
+            }
+
+            this.isActive = value;
+            this.valueChange?.Invoke(this, new KeyEventArgs(this.isActive, !this.isActive));
+        }
+    }
+
+    public Key Key
+    {
+        get
+        {
+            return this.keyValue;
+        }
+        set
+        {
+            this.keyValue = value;
+
+            if (this.SizeCalculated)
+            {
+                this.keyText = this.keyValue.ToString();
+                this.keyTextSize = RendererManager.MeasureText(this.keyText, this.MenuStyle.Font, this.MenuStyle.TextSize);
+            }
+        }
+    }
+
+    public MouseKey MouseKey
+    {
+        get
+        {
+            return this.mouseKeyValue;
+        }
+        set
+        {
+            this.mouseKeyValue = value;
+
+            if (this.SizeCalculated)
+            {
+                this.keyText = this.mouseKeyValue.ToString();
+                this.keyTextSize = RendererManager.MeasureText(this.keyText, this.MenuStyle.Font, this.MenuStyle.TextSize);
+            }
+        }
+    }
+
+    public static implicit operator bool(MenuToggleKey item)
+    {
+        return item.IsActive;
+    }
+
+    public MenuToggleKey SetTooltip(string tooltip)
+    {
+        this.LocalizedTooltip[Lang.En] = tooltip;
+        return this;
+    }
+
+    internal override void CalculateSize()
+    {
+        base.CalculateSize();
+        this.Size = new Vector2(this.Size.X + 40, this.Size.Y);
+    }
+
+    internal override object GetSaveValue()
+    {
+        if (this.MouseKey != MouseKey.None)
+        {
             return new
             {
-                this.Key,
-                IsActive = this.SaveValue ? this.IsActive : this.defaultValue
+                this.MouseKey,
+                this.IsActive
             };
         }
 
-        internal override void Load(JToken token)
+        return new
         {
-            try
+            this.Key,
+            IsActive = this.SaveValue ? this.IsActive : this.defaultValue
+        };
+    }
+
+    internal override void Load(JToken token)
+    {
+        try
+        {
+            token = token?[this.Name];
+            if (token == null)
             {
-                token = token?[this.Name];
-                if (token == null)
-                {
-                    return;
-                }
-
-                this.IsActive = token[nameof(this.IsActive)].ToObject<bool>();
-
-                var key = token[nameof(this.Key)];
-                if (key != null)
-                {
-                    this.Key = key.ToObject<Key>();
-                    if (this.Key != Key.None)
-                    {
-                        InputManager.KeyUp += this.OnKeyUp;
-                    }
-
-                    return;
-                }
-
-                var mouseKey = token[nameof(this.MouseKey)];
-                if (mouseKey != null)
-                {
-                    this.MouseKey = mouseKey.ToObject<MouseKey>();
-                    if (this.MouseKey != MouseKey.None)
-                    {
-                        InputManager.MouseKeyUp += this.MouseKeyUp;
-                    }
-                }
+                return;
             }
-            catch (Exception e)
+
+            this.IsActive = token[nameof(this.IsActive)].ToObject<bool>();
+
+            var key = token[nameof(this.Key)];
+            if (key != null)
             {
-                Logger.Error(e);
+                this.Key = key.ToObject<Key>();
+                if (this.Key != Key.None)
+                {
+                    InputManager.KeyUp += this.OnKeyUp;
+                }
+
+                return;
+            }
+
+            var mouseKey = token[nameof(this.MouseKey)];
+            if (mouseKey != null)
+            {
+                this.MouseKey = mouseKey.ToObject<MouseKey>();
+                if (this.MouseKey != MouseKey.None)
+                {
+                    InputManager.MouseKeyUp += this.MouseKeyUp;
+                }
             }
         }
-
-        internal override bool OnMouseRelease(Vector2 position)
+        catch (Exception e)
         {
-            if (this.changingKey)
-            {
-                return true;
-            }
+            Logger.Error(e);
+        }
+    }
 
-            this.Remove();
-            this.changingKey = true;
-            InputManager.KeyUp += this.GetKey;
-            InputManager.MouseKeyUp += this.GetMouseKey;
-
+    internal override bool OnMouseRelease(Vector2 position)
+    {
+        if (this.changingKey)
+        {
             return true;
         }
 
-        internal override void Remove()
+        this.Remove();
+        this.changingKey = true;
+        InputManager.KeyUp += this.GetKey;
+        InputManager.MouseKeyUp += this.GetMouseKey;
+
+        return true;
+    }
+
+    internal override void Remove()
+    {
+        InputManager.KeyUp -= this.OnKeyUp;
+        InputManager.MouseKeyUp -= this.MouseKeyUp;
+    }
+
+    //internal override void SetInputManager(IInputManager9 inputManager)
+    //{
+    //    base.SetInputManager(inputManager);
+
+    //    if (this.keyValue != Key.None)
+    //    {
+    //        this.InputManager.KeyUp += this.OnKeyUp;
+    //    }
+    //    else if (this.mouseKeyValue != MouseKey.None)
+    //    {
+    //        this.InputManager.MouseKeyUp += this.MouseKeyUp;
+    //    }
+    //}
+
+    internal override void SetRenderer()
+    {
+        base.SetRenderer();
+        this.keyTextSize = RendererManager.MeasureText(this.keyText, this.MenuStyle.Font, this.MenuStyle.TextSize);
+    }
+
+    protected override void Draw()
+    {
+        var keyPosition = new Vector2(
+            (this.Position.X + this.Size.X) - this.MenuStyle.RightIndent - this.keyTextSize.X,
+            this.Position.Y + ((this.Size.Y - this.MenuStyle.TextSize) / 3.3f));
+
+        //key background
+        if (this.IsActive)
         {
-            InputManager.KeyUp -= this.OnKeyUp;
-            InputManager.MouseKeyUp -= this.MouseKeyUp;
+            RendererManager.DrawLine(
+                this.Position + new Vector2(this.Size.X - (this.keyTextSize.X + (this.MenuStyle.RightIndent * 2)), this.Size.Y / 2),
+                this.Position + new Vector2(this.Size.X, this.Size.Y / 2),
+                this.MenuStyle.BackgroundColor,
+                this.Size.Y);
         }
 
-        //internal override void SetInputManager(IInputManager9 inputManager)
-        //{
-        //    base.SetInputManager(inputManager);
+        base.Draw();
 
-        //    if (this.keyValue != Key.None)
-        //    {
-        //        this.InputManager.KeyUp += this.OnKeyUp;
-        //    }
-        //    else if (this.mouseKeyValue != MouseKey.None)
-        //    {
-        //        this.InputManager.MouseKeyUp += this.MouseKeyUp;
-        //    }
-        //}
+        //key
+        RendererManager.DrawText(
+            this.changingKey ? "?" : this.keyText,
+            keyPosition,
+            Color.White,
+            this.MenuStyle.Font,
+            this.MenuStyle.TextSize);
+    }
 
-        internal override void SetRenderer()
+    private void GetKey(Divine.Input.EventArgs.KeyEventArgs e)
+    {
+        this.Key = e.Key == Key.Escape ? Key.None : e.Key;
+        this.mouseKeyValue = MouseKey.None;
+        e.Process = false;
+
+        InputManager.KeyUp -= this.GetKey;
+        InputManager.MouseKeyUp -= this.GetMouseKey;
+
+        if (this.Key != Key.None)
         {
-            base.SetRenderer();
-            this.keyTextSize = RendererManager.MeasureText(this.keyText, this.MenuStyle.Font, this.MenuStyle.TextSize);
+            InputManager.KeyUp += this.OnKeyUp;
         }
 
-        protected override void Draw()
+        this.changingKey = false;
+    }
+
+    private void GetMouseKey(MouseEventArgs e)
+    {
+        if (e.MouseKey == MouseKey.Left || e.MouseKey == MouseKey.Right)
         {
-            var keyPosition = new Vector2(
-                (this.Position.X + this.Size.X) - this.MenuStyle.RightIndent - this.keyTextSize.X,
-                this.Position.Y + ((this.Size.Y - this.MenuStyle.TextSize) / 3.3f));
-
-            //key background
-            if (this.IsActive)
-            {
-                RendererManager.DrawLine(
-                    this.Position + new Vector2(this.Size.X - (this.keyTextSize.X + (this.MenuStyle.RightIndent * 2)), this.Size.Y / 2),
-                    this.Position + new Vector2(this.Size.X, this.Size.Y / 2),
-                    this.MenuStyle.BackgroundColor,
-                    this.Size.Y);
-            }
-
-            base.Draw();
-
-            //key
-            RendererManager.DrawText(
-                this.changingKey ? "?" : this.keyText,
-                keyPosition,
-                Color.White,
-                this.MenuStyle.Font,
-                this.MenuStyle.TextSize);
+            this.keyValue = Key.None;
+            this.MouseKey = MouseKey.None;
+        }
+        else
+        {
+            this.keyValue = Key.None;
+            this.MouseKey = e.MouseKey;
         }
 
-        private void GetKey(Divine.Input.EventArgs.KeyEventArgs e)
+        e.Process = false;
+
+        InputManager.KeyUp -= this.GetKey;
+        InputManager.MouseKeyUp -= this.GetMouseKey;
+
+        if (this.MouseKey != MouseKey.None)
         {
-            this.Key = e.Key == Key.Escape ? Key.None : e.Key;
-            this.mouseKeyValue = MouseKey.None;
-            e.Process = false;
-
-            InputManager.KeyUp -= this.GetKey;
-            InputManager.MouseKeyUp -= this.GetMouseKey;
-
-            if (this.Key != Key.None)
-            {
-                InputManager.KeyUp += this.OnKeyUp;
-            }
-
-            this.changingKey = false;
+            InputManager.MouseKeyUp += this.MouseKeyUp;
         }
 
-        private void GetMouseKey(MouseEventArgs e)
+        this.changingKey = false;
+    }
+
+    private void MouseKeyUp(MouseEventArgs e)
+    {
+        if (e.MouseKey == this.mouseKeyValue)
         {
-            if (e.MouseKey == MouseKey.Left || e.MouseKey == MouseKey.Right)
-            {
-                this.keyValue = Key.None;
-                this.MouseKey = MouseKey.None;
-            }
-            else
-            {
-                this.keyValue = Key.None;
-                this.MouseKey = e.MouseKey;
-            }
-
-            e.Process = false;
-
-            InputManager.KeyUp -= this.GetKey;
-            InputManager.MouseKeyUp -= this.GetMouseKey;
-
-            if (this.MouseKey != MouseKey.None)
-            {
-                InputManager.MouseKeyUp += this.MouseKeyUp;
-            }
-
-            this.changingKey = false;
+            this.IsActive = !this.IsActive;
         }
+    }
 
-        private void MouseKeyUp(MouseEventArgs e)
+    private void OnKeyUp(Divine.Input.EventArgs.KeyEventArgs e)
+    {
+        if (e.Key == this.keyValue)
         {
-            if (e.MouseKey == this.mouseKeyValue)
-            {
-                this.IsActive = !this.IsActive;
-            }
-        }
-
-        private void OnKeyUp(Divine.Input.EventArgs.KeyEventArgs e)
-        {
-            if (e.Key == this.keyValue)
-            {
-                this.IsActive = !this.IsActive;
-            }
+            this.IsActive = !this.IsActive;
         }
     }
 }

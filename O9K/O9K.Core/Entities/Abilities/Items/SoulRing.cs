@@ -1,53 +1,52 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_soul_ring)]
+public class SoulRing : ActiveAbility, IHasHealthCost, IManaRestore
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData healthCostData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData manaRestoreData;
 
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_soul_ring)]
-    public class SoulRing : ActiveAbility, IHasHealthCost, IManaRestore
+    public SoulRing(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthCostData;
+        this.healthCostData = new SpecialData(baseAbility, "health_sacrifice");
+        this.manaRestoreData = new SpecialData(baseAbility, "mana_gain");
+    }
 
-        private readonly SpecialData manaRestoreData;
+    public bool CanSuicide { get; } = false;
 
-        public SoulRing(Ability baseAbility)
-            : base(baseAbility)
+    public int HealthCost
+    {
+        get
         {
-            this.healthCostData = new SpecialData(baseAbility, "health_sacrifice");
-            this.manaRestoreData = new SpecialData(baseAbility, "mana_gain");
+            return (int)this.healthCostData.GetValue(1);
         }
+    }
 
-        public bool CanSuicide { get; } = false;
+    public bool InstantRestore { get; } = true;
 
-        public int HealthCost
-        {
-            get
-            {
-                return (int)this.healthCostData.GetValue(1);
-            }
-        }
+    public string RestoreModifierName { get; } = string.Empty;
 
-        public bool InstantRestore { get; } = true;
+    public bool RestoresAlly { get; } = false;
 
-        public string RestoreModifierName { get; } = string.Empty;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresAlly { get; } = false;
-
-        public bool RestoresOwner { get; } = true;
-
-        public int GetManaRestore(Unit9 unit)
-        {
-            return (int)this.manaRestoreData.GetValue(this.Level);
-        }
+    public int GetManaRestore(Unit9 unit)
+    {
+        return (int)this.manaRestoreData.GetValue(this.Level);
     }
 }

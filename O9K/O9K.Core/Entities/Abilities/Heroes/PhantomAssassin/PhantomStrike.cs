@@ -1,30 +1,29 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.PhantomAssassin
+﻿namespace O9K.Core.Entities.Abilities.Heroes.PhantomAssassin;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.phantom_assassin_phantom_strike)]
+public class PhantomStrike : RangedAbility, IBlink, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.phantom_assassin_phantom_strike)]
-    public class PhantomStrike : RangedAbility, IBlink, INuke
+    public PhantomStrike(Ability baseAbility)
+        : base(baseAbility)
     {
-        public PhantomStrike(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
+    }
 
-        public BlinkType BlinkType { get; } = BlinkType.Targetable;
+    public BlinkType BlinkType { get; } = BlinkType.Targetable;
 
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
-        {
-            return this.Owner.GetRawAttackDamage(unit);
-        }
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        return this.Owner.GetRawAttackDamage(unit);
     }
 }

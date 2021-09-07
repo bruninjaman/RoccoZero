@@ -1,23 +1,22 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.BountyHunter
+﻿namespace O9K.Core.Entities.Abilities.Heroes.BountyHunter;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.bounty_hunter_shuriken_toss)]
+public class ShurikenToss : RangedAbility, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.bounty_hunter_shuriken_toss)]
-    public class ShurikenToss : RangedAbility, INuke
+    public ShurikenToss(Ability baseAbility)
+        : base(baseAbility)
     {
-        public ShurikenToss(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.DamageData = new SpecialData(baseAbility, "bonus_damage");
-        }
+        this.SpeedData = new SpecialData(baseAbility, "speed");
+        this.DamageData = new SpecialData(baseAbility, "bonus_damage");
     }
 }

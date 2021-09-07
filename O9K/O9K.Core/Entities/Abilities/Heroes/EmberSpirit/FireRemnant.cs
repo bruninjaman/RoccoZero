@@ -1,61 +1,60 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.EmberSpirit
+﻿namespace O9K.Core.Entities.Abilities.Heroes.EmberSpirit;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.ember_spirit_fire_remnant)]
+public class FireRemnant : CircleAbility
 {
-    using Base;
+    private readonly SpecialData aghanimsRangeMultiplier;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData aghanimsSpeedMultiplier;
 
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.ember_spirit_fire_remnant)]
-    public class FireRemnant : CircleAbility
+    public FireRemnant(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData aghanimsRangeMultiplier;
+        this.SpeedData = new SpecialData(baseAbility, "speed_multiplier");
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.aghanimsSpeedMultiplier = new SpecialData(baseAbility, "scepter_speed_multiplier");
+        this.aghanimsRangeMultiplier = new SpecialData(baseAbility, "scepter_range_multiplier");
+    }
 
-        private readonly SpecialData aghanimsSpeedMultiplier;
+    public override bool HasAreaOfEffect { get; } = false;
 
-        public FireRemnant(Ability baseAbility)
-            : base(baseAbility)
+    public override float Speed
+    {
+        get
         {
-            this.SpeedData = new SpecialData(baseAbility, "speed_multiplier");
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.aghanimsSpeedMultiplier = new SpecialData(baseAbility, "scepter_speed_multiplier");
-            this.aghanimsRangeMultiplier = new SpecialData(baseAbility, "scepter_range_multiplier");
-        }
+            var multiplier = (this.SpeedData.GetValue(this.Level) / 100);
 
-        public override bool HasAreaOfEffect { get; } = false;
-
-        public override float Speed
-        {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                var multiplier = (this.SpeedData.GetValue(this.Level) / 100);
-
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    multiplier *= this.aghanimsSpeedMultiplier.GetValue(this.Level);
-                }
-
-                return this.Owner.Speed * multiplier;
+                multiplier *= this.aghanimsSpeedMultiplier.GetValue(this.Level);
             }
+
+            return this.Owner.Speed * multiplier;
         }
+    }
 
-        protected override float BaseCastRange
+    protected override float BaseCastRange
+    {
+        get
         {
-            get
+            var castRange = base.BaseCastRange;
+
+            if (this.Owner.HasAghanimsScepter)
             {
-                var castRange = base.BaseCastRange;
-
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    castRange *= this.aghanimsRangeMultiplier.GetValue(this.Level);
-                }
-
-                return castRange;
+                castRange *= this.aghanimsRangeMultiplier.GetValue(this.Level);
             }
+
+            return castRange;
         }
     }
 }

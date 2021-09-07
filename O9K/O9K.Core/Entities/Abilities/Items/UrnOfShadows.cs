@@ -1,51 +1,50 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_urn_of_shadows)]
+public class UrnOfShadows : RangedAbility, IHealthRestore, IDebuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_urn_of_shadows)]
-    public class UrnOfShadows : RangedAbility, IHealthRestore, IDebuff
+    public UrnOfShadows(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthRestoreData;
+        this.DurationData = new SpecialData(baseAbility, "duration");
+        this.healthRestoreData = new SpecialData(baseAbility, "soul_heal_amount");
+    }
 
-        public UrnOfShadows(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.DurationData = new SpecialData(baseAbility, "duration");
-            this.healthRestoreData = new SpecialData(baseAbility, "soul_heal_amount");
-        }
+    public override bool BreaksLinkens { get; } = false;
 
-        public override bool BreaksLinkens { get; } = false;
+    public override DamageType DamageType { get; } = DamageType.Magical;
 
-        public override DamageType DamageType { get; } = DamageType.Magical;
+    public string DebuffModifierName { get; } = "modifier_item_urn_damage";
 
-        public string DebuffModifierName { get; } = "modifier_item_urn_damage";
+    public bool InstantRestore { get; } = false;
 
-        public bool InstantRestore { get; } = false;
+    public string RestoreModifierName { get; } = "modifier_item_urn_heal";
 
-        public string RestoreModifierName { get; } = "modifier_item_urn_heal";
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
+    public override bool CanBeCasted(bool checkChanneling = true)
+    {
+        return this.Charges > 0 && base.CanBeCasted(checkChanneling);
+    }
 
-        public override bool CanBeCasted(bool checkChanneling = true)
-        {
-            return this.Charges > 0 && base.CanBeCasted(checkChanneling);
-        }
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)(this.healthRestoreData.GetValue(this.Level) * this.Duration);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)(this.healthRestoreData.GetValue(this.Level) * this.Duration);
     }
 }

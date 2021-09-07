@@ -1,24 +1,23 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Medusa
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Medusa;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.medusa_stone_gaze)]
+public class StoneGaze : AreaOfEffectAbility, IDebuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.medusa_stone_gaze)]
-    public class StoneGaze : AreaOfEffectAbility, IDebuff
+    public StoneGaze(Ability baseAbility)
+        : base(baseAbility)
     {
-        public StoneGaze(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-        }
-
-        public string DebuffModifierName { get; } = "modifier_medusa_stone_gaze_slow";
+        this.RadiusData = new SpecialData(baseAbility, "radius");
     }
+
+    public string DebuffModifierName { get; } = "modifier_medusa_stone_gaze_slow";
 }

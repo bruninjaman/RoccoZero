@@ -1,49 +1,48 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_enchanted_mango)]
+public class EnchantedMango : RangedAbility, IManaRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData manaRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_enchanted_mango)]
-    public class EnchantedMango : RangedAbility, IManaRestore
+    public EnchantedMango(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData manaRestoreData;
+        this.manaRestoreData = new SpecialData(baseAbility, "replenish_amount");
+    }
 
-        public EnchantedMango(Ability baseAbility)
-            : base(baseAbility)
+    public override AbilityBehavior AbilityBehavior
+    {
+        get
         {
-            this.manaRestoreData = new SpecialData(baseAbility, "replenish_amount");
+            return base.AbilityBehavior | AbilityBehavior.UnitTarget;
         }
+    }
 
-        public override AbilityBehavior AbilityBehavior
-        {
-            get
-            {
-                return base.AbilityBehavior | AbilityBehavior.UnitTarget;
-            }
-        }
+    public bool InstantRestore { get; } = true;
 
-        public bool InstantRestore { get; } = true;
+    public string RestoreModifierName { get; } = string.Empty;
 
-        public string RestoreModifierName { get; } = string.Empty;
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
+    public override bool TargetsEnemy { get; } = false;
 
-        public override bool TargetsEnemy { get; } = false;
-
-        public int GetManaRestore(Unit9 unit)
-        {
-            return (int)this.manaRestoreData.GetValue(this.Level);
-        }
+    public int GetManaRestore(Unit9 unit)
+    {
+        return (int)this.manaRestoreData.GetValue(this.Level);
     }
 }

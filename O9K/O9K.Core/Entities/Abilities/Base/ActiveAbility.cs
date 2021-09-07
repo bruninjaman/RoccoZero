@@ -1,348 +1,347 @@
-﻿namespace O9K.Core.Entities.Abilities.Base
+﻿namespace O9K.Core.Entities.Abilities.Base;
+
+using System.Collections.Generic;
+
+using Components.Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Runes;
+using Divine.Entity.Entities.Trees;
+using Divine.Numerics;
+
+using Entities.Units;
+
+using Helpers;
+
+using Prediction.Collision;
+using Prediction.Data;
+
+public abstract class ActiveAbility : Ability9, IActiveAbility
 {
-    using System.Collections.Generic;
+    protected SpecialData SpeedData;
 
-    using Components.Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Runes;
-    using Divine.Entity.Entities.Trees;
-    using Divine.Numerics;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Prediction.Collision;
-    using Prediction.Data;
-
-    public abstract class ActiveAbility : Ability9, IActiveAbility
+    protected ActiveAbility(Ability baseAbility)
+        : base(baseAbility)
     {
-        protected SpecialData SpeedData;
+        this.TargetsAlly = (baseAbility.TargetTeamType & (TargetTeamType.All | TargetTeamType.Allied)) != TargetTeamType.Enemy;
+        this.TargetsEnemy = (baseAbility.TargetTeamType & (TargetTeamType.All | TargetTeamType.Enemy)) != TargetTeamType.Allied;
+    }
 
-        protected ActiveAbility(Ability baseAbility)
-            : base(baseAbility)
+    public virtual bool BreaksLinkens
+    {
+        get
         {
-            this.TargetsAlly = (baseAbility.TargetTeamType & (TargetTeamType.All | TargetTeamType.Allied)) != TargetTeamType.Enemy;
-            this.TargetsEnemy = (baseAbility.TargetTeamType & (TargetTeamType.All | TargetTeamType.Enemy)) != TargetTeamType.Allied;
+            return this.UnitTargetCast;
+        }
+    }
+
+    public virtual bool CanBeCastedWhileChanneling
+    {
+        get
+        {
+            return (this.AbilityBehavior & AbilityBehavior.IgnoreChannel) != 0;
+        }
+    }
+
+    public virtual CollisionTypes CollisionTypes { get; } = CollisionTypes.None;
+
+    public virtual bool HasAreaOfEffect
+    {
+        get
+        {
+            return this.CollisionTypes == CollisionTypes.None && this.Radius > 0;
+        }
+    }
+
+    public bool IsImmediateCasting
+    {
+        get
+        {
+            return (this.AbilityBehavior & AbilityBehavior.Immediate) != 0;
+        }
+    }
+
+    public bool NoTargetCast
+    {
+        get
+        {
+            return (this.AbilityBehavior & AbilityBehavior.NoTarget) != 0;
+        }
+    }
+
+    public bool PositionCast
+    {
+        get
+        {
+            return (this.AbilityBehavior & AbilityBehavior.Point) != 0;
+        }
+    }
+
+    public virtual SkillShotType SkillShotType { get; } = SkillShotType.None;
+
+    public virtual float Speed
+    {
+        get
+        {
+            return this.SpeedData?.GetValue(this.Level) ?? 0;
+        }
+    }
+
+    public virtual bool TargetsAlly { get; }
+
+    public virtual bool TargetsEnemy { get; }
+
+    public bool UnitTargetCast
+    {
+        get
+        {
+            return (this.AbilityBehavior & AbilityBehavior.UnitTarget) != 0;
+        }
+    }
+
+    protected Sleeper ActionSleeper { get; } = new Sleeper();
+
+    protected bool CanBeCastedWhileRooted
+    {
+        get
+        {
+            return (this.AbilityBehavior & AbilityBehavior.RootDisables) == 0;
+        }
+    }
+
+    protected virtual bool CanBeCastedWhileStunned { get; } = false;
+
+    public override bool CanBeCasted(bool checkChanneling = true)
+    {
+        // todo add random not stun modifiers check (axe taunt etc.)
+
+        if (this.ActionSleeper.IsSleeping)
+        {
+            return false;
         }
 
-        public virtual bool BreaksLinkens
+        //if (this.Owner.IsCasting)
+        //{
+        //    return false;
+        //}
+
+        if (!this.IsReady)
         {
-            get
-            {
-                return this.UnitTargetCast;
-            }
+            return false;
         }
 
-        public virtual bool CanBeCastedWhileChanneling
+        if (!this.Owner.IsAlive)
         {
-            get
-            {
-                return (this.AbilityBehavior & AbilityBehavior.IgnoreChannel) != 0;
-            }
+            return false;
         }
 
-        public virtual CollisionTypes CollisionTypes { get; } = CollisionTypes.None;
-
-        public virtual bool HasAreaOfEffect
+        if (this.Owner.IsCharging && !this.IsImmediateCasting)
         {
-            get
-            {
-                return this.CollisionTypes == CollisionTypes.None && this.Radius > 0;
-            }
+            return false;
         }
 
-        public bool IsImmediateCasting
+        if (checkChanneling && !this.CanBeCastedWhileChanneling && this.Owner.IsChanneling)
         {
-            get
-            {
-                return (this.AbilityBehavior & AbilityBehavior.Immediate) != 0;
-            }
+            return false;
         }
 
-        public bool NoTargetCast
+        if (!this.CanBeCastedWhileStunned && this.Owner.IsStunned)
         {
-            get
-            {
-                return (this.AbilityBehavior & AbilityBehavior.NoTarget) != 0;
-            }
+            return false;
         }
 
-        public bool PositionCast
+        if (!this.CanBeCastedWhileRooted && (this.Owner.IsRooted || this.Owner.IsLeashed))
         {
-            get
-            {
-                return (this.AbilityBehavior & AbilityBehavior.Point) != 0;
-            }
+            return false;
         }
 
-        public virtual SkillShotType SkillShotType { get; } = SkillShotType.None;
-
-        public virtual float Speed
+        if ((this.IsItem && this.Owner.IsMuted) || (!this.IsItem && this.Owner.IsSilenced))
         {
-            get
-            {
-                return this.SpeedData?.GetValue(this.Level) ?? 0;
-            }
+            return false;
         }
 
-        public virtual bool TargetsAlly { get; }
+        return true;
+    }
 
-        public virtual bool TargetsEnemy { get; }
+    public virtual bool CanHit(Unit9 target)
+    {
+        return true;
+    }
 
-        public bool UnitTargetCast
+    public virtual bool CanHit(Unit9 mainTarget, List<Unit9> aoeTargets, int minCount)
+    {
+        return true;
+    }
+
+    public virtual float GetCastDelay(Unit9 unit)
+    {
+        if (this.Owner.Equals(unit))
         {
-            get
-            {
-                return (this.AbilityBehavior & AbilityBehavior.UnitTarget) != 0;
-            }
+            return this.GetCastDelay();
         }
 
-        protected Sleeper ActionSleeper { get; } = new Sleeper();
+        return this.GetCastDelay(unit.Position);
+    }
 
-        protected bool CanBeCastedWhileRooted
+    public virtual float GetCastDelay(Vector3 position)
+    {
+        if (this.NoTargetCast)
         {
-            get
-            {
-                return (this.AbilityBehavior & AbilityBehavior.RootDisables) == 0;
-            }
+            return this.GetCastDelay();
         }
 
-        protected virtual bool CanBeCastedWhileStunned { get; } = false;
+        return this.GetCastDelay() + this.Owner.GetTurnTime(position);
+    }
 
-        public override bool CanBeCasted(bool checkChanneling = true)
+    public virtual float GetCastDelay()
+    {
+        return this.CastPoint + InputLag;
+    }
+
+    public virtual float GetHitTime(Unit9 unit)
+    {
+        if (this.Owner.Equals(unit))
         {
-            // todo add random not stun modifiers check (axe taunt etc.)
-
-            if (this.ActionSleeper.IsSleeping)
-            {
-                return false;
-            }
-
-            //if (this.Owner.IsCasting)
-            //{
-            //    return false;
-            //}
-
-            if (!this.IsReady)
-            {
-                return false;
-            }
-
-            if (!this.Owner.IsAlive)
-            {
-                return false;
-            }
-
-            if (this.Owner.IsCharging && !this.IsImmediateCasting)
-            {
-                return false;
-            }
-
-            if (checkChanneling && !this.CanBeCastedWhileChanneling && this.Owner.IsChanneling)
-            {
-                return false;
-            }
-
-            if (!this.CanBeCastedWhileStunned && this.Owner.IsStunned)
-            {
-                return false;
-            }
-
-            if (!this.CanBeCastedWhileRooted && (this.Owner.IsRooted || this.Owner.IsLeashed))
-            {
-                return false;
-            }
-
-            if ((this.IsItem && this.Owner.IsMuted) || (!this.IsItem && this.Owner.IsSilenced))
-            {
-                return false;
-            }
-
-            return true;
+            return this.GetCastDelay() + this.ActivationDelay;
         }
 
-        public virtual bool CanHit(Unit9 target)
+        return this.GetHitTime(unit.Position);
+    }
+
+    public virtual float GetHitTime(Vector3 position)
+    {
+        var time = this.GetCastDelay(position) + this.ActivationDelay;
+
+        if (this.Speed > 0)
         {
-            return true;
+            return time + (this.Owner.Distance(position) / this.Speed);
         }
 
-        public virtual bool CanHit(Unit9 mainTarget, List<Unit9> aoeTargets, int minCount)
+        return time;
+    }
+
+    public virtual PredictionInput9 GetPredictionInput(Unit9 target, List<Unit9> aoeTargets = null)
+    {
+        var input = new PredictionInput9
         {
-            return true;
+            Caster = this.Owner,
+            Target = target,
+            CollisionTypes = this.CollisionTypes,
+            Delay = this.CastPoint + this.ActivationDelay + InputLag,
+            Speed = this.Speed,
+            Range = this.Range,
+            Radius = this.Radius,
+            CastRange = this.CastRange,
+            SkillShotType = this.SkillShotType,
+            RequiresToTurn = !this.NoTargetCast
+        };
+
+        if (aoeTargets != null)
+        {
+            input.AreaOfEffect = this.HasAreaOfEffect;
+            input.AreaOfEffectTargets = aoeTargets;
         }
 
-        public virtual float GetCastDelay(Unit9 unit)
-        {
-            if (this.Owner.Equals(unit))
-            {
-                return this.GetCastDelay();
-            }
+        return input;
+    }
 
-            return this.GetCastDelay(unit.Position);
+    public virtual PredictionOutput9 GetPredictionOutput(PredictionInput9 input)
+    {
+        return this.PredictionManager.GetPrediction(input);
+    }
+
+    public virtual bool UseAbility(
+        Unit9 mainTarget,
+        List<Unit9> aoeTargets,
+        HitChance minimumChance,
+        int minAOETargets = 0,
+        bool queue = false,
+        bool bypass = false)
+    {
+        return this.UseAbility(queue, bypass);
+    }
+
+    public virtual bool UseAbility(Unit9 target, HitChance minimumChance, bool queue = false, bool bypass = false)
+    {
+        return this.UseAbility(queue, bypass);
+    }
+
+    public virtual bool UseAbility(bool queue = false, bool bypass = false)
+    {
+        var result = this.BaseAbility.Cast(queue, bypass);
+        if (result)
+        {
+            this.ActionSleeper.Sleep(0.1f);
         }
 
-        public virtual float GetCastDelay(Vector3 position)
-        {
-            if (this.NoTargetCast)
-            {
-                return this.GetCastDelay();
-            }
+        return result;
+    }
 
-            return this.GetCastDelay() + this.Owner.GetTurnTime(position);
+    public virtual bool UseAbility(Unit9 target, bool queue = false, bool bypass = false)
+    {
+        bool result;
+
+        if (this.UnitTargetCast)
+        {
+            result = this.BaseAbility.Cast(target.BaseUnit, queue, bypass);
+        }
+        else if (this.PositionCast)
+        {
+            result = this.BaseAbility.Cast(target.Position, queue, bypass);
+        }
+        else
+        {
+            result = this.BaseAbility.Cast(queue, bypass);
         }
 
-        public virtual float GetCastDelay()
+        if (result)
         {
-            return this.CastPoint + InputLag;
+            this.ActionSleeper.Sleep(0.1f);
         }
 
-        public virtual float GetHitTime(Unit9 unit)
-        {
-            if (this.Owner.Equals(unit))
-            {
-                return this.GetCastDelay() + this.ActivationDelay;
-            }
+        return result;
+    }
 
-            return this.GetHitTime(unit.Position);
+    public virtual bool UseAbility(Tree target, bool queue = false, bool bypass = false)
+    {
+        var result = this.BaseAbility.Cast(target, queue, bypass);
+        if (result)
+        {
+            this.ActionSleeper.Sleep(0.1f);
         }
 
-        public virtual float GetHitTime(Vector3 position)
+        return result;
+    }
+
+    public virtual bool UseAbility(Vector3 position, bool queue = false, bool bypass = false)
+    {
+        bool result;
+        if (this.PositionCast)
         {
-            var time = this.GetCastDelay(position) + this.ActivationDelay;
-
-            if (this.Speed > 0)
-            {
-                return time + (this.Owner.Distance(position) / this.Speed);
-            }
-
-            return time;
+            result = this.BaseAbility.Cast(position, queue, bypass);
+        }
+        else
+        {
+            result = this.BaseAbility.Cast(queue, bypass);
         }
 
-        public virtual PredictionInput9 GetPredictionInput(Unit9 target, List<Unit9> aoeTargets = null)
+        if (result)
         {
-            var input = new PredictionInput9
-            {
-                Caster = this.Owner,
-                Target = target,
-                CollisionTypes = this.CollisionTypes,
-                Delay = this.CastPoint + this.ActivationDelay + InputLag,
-                Speed = this.Speed,
-                Range = this.Range,
-                Radius = this.Radius,
-                CastRange = this.CastRange,
-                SkillShotType = this.SkillShotType,
-                RequiresToTurn = !this.NoTargetCast
-            };
-
-            if (aoeTargets != null)
-            {
-                input.AreaOfEffect = this.HasAreaOfEffect;
-                input.AreaOfEffectTargets = aoeTargets;
-            }
-
-            return input;
+            this.ActionSleeper.Sleep(0.1f);
         }
 
-        public virtual PredictionOutput9 GetPredictionOutput(PredictionInput9 input)
+        return result;
+    }
+
+    public virtual bool UseAbility(Rune target, bool queue = false, bool bypass = false)
+    {
+        var result = this.BaseAbility.Cast(target, queue, bypass);
+        if (result)
         {
-            return this.PredictionManager.GetPrediction(input);
+            this.ActionSleeper.Sleep(0.1f);
         }
 
-        public virtual bool UseAbility(
-            Unit9 mainTarget,
-            List<Unit9> aoeTargets,
-            HitChance minimumChance,
-            int minAOETargets = 0,
-            bool queue = false,
-            bool bypass = false)
-        {
-            return this.UseAbility(queue, bypass);
-        }
-
-        public virtual bool UseAbility(Unit9 target, HitChance minimumChance, bool queue = false, bool bypass = false)
-        {
-            return this.UseAbility(queue, bypass);
-        }
-
-        public virtual bool UseAbility(bool queue = false, bool bypass = false)
-        {
-            var result = this.BaseAbility.Cast(queue, bypass);
-            if (result)
-            {
-                this.ActionSleeper.Sleep(0.1f);
-            }
-
-            return result;
-        }
-
-        public virtual bool UseAbility(Unit9 target, bool queue = false, bool bypass = false)
-        {
-            bool result;
-
-            if (this.UnitTargetCast)
-            {
-                result = this.BaseAbility.Cast(target.BaseUnit, queue, bypass);
-            }
-            else if (this.PositionCast)
-            {
-                result = this.BaseAbility.Cast(target.Position, queue, bypass);
-            }
-            else
-            {
-                result = this.BaseAbility.Cast(queue, bypass);
-            }
-
-            if (result)
-            {
-                this.ActionSleeper.Sleep(0.1f);
-            }
-
-            return result;
-        }
-
-        public virtual bool UseAbility(Tree target, bool queue = false, bool bypass = false)
-        {
-            var result = this.BaseAbility.Cast(target, queue, bypass);
-            if (result)
-            {
-                this.ActionSleeper.Sleep(0.1f);
-            }
-
-            return result;
-        }
-
-        public virtual bool UseAbility(Vector3 position, bool queue = false, bool bypass = false)
-        {
-            bool result;
-            if (this.PositionCast)
-            {
-                result = this.BaseAbility.Cast(position, queue, bypass);
-            }
-            else
-            {
-                result = this.BaseAbility.Cast(queue, bypass);
-            }
-
-            if (result)
-            {
-                this.ActionSleeper.Sleep(0.1f);
-            }
-
-            return result;
-        }
-
-        public virtual bool UseAbility(Rune target, bool queue = false, bool bypass = false)
-        {
-            var result = this.BaseAbility.Cast(target, queue, bypass);
-            if (result)
-            {
-                this.ActionSleeper.Sleep(0.1f);
-            }
-
-            return result;
-        }
+        return result;
     }
 }

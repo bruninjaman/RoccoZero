@@ -1,15 +1,14 @@
-﻿namespace O9K.Core.Prediction.Data
+﻿namespace O9K.Core.Prediction.Data;
+
+public enum HitChance
 {
-    public enum HitChance
-    {
-        Impossible,
+    Impossible,
 
-        Low,
+    Low,
 
-        Medium,
+    Medium,
 
-        High,
+    High,
 
-        Immobile
-    }
+    Immobile
 }

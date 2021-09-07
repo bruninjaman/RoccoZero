@@ -1,34 +1,33 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.ArcWarden
+﻿namespace O9K.Core.Entities.Abilities.Heroes.ArcWarden;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.arc_warden_flux)]
+public class Flux : RangedAbility, IDebuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.arc_warden_flux)]
-    public class Flux : RangedAbility, IDebuff
+    public Flux(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.castRangeData = new SpecialData(baseAbility, "abilitycastrange");
+    }
 
-        public Flux(Ability baseAbility)
-            : base(baseAbility)
+    public string DebuffModifierName { get; } = string.Empty; // debuff stacks
+
+    protected override float BaseCastRange
+    {
+        get
         {
-            this.castRangeData = new SpecialData(baseAbility, "abilitycastrange");
-        }
-
-        public string DebuffModifierName { get; } = string.Empty; // debuff stacks
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
+            return this.castRangeData.GetValue(this.Level);
         }
     }
 }

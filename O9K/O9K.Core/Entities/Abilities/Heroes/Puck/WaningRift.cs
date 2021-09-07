@@ -1,37 +1,36 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Puck
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Puck;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.puck_waning_rift)]
+public class WaningRift : CircleAbility, IDisable, INuke
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.puck_waning_rift)]
-    public class WaningRift : CircleAbility, IDisable, INuke
+    public WaningRift(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.castRangeData = new SpecialData(baseAbility, "max_distance");
+        this.DamageData = new SpecialData(baseAbility, "damage");
+    }
 
-        public WaningRift(Ability baseAbility)
-            : base(baseAbility)
+    public UnitState AppliesUnitState { get; } = UnitState.Silenced;
+
+    public override float CastRange
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.castRangeData = new SpecialData(baseAbility, "max_distance");
-            this.DamageData = new SpecialData(baseAbility, "damage");
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Silenced;
-
-        public override float CastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
+            return this.castRangeData.GetValue(this.Level);
         }
     }
 }

@@ -1,72 +1,71 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Tinker
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Tinker;
+
+using System.Collections.Generic;
+using System.Linq;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Managers.Entity;
+
+using Metadata;
+
+[AbilityId(AbilityId.tinker_heat_seeking_missile)]
+public class HeatSeekingMissile : AreaOfEffectAbility, INuke
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly SpecialData targetsData;
 
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Managers.Entity;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.tinker_heat_seeking_missile)]
-    public class HeatSeekingMissile : AreaOfEffectAbility, INuke
+    public HeatSeekingMissile(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData targetsData;
+        this.SpeedData = new SpecialData(baseAbility, "speed");
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.targetsData = new SpecialData(baseAbility, "targets");
+    }
 
-        public HeatSeekingMissile(Ability baseAbility)
-            : base(baseAbility)
+    public override bool CanHit(Unit9 target)
+    {
+        var hitCount = (int)this.targetsData.GetValue(this.Level);
+
+        var possibleTargets = EntityManager9.Units
+            .Where(
+                x => x.IsEnemy() && x.IsHero && x.IsAlive && x.IsVisible && !x.IsMagicImmune && !x.IsInvulnerable
+                     && x.Distance(this.Owner) < this.Radius)
+            .OrderBy(x => x.Distance(this.Owner))
+            .Take(hitCount);
+
+        if (!possibleTargets.Contains(target))
         {
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.targetsData = new SpecialData(baseAbility, "targets");
+            return false;
         }
 
-        public override bool CanHit(Unit9 target)
+        return base.CanHit(target);
+    }
+
+    public override bool CanHit(Unit9 mainTarget, List<Unit9> aoeTargets, int minCount)
+    {
+        var hitCount = (int)this.targetsData.GetValue(this.Level);
+
+        var possibleTargets = EntityManager9.Units
+            .Where(
+                x => x.IsHero && x.IsAlive && x.IsVisible && !x.IsMagicImmune && !x.IsInvulnerable
+                     && x.Distance(this.Owner) < this.Radius)
+            .OrderBy(x => x.Distance(this.Owner))
+            .Take(hitCount);
+
+        if (!possibleTargets.Contains(mainTarget))
         {
-            var hitCount = (int)this.targetsData.GetValue(this.Level);
-
-            var possibleTargets = EntityManager9.Units
-                .Where(
-                    x => x.IsEnemy() && x.IsHero && x.IsAlive && x.IsVisible && !x.IsMagicImmune && !x.IsInvulnerable
-                         && x.Distance(this.Owner) < this.Radius)
-                .OrderBy(x => x.Distance(this.Owner))
-                .Take(hitCount);
-
-            if (!possibleTargets.Contains(target))
-            {
-                return false;
-            }
-
-            return base.CanHit(target);
+            return false;
         }
 
-        public override bool CanHit(Unit9 mainTarget, List<Unit9> aoeTargets, int minCount)
-        {
-            var hitCount = (int)this.targetsData.GetValue(this.Level);
-
-            var possibleTargets = EntityManager9.Units
-                .Where(
-                    x => x.IsHero && x.IsAlive && x.IsVisible && !x.IsMagicImmune && !x.IsInvulnerable
-                         && x.Distance(this.Owner) < this.Radius)
-                .OrderBy(x => x.Distance(this.Owner))
-                .Take(hitCount);
-
-            if (!possibleTargets.Contains(mainTarget))
-            {
-                return false;
-            }
-
-            return base.CanHit(mainTarget, aoeTargets, minCount);
-        }
+        return base.CanHit(mainTarget, aoeTargets, minCount);
     }
 }

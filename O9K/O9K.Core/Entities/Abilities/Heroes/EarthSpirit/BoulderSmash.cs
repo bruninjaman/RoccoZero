@@ -1,44 +1,43 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.EarthSpirit
+﻿namespace O9K.Core.Entities.Abilities.Heroes.EarthSpirit;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.earth_spirit_boulder_smash)]
+public class BoulderSmash : RangedAbility, INuke
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRange;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.earth_spirit_boulder_smash)]
-    public class BoulderSmash : RangedAbility, INuke
+    public BoulderSmash(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRange;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.RangeData = new SpecialData(baseAbility, "rock_distance");
+        this.SpeedData = new SpecialData(baseAbility, "speed");
+        this.DamageData = new SpecialData(baseAbility, "rock_damage");
+        this.castRange = new SpecialData(baseAbility, "rock_search_aoe");
+    }
 
-        public BoulderSmash(Ability baseAbility)
-            : base(baseAbility)
+    public override float Range
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.RangeData = new SpecialData(baseAbility, "rock_distance");
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.DamageData = new SpecialData(baseAbility, "rock_damage");
-            this.castRange = new SpecialData(baseAbility, "rock_search_aoe");
+            return this.RangeData.GetValue(this.Level) + this.Radius;
         }
+    }
 
-        public override float Range
+    protected override float BaseCastRange
+    {
+        get
         {
-            get
-            {
-                return this.RangeData.GetValue(this.Level) + this.Radius;
-            }
-        }
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRange.GetValue(this.Level);
-            }
+            return this.castRange.GetValue(this.Level);
         }
     }
 }

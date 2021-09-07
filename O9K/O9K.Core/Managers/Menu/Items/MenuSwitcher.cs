@@ -1,154 +1,153 @@
-﻿namespace O9K.Core.Managers.Menu.Items
+﻿namespace O9K.Core.Managers.Menu.Items;
+
+using System;
+
+using Divine.Numerics;
+using Divine.Renderer;
+
+using EventArgs;
+
+using Logger;
+
+using Newtonsoft.Json.Linq;
+
+public class MenuSwitcher : MenuItem
 {
-    using System;
+    private readonly bool defaultValue;
 
-    using Divine.Numerics;
-    using Divine.Renderer;
+    private bool isEnabled;
 
-    using EventArgs;
+    private bool loaded;
 
-    using Logger;
+    private EventHandler<SwitcherEventArgs> valueChange;
 
-    using Newtonsoft.Json.Linq;
-
-    public class MenuSwitcher : MenuItem
+    public MenuSwitcher(string displayName, bool defaultValue = true, bool heroUnique = false)
+        : this(displayName, displayName, defaultValue, heroUnique)
     {
-        private readonly bool defaultValue;
+    }
 
-        private bool isEnabled;
+    public MenuSwitcher(string displayName, string name, bool defaultValue = true, bool heroUnique = false)
+        : base(displayName, name, heroUnique)
+    {
+        this.defaultValue = defaultValue;
+        this.isEnabled = defaultValue;
+    }
 
-        private bool loaded;
-
-        private EventHandler<SwitcherEventArgs> valueChange;
-
-        public MenuSwitcher(string displayName, bool defaultValue = true, bool heroUnique = false)
-            : this(displayName, displayName, defaultValue, heroUnique)
+    public event EventHandler<SwitcherEventArgs> ValueChange
+    {
+        add
         {
-        }
-
-        public MenuSwitcher(string displayName, string name, bool defaultValue = true, bool heroUnique = false)
-            : base(displayName, name, heroUnique)
-        {
-            this.defaultValue = defaultValue;
-            this.isEnabled = defaultValue;
-        }
-
-        public event EventHandler<SwitcherEventArgs> ValueChange
-        {
-            add
+            if (this.loaded && this.IsEnabled)
             {
-                if (this.loaded && this.IsEnabled)
-                {
-                    value(this, new SwitcherEventArgs(this.IsEnabled, this.IsEnabled));
-                }
-
-                this.valueChange += value;
-            }
-            remove
-            {
-                this.valueChange -= value;
-            }
-        }
-
-        public bool IsEnabled
-        {
-            get
-            {
-                return this.isEnabled;
-            }
-            set
-            {
-                if (value == this.isEnabled)
-                {
-                    return;
-                }
-
-                var args = new SwitcherEventArgs(value, this.isEnabled);
-                this.valueChange?.Invoke(this, args);
-
-                if (args.Process)
-                {
-                    this.isEnabled = value;
-                }
-            }
-        }
-
-        public static implicit operator bool(MenuSwitcher item)
-        {
-            return item.isEnabled;
-        }
-
-        public MenuSwitcher SetTooltip(string tooltip)
-        {
-            this.LocalizedTooltip[Lang.En] = tooltip;
-            return this;
-        }
-
-        internal override void CalculateSize()
-        {
-            base.CalculateSize();
-            this.Size = new Vector2(this.Size.X + this.MenuStyle.TextureArrowSize + 10, this.Size.Y);
-        }
-
-        internal override object GetSaveValue()
-        {
-            if (!this.SaveValue)
-            {
-                return this.defaultValue;
+                value(this, new SwitcherEventArgs(this.IsEnabled, this.IsEnabled));
             }
 
-            if (this.defaultValue == this.isEnabled)
+            this.valueChange += value;
+        }
+        remove
+        {
+            this.valueChange -= value;
+        }
+    }
+
+    public bool IsEnabled
+    {
+        get
+        {
+            return this.isEnabled;
+        }
+        set
+        {
+            if (value == this.isEnabled)
             {
-                return null;
+                return;
             }
 
-            return this.IsEnabled;
-        }
+            var args = new SwitcherEventArgs(value, this.isEnabled);
+            this.valueChange?.Invoke(this, args);
 
-        internal override void Load(JToken token)
-        {
-            try
+            if (args.Process)
             {
-                token = token?[this.Name];
-                if (token != null)
-                {
-                    this.isEnabled = token.ToObject<bool>();
-                }
-
-                if (this.isEnabled)
-                {
-                    this.isEnabled = false;
-                    this.IsEnabled = true; // invoke event
-                }
-
-                this.loaded = true;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
+                this.isEnabled = value;
             }
         }
+    }
 
-        internal override bool OnMouseRelease(Vector2 position)
+    public static implicit operator bool(MenuSwitcher item)
+    {
+        return item.isEnabled;
+    }
+
+    public MenuSwitcher SetTooltip(string tooltip)
+    {
+        this.LocalizedTooltip[Lang.En] = tooltip;
+        return this;
+    }
+
+    internal override void CalculateSize()
+    {
+        base.CalculateSize();
+        this.Size = new Vector2(this.Size.X + this.MenuStyle.TextureArrowSize + 10, this.Size.Y);
+    }
+
+    internal override object GetSaveValue()
+    {
+        if (!this.SaveValue)
         {
-            this.IsEnabled = !this.IsEnabled;
-            return true;
+            return this.defaultValue;
         }
 
-        protected override void Draw()
+        if (this.defaultValue == this.isEnabled)
         {
-            base.Draw();
-
-            //rectangle
-            RendererManager.DrawFilledRectangle(
-                new RectangleF(
-                    (this.Position.X + this.Size.X) - this.MenuStyle.TextureArrowSize - this.MenuStyle.RightIndent,
-                    this.Position.Y + ((this.Size.Y - this.MenuStyle.TextureArrowSize) / 2.2f),
-                    this.MenuStyle.TextureArrowSize,
-                    this.MenuStyle.TextureArrowSize),
-                this.IsEnabled ? Color.White : this.MenuStyle.BackgroundColor,
-                new Color(50, 50, 50, 255),
-                2);
+            return null;
         }
+
+        return this.IsEnabled;
+    }
+
+    internal override void Load(JToken token)
+    {
+        try
+        {
+            token = token?[this.Name];
+            if (token != null)
+            {
+                this.isEnabled = token.ToObject<bool>();
+            }
+
+            if (this.isEnabled)
+            {
+                this.isEnabled = false;
+                this.IsEnabled = true; // invoke event
+            }
+
+            this.loaded = true;
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+    }
+
+    internal override bool OnMouseRelease(Vector2 position)
+    {
+        this.IsEnabled = !this.IsEnabled;
+        return true;
+    }
+
+    protected override void Draw()
+    {
+        base.Draw();
+
+        //rectangle
+        RendererManager.DrawFilledRectangle(
+            new RectangleF(
+                (this.Position.X + this.Size.X) - this.MenuStyle.TextureArrowSize - this.MenuStyle.RightIndent,
+                this.Position.Y + ((this.Size.Y - this.MenuStyle.TextureArrowSize) / 2.2f),
+                this.MenuStyle.TextureArrowSize,
+                this.MenuStyle.TextureArrowSize),
+            this.IsEnabled ? Color.White : this.MenuStyle.BackgroundColor,
+            new Color(50, 50, 50, 255),
+            2);
     }
 }

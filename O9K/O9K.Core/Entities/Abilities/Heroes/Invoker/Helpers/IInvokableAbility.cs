@@ -1,19 +1,18 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Invoker.Helpers
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Invoker.Helpers;
+
+using System.Collections.Generic;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+public interface IInvokableAbility
 {
-    using System.Collections.Generic;
+    bool CanBeInvoked { get; }
 
-    using Divine.Entity.Entities.Abilities.Components;
+    bool IsInvoked { get; }
 
-    public interface IInvokableAbility
-    {
-        bool CanBeInvoked { get; }
+    AbilityId[] RequiredOrbs { get; }
+    
+    AbilitySlot GetAbilitySlot { get; }
 
-        bool IsInvoked { get; }
-
-        AbilityId[] RequiredOrbs { get; }
-        
-        AbilitySlot GetAbilitySlot { get; }
-
-        bool Invoke(List<AbilityId> currentOrbs = null, bool queue = false, bool bypass = false, bool invokeIfOnLastPosition = false);
-    }
+    bool Invoke(List<AbilityId> currentOrbs = null, bool queue = false, bool bypass = false, bool invokeIfOnLastPosition = false);
 }

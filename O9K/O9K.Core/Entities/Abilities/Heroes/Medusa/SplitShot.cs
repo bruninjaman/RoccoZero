@@ -1,18 +1,17 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Medusa
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Medusa;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.medusa_split_shot)]
+public class SplitShot : PassiveAbility
 {
-    using Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.medusa_split_shot)]
-    public class SplitShot : PassiveAbility
+    public SplitShot(Ability baseAbility)
+        : base(baseAbility)
     {
-        public SplitShot(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
     }
 }

@@ -1,41 +1,40 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.WitchDoctor
+﻿namespace O9K.Core.Entities.Abilities.Heroes.WitchDoctor;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.witch_doctor_voodoo_restoration)]
+public class VoodooRestoration : ToggleAbility, IHasRadius, IHealthRestore
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData healthRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.witch_doctor_voodoo_restoration)]
-    public class VoodooRestoration : ToggleAbility, IHasRadius, IHealthRestore
+    public VoodooRestoration(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData healthRestoreData;
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.healthRestoreData = new SpecialData(baseAbility, "heal");
+    }
 
-        public VoodooRestoration(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.healthRestoreData = new SpecialData(baseAbility, "heal");
-        }
+    public bool InstantRestore { get; } = false;
 
-        public bool InstantRestore { get; } = false;
+    public string RestoreModifierName { get; } = "modifier_voodoo_restoration_heal";
 
-        public string RestoreModifierName { get; } = "modifier_voodoo_restoration_heal";
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
-
-        public int GetHealthRestore(Unit9 unit)
-        {
-            return (int)this.healthRestoreData.GetValue(this.Level);
-        }
+    public int GetHealthRestore(Unit9 unit)
+    {
+        return (int)this.healthRestoreData.GetValue(this.Level);
     }
 }

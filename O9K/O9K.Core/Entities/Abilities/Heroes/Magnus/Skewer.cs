@@ -1,50 +1,49 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Magnus
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Magnus;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.magnataur_skewer)]
+public class Skewer : LineAbility, IBlink
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.magnataur_skewer)]
-    public class Skewer : LineAbility, IBlink
+    public Skewer(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.RadiusData = new SpecialData(baseAbility, "skewer_radius");
+        this.DamageData = new SpecialData(baseAbility, "skewer_damage");
+        this.SpeedData = new SpecialData(baseAbility, "skewer_speed");
+        this.castRangeData = new SpecialData(baseAbility, "range");
+    }
 
-        public Skewer(Ability baseAbility)
-            : base(baseAbility)
+    public BlinkType BlinkType { get; } = BlinkType.Blink;
+
+    public override float CastPoint
+    {
+        get
         {
-            this.RadiusData = new SpecialData(baseAbility, "skewer_radius");
-            this.DamageData = new SpecialData(baseAbility, "skewer_damage");
-            this.SpeedData = new SpecialData(baseAbility, "skewer_speed");
-            this.castRangeData = new SpecialData(baseAbility, "range");
-        }
-
-        public BlinkType BlinkType { get; } = BlinkType.Blink;
-
-        public override float CastPoint
-        {
-            get
+            if (this.Owner.HasAghanimsScepter)
             {
-                if (this.Owner.HasAghanimsScepter)
-                {
-                    return base.CastPoint / 2f;
-                }
-
-                return base.CastPoint;
+                return base.CastPoint / 2f;
             }
+
+            return base.CastPoint;
         }
+    }
 
-        protected override float BaseCastRange
+    protected override float BaseCastRange
+    {
+        get
         {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
+            return this.castRangeData.GetValue(this.Level);
         }
     }
 }

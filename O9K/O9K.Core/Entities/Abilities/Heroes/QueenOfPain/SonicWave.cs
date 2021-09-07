@@ -1,64 +1,63 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.QueenOfPain
+﻿namespace O9K.Core.Entities.Abilities.Heroes.QueenOfPain;
+
+using System;
+
+using Base;
+using Base.Types;
+using Divine.Numerics;
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Extensions;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.queenofpain_sonic_wave)]
+public class SonicWave : ConeAbility, INuke
 {
-    using System;
+    private readonly SpecialData scepterDamageData;
 
-    using Base;
-    using Base.Types;
-    using Divine.Numerics;
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Extensions;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.queenofpain_sonic_wave)]
-    public class SonicWave : ConeAbility, INuke
+    public SonicWave(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData scepterDamageData;
+        this.RadiusData = new SpecialData(baseAbility, "starting_aoe");
+        this.EndRadiusData = new SpecialData(baseAbility, "final_aoe");
+        this.RangeData = new SpecialData(baseAbility, "distance");
+        this.SpeedData = new SpecialData(baseAbility, "speed");
+        this.DamageData = new SpecialData(baseAbility, "damage");
+        this.scepterDamageData = new SpecialData(baseAbility, "damage_scepter");
+    }
 
-        public SonicWave(Ability baseAbility)
-            : base(baseAbility)
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        if (this.Owner.HasAghanimsScepter)
         {
-            this.RadiusData = new SpecialData(baseAbility, "starting_aoe");
-            this.EndRadiusData = new SpecialData(baseAbility, "final_aoe");
-            this.RangeData = new SpecialData(baseAbility, "distance");
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.DamageData = new SpecialData(baseAbility, "damage");
-            this.scepterDamageData = new SpecialData(baseAbility, "damage_scepter");
-        }
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
-        {
-            if (this.Owner.HasAghanimsScepter)
+            return new Damage
             {
-                return new Damage
-                {
-                    [this.DamageType] = this.scepterDamageData.GetValue(this.Level)
-                };
-            }
-
-            return base.GetRawDamage(unit, remainingHealth);
+                [this.DamageType] = this.scepterDamageData.GetValue(this.Level)
+            };
         }
 
-        public override bool UseAbility(Vector3 position, bool queue = false, bool bypass = false)
+        return base.GetRawDamage(unit, remainingHealth);
+    }
+
+    public override bool UseAbility(Vector3 position, bool queue = false, bool bypass = false)
+    {
+        //todo fix prediction range and delete 
+
+        position = this.Owner.Position.Extend2D(position, Math.Min(this.CastRange, this.Owner.Distance(position)));
+
+        var result = this.BaseAbility.Cast(position, queue, bypass);
+        if (result)
         {
-            //todo fix prediction range and delete 
-
-            position = this.Owner.Position.Extend2D(position, Math.Min(this.CastRange, this.Owner.Distance(position)));
-
-            var result = this.BaseAbility.Cast(position, queue, bypass);
-            if (result)
-            {
-                this.ActionSleeper.Sleep(0.1f);
-            }
-
-            return result;
+            this.ActionSleeper.Sleep(0.1f);
         }
+
+        return result;
     }
 }

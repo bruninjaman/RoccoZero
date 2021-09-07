@@ -1,17 +1,16 @@
-﻿namespace O9K.Core.Entities.Abilities.Base.Types
+﻿namespace O9K.Core.Entities.Abilities.Base.Types;
+
+using Components.Base;
+
+using Divine.Entity.Entities.Units.Components;
+
+public interface IShield : IActiveAbility
 {
-    using Components.Base;
+    UnitState AppliesUnitState { get; }
 
-    using Divine.Entity.Entities.Units.Components;
+    string ShieldModifierName { get; }
 
-    public interface IShield : IActiveAbility
-    {
-        UnitState AppliesUnitState { get; }
+    bool ShieldsAlly { get; }
 
-        string ShieldModifierName { get; }
-
-        bool ShieldsAlly { get; }
-
-        bool ShieldsOwner { get; }
-    }
+    bool ShieldsOwner { get; }
 }

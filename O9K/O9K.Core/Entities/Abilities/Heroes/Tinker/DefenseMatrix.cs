@@ -1,58 +1,57 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Tinker
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Tinker;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.tinker_defense_matrix)]
+public class DefenseMatrix : RangedAbility, IShield, IHasDamageBlock
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.tinker_defense_matrix)]
-    public class DefenseMatrix : RangedAbility, IShield, IHasDamageBlock
+    public DefenseMatrix(Ability baseAbility)
+        : base(baseAbility)
     {
+        this.DamageData = new SpecialData(baseAbility, "damage_absorb");
+    }
 
-        public DefenseMatrix(Ability baseAbility)
-            : base(baseAbility)
+    public string ShieldModifierName { get; } = "modifier_tinker_defense_matrix";
+
+    public bool ShieldsAlly { get; } = true;
+
+    public bool ShieldsOwner { get; } = true;
+
+    public DamageType BlockDamageType { get; } = DamageType.Physical | DamageType.Magical | DamageType.Pure;
+
+    public UnitState AppliesUnitState { get; } = 0;
+
+    public bool ProvidesStatusResistance
+    {
+        get
         {
-            this.DamageData = new SpecialData(baseAbility, "damage_absorb");
+            return true;
         }
+    }
 
-        public string ShieldModifierName { get; } = "modifier_tinker_defense_matrix";
+    public override bool TargetsEnemy { get; } = false;
 
-        public bool ShieldsAlly { get; } = true;
+    public string BlockModifierName { get; } = "modifier_tinker_defense_matrix";
 
-        public bool ShieldsOwner { get; } = true;
+    public bool BlocksDamageAfterReduction { get; } = false;
 
-        public DamageType BlockDamageType { get; } = DamageType.Physical | DamageType.Magical | DamageType.Pure;
+    public bool IsDamageBlockPermanent { get; } = false;
 
-        public UnitState AppliesUnitState { get; } = 0;
-
-        public bool ProvidesStatusResistance
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public override bool TargetsEnemy { get; } = false;
-
-        public string BlockModifierName { get; } = "modifier_tinker_defense_matrix";
-
-        public bool BlocksDamageAfterReduction { get; } = false;
-
-        public bool IsDamageBlockPermanent { get; } = false;
-
-        public float BlockValue(Unit9 target)
-        {
-            return this.DamageData.GetValue(this.Level);
-        }
+    public float BlockValue(Unit9 target)
+    {
+        return this.DamageData.GetValue(this.Level);
     }
 }

@@ -1,56 +1,55 @@
-﻿namespace O9K.Core.Entities.Abilities.NeutralItems
+﻿namespace O9K.Core.Entities.Abilities.NeutralItems;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Range;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_spy_gadget)]
+public class Telescope : PassiveAbility, IHasRangeIncrease
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData attackRange;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData castRange;
 
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Range;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_spy_gadget)]
-    public class Telescope : PassiveAbility, IHasRangeIncrease
+    public Telescope(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackRange;
+        this.castRange = new SpecialData(baseAbility, "cast_range");
+        this.attackRange = new SpecialData(baseAbility, "attack_range");
+    }
 
-        private readonly SpecialData castRange;
+    public bool IsRangeIncreasePermanent { get; } = false;
 
-        public Telescope(Ability baseAbility)
-            : base(baseAbility)
+    public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Ability | RangeIncreaseType.Attack;
+
+    public string RangeModifierName { get; } = "modifier_item_spy_gadget";
+
+    public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+    {
+        if (!this.IsUsable)
         {
-            this.castRange = new SpecialData(baseAbility, "cast_range");
-            this.attackRange = new SpecialData(baseAbility, "attack_range");
+            return 0;
         }
 
-        public bool IsRangeIncreasePermanent { get; } = false;
-
-        public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Ability | RangeIncreaseType.Attack;
-
-        public string RangeModifierName { get; } = "modifier_item_spy_gadget";
-
-        public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+        if (type == RangeIncreaseType.Attack)
         {
-            if (!this.IsUsable)
+            if (!unit.IsRanged)
             {
                 return 0;
             }
 
-            if (type == RangeIncreaseType.Attack)
-            {
-                if (!unit.IsRanged)
-                {
-                    return 0;
-                }
-
-                return this.attackRange.GetValue(this.Level);
-            }
-
-            return this.castRange.GetValue(this.Level);
+            return this.attackRange.GetValue(this.Level);
         }
+
+        return this.castRange.GetValue(this.Level);
     }
 }

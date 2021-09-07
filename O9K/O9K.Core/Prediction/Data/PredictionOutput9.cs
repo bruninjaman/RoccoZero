@@ -1,23 +1,22 @@
-﻿namespace O9K.Core.Prediction.Data
+﻿namespace O9K.Core.Prediction.Data;
+
+using System.Collections.Generic;
+
+using Entities.Units;
+
+using Divine.Numerics;
+
+public class PredictionOutput9
 {
-    using System.Collections.Generic;
+    public List<PredictionOutput9> AoeTargetsHit { get; set; } = new List<PredictionOutput9>();
 
-    using Entities.Units;
+    public Vector3 BlinkLinePosition { get; set; }
 
-    using Divine.Numerics;
+    public Vector3 CastPosition { get; set; }
 
-    public class PredictionOutput9
-    {
-        public List<PredictionOutput9> AoeTargetsHit { get; set; } = new List<PredictionOutput9>();
+    public HitChance HitChance { get; set; }
 
-        public Vector3 BlinkLinePosition { get; set; }
+    public Unit9 Target { get; set; }
 
-        public Vector3 CastPosition { get; set; }
-
-        public HitChance HitChance { get; set; }
-
-        public Unit9 Target { get; set; }
-
-        public Vector3 TargetPosition { get; set; }
-    }
+    public Vector3 TargetPosition { get; set; }
 }

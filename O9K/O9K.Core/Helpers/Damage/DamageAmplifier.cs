@@ -1,24 +1,23 @@
-﻿namespace O9K.Core.Helpers.Damage
+﻿namespace O9K.Core.Helpers.Damage;
+
+using Divine.Entity.Entities.Abilities.Components;
+
+public class DamageAmplifier : Damage
 {
-    using Divine.Entity.Entities.Abilities.Components;
-
-    public class DamageAmplifier : Damage
+    public override float this[DamageType index]
     {
-        public override float this[DamageType index]
+        get
         {
-            get
+            if (this.Damages.TryGetValue(index, out var damage))
             {
-                if (this.Damages.TryGetValue(index, out var damage))
-                {
-                    return damage;
-                }
+                return damage;
+            }
 
-                return 1;
-            }
-            set
-            {
-                this.Damages[index] = value;
-            }
+            return 1;
+        }
+        set
+        {
+            this.Damages[index] = value;
         }
     }
 }

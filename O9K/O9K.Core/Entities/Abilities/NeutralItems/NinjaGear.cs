@@ -1,18 +1,17 @@
-﻿namespace O9K.Core.Entities.Abilities.NeutralItems
+﻿namespace O9K.Core.Entities.Abilities.NeutralItems;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_ninja_gear)]
+public class NinjaGear : ActiveAbility
 {
-    using Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_ninja_gear)]
-    public class NinjaGear : ActiveAbility
+    public NinjaGear(Ability baseAbility)
+        : base(baseAbility)
     {
-        public NinjaGear(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
     }
 }

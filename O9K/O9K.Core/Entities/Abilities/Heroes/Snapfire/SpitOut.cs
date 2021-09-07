@@ -1,27 +1,26 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Snapfire
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Snapfire;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId((AbilityId)6486)]
+public class SpitOut : CircleAbility, INuke, IDisable
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId((AbilityId)6486)]
-    public class SpitOut : CircleAbility, INuke, IDisable
+    public SpitOut(Ability baseAbility)
+        : base(baseAbility)
     {
-        public SpitOut(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-            this.RadiusData = new SpecialData(baseAbility, "impact_radius");
-            this.DamageData = new SpecialData(baseAbility, "impact_damage");
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+        this.RadiusData = new SpecialData(baseAbility, "impact_radius");
+        this.DamageData = new SpecialData(baseAbility, "impact_damage");
     }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Stunned;
 }

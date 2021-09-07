@@ -1,33 +1,32 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.TreantProtector
+﻿namespace O9K.Core.Entities.Abilities.Heroes.TreantProtector;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.treant_natures_guise)]
+public class NaturesGuise : PassiveAbility
 {
-    using Base;
+    private bool isInvisibility;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.treant_natures_guise)]
-    public class NaturesGuise : PassiveAbility
+    public NaturesGuise(Ability baseAbility)
+        : base(baseAbility)
     {
-        private bool isInvisibility;
+    }
 
-        public NaturesGuise(Ability baseAbility)
-            : base(baseAbility)
+    public override bool IsInvisibility
+    {
+        get
         {
-        }
-
-        public override bool IsInvisibility
-        {
-            get
+            if (this.isInvisibility)
             {
-                if (this.isInvisibility)
-                {
-                    return true;
-                }
-
-                return this.isInvisibility = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_treant_4)?.Level > 0;
+                return true;
             }
+
+            return this.isInvisibility = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_treant_4)?.Level > 0;
         }
     }
 }

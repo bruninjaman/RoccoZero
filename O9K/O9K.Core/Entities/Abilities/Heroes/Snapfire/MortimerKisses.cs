@@ -1,55 +1,54 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Snapfire
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Snapfire;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.snapfire_mortimer_kisses)]
+public class MortimerKisses : CircleAbility
 {
-    using Base;
+    private readonly SpecialData maxTravelTimeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
+    private readonly SpecialData minRangeData;
 
-    using Helpers;
+    private readonly SpecialData minTravelTimeData;
 
-    using Metadata;
-
-    [AbilityId(AbilityId.snapfire_mortimer_kisses)]
-    public class MortimerKisses : CircleAbility
+    public MortimerKisses(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData maxTravelTimeData;
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+        this.RadiusData = new SpecialData(baseAbility, "impact_radius");
+        this.minRangeData = new SpecialData(baseAbility, "min_range");
+        this.minTravelTimeData = new SpecialData(baseAbility, "min_lob_travel_time");
+        this.maxTravelTimeData = new SpecialData(baseAbility, "max_lob_travel_time");
+    }
 
-        private readonly SpecialData minRangeData;
-
-        private readonly SpecialData minTravelTimeData;
-
-        public MortimerKisses(Ability baseAbility)
-            : base(baseAbility)
+    public float MaxTravelTime
+    {
+        get
         {
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-            this.RadiusData = new SpecialData(baseAbility, "impact_radius");
-            this.minRangeData = new SpecialData(baseAbility, "min_range");
-            this.minTravelTimeData = new SpecialData(baseAbility, "min_lob_travel_time");
-            this.maxTravelTimeData = new SpecialData(baseAbility, "max_lob_travel_time");
+            return this.maxTravelTimeData.GetValue(this.Level);
         }
+    }
 
-        public float MaxTravelTime
+    public float MinRange
+    {
+        get
         {
-            get
-            {
-                return this.maxTravelTimeData.GetValue(this.Level);
-            }
+            return this.minRangeData.GetValue(this.Level);
         }
+    }
 
-        public float MinRange
+    public float MinTravelTime
+    {
+        get
         {
-            get
-            {
-                return this.minRangeData.GetValue(this.Level);
-            }
-        }
-
-        public float MinTravelTime
-        {
-            get
-            {
-                return this.minTravelTimeData.GetValue(this.Level);
-            }
+            return this.minTravelTimeData.GetValue(this.Level);
         }
     }
 }

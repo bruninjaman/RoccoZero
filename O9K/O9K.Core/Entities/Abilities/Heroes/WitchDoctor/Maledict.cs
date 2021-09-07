@@ -1,47 +1,46 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.WitchDoctor
+﻿namespace O9K.Core.Entities.Abilities.Heroes.WitchDoctor;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.witch_doctor_maledict)]
+public class Maledict : CircleAbility, /*IHasDamageAmplify,*/ IDebuff
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData amplifierData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.witch_doctor_maledict)]
-    public class Maledict : CircleAbility, /*IHasDamageAmplify,*/ IDebuff
+    public Maledict(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData amplifierData;
+        //todo enable amplifier ?
 
-        public Maledict(Ability baseAbility)
-            : base(baseAbility)
-        {
-            //todo enable amplifier ?
+        this.RadiusData = new SpecialData(baseAbility, "radius");
+        this.amplifierData = new SpecialData(baseAbility, "bonus_damage");
+    }
 
-            this.RadiusData = new SpecialData(baseAbility, "radius");
-            this.amplifierData = new SpecialData(baseAbility, "bonus_damage");
-        }
+    public DamageType AmplifierDamageType { get; } = DamageType.Physical | DamageType.Magical | DamageType.Pure;
 
-        public DamageType AmplifierDamageType { get; } = DamageType.Physical | DamageType.Magical | DamageType.Pure;
+    public string AmplifierModifierName { get; } = "modifier_maledict";
 
-        public string AmplifierModifierName { get; } = "modifier_maledict";
+    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
 
-        public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
+    public string DebuffModifierName { get; } = "modifier_maledict";
 
-        public string DebuffModifierName { get; } = "modifier_maledict";
+    public bool IsAmplifierAddedToStats { get; } = false;
 
-        public bool IsAmplifierAddedToStats { get; } = false;
+    public bool IsAmplifierPermanent { get; } = false;
 
-        public bool IsAmplifierPermanent { get; } = false;
-
-        public float AmplifierValue(Unit9 target)
-        {
-            return this.amplifierData.GetValue(this.Level) / 100;
-        }
+    public float AmplifierValue(Unit9 target)
+    {
+        return this.amplifierData.GetValue(this.Level) / 100;
     }
 }

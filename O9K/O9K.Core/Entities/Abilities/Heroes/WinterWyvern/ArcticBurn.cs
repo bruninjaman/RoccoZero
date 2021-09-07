@@ -1,38 +1,37 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.WinterWyvern
+﻿namespace O9K.Core.Entities.Abilities.Heroes.WinterWyvern;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Range;
+
+using Metadata;
+
+[AbilityId(AbilityId.winter_wyvern_arctic_burn)]
+public class ArcticBurn : ActiveAbility, IHasRangeIncrease
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData attackRange;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Range;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.winter_wyvern_arctic_burn)]
-    public class ArcticBurn : ActiveAbility, IHasRangeIncrease
+    public ArcticBurn(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackRange;
+        this.attackRange = new SpecialData(baseAbility, "attack_range_bonus");
+    }
 
-        public ArcticBurn(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.attackRange = new SpecialData(baseAbility, "attack_range_bonus");
-        }
+    public bool IsRangeIncreasePermanent { get; } = false;
 
-        public bool IsRangeIncreasePermanent { get; } = false;
+    public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
 
-        public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
+    public string RangeModifierName { get; } = "modifier_winter_wyvern_arctic_burn_flight";
 
-        public string RangeModifierName { get; } = "modifier_winter_wyvern_arctic_burn_flight";
-
-        public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
-        {
-            return this.attackRange.GetValue(this.Level);
-        }
+    public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+    {
+        return this.attackRange.GetValue(this.Level);
     }
 }

@@ -1,32 +1,31 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_medallion_of_courage)]
+public class MedallionOfCourage : RangedAbility, IShield, IDebuff
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_medallion_of_courage)]
-    public class MedallionOfCourage : RangedAbility, IShield, IDebuff
+    public MedallionOfCourage(Ability baseAbility)
+        : base(baseAbility)
     {
-        public MedallionOfCourage(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
-
-        public UnitState AppliesUnitState { get; } = 0;
-
-        public override bool BreaksLinkens { get; } = false;
-
-        public string DebuffModifierName { get; } = "modifier_item_medallion_of_courage_armor_reduction";
-
-        public string ShieldModifierName { get; } = "modifier_item_medallion_of_courage_armor_addition";
-
-        public bool ShieldsAlly { get; } = true;
-
-        public bool ShieldsOwner { get; } = false;
     }
+
+    public UnitState AppliesUnitState { get; } = 0;
+
+    public override bool BreaksLinkens { get; } = false;
+
+    public string DebuffModifierName { get; } = "modifier_item_medallion_of_courage_armor_reduction";
+
+    public string ShieldModifierName { get; } = "modifier_item_medallion_of_courage_armor_addition";
+
+    public bool ShieldsAlly { get; } = true;
+
+    public bool ShieldsOwner { get; } = false;
 }

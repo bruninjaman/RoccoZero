@@ -1,23 +1,22 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowShaman
+﻿namespace O9K.Core.Entities.Abilities.Heroes.ShadowShaman;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.shadow_shaman_ether_shock)]
+public class EtherShock : RangedAreaOfEffectAbility, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.shadow_shaman_ether_shock)]
-    public class EtherShock : RangedAreaOfEffectAbility, INuke
+    public EtherShock(Ability baseAbility)
+        : base(baseAbility)
     {
-        public EtherShock(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "start_radius");
-            this.DamageData = new SpecialData(baseAbility, "damage");
-        }
+        this.RadiusData = new SpecialData(baseAbility, "start_radius");
+        this.DamageData = new SpecialData(baseAbility, "damage");
     }
 }

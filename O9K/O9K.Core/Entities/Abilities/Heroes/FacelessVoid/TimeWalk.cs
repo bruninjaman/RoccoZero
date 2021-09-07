@@ -1,35 +1,34 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.FacelessVoid
+﻿namespace O9K.Core.Entities.Abilities.Heroes.FacelessVoid;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.faceless_void_time_walk)]
+public class TimeWalk : RangedAbility, IBlink
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData castRangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.faceless_void_time_walk)]
-    public class TimeWalk : RangedAbility, IBlink
+    public TimeWalk(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData castRangeData;
+        this.SpeedData = new SpecialData(baseAbility, "speed");
+        this.castRangeData = new SpecialData(baseAbility, "range");
+    }
 
-        public TimeWalk(Ability baseAbility)
-            : base(baseAbility)
+    public BlinkType BlinkType { get; } = BlinkType.Blink;
+
+    protected override float BaseCastRange
+    {
+        get
         {
-            this.SpeedData = new SpecialData(baseAbility, "speed");
-            this.castRangeData = new SpecialData(baseAbility, "range");
-        }
-
-        public BlinkType BlinkType { get; } = BlinkType.Blink;
-
-        protected override float BaseCastRange
-        {
-            get
-            {
-                return this.castRangeData.GetValue(this.Level);
-            }
+            return this.castRangeData.GetValue(this.Level);
         }
     }
 }

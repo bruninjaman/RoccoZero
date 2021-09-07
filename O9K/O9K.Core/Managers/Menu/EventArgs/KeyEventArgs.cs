@@ -1,10 +1,9 @@
-﻿namespace O9K.Core.Managers.Menu.EventArgs
+﻿namespace O9K.Core.Managers.Menu.EventArgs;
+
+public sealed class KeyEventArgs : MenuEventArgs<bool>
 {
-    public sealed class KeyEventArgs : MenuEventArgs<bool>
+    public KeyEventArgs(bool newValue, bool oldValue)
+        : base(newValue, oldValue)
     {
-        public KeyEventArgs(bool newValue, bool oldValue)
-            : base(newValue, oldValue)
-        {
-        }
     }
 }

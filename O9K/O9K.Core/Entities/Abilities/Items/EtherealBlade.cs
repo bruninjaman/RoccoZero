@@ -1,98 +1,97 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Damage;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_ethereal_blade)]
+public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, IHasDamageAmplify
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData amplifierData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-    using Divine.Entity.Entities.Units.Heroes.Components;
+    private readonly SpecialData damageMultiplierData;
 
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Damage;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_ethereal_blade)]
-    public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, IHasDamageAmplify
+    public EtherealBlade(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData amplifierData;
+        this.DamageData = new SpecialData(baseAbility, "blast_damage_base");
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+        this.amplifierData = new SpecialData(baseAbility, "ethereal_damage_bonus");
+        this.damageMultiplierData = new SpecialData(baseAbility, "blast_agility_multiplier");
+    }
 
-        private readonly SpecialData damageMultiplierData;
+    public DamageType AmplifierDamageType { get; } = DamageType.Magical;
 
-        public EtherealBlade(Ability baseAbility)
-            : base(baseAbility)
+    public string[] AmplifierModifierNames { get; } = { "modifier_item_ethereal_blade_ethereal" };
+
+    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
+
+    public UnitState AppliesUnitState { get; } = UnitState.Disarmed;
+
+    public override DamageType DamageType { get; } = DamageType.Magical;
+
+    public string DebuffModifierName { get; } = "modifier_item_ethereal_blade_ethereal";
+
+    public bool IsAmplifierAddedToStats { get; } = true;
+
+    public bool IsAmplifierPermanent { get; } = false;
+
+    public string ShieldModifierName { get; } = "modifier_item_ethereal_blade_ethereal";
+
+    public bool ShieldsAlly { get; } = true;
+
+    public bool ShieldsOwner { get; } = true;
+
+    public float AmplifierValue(Unit9 source, Unit9 target)
+    {
+        return this.amplifierData.GetValue(this.Level) / -100;
+    }
+
+    public override int GetDamage(Unit9 unit)
+    {
+        var amplify = unit.GetDamageAmplification(this.Owner, this.DamageType, true);
+        var block = unit.GetDamageBlock(this.DamageType);
+        var damage = this.GetRawDamage(unit);
+
+        var bonusAmplifier = 1f;
+        if (!unit.HasModifier(this.AmplifierModifierNames))
         {
-            this.DamageData = new SpecialData(baseAbility, "blast_damage_base");
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-            this.amplifierData = new SpecialData(baseAbility, "ethereal_damage_bonus");
-            this.damageMultiplierData = new SpecialData(baseAbility, "blast_agility_multiplier");
+            bonusAmplifier += this.AmplifierValue(this.Owner, unit);
         }
 
-        public DamageType AmplifierDamageType { get; } = DamageType.Magical;
+        return (int)((damage[this.DamageType] - block) * amplify * bonusAmplifier);
+    }
 
-        public string[] AmplifierModifierNames { get; } = { "modifier_item_ethereal_blade_ethereal" };
+    public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
+    {
+        var damage = base.GetRawDamage(unit, remainingHealth);
+        var multiplier = this.damageMultiplierData.GetValue(this.Level);
 
-        public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
-
-        public UnitState AppliesUnitState { get; } = UnitState.Disarmed;
-
-        public override DamageType DamageType { get; } = DamageType.Magical;
-
-        public string DebuffModifierName { get; } = "modifier_item_ethereal_blade_ethereal";
-
-        public bool IsAmplifierAddedToStats { get; } = true;
-
-        public bool IsAmplifierPermanent { get; } = false;
-
-        public string ShieldModifierName { get; } = "modifier_item_ethereal_blade_ethereal";
-
-        public bool ShieldsAlly { get; } = true;
-
-        public bool ShieldsOwner { get; } = true;
-
-        public float AmplifierValue(Unit9 source, Unit9 target)
+        switch (this.Owner.PrimaryAttribute)
         {
-            return this.amplifierData.GetValue(this.Level) / -100;
+            case Attribute.Strength:
+                damage[this.DamageType] += multiplier * this.Owner.TotalStrength;
+                break;
+            case Attribute.Agility:
+                damage[this.DamageType] += multiplier * this.Owner.TotalAgility;
+                break;
+            case Attribute.Intelligence:
+                damage[this.DamageType] += multiplier * this.Owner.TotalIntelligence;
+                break;
         }
 
-        public override int GetDamage(Unit9 unit)
-        {
-            var amplify = unit.GetDamageAmplification(this.Owner, this.DamageType, true);
-            var block = unit.GetDamageBlock(this.DamageType);
-            var damage = this.GetRawDamage(unit);
-
-            var bonusAmplifier = 1f;
-            if (!unit.HasModifier(this.AmplifierModifierNames))
-            {
-                bonusAmplifier += this.AmplifierValue(this.Owner, unit);
-            }
-
-            return (int)((damage[this.DamageType] - block) * amplify * bonusAmplifier);
-        }
-
-        public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
-        {
-            var damage = base.GetRawDamage(unit, remainingHealth);
-            var multiplier = this.damageMultiplierData.GetValue(this.Level);
-
-            switch (this.Owner.PrimaryAttribute)
-            {
-                case Attribute.Strength:
-                    damage[this.DamageType] += multiplier * this.Owner.TotalStrength;
-                    break;
-                case Attribute.Agility:
-                    damage[this.DamageType] += multiplier * this.Owner.TotalAgility;
-                    break;
-                case Attribute.Intelligence:
-                    damage[this.DamageType] += multiplier * this.Owner.TotalIntelligence;
-                    break;
-            }
-
-            return damage;
-        }
+        return damage;
     }
 }

@@ -1,18 +1,17 @@
-﻿namespace O9K.Core.Entities.Abilities.NeutralItems
+﻿namespace O9K.Core.Entities.Abilities.NeutralItems;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_dragon_scale)]
+public class DragonScale : PassiveAbility
 {
-    using Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_dragon_scale)]
-    public class DragonScale : PassiveAbility
+    public DragonScale(Ability baseAbility)
+        : base(baseAbility)
     {
-        public DragonScale(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
     }
 }

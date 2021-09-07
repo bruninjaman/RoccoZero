@@ -1,39 +1,38 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.KeeperOfTheLight
+﻿namespace O9K.Core.Entities.Abilities.Heroes.KeeperOfTheLight;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.keeper_of_the_light_chakra_magic)]
+public class ChakraMagic : RangedAbility, IManaRestore
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData manaRestoreData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.keeper_of_the_light_chakra_magic)]
-    public class ChakraMagic : RangedAbility, IManaRestore
+    public ChakraMagic(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData manaRestoreData;
+        this.manaRestoreData = new SpecialData(baseAbility, "mana_restore");
+    }
 
-        public ChakraMagic(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.manaRestoreData = new SpecialData(baseAbility, "mana_restore");
-        }
+    public bool InstantRestore { get; } = true;
 
-        public bool InstantRestore { get; } = true;
+    public string RestoreModifierName { get; } = string.Empty;
 
-        public string RestoreModifierName { get; } = string.Empty;
+    public bool RestoresAlly { get; } = true;
 
-        public bool RestoresAlly { get; } = true;
+    public bool RestoresOwner { get; } = true;
 
-        public bool RestoresOwner { get; } = true;
-
-        public int GetManaRestore(Unit9 unit)
-        {
-            return (int)this.manaRestoreData.GetValue(this.Level);
-        }
+    public int GetManaRestore(Unit9 unit)
+    {
+        return (int)this.manaRestoreData.GetValue(this.Level);
     }
 }

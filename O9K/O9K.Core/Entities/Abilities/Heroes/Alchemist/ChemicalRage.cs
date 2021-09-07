@@ -1,38 +1,37 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Alchemist
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Alchemist;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.alchemist_chemical_rage)]
+public class ChemicalRage : ActiveAbility, IBuff
 {
-    using Base;
-    using Base.Types;
+    private readonly SpecialData attackTimeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.alchemist_chemical_rage)]
-    public class ChemicalRage : ActiveAbility, IBuff
+    public ChemicalRage(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackTimeData;
-
-        public ChemicalRage(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.attackTimeData = new SpecialData(baseAbility, "base_attack_time");
-        }
-
-        public float AttackTime
-        {
-            get
-            {
-                return this.attackTimeData.GetValue(this.Level);
-            }
-        }
-
-        public string BuffModifierName { get; } = "modifier_alchemist_chemical_rage";
-
-        public bool BuffsAlly { get; } = false;
-
-        public bool BuffsOwner { get; } = true;
+        this.attackTimeData = new SpecialData(baseAbility, "base_attack_time");
     }
+
+    public float AttackTime
+    {
+        get
+        {
+            return this.attackTimeData.GetValue(this.Level);
+        }
+    }
+
+    public string BuffModifierName { get; } = "modifier_alchemist_chemical_rage";
+
+    public bool BuffsAlly { get; } = false;
+
+    public bool BuffsOwner { get; } = true;
 }

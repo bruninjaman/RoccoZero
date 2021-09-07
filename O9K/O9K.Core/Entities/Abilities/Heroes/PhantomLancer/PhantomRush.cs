@@ -1,40 +1,39 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.PhantomLancer
+﻿namespace O9K.Core.Entities.Abilities.Heroes.PhantomLancer;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.phantom_lancer_phantom_edge)]
+public class PhantomRush : ToggleAbility
 {
-    using Base;
+    private readonly SpecialData rangeData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.phantom_lancer_phantom_edge)]
-    public class PhantomRush : ToggleAbility
+    public PhantomRush(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData rangeData;
+        this.rangeData = new SpecialData(baseAbility, "max_distance");
+    }
 
-        public PhantomRush(Ability baseAbility)
-            : base(baseAbility)
+    public override float Radius
+    {
+        get
         {
-            this.rangeData = new SpecialData(baseAbility, "max_distance");
+            // for hud range
+            return this.Range;
         }
+    }
 
-        public override float Radius
+    public override float Range
+    {
+        get
         {
-            get
-            {
-                // for hud range
-                return this.Range;
-            }
-        }
-
-        public override float Range
-        {
-            get
-            {
-                return this.rangeData.GetValue(this.Level);
-            }
+            return this.rangeData.GetValue(this.Level);
         }
     }
 }

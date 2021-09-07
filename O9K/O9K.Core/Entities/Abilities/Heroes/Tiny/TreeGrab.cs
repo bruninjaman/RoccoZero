@@ -1,48 +1,47 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Tiny
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Tiny;
+
+using Base;
+using Base.Components;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Entities.Units;
+
+using Helpers;
+using Helpers.Range;
+
+using Metadata;
+
+[AbilityId(AbilityId.tiny_tree_grab)]
+public class TreeGrab : RangedAbility, IHasRangeIncrease
 {
-    using Base;
-    using Base.Components;
+    private readonly SpecialData attackRange;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-    using Helpers.Range;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.tiny_tree_grab)]
-    public class TreeGrab : RangedAbility, IHasRangeIncrease
+    public TreeGrab(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData attackRange;
+        this.attackRange = new SpecialData(baseAbility, "splash_width");
+    }
 
-        public TreeGrab(Ability baseAbility)
-            : base(baseAbility)
+    public override float CastRange
+    {
+        get
         {
-            this.attackRange = new SpecialData(baseAbility, "splash_width");
+            return base.CastRange + 100;
         }
+    }
 
-        public override float CastRange
-        {
-            get
-            {
-                return base.CastRange + 100;
-            }
-        }
+    public bool IsRangeIncreasePermanent { get; } = false;
 
-        public bool IsRangeIncreasePermanent { get; } = false;
+    public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
 
-        public RangeIncreaseType RangeIncreaseType { get; } = RangeIncreaseType.Attack;
+    public string RangeModifierName { get; } = "modifier_tiny_craggy_exterior";
 
-        public string RangeModifierName { get; } = "modifier_tiny_craggy_exterior";
+    public override bool TargetsEnemy { get; } = false;
 
-        public override bool TargetsEnemy { get; } = false;
-
-        public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
-        {
-            return this.attackRange.GetValue(this.Level);
-        }
+    public float GetRangeIncrease(Unit9 unit, RangeIncreaseType type)
+    {
+        return this.attackRange.GetValue(this.Level);
     }
 }

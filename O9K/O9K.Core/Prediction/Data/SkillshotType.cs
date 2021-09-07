@@ -1,17 +1,16 @@
-﻿namespace O9K.Core.Prediction.Data
+﻿namespace O9K.Core.Prediction.Data;
+
+public enum SkillShotType
 {
-    public enum SkillShotType
-    {
-        None,
+    None,
 
-        AreaOfEffect,
+    AreaOfEffect,
 
-        RangedAreaOfEffect,
+    RangedAreaOfEffect,
 
-        Line,
+    Line,
 
-        Circle,
+    Circle,
 
-        Cone,
-    }
+    Cone,
 }

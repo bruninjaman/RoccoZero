@@ -1,88 +1,87 @@
-﻿namespace O9K.Core.Entities.Heroes
+﻿namespace O9K.Core.Entities.Heroes;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Divine.Entity;
+using Divine.Helpers;
+using Divine.Entity.Entities.Components;
+using Divine.Entity.Entities.Players;
+using Divine.Entity.Entities.Units;
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Logger;
+
+using Managers.Entity;
+
+using Units;
+
+public sealed class Owner
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Divine.Entity;
-    using Divine.Helpers;
-    using Divine.Entity.Entities.Components;
-    using Divine.Entity.Entities.Players;
-    using Divine.Entity.Entities.Units;
-    using Divine.Entity.Entities.Units.Heroes;
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Logger;
-
-    using Managers.Entity;
-
-    using Units;
-
-    public sealed class Owner
+    public Owner()
     {
-        public Owner()
+        try
         {
-            try
-            {
-                this.Player = EntityManager.LocalPlayer;
-                this.PlayerHandle = this.Player.Handle;
-                this.Team = this.Player.Team;
-                this.EnemyTeam = this.Team == Team.Radiant ? Team.Dire : Team.Radiant;
-                this.HeroId = this.Player.SelectedHeroId;
-                this.HeroName = this.HeroId.ToString();
-                this.HeroDisplayName = LocalizationHelper.LocalizeName(this.HeroName);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
+            this.Player = EntityManager.LocalPlayer;
+            this.PlayerHandle = this.Player.Handle;
+            this.Team = this.Player.Team;
+            this.EnemyTeam = this.Team == Team.Radiant ? Team.Dire : Team.Radiant;
+            this.HeroId = this.Player.SelectedHeroId;
+            this.HeroName = this.HeroId.ToString();
+            this.HeroDisplayName = LocalizationHelper.LocalizeName(this.HeroName);
         }
-
-        public Team EnemyTeam { get; }
-
-        public Hero9 Hero { get; private set; }
-
-        public string HeroDisplayName { get; }
-
-        public uint HeroHandle { get; private set; }
-
-        public HeroId HeroId { get; }
-
-        public string HeroName { get; }
-
-        public Player Player { get; }
-
-        public uint PlayerHandle { get; }
-
-        public IEnumerable<Unit9> SelectedUnits
+        catch (Exception e)
         {
-            get
-            {
-                return this.Player.SelectedUnits.Select(x => EntityManager9.GetUnitFast(x.Handle)).Where(x => x != null);
-            }
+            Logger.Error(e);
         }
+    }
 
-        public Team Team { get; }
+    public Team EnemyTeam { get; }
 
-        public static implicit operator Hero9(Owner owner)
+    public Hero9 Hero { get; private set; }
+
+    public string HeroDisplayName { get; }
+
+    public uint HeroHandle { get; private set; }
+
+    public HeroId HeroId { get; }
+
+    public string HeroName { get; }
+
+    public Player Player { get; }
+
+    public uint PlayerHandle { get; }
+
+    public IEnumerable<Unit9> SelectedUnits
+    {
+        get
         {
-            return owner.Hero;
+            return this.Player.SelectedUnits.Select(x => EntityManager9.GetUnitFast(x.Handle)).Where(x => x != null);
         }
+    }
 
-        public static implicit operator Unit(Owner owner)
-        {
-            return owner.Hero.BaseUnit;
-        }
+    public Team Team { get; }
 
-        public static implicit operator Hero(Owner owner)
-        {
-            return owner.Hero.BaseHero;
-        }
+    public static implicit operator Hero9(Owner owner)
+    {
+        return owner.Hero;
+    }
 
-        internal void SetHero(Unit9 myHero)
-        {
-            this.Hero = (Hero9)myHero;
-            this.Hero.IsMyHero = true;
-            this.HeroHandle = this.Hero.Handle;
-        }
+    public static implicit operator Unit(Owner owner)
+    {
+        return owner.Hero.BaseUnit;
+    }
+
+    public static implicit operator Hero(Owner owner)
+    {
+        return owner.Hero.BaseHero;
+    }
+
+    internal void SetHero(Unit9 myHero)
+    {
+        this.Hero = (Hero9)myHero;
+        this.Hero.IsMyHero = true;
+        this.HeroHandle = this.Hero.Handle;
     }
 }

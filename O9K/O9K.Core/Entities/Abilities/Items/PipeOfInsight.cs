@@ -1,50 +1,49 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Entities.Units;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_pipe)]
+public class PipeOfInsight : AreaOfEffectAbility, IHasDamageBlock, IShield
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
+    private readonly SpecialData blockData;
 
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Entities.Units;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_pipe)]
-    public class PipeOfInsight : AreaOfEffectAbility, IHasDamageBlock, IShield
+    public PipeOfInsight(Ability baseAbility)
+        : base(baseAbility)
     {
-        private readonly SpecialData blockData;
+        this.RadiusData = new SpecialData(baseAbility, "barrier_radius");
+        this.blockData = new SpecialData(baseAbility, "barrier_block");
+    }
 
-        public PipeOfInsight(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.RadiusData = new SpecialData(baseAbility, "barrier_radius");
-            this.blockData = new SpecialData(baseAbility, "barrier_block");
-        }
+    public UnitState AppliesUnitState { get; } = 0;
 
-        public UnitState AppliesUnitState { get; } = 0;
+    public DamageType BlockDamageType { get; } = DamageType.Magical;
 
-        public DamageType BlockDamageType { get; } = DamageType.Magical;
+    public string BlockModifierName { get; } = "modifier_item_pipe_barrier";
 
-        public string BlockModifierName { get; } = "modifier_item_pipe_barrier";
+    public bool BlocksDamageAfterReduction { get; } = false;
 
-        public bool BlocksDamageAfterReduction { get; } = false;
+    public bool IsDamageBlockPermanent { get; } = false;
 
-        public bool IsDamageBlockPermanent { get; } = false;
+    public string ShieldModifierName { get; } = "modifier_item_pipe_barrier";
 
-        public string ShieldModifierName { get; } = "modifier_item_pipe_barrier";
+    public bool ShieldsAlly { get; } = true;
 
-        public bool ShieldsAlly { get; } = true;
+    public bool ShieldsOwner { get; } = true;
 
-        public bool ShieldsOwner { get; } = true;
-
-        public float BlockValue(Unit9 target)
-        {
-            return this.blockData.GetValue(this.Level);
-        }
+    public float BlockValue(Unit9 target)
+    {
+        return this.blockData.GetValue(this.Level);
     }
 }

@@ -1,18 +1,17 @@
-﻿namespace O9K.Core.Entities.Abilities.Items
+﻿namespace O9K.Core.Entities.Abilities.Items;
+
+using Base;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.item_gauntlets)]
+public class GauntletsOfStrength : PassiveAbility
 {
-    using Base;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.item_gauntlets)]
-    public class GauntletsOfStrength : PassiveAbility
+    public GauntletsOfStrength(Ability baseAbility)
+        : base(baseAbility)
     {
-        public GauntletsOfStrength(Ability baseAbility)
-            : base(baseAbility)
-        {
-        }
     }
 }

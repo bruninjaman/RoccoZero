@@ -1,42 +1,41 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Lion
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Lion;
+
+using Base;
+using Base.Components;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
+
+using Metadata;
+
+[AbilityId(AbilityId.lion_voodoo)]
+public class Hex : RangedAbility, IDisable, IAppliesImmobility
 {
-    using Base;
-    using Base.Components;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Entity.Entities.Units.Components;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.lion_voodoo)]
-    public class Hex : RangedAbility, IDisable, IAppliesImmobility
+    public Hex(Ability baseAbility)
+        : base(baseAbility)
     {
-        public Hex(Ability baseAbility)
-            : base(baseAbility)
-        {
-            //todo radius
-        }
-
-        public override AbilityBehavior AbilityBehavior
-        {
-            get
-            {
-                var behavior = base.AbilityBehavior;
-                var talent = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_lion_4);
-
-                if (talent?.Level > 0)
-                {
-                    behavior = (behavior & ~AbilityBehavior.UnitTarget) | AbilityBehavior.Point;
-                }
-
-                return behavior;
-            }
-        }
-
-        public UnitState AppliesUnitState { get; } = UnitState.Hexed | UnitState.Silenced | UnitState.Disarmed;
-
-        public string ImmobilityModifierName { get; } = "modifier_lion_voodoo";
+        //todo radius
     }
+
+    public override AbilityBehavior AbilityBehavior
+    {
+        get
+        {
+            var behavior = base.AbilityBehavior;
+            var talent = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_lion_4);
+
+            if (talent?.Level > 0)
+            {
+                behavior = (behavior & ~AbilityBehavior.UnitTarget) | AbilityBehavior.Point;
+            }
+
+            return behavior;
+        }
+    }
+
+    public UnitState AppliesUnitState { get; } = UnitState.Hexed | UnitState.Silenced | UnitState.Disarmed;
+
+    public string ImmobilityModifierName { get; } = "modifier_lion_voodoo";
 }

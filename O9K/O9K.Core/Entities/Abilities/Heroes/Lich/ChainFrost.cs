@@ -1,23 +1,22 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Lich
+﻿namespace O9K.Core.Entities.Abilities.Heroes.Lich;
+
+using Base;
+using Base.Types;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+
+using Helpers;
+
+using Metadata;
+
+[AbilityId(AbilityId.lich_chain_frost)]
+public class ChainFrost : RangedAbility, INuke
 {
-    using Base;
-    using Base.Types;
-
-    using Divine.Entity.Entities.Abilities;
-    using Divine.Entity.Entities.Abilities.Components;
-
-    using Helpers;
-
-    using Metadata;
-
-    [AbilityId(AbilityId.lich_chain_frost)]
-    public class ChainFrost : RangedAbility, INuke
+    public ChainFrost(Ability baseAbility)
+        : base(baseAbility)
     {
-        public ChainFrost(Ability baseAbility)
-            : base(baseAbility)
-        {
-            this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-            this.DamageData = new SpecialData(baseAbility, "damage");
-        }
+        this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+        this.DamageData = new SpecialData(baseAbility, "damage");
     }
 }

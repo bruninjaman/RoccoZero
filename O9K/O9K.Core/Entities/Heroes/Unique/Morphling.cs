@@ -1,67 +1,66 @@
-﻿namespace O9K.Core.Entities.Heroes.Unique
+﻿namespace O9K.Core.Entities.Heroes.Unique;
+
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Entity.Entities.Units.Heroes.Components;
+
+using Managers.Entity;
+
+using Metadata;
+
+using Units;
+
+[HeroId(HeroId.npc_dota_hero_morphling)]
+public class Morphling : Hero9
 {
-    using Divine.Entity.Entities.Units.Heroes;
-    using Divine.Entity.Entities.Units.Heroes.Components;
-
-    using Managers.Entity;
-
-    using Metadata;
-
-    using Units;
-
-    [HeroId(HeroId.npc_dota_hero_morphling)]
-    public class Morphling : Hero9
+    public Morphling(Hero baseHero)
+        : base(baseHero)
     {
-        public Morphling(Hero baseHero)
-            : base(baseHero)
+        if (baseHero.ReplicateFrom?.HeroId != this.Id)
         {
-            if (baseHero.ReplicateFrom?.HeroId != this.Id)
-            {
-                this.IsIllusion = false;
-                this.CanUseAbilities = true;
-                this.IsImportant = true;
-            }
+            this.IsIllusion = false;
+            this.CanUseAbilities = true;
+            this.IsImportant = true;
         }
+    }
 
-        public bool IsMorphed { get; private set; }
+    public bool IsMorphed { get; private set; }
 
-        public Unit9 MorphedHero { get; private set; }
+    public Unit9 MorphedHero { get; private set; }
 
-        internal override float BaseAttackRange
+    internal override float BaseAttackRange
+    {
+        get
         {
-            get
+            if (this.IsMorphed && this.MorphedHero?.IsValid == true)
             {
-                if (this.IsMorphed && this.MorphedHero?.IsValid == true)
-                {
-                    return this.MorphedHero.BaseAttackRange;
-                }
-
-                return base.BaseAttackRange;
+                return this.MorphedHero.BaseAttackRange;
             }
+
+            return base.BaseAttackRange;
         }
+    }
 
-        internal override float HpBarOffset
+    internal override float HpBarOffset
+    {
+        get
         {
-            get
+            if (this.IsMorphed && this.MorphedHero != null)
             {
-                if (this.IsMorphed && this.MorphedHero != null)
-                {
-                    return this.MorphedHero.HpBarOffset;
-                }
-
-                return base.HpBarOffset;
+                return this.MorphedHero.HpBarOffset;
             }
+
+            return base.HpBarOffset;
         }
+    }
 
-        internal void Morphed(bool added)
+    internal void Morphed(bool added)
+    {
+        this.IsRanged = this.BaseUnit.IsRanged;
+        this.IsMorphed = added;
+
+        if (this.IsMorphed)
         {
-            this.IsRanged = this.BaseUnit.IsRanged;
-            this.IsMorphed = added;
-
-            if (this.IsMorphed)
-            {
-                this.MorphedHero = EntityManager9.GetUnitFast(this.BaseHero.ReplicateFrom?.Handle);
-            }
+            this.MorphedHero = EntityManager9.GetUnitFast(this.BaseHero.ReplicateFrom?.Handle);
         }
     }
 }
