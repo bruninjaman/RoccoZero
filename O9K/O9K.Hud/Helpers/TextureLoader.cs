@@ -8,11 +8,12 @@ using Core.Entities.Heroes;
 using Core.Entities.Units;
 using Core.Logger;
 using Core.Managers.Entity;
+
 using Divine.Entity;
-using Divine.Renderer;
-using Divine.Entity.Entities.Players;
 using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Players;
 using Divine.Entity.Entities.Units.Heroes.Components;
+using Divine.Renderer;
 
 using Modules;
 
@@ -123,7 +124,7 @@ internal class TextureLoader : IHudModule
                 RendererManager.LoadImage(hero.TextureName, ImageType.RoundUnit);
                 RendererManager.LoadImage(hero.TextureName, ImageType.MiniUnit);
             }
-            else if (unit.IsUnit && !unit.IsCreep)
+            else if (unit.IsUnit && !unit.IsCreep && !unit.IsBuilding)
             {
                 RendererManager.LoadImage(unit.DefaultName, ImageType.Unit);
             }
