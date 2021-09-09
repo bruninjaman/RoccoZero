@@ -7,6 +7,8 @@ using Divine.Input;
 using Divine.Input.EventArgs;
 using Divine.Menu;
 using Divine.Renderer;
+using Divine.Service;
+using Divine.Update;
 
 using Items;
 
@@ -22,17 +24,23 @@ public sealed class MenuManager9 : IMenuManager9, IDisposable
     {
         this.mainMenu = new MainMenu();
 
-        var menu = new Menu("General Settings");
+        Divine.Service.Language? lastLanguage = null;
 
-        var language = menu.Add(new MenuSelector("Language", "En", new[] { "En", "Ru", "Cn" }));
-        language.ValueChange += (sender, e) =>
+        UpdateManager.CreateIngameUpdate(2000, () =>
         {
-            switch (e.NewValue)
+            if (lastLanguage != null && lastLanguage == DivineService.Language)
             {
-                case "Ru":
+                return;
+            }
+
+            lastLanguage = DivineService.Language;
+
+            switch (lastLanguage)
+            {
+                case Divine.Service.Language.Ru:
                     this.mainMenu.SetLanguage(Lang.Ru);
                     break;
-                case "Cn":
+                case Divine.Service.Language.Cn:
                     this.mainMenu.SetLanguage(Lang.Cn);
                     break;
                 default:
@@ -42,9 +50,7 @@ public sealed class MenuManager9 : IMenuManager9, IDisposable
 
             this.mainMenu.CalculateSize();
             this.mainMenu.CalculateWidth(true);
-        };
-
-        AddRootMenu(menu);
+        });
 
         InputManager.KeyDown += this.OnKeyDown;
     }
