@@ -20,11 +20,11 @@ public static class Hud
     {
         get
         {
-            return CameraManager.LookAtPosition;
+            return CameraManager.LookAt;
         }
         set
         {
-            CameraManager.LookAtPosition = value;
+            CameraManager.LookAt = value;
         }
     }
 
