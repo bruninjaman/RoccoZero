@@ -6,9 +6,9 @@ using Divine.GameConsole;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 
-internal class WeatherHack
+internal sealed class WeatherHack
 {
-    private MenuSelector WeatherItem { get; }
+    private readonly MenuSelector WeatherItem;
 
     public WeatherHack(RootMenu rootMenu)
     {
@@ -17,19 +17,19 @@ internal class WeatherHack
         WeatherItem.ValueChanged += OnWeatherValueChanged;
     }
 
-    /*public void Dispose()
+    public void Dispose()
     {
-        Weather.SetValue(0);
+        GameConsoleManager.SetValue("cl_weather", 0);
 
-        WeatherItem.PropertyChanged -= WeatherItemChanged;
-    }*/
+        WeatherItem.ValueChanged -= OnWeatherValueChanged;
+    }
 
     private void OnWeatherValueChanged(MenuSelector selector, SelectorEventArgs e)
     {
         GameConsoleManager.SetValue("cl_weather", Array.IndexOf(WeatherNames, e.NewValue));
     }
 
-    private readonly string[] WeatherNames =
+    private static readonly string[] WeatherNames =
     {
         "Default",
         "Snow",

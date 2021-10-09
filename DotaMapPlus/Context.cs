@@ -3,17 +3,15 @@
 using Divine.Menu;
 using Divine.Numerics;
 
-internal sealed class Config
+internal sealed class Context
 {
-    private ZoomHack ZoomHack { get; }
+    private readonly ZoomHack ZoomHack;
 
-    private ConsoleCommands ConsoleCommands { get; }
+    private readonly ConsoleCommands ConsoleCommands;
 
-    private WeatherHack WeatherHack { get; }
+    private readonly WeatherHack WeatherHack;
 
-    private bool Disposed { get; set; }
-
-    public Config()
+    public Context()
     {
         var rootMenu = MenuManager.CreateRootMenu("DotaMapPlus");
         rootMenu.SetFontColor(Color.Aqua);
@@ -23,5 +21,12 @@ internal sealed class Config
         ConsoleCommands = new ConsoleCommands(rootMenu);
 
         WeatherHack = new WeatherHack(rootMenu);
+    }
+
+    public void Dispose()
+    {
+        ZoomHack.Dispose();
+        ConsoleCommands.Dispose();
+        WeatherHack.Dispose();
     }
 }

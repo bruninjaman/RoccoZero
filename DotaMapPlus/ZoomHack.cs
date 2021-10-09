@@ -8,17 +8,17 @@ using Divine.Input.EventArgs;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 
-internal class ZoomHack
+internal sealed class ZoomHack
 {
-    private MenuHoldKey ZoomKeyItem { get; }
+    private const int DefaultZoomValue = 1200;
 
-    private MenuSlider ZoomSliderItem { get; }
+    private const int MaxZoomValue = 9000;
 
-    private int DefaultZoomValue { get; } = 1200;
+    private const int MinZoomValue = 1134;
 
-    private int MaxZoomValue { get; } = 9000;
+    private readonly MenuHoldKey ZoomKeyItem;
 
-    private int MinZoomValue { get; } = 1134;
+    private readonly MenuSlider ZoomSliderItem;
 
     public ZoomHack(RootMenu rootMenu)
     {
@@ -34,15 +34,15 @@ internal class ZoomHack
         GameConsoleManager.ExecuteCommand("dota_camera_disable_zoom true");
     }
 
-    /*public void Dispose()
+    public void Dispose()
     {
-        Game.ExecuteCommand("dota_camera_disable_zoom false");
+        GameConsoleManager.ExecuteCommand("dota_camera_disable_zoom false");
 
-        ZoomVar.SetValue(DefaultZoomValue);
+        GameConsoleManager.SetValue("dota_camera_distance", DefaultZoomValue);
 
-        ZoomSliderItem.PropertyChanged -= ZoomSliderItemChanged;
-        InputManage.Value.MouseWheel -= InputManagerMouseWheel;
-    }*/
+        ZoomSliderItem.ValueChanged -= OnZoomSliderValueChanged;
+        InputManager.MouseWheel -= OnInputManagerMouseWheel;
+    }
 
     private void OnZoomSliderValueChanged(MenuSlider slider, SliderEventArgs e)
     {

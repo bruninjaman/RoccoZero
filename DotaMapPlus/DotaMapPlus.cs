@@ -4,15 +4,15 @@ using Divine.Service;
 
 internal sealed class DotaMapPlus : Bootstrapper
 {
-    private Config Config { get; set; }
+    private Context Context;
 
     protected override void OnActivate()
     {
-        Config = new Config();
+        Context = new Context();
     }
 
-    /*protected override void OnDeactivate()
+    protected override void OnDeactivate()
     {
-        Config?.Dispose();
-    }*/
+        Context?.Dispose();
+    }
 }

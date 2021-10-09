@@ -4,13 +4,13 @@ using Divine.GameConsole;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 
-internal class ConsoleCommands
+internal sealed class ConsoleCommands
 {
-    private MenuSwitcher FogItem { get; }
+    private readonly MenuSwitcher FogItem;
 
-    private MenuSwitcher FilteringItem { get; }
+    private readonly MenuSwitcher FilteringItem;
 
-    private MenuSwitcher ParticleHackItem { get; }
+    private readonly MenuSwitcher ParticleHackItem;
 
     public ConsoleCommands(RootMenu rootMenu)
     {
@@ -24,16 +24,16 @@ internal class ConsoleCommands
         ParticleHackItem.ValueChanged += ParticleHackItemChanged;
     }
 
-    /*public void Dispose()
+    public void Dispose()
     {
-        Fog.SetValue(1);
-        Filtering.SetValue(0);
-        ParticleHack.SetValue(1);
+        GameConsoleManager.SetValue("fog_enable", 1);
+        GameConsoleManager.SetValue("fow_client_nofiltering", 0);
+        GameConsoleManager.SetValue("dota_use_particle_fow", 1);
 
-        FogItem.PropertyChanged -= FogItemChanged;
-        FilteringItem.PropertyChanged -= FilteringItemChanged;
-        ParticleHackItem.PropertyChanged -= ParticleHackItemChanged;
-    }*/
+        FogItem.ValueChanged -= FogItemChanged;
+        FilteringItem.ValueChanged -= FilteringItemChanged;
+        ParticleHackItem.ValueChanged -= ParticleHackItemChanged;
+    }
 
     private void FogItemChanged(MenuSwitcher switcher, SwitcherEventArgs e)
     {
