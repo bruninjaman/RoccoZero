@@ -163,7 +163,7 @@ public class VisibleByEnemyPlus : Bootstrapper
             ParticleManager.CreateOrUpdateParticle(
                 $"VisibleByEnemyPlus.{unit.Handle}",
                 Config.Effects[Config.EffectTypeItem],
-                 unit,
+                unit,
                 ParticleAttachment.AbsOriginFollow,
                 new ControlPoint(1, Red, Green, Blue),
                 new ControlPoint(2, Alpha));

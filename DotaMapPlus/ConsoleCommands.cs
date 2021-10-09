@@ -16,7 +16,7 @@ internal class ConsoleCommands
     {
         var consoleCommandsMenu = rootMenu.CreateMenu("Console Commands");
         FogItem = consoleCommandsMenu.CreateSwitcher("Fog Disable");
-        FilteringItem = consoleCommandsMenu.CreateSwitcher("Filtering Disable");
+        FilteringItem = consoleCommandsMenu.CreateSwitcher("Filtering Disable1", "Filtering Disable", false);
         ParticleHackItem = consoleCommandsMenu.CreateSwitcher("Particle Hack Enable");
 
         FogItem.ValueChanged += FogItemChanged;
