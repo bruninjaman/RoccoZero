@@ -1,18 +1,19 @@
-﻿namespace O9K.AIO.Heroes.ArcWarden.Utils;
-
-using System.Runtime.Serialization;
-
-public enum Lane
+﻿namespace O9K.AIO.Heroes.ArcWarden.Utils
 {
-    [EnumMember(Value = "top")]
-    TOP,
+    using System.Runtime.Serialization;
 
-    [EnumMember(Value = "mid")]
-    MID,
+    public enum Lane
+    {
+        [EnumMember(Value = "top")]
+        TOP,
 
-    [EnumMember(Value = "bot")]
-    BOT,
+        [EnumMember(Value = "mid")]
+        MID,
 
-    [EnumMember(Value = "auto")]
-    AUTO,
+        [EnumMember(Value = "bot")]
+        BOT,
+
+        [EnumMember(Value = "auto")]
+        AUTO
+    }
 }

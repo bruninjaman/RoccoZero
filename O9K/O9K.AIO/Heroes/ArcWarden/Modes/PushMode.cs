@@ -1,117 +1,119 @@
-﻿namespace O9K.AIO.Heroes.ArcWarden.Modes;
-
-using System.Collections.Generic;
-using System.Linq;
-
-using AIO.Modes.KeyPress;
-
-using Base;
-
-using Core.Managers.Menu.EventArgs;
-
-using CustomUnitManager;
-
-using Draw;
-
-using Units;
-
-internal class PushMode : KeyPressMode
+﻿namespace O9K.AIO.Heroes.ArcWarden.Modes
 {
-    private readonly ArcWardenUnitManager arcUnitManager1;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    private ArcWarden hero;
+    using AIO.Modes.KeyPress;
 
-    public PushMode(BaseHero baseHero, KeyPressModeMenu menu)
-        : base(baseHero, menu)
+    using Base;
+
+    using Core.Managers.Menu.EventArgs;
+
+    using CustomUnitManager;
+
+    using Draw;
+
+    using Units;
+
+    internal class PushMode : KeyPressMode
     {
-        Instance = this;
-        this.arcUnitManager1 = this.UnitManager as ArcWardenUnitManager;
-    }
+        private readonly ArcWardenUnitManager arcUnitManager1;
 
-    private ArcWarden Hero
-    {
-        get
+        private ArcWarden hero;
+
+        public PushMode(BaseHero baseHero, KeyPressModeMenu menu)
+            : base(baseHero, menu)
         {
-            if (this.hero == null)
+            Instance = this;
+            this.arcUnitManager1 = this.UnitManager as ArcWardenUnitManager;
+        }
+
+        private ArcWarden Hero
+        {
+            get
             {
-                this.hero = this.arcUnitManager1.PushControllableUnits.FirstOrDefault(x => x.Owner.IsHero) as ArcWarden;
+                if (this.hero == null)
+                {
+                    this.hero = this.arcUnitManager1.PushControllableUnits.Where(
+                                    x => x.Owner.IsHero).FirstOrDefault() as ArcWarden;
+                }
+
+                return this.hero;
+            }
+        }
+
+        public static PushMode Instance { get; set; }
+
+        public IEnumerable<IPushUnit> ControllableUnitsTempest
+        {
+            get
+            {
+                return  this.arcUnitManager1.PushControllableUnits.Where(
+                        x => x.Owner.IsIllusion && x.Owner != this.Hero?.Owner)
+                    .Select(x => new PushUnit(x) as IPushUnit);
+            }
+        }
+
+        public void TurnOffAutoPush()
+        {
+            this.UpdateHandler.IsEnabled = false;
+
+            ArcWardenPanel.pushComboStatus = false;
+        }
+
+        protected override void KeyOnValueChanged(object sender, KeyEventArgs e)
+        {
+            if (!e.NewValue)
+            {
+                return;
             }
 
-            return this.hero;
-        }
-    }
+            if (!this.UpdateHandler.IsEnabled)
+            {
+                ArcWarden.TpCount = 1;
 
-    public static PushMode Instance { get; set; }
+                this.UpdateHandler.IsEnabled = true;
 
-    public IEnumerable<IPushUnit> ControllableUnitsTempest
-    {
-        get
-        {
-            return this.arcUnitManager1.PushControllableUnits.Where(
-                                                                    x => x.Owner.IsIllusion && x.Owner != this.Hero?.Owner)
-                       .Select(x => new PushUnit(x) as IPushUnit);
-        }
-    }
+                ArcWardenPanel.pushComboStatus = true;
+            }
+            else
+            {
+                this.UpdateHandler.IsEnabled = false;
 
-    public void TurnOffAutoPush()
-    {
-        this.UpdateHandler.IsEnabled = false;
-
-        ArcWardenPanel.PushComboStatus = false;
-    }
-
-    protected override void KeyOnValueChanged(object sender, KeyEventArgs e)
-    {
-        if (!e.NewValue)
-        {
-            return;
+                ArcWardenPanel.pushComboStatus = false;
+            }
         }
 
-        if (!this.UpdateHandler.IsEnabled)
+        protected override void ExecuteCombo()
         {
-            ArcWarden.TpCount = 1;
+            // if (this.Hero != null)
+            // {
+            //     var pushUnits = ControllableUnitsTempest.Append(Hero);
+            // }
+            //
+            // if (this.Hero.IsValid)
+            // {
+            //     this.Hero.PushCombo();
+            // }
 
-            this.UpdateHandler.IsEnabled = true;
+            var controllableUnitsTempest = this.ControllableUnitsTempest;
 
-            ArcWardenPanel.PushComboStatus = true;
-        }
-        else
-        {
-            this.UpdateHandler.IsEnabled = false;
+            if (this.Hero != null)
+            {
+                controllableUnitsTempest = controllableUnitsTempest.Append(this.Hero);
+            }
 
-            ArcWardenPanel.PushComboStatus = false;
-        }
-    }
+            if (!controllableUnitsTempest.Any(x => x != null && x.IsValid))
+            {
+                this.UpdateHandler.IsEnabled = false;
 
-    protected override void ExecuteCombo()
-    {
-        // if (this.Hero != null)
-        // {
-        //     var pushUnits = ControllableUnitsTempest.Append(Hero);
-        // }
-        //
-        // if (this.Hero.IsValid)
-        // {
-        //     this.Hero.PushCombo();
-        // }
+                ArcWardenPanel.pushComboStatus = false;
+            }
 
-        var controllableUnitsTempest = this.ControllableUnitsTempest;
-
-        if (this.Hero != null)
-        {
-            controllableUnitsTempest = controllableUnitsTempest.Append(this.Hero);
-        }
-
-        if (!controllableUnitsTempest.Any(x => x != null && x.IsValid))
-        {
-            this.UpdateHandler.IsEnabled = false;
-
-            ArcWardenPanel.PushComboStatus = false;
-        }
-
-        foreach (var unit in controllableUnitsTempest.Where(x => x != null && x.IsValid))
-        {
-            unit.PushCombo();
+            foreach (var unit in controllableUnitsTempest.Where(x => x != null && x.IsValid))
+            {
+                unit.PushCombo();
+            }
         }
     }
 }

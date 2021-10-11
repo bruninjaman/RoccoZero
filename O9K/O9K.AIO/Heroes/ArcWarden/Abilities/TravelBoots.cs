@@ -1,33 +1,34 @@
-﻿namespace O9K.AIO.Heroes.ArcWarden.Abilities;
-
-using System;
-
-using AIO.Abilities;
-
-using Core.Entities.Abilities.Base;
-using Core.Helpers;
-
-using TargetManager;
-
-internal class TravelBoots : UsableAbility
+﻿namespace O9K.AIO.Heroes.ArcWarden.Abilities
 {
-    public TravelBoots(ActiveAbility ability)
-        : base(ability)
-    {
-    }
+    using System;
 
-    public override bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper)
-    {
-        throw new NotImplementedException();
-    }
+    using AIO.Abilities;
 
-    public override bool ShouldCast(TargetManager targetManager)
-    {
-        throw new NotImplementedException();
-    }
+    using Core.Entities.Abilities.Base;
+    using Core.Helpers;
 
-    public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
+    using TargetManager;
+
+    internal class TravelBoots : UsableAbility
     {
-        throw new NotImplementedException();
+        public TravelBoots(ActiveAbility ability)
+            : base(ability)
+        {
+        }
+
+        public override bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ShouldCast(TargetManager targetManager)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

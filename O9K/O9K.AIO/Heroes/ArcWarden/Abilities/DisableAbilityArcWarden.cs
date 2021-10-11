@@ -1,145 +1,146 @@
-﻿namespace O9K.AIO.Heroes.ArcWarden.Abilities;
-
-using AIO.Abilities;
-
-using Core.Entities.Abilities.Base;
-using Core.Entities.Abilities.Base.Types;
-using Core.Extensions;
-using Core.Helpers;
-using Core.Prediction.Data;
-
-using Divine.Entity.Entities.Abilities.Components;
-
-using TargetManager;
-
-internal class DisableAbilityArcWarden : UsableAbility
+﻿namespace O9K.AIO.Heroes.ArcWarden.Abilities
 {
-    public DisableAbilityArcWarden(ActiveAbility ability)
-        : base(ability)
+    using AIO.Abilities;
+
+    using Core.Entities.Abilities.Base;
+    using Core.Entities.Abilities.Base.Types;
+    using Core.Extensions;
+    using Core.Helpers;
+    using Core.Prediction.Data;
+
+    using Divine.Entity.Entities.Abilities.Components;
+
+    using TargetManager;
+
+    internal class DisableAbilityArcWarden : UsableAbility
     {
-        this.Disable = (IDisable)ability;
-    }
-
-    protected IDisable Disable { get; }
-
-    public override bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper)
-    {
-        if (!this.Ability.UseAbility(targetManager.Target))
+        public DisableAbilityArcWarden(ActiveAbility ability)
+            : base(ability)
         {
-            return false;
+            this.Disable = (IDisable)ability;
         }
 
-        var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
-        var delay = this.Ability.GetCastDelay(targetManager.Target);
+        protected IDisable Disable { get; }
 
-        targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
-        comboSleeper.Sleep(delay);
-        this.OrbwalkSleeper.Sleep(delay);
-        this.Sleeper.Sleep(hitTime);
-
-        return true;
-    }
-
-    public override bool ShouldCast(TargetManager targetManager)
-    {
-        var target = targetManager.Target;
-
-        if (this.Ability.UnitTargetCast && !target.IsVisible)
+        public override bool ForceUseAbility(TargetManager targetManager, Sleeper comboSleeper)
         {
-            return false;
-        }
-
-        if (this.Ability.BreaksLinkens && target.IsBlockingAbilities)
-        {
-            return false;
-        }
-
-        if (target.IsDarkPactProtected)
-        {
-            return false;
-        }
-
-        if (target.IsInvulnerable)
-        {
-            if (this.Disable.UnitTargetCast)
+            if (!this.Ability.UseAbility(targetManager.Target))
             {
                 return false;
             }
 
-            if (!this.ChainStun(target, true))
+            var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
+            var delay = this.Ability.GetCastDelay(targetManager.Target);
+
+            targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
+            comboSleeper.Sleep(delay);
+            this.OrbwalkSleeper.Sleep(delay);
+            this.Sleeper.Sleep(hitTime);
+
+            return true;
+        }
+
+        public override bool ShouldCast(TargetManager targetManager)
+        {
+            var target = targetManager.Target;
+
+            if (this.Ability.UnitTargetCast && !target.IsVisible)
             {
                 return false;
             }
-        }
 
-        if (this.Ability.GetDamage(target) < target.Health)
-        {
-            if (target.IsStunned)
+            if (this.Ability.BreaksLinkens && target.IsBlockingAbilities)
             {
-                return this.ChainStun(target, false);
+                return false;
             }
 
-            if (target.IsHexed)
+            if (target.IsDarkPactProtected)
             {
-                if (this.Disable.Id == AbilityId.item_bloodthorn &&
-                    !target.HasModifier("modifier_bloodthorn_debuff"))
+                return false;
+            }
+
+            if (target.IsInvulnerable)
+            {
+                if (this.Disable.UnitTargetCast)
                 {
-                    return true;
+                    return false;
                 }
 
-                if (this.Disable.Id == AbilityId.item_orchid &&
-                    !target.HasModifier("modifier_orchid_malevolence_debuff"))
+                if (!this.ChainStun(target, true))
                 {
-                    return true;
+                    return false;
+                }
+            }
+
+            if (this.Ability.GetDamage(target) < target.Health)
+            {
+                if (target.IsStunned)
+                {
+                    return this.ChainStun(target, false);
                 }
 
-                return this.ChainStun(target, false);
+                if (target.IsHexed)
+                {
+                    if (this.Disable.Id == AbilityId.item_bloodthorn &&
+                        !target.HasModifier("modifier_bloodthorn_debuff"))
+                    {
+                        return true;
+                    }
+
+                    if (this.Disable.Id == AbilityId.item_orchid &&
+                        !target.HasModifier("modifier_orchid_malevolence_debuff"))
+                    {
+                        return true;
+                    }
+
+                    return this.ChainStun(target, false);
+                }
+
+                if (target.IsSilenced)
+                {
+                    return this.ChainStun(target, false);
+                }
+
+                if (target.IsRooted)
+                {
+                    return !this.Disable.IsRoot() || this.ChainStun(target, false);
+                }
             }
 
-            if (target.IsSilenced)
-            {
-                return this.ChainStun(target, false);
-            }
-
-            if (target.IsRooted)
-            {
-                return !this.Disable.IsRoot() || this.ChainStun(target, false);
-            }
-        }
-
-        if (target.IsRooted && !this.Ability.UnitTargetCast && target.GetImmobilityDuration() <= 0)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
-    {
-        if (aoe)
-        {
-            if (!this.Ability.UseAbility(targetManager.Target, targetManager.EnemyHeroes, HitChance.Low))
-            {
-                return false;
-            }
-        }
-        else
-        {
-            if (!this.Ability.UseAbility(targetManager.Target, HitChance.Low))
+            if (target.IsRooted && !this.Ability.UnitTargetCast && target.GetImmobilityDuration() <= 0)
             {
                 return false;
             }
+
+            return true;
         }
 
-        var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
-        var delay = this.Ability.GetCastDelay(targetManager.Target);
+        public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
+        {
+            if (aoe)
+            {
+                if (!this.Ability.UseAbility(targetManager.Target, targetManager.EnemyHeroes, HitChance.Low))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!this.Ability.UseAbility(targetManager.Target, HitChance.Low))
+                {
+                    return false;
+                }
+            }
 
-        targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
-        comboSleeper.Sleep(delay);
-        this.OrbwalkSleeper.Sleep(delay);
-        this.Sleeper.Sleep(hitTime);
+            var hitTime = this.Ability.GetHitTime(targetManager.Target) + 0.5f;
+            var delay = this.Ability.GetCastDelay(targetManager.Target);
 
-        return true;
+            targetManager.Target.SetExpectedUnitState(this.Disable.AppliesUnitState, hitTime);
+            comboSleeper.Sleep(delay);
+            this.OrbwalkSleeper.Sleep(delay);
+            this.Sleeper.Sleep(hitTime);
+
+            return true;
+        }
     }
 }
