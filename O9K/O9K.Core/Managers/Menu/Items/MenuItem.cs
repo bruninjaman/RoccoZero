@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Nodes;
 
 using Divine.Entity;
 using Divine.Game;
@@ -9,8 +10,6 @@ using Divine.Numerics;
 using Divine.Renderer;
 
 using Logger;
-
-using Newtonsoft.Json.Linq;
 
 public abstract class MenuItem : IEquatable<MenuItem>
 {
@@ -199,9 +198,9 @@ public abstract class MenuItem : IEquatable<MenuItem>
         }
 
         this.hooverTime = GameManager.RawGameTime;
-    }
+}
 
-    internal abstract void Load(JToken token);
+    internal abstract void Load(JsonNode jsonNode);
 
     internal void OnDraw(Vector2 position, float childWidth)
     {

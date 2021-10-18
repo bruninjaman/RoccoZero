@@ -1,6 +1,7 @@
 ﻿namespace O9K.Core.Managers.Menu;
 
 using System;
+using System.Text.Json.Nodes;
 
 using Divine.Numerics;
 using Divine.Renderer;
@@ -10,8 +11,6 @@ using Helpers;
 using Items;
 
 using Logger;
-
-using Newtonsoft.Json.Linq;
 
 internal sealed class MainMenu : Menu
 {
@@ -152,15 +151,15 @@ internal sealed class MainMenu : Menu
         };
     }
 
-    internal override void Load(JToken token)
+    internal override void Load(JsonNode jsonNode)
     {
-        token = token?[this.Name]?[nameof(this.MenuPosition)];
-        if (token == null)
+        jsonNode = jsonNode?[this.Name]?[nameof(this.MenuPosition)];
+        if (jsonNode == null)
         {
             return;
         }
 
-        this.MenuPosition = new Vector2((float)token["X"], (float)token["Y"]);
+        this.MenuPosition = new Vector2((float)jsonNode["X"], (float)jsonNode["Y"]);
     }
 
     internal bool OnMouseMove(Vector2 position)

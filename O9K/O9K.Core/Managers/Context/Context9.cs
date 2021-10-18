@@ -4,6 +4,8 @@ using System;
 
 using Assembly;
 
+using Divine.Service;
+
 //using Ensage.SDK.Renderer;
 
 //using Input;
@@ -50,6 +52,21 @@ public static class Context9
         jungleManager = new Lazy<IJungleManager>(() => new JungleManager());
         menuManager = new Lazy<IMenuManager9>(() => new MenuManager9());
         particleManger = new Lazy<IParticleManager9>(() => new ParticleManager9());
+
+        Bootstrapper.Deactivate += OnDeactivate;
+    }
+
+    private static void OnDeactivate()
+    {
+        if (menuManager.IsValueCreated)
+        {
+            ((MenuManager9)menuManager.Value).Dispose();
+        }
+
+        if (menuManager.IsValueCreated)
+        {
+            ((ParticleManager9)particleManger.Value).Dispose();
+        }
     }
 
     public static IAssemblyEventManager9 AssemblyEventManager

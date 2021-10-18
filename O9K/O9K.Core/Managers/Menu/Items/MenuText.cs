@@ -1,6 +1,6 @@
 ﻿namespace O9K.Core.Managers.Menu.Items;
 
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 public class MenuText : MenuItem
 {
@@ -25,7 +25,7 @@ public class MenuText : MenuItem
         return null;
     }
 
-    internal override void Load(JToken token)
+    internal override void Load(JsonNode jsonNode)
     {
     }
 }

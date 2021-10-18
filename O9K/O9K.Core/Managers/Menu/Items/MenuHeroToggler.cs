@@ -3,9 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
+
+using Divine.Entity.Entities.Units.Heroes.Components;
 using Divine.Numerics;
 using Divine.Renderer;
-using Divine.Entity.Entities.Units.Heroes.Components;
 
 using Entities.Heroes;
 using Entities.Units;
@@ -15,8 +17,6 @@ using Entity;
 using EventArgs;
 
 using Logger;
-
-using Newtonsoft.Json.Linq;
 
 public class MenuHeroToggler : MenuItem
 {
@@ -91,17 +91,17 @@ public class MenuHeroToggler : MenuItem
         return this.savedHeroes;
     }
 
-    internal override void Load(JToken token)
+    internal override void Load(JsonNode jsonNode)
     {
         try
         {
-            token = token?[this.Name];
-            if (token == null)
+            jsonNode = jsonNode?[this.Name];
+            if (jsonNode == null)
             {
                 return;
             }
 
-            foreach (var item in token.ToObject<JObject>())
+            foreach (var item in jsonNode.AsObject())
             {
                 var key = item.Key;
                 var value = (bool)item.Value;
@@ -243,7 +243,7 @@ public class MenuHeroToggler : MenuItem
                 return;
             }
 
-            if (!(entity is Hero9 hero))
+            if (entity is not Hero9 hero)
             {
                 return;
             }

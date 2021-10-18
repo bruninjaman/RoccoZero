@@ -1,6 +1,7 @@
 ﻿namespace O9K.Core.Managers.Menu.Items;
 
 using System;
+using System.Text.Json.Nodes;
 
 using Divine.Numerics;
 using Divine.Renderer;
@@ -8,8 +9,6 @@ using Divine.Renderer;
 using EventArgs;
 
 using Logger;
-
-using Newtonsoft.Json.Linq;
 
 public class MenuSwitcher : MenuItem
 {
@@ -105,14 +104,14 @@ public class MenuSwitcher : MenuItem
         return this.IsEnabled;
     }
 
-    internal override void Load(JToken token)
+    internal override void Load(JsonNode jsonNode)
     {
         try
         {
-            token = token?[this.Name];
-            if (token != null)
+            jsonNode = jsonNode?[this.Name];
+            if (jsonNode != null)
             {
-                this.isEnabled = token.ToObject<bool>();
+                this.isEnabled = (bool)jsonNode;
             }
 
             if (this.isEnabled)

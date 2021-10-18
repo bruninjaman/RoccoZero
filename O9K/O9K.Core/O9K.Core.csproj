@@ -31,9 +31,6 @@
     <Reference Include="Divine.Zero">
       <HintPath>..\..\..\..\..\Desktop\Divine\bin\Divine.Zero.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\Desktop\Divine\bin\Newtonsoft.Json.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

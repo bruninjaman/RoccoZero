@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 
 using Divine.Numerics;
 using Divine.Renderer;
@@ -12,8 +13,6 @@ using EventArgs;
 using Extensions;
 
 using Logger;
-
-using Newtonsoft.Json.Linq;
 
 public class MenuSelector : MenuSelector<string>
 {
@@ -170,17 +169,17 @@ public class MenuSelector<T> : MenuItem
         return this.Selected;
     }
 
-    internal override void Load(JToken token)
+    internal override void Load(JsonNode jsonNode)
     {
         try
         {
-            token = token?[this.Name];
-            if (token == null)
+            jsonNode = jsonNode?[this.Name];
+            if (jsonNode == null)
             {
                 return;
             }
 
-            var value = token.ToObject<T>();
+            var value = jsonNode.GetValue<T>();
             if (this.items.Contains(value))
             {
                 this.Selected = value;

@@ -1,6 +1,7 @@
 ﻿namespace O9K.Core.Managers.Menu.Items;
 
 using System;
+using System.Text.Json.Nodes;
 
 using Divine.Input;
 using Divine.Input.EventArgs;
@@ -8,8 +9,6 @@ using Divine.Numerics;
 using Divine.Renderer;
 
 using Logger;
-
-using Newtonsoft.Json.Linq;
 
 using Key = System.Windows.Input.Key;
 using KeyEventArgs = EventArgs.KeyEventArgs;
@@ -152,22 +151,22 @@ public class MenuToggleKey : MenuItem
         };
     }
 
-    internal override void Load(JToken token)
+    internal override void Load(JsonNode jsonNode)
     {
         try
         {
-            token = token?[this.Name];
-            if (token == null)
+            jsonNode = jsonNode?[this.Name];
+            if (jsonNode == null)
             {
                 return;
             }
 
-            this.IsActive = token[nameof(this.IsActive)].ToObject<bool>();
+            this.IsActive = (bool)jsonNode[nameof(this.IsActive)];
 
-            var key = token[nameof(this.Key)];
+            var key = jsonNode[nameof(this.Key)];
             if (key != null)
             {
-                this.Key = key.ToObject<Key>();
+                this.Key = (Key)(int)key;
                 if (this.Key != Key.None)
                 {
                     InputManager.KeyUp += this.OnKeyUp;
@@ -176,10 +175,10 @@ public class MenuToggleKey : MenuItem
                 return;
             }
 
-            var mouseKey = token[nameof(this.MouseKey)];
+            var mouseKey = jsonNode[nameof(this.MouseKey)];
             if (mouseKey != null)
             {
-                this.MouseKey = mouseKey.ToObject<MouseKey>();
+                this.MouseKey = (MouseKey)(int)mouseKey;
                 if (this.MouseKey != MouseKey.None)
                 {
                     InputManager.MouseKeyUp += this.MouseKeyUp;
@@ -279,7 +278,7 @@ public class MenuToggleKey : MenuItem
 
     private void GetMouseKey(MouseEventArgs e)
     {
-        if (e.MouseKey == MouseKey.Left || e.MouseKey == MouseKey.Right)
+        if (e.MouseKey is MouseKey.Left or MouseKey.Right)
         {
             this.keyValue = Key.None;
             this.MouseKey = MouseKey.None;

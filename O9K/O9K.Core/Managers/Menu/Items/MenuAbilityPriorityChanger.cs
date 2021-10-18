@@ -3,18 +3,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
+
+using Divine.Entity.Entities.Abilities.Components;
 using Divine.Extensions;
 using Divine.Input;
+using Divine.Input.EventArgs;
 using Divine.Numerics;
 using Divine.Renderer;
-using Divine.Input.EventArgs;
-using Divine.Entity.Entities.Abilities.Components;
 
 using EventArgs;
 
 using Logger;
-
-using Newtonsoft.Json.Linq;
 
 public class MenuAbilityPriorityChanger : MenuItem
 {
@@ -246,17 +246,17 @@ public class MenuAbilityPriorityChanger : MenuItem
         };
     }
 
-    internal override void Load(JToken token)
+    internal override void Load(JsonNode jsonNode)
     {
         try
         {
-            token = token?[this.Name];
-            if (token == null)
+            jsonNode = jsonNode?[this.Name];
+            if (jsonNode == null)
             {
                 return;
             }
 
-            foreach (var item in token["Abilities"].ToObject<JObject>())
+            foreach (var item in jsonNode["Abilities"].AsObject())
             {
                 var key = item.Key;
                 var value = (bool)item.Value;
@@ -269,7 +269,7 @@ public class MenuAbilityPriorityChanger : MenuItem
                 }
             }
 
-            foreach (var item in token["Priority"].ToObject<JObject>())
+            foreach (var item in jsonNode["Priority"].AsObject())
             {
                 var key = item.Key;
                 var value = (int)item.Value;

@@ -3,12 +3,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
+
+using Divine.Entity.Entities.Units.Heroes.Components;
 using Divine.Extensions;
 using Divine.Input;
+using Divine.Input.EventArgs;
 using Divine.Numerics;
 using Divine.Renderer;
-using Divine.Input.EventArgs;
-using Divine.Entity.Entities.Units.Heroes.Components;
 
 using Entities.Heroes;
 using Entities.Units;
@@ -18,8 +20,6 @@ using Entity;
 using EventArgs;
 
 using Logger;
-
-using Newtonsoft.Json.Linq;
 
 public class MenuHeroPriorityChanger : MenuItem
 {
@@ -229,17 +229,17 @@ public class MenuHeroPriorityChanger : MenuItem
         };
     }
 
-    internal override void Load(JToken token)
+    internal override void Load(JsonNode jsonNode)
     {
         try
         {
-            token = token?[this.Name];
-            if (token == null)
+            jsonNode = jsonNode?[this.Name];
+            if (jsonNode == null)
             {
                 return;
             }
 
-            foreach (var item in token["Heroes"].ToObject<JObject>())
+            foreach (var item in jsonNode["Heroes"].AsObject())
             {
                 var key = item.Key;
                 var value = (bool)item.Value;
@@ -252,7 +252,7 @@ public class MenuHeroPriorityChanger : MenuItem
                 }
             }
 
-            foreach (var item in token["Priority"].ToObject<JObject>())
+            foreach (var item in jsonNode["Priority"].AsObject())
             {
                 var key = item.Key;
                 var value = (int)item.Value;
@@ -536,7 +536,7 @@ public class MenuHeroPriorityChanger : MenuItem
                 return;
             }
 
-            if (!(entity is Hero9 hero))
+            if (entity is not Hero9 hero)
             {
                 return;
             }

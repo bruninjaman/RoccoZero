@@ -76,6 +76,8 @@ public sealed class MenuManager9 : IMenuManager9, IDisposable
         InputManager.KeyDown -= this.OnKeyDown;
         InputManager.KeyUp -= this.OnKeyUp;
         RendererManager.Draw -= this.OnDraw;
+
+        SaveMenu();
     }
 
     public void RemoveRootMenu(Menu menu)
@@ -191,21 +193,20 @@ public sealed class MenuManager9 : IMenuManager9, IDisposable
 
     private void SaveMenu()
     {
-        Task.Run(
-            () =>
+        Task.Run(() =>
+        {
+            try
+            {
+                lock (this.mainMenu)
                 {
-                    try
-                    {
-                        lock (this.mainMenu)
-                        {
-                            this.mainMenu.Save();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e);
-                    }
-                });
+                    this.mainMenu.Save();
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+        });
     }
 
     private void Subscribe()

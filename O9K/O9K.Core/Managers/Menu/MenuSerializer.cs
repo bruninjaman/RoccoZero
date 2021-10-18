@@ -4,7 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 using Divine.Zero.Helpers;
 
@@ -12,24 +13,10 @@ using Items;
 
 using Logger;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
 internal sealed class MenuSerializer
 {
-    public MenuSerializer(params JsonConverter[] converters)
+    public MenuSerializer()
     {
-        this.Settings = new JsonSerializerSettings
-        {
-            Formatting = Formatting.Indented,
-            DefaultValueHandling = DefaultValueHandling.Include | DefaultValueHandling.Populate,
-            NullValueHandling = NullValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto,
-            Converters = converters,
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-        };
-
-        this.JsonSerializer = JsonSerializer.Create(this.Settings);
         this.ConfigDirectory = Path.Combine(Directories.Config, "Plugins", "O9K");
 
         try
@@ -44,11 +31,7 @@ internal sealed class MenuSerializer
 
     public string ConfigDirectory { get; }
 
-    public JsonSerializer JsonSerializer { get; }
-
-    public JsonSerializerSettings Settings { get; }
-
-    public JToken Deserialize(MenuItem menuItem)
+    public JsonNode Deserialize(MenuItem menuItem)
     {
         var file = Path.Combine(this.ConfigDirectory, menuItem.Name + ".json");
 
@@ -60,7 +43,7 @@ internal sealed class MenuSerializer
         try
         {
             var json = File.ReadAllText(file);
-            return JToken.Parse(json);
+            return JsonNode.Parse(json);
         }
         catch (Exception e)
         {
@@ -76,24 +59,15 @@ internal sealed class MenuSerializer
 
         foreach (var menu in menus)
         {
-            var sb = new StringBuilder();
-            using (var sw = new StringWriter(sb))
-            {
-                using (var writer = new JsonTextWriter(sw))
-                {
-                    writer.Formatting = Formatting.Indented;
-                    writer.WriteStartObject();
-                    this.Serialize(writer, menu);
-                    writer.WriteEndObject();
-                }
-            }
-
-            var file = Path.Combine(this.ConfigDirectory, menu.Name + ".json");
-            File.WriteAllText(file, sb.ToString());
+            using var fs = new FileStream(Path.Combine(this.ConfigDirectory, menu.Name + ".json"), FileMode.Create, FileAccess.Write);
+            using var writer = new Utf8JsonWriter(fs, new() { Indented = true });
+            writer.WriteStartObject();
+            Serialize(writer, menu);
+            writer.WriteEndObject();
         }
     }
 
-    private void Serialize(JsonWriter writer, MenuItem menuItem)
+    private static void Serialize(Utf8JsonWriter writer, MenuItem menuItem)
     {
         if (menuItem is Menu menu && !menu.IsMainMenu)
         {
@@ -104,13 +78,13 @@ internal sealed class MenuSerializer
 
             foreach (var item in menu.MenuItems.ToList())
             {
-                this.Serialize(writer, item);
+                Serialize(writer, item);
                 saved.Add(item.Name);
             }
 
-            if (menu.Token != null)
+            if (menu.JsonNode != null)
             {
-                foreach (var item in menu.Token.ToObject<JObject>())
+                foreach (var item in menu.JsonNode.AsObject())
                 {
                     if (saved.Contains(item.Key))
                     {
@@ -118,7 +92,7 @@ internal sealed class MenuSerializer
                     }
 
                     writer.WritePropertyName(item.Key);
-                    this.JsonSerializer.Serialize(writer, item.Value);
+                    JsonSerializer.Serialize(writer, item.Value, new JsonSerializerOptions() { WriteIndented = true });
                 }
             }
 
@@ -133,26 +107,27 @@ internal sealed class MenuSerializer
             }
 
             writer.WritePropertyName(menuItem.Name);
-            this.WritePropertyValue(writer, value);
+            WritePropertyValue(writer, value);
         }
     }
 
-    private void WritePropertyValue(JsonWriter writer, object propertyValue)
+    private static void WritePropertyValue(Utf8JsonWriter writer, object propertyValue)
     {
         var propertyType = propertyValue.GetType();
         if (propertyType.IsArray && propertyValue is object[] values)
         {
             writer.WriteStartArray();
+
             foreach (var value in values)
             {
-                this.JsonSerializer.Serialize(writer, value);
+                JsonSerializer.Serialize(writer, value);
             }
 
-            writer.WriteEnd();
+            writer.WriteEndArray();
         }
         else
         {
-            this.JsonSerializer.Serialize(writer, propertyValue);
+            JsonSerializer.Serialize(writer, propertyValue);
         }
     }
 }

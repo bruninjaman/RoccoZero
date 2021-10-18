@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 
 using Divine.Entity.Entities.Abilities.Components;
 using Divine.Entity.Entities.Units.Heroes.Components;
@@ -10,8 +11,6 @@ using Divine.Numerics;
 using Divine.Renderer;
 
 using Helpers;
-
-using Newtonsoft.Json.Linq;
 
 public class Menu : MenuItem
 {
@@ -86,7 +85,7 @@ public class Menu : MenuItem
 
     internal List<MenuItem> MenuItems { get; private set; } = new List<MenuItem>();
 
-    internal JToken Token { get; private set; }
+    internal JsonNode JsonNode { get; private set; }
 
     protected float ChildWidth { get; set; } = 150 * Hud.Info.ScreenRatio;
 
@@ -113,9 +112,9 @@ public class Menu : MenuItem
             this.CalculateWidth(true);
         }
 
-        if (this.Token != null)
+        if (this.JsonNode != null)
         {
-            item.Load(this.Token);
+            item.Load(this.JsonNode);
         }
 
         if (!this.IsCollapsed)
@@ -237,13 +236,13 @@ public class Menu : MenuItem
         return null;
     }
 
-    internal override void Load(JToken token)
+    internal override void Load(JsonNode jsonNode)
     {
-        this.Token = token?[this.Name];
+        this.JsonNode = jsonNode?[this.Name];
 
         foreach (var menuItem in this.MenuItems.ToList())
         {
-            menuItem.Load(this.Token);
+            menuItem.Load(this.JsonNode);
         }
     }
 

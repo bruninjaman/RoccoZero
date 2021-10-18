@@ -1,6 +1,7 @@
 ﻿namespace O9K.Core.Managers.Menu.Items;
 
 using System;
+using System.Text.Json.Nodes;
 
 using Divine.Input;
 using Divine.Input.EventArgs;
@@ -10,8 +11,6 @@ using Divine.Renderer;
 using EventArgs;
 
 using Logger;
-
-using Newtonsoft.Json.Linq;
 
 public class MenuSlider : MenuItem
 {
@@ -123,17 +122,17 @@ public class MenuSlider : MenuItem
         return this.Value;
     }
 
-    internal override void Load(JToken token)
+    internal override void Load(JsonNode jsonNode)
     {
         try
         {
-            token = token?[this.Name];
-            if (token == null)
+            jsonNode = jsonNode?[this.Name];
+            if (jsonNode == null)
             {
                 return;
             }
 
-            this.Value = (int)token;
+            this.Value = (int)jsonNode;
         }
         catch (Exception e)
         {
