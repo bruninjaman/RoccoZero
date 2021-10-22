@@ -34,7 +34,7 @@ internal class TargetableProjectileObstacle : AbilityObstacle, IUpdatable
         this.EndCastTime = ability.EndCastTime;
         this.EndObstacleTime = ability.EndCastTime + (ability.ActiveAbility.CastRange / ability.ActiveAbility.Speed);
         this.EndPosition = this.Caster.InFront(this.Range);
-        this.Polygon = new Polygon.Rectangle(this.Position, this.EndPosition, this.Radius);
+        this.Polygon = new Polygon9.Rectangle(this.Position, this.EndPosition, this.Radius);
         this.IsUpdated = false;
     }
 
@@ -149,7 +149,7 @@ internal class TargetableProjectileObstacle : AbilityObstacle, IUpdatable
 
     public void Update()
     {
-        var rectangle = (Polygon.Rectangle)this.Polygon;
+        var rectangle = (Polygon9.Rectangle)this.Polygon;
         this.EndPosition = this.Caster.InFront(this.Range);
         rectangle.End = this.EndPosition.ToVector2();
         rectangle.UpdatePolygon();

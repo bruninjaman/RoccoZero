@@ -50,7 +50,7 @@ internal class Powershot : NukeAbility, IDisposable
             return false;
         }
 
-        var polygon = new Polygon.Rectangle(
+        var polygon = new Polygon9.Rectangle(
             this.Owner.Position,
             this.Owner.Position.Extend2D(this.castPosition, this.Ability.Range),
             this.Ability.Radius - 75);

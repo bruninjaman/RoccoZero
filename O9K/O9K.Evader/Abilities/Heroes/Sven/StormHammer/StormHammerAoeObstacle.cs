@@ -34,7 +34,7 @@ internal class StormHammerAoeObstacle : AbilityObstacle, IUpdatable
         this.Radius = ability.RangedAbility.Radius + RadiusIncrease;
         this.Range = ability.RangedAbility.Range + RangeIncrease;
         this.EndPosition = this.Caster.InFront(this.Range);
-        this.Polygon = new Polygon.Rectangle(this.Position, this.EndPosition, this.Radius);
+        this.Polygon = new Polygon9.Rectangle(this.Position, this.EndPosition, this.Radius);
         this.IsUpdated = false;
     }
 
@@ -164,7 +164,7 @@ internal class StormHammerAoeObstacle : AbilityObstacle, IUpdatable
 
     public virtual void Update()
     {
-        var rectangle = (Polygon.Rectangle)this.Polygon;
+        var rectangle = (Polygon9.Rectangle)this.Polygon;
         this.EndPosition = this.Caster.InFront(this.Range);
         rectangle.End = this.EndPosition.ToVector2();
         rectangle.UpdatePolygon();

@@ -48,7 +48,7 @@ internal class GeomagneticGrip : NukeAbility
             input.Caster = unit;
             output = this.Ability.GetPredictionOutput(input);
 
-            var rec = new Polygon.Rectangle(this.Owner.Position, unit.Position, this.Ability.Radius);
+            var rec = new Polygon9.Rectangle(this.Owner.Position, unit.Position, this.Ability.Radius);
 
             if (!rec.IsInside(output.TargetPosition))
             {
@@ -87,7 +87,7 @@ internal class GeomagneticGrip : NukeAbility
             input.Caster = stone;
             output = this.Ability.GetPredictionOutput(input);
 
-            var rec = new Polygon.Rectangle(this.Owner.Position, stone.Position, this.Ability.Radius);
+            var rec = new Polygon9.Rectangle(this.Owner.Position, stone.Position, this.Ability.Radius);
 
             if (!rec.IsInside(output.TargetPosition))
             {

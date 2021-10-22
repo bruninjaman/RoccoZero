@@ -32,7 +32,7 @@ internal class RollingBoulderBlink : BlinkAbility
 
         var position = this.Owner.Position.Extend2D(toPosition, Math.Min(this.Ability.CastRange - 25, this.Owner.Distance(toPosition)));
 
-        var rec = new Polygon.Rectangle(this.Owner.Position, position, this.Ability.Radius);
+        var rec = new Polygon9.Rectangle(this.Owner.Position, position, this.Ability.Radius);
 
         if (EntityManager9.Units.Any(x => x.IsHero && x.IsEnemy(this.Owner) && x.IsAlive && rec.IsInside(x.Position)))
         {

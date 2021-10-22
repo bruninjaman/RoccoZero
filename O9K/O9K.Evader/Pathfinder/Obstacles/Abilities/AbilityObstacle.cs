@@ -70,7 +70,7 @@ internal abstract class AbilityObstacle : IObstacle, IDrawable, IExpirable
 
     public uint? NavMeshId { get; set; }
 
-    public Polygon Polygon { get; protected set; }
+    public Polygon9 Polygon { get; protected set; }
 
     public Vector3 Position { get; protected set; }
 

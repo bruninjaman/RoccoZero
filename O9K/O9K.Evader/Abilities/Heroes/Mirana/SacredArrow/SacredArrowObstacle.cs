@@ -56,7 +56,7 @@ internal class SacredArrowObstacle : LinearProjectileUnitObstacle
         if (this.NavMeshId == null /*&& !this.Caster.IsRotating*/)
         {
             this.EndPosition = this.Caster.InFront(this.Range, this.angle);
-            this.Polygon = new Polygon.Rectangle(this.Position, this.EndPosition, this.Radius);
+            this.Polygon = new Polygon9.Rectangle(this.Position, this.EndPosition, this.Radius);
             this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.Position, this.EndPosition, this.Radius);
             this.NavMeshId = 1; //hack
         }
@@ -71,7 +71,7 @@ internal class SacredArrowObstacle : LinearProjectileUnitObstacle
             var currentPosition = this.Position.Extend2D(this.EndPosition, time * this.Speed);
 
             //this.Pathfinder.NavMesh.UpdateObstacle(this.NavMeshId.Value, currentPosition, this.Radius);
-            var rectangle = (Polygon.Rectangle)this.Polygon;
+            var rectangle = (Polygon9.Rectangle)this.Polygon;
             rectangle.Start = currentPosition.ToVector2();
             rectangle.UpdatePolygon();
         }

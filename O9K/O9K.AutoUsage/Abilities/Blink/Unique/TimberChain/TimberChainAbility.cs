@@ -71,7 +71,7 @@ internal class TimberChainAbility : BlinkAbility
                                                                  && x.Distance2D(this.Owner.Position) > 500)
                 .OrderBy(x => x.Distance2D(this.Fountain)))
             {
-                var rec = new Polygon.Rectangle(this.Owner.Position, tree.Position, this.timberChain.ChainRadius);
+                var rec = new Polygon9.Rectangle(this.Owner.Position, tree.Position, this.timberChain.ChainRadius);
 
                 if (EntityManager9.Trees.Any(x => rec.IsInside(x.Position)))
                 {

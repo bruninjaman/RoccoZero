@@ -360,7 +360,7 @@ public class PredictionManager9 : IPredictionManager9
                 if (targets.Count > 1)
                 {
                     // yolo
-                    var polygons = new Dictionary<Polygon.Trapezoid, List<PredictionOutput9>>();
+                    var polygons = new Dictionary<Polygon9.Trapezoid, List<PredictionOutput9>>();
 
                     if (input.UseBlink)
                     {
@@ -373,7 +373,7 @@ public class PredictionManager9 : IPredictionManager9
                             var averagePosition = (targetPosition + aoeTargetPosition) / 2;
                             var start = targetPosition.Extend2D(aoeTargetPosition, -100);
                             var end = start.Extend2D(aoeTargetPosition, input.Range);
-                            var rec = new Polygon.Trapezoid(start, end, input.Radius, input.EndRadius);
+                            var rec = new Polygon9.Trapezoid(start, end, input.Radius, input.EndRadius);
 
                             foreach (var output9 in otherTargets)
                             {
@@ -385,7 +385,7 @@ public class PredictionManager9 : IPredictionManager9
                                 var averagePosition2 = (averagePosition + output9.TargetPosition) / 2;
                                 var start2 = targetPosition.Extend2D(averagePosition2, -100);
                                 var end2 = start2.Extend2D(averagePosition2, input.Range);
-                                var rec2 = new Polygon.Trapezoid(start2, end2, input.Radius + 50, input.EndRadius + 50);
+                                var rec2 = new Polygon9.Trapezoid(start2, end2, input.Radius + 50, input.EndRadius + 50);
 
                                 if (!rec2.IsInside(aoeTargetPosition) || !rec2.IsInside(output9.TargetPosition))
                                 {
@@ -406,7 +406,7 @@ public class PredictionManager9 : IPredictionManager9
                         {
                             var endPosition = startPosition.Extend2D(predictionOutput.TargetPosition, input.Range);
 
-                            var rec = new Polygon.Trapezoid(startPosition, endPosition, input.Radius * 1.4f, input.EndRadius * 1.8f);
+                            var rec = new Polygon9.Trapezoid(startPosition, endPosition, input.Radius * 1.4f, input.EndRadius * 1.8f);
 
                             if (rec.IsOutside(output.TargetPosition.ToVector2()))
                             {
@@ -473,7 +473,7 @@ public class PredictionManager9 : IPredictionManager9
                 if (targets.Count > 1)
                 {
                     // yolo
-                    var polygons = new Dictionary<Polygon.Rectangle, List<PredictionOutput9>>();
+                    var polygons = new Dictionary<Polygon9.Rectangle, List<PredictionOutput9>>();
 
                     if (input.UseBlink)
                     {
@@ -486,7 +486,7 @@ public class PredictionManager9 : IPredictionManager9
                             var averagePosition = (targetPosition + aoeTargetPosition) / 2;
                             var start = targetPosition.Extend2D(aoeTargetPosition, -100);
                             var end = start.Extend2D(aoeTargetPosition, input.Range);
-                            var rec = new Polygon.Rectangle(start, end, input.Radius);
+                            var rec = new Polygon9.Rectangle(start, end, input.Radius);
 
                             foreach (var output9 in otherTargets)
                             {
@@ -498,7 +498,7 @@ public class PredictionManager9 : IPredictionManager9
                                 var averagePosition2 = (averagePosition + output9.TargetPosition) / 2;
                                 var start2 = targetPosition.Extend2D(averagePosition2, -100);
                                 var end2 = start2.Extend2D(averagePosition2, input.Range);
-                                var rec2 = new Polygon.Rectangle(start2, end2, input.Radius + 50);
+                                var rec2 = new Polygon9.Rectangle(start2, end2, input.Radius + 50);
 
                                 if (!rec2.IsInside(aoeTargetPosition) || !rec2.IsInside(output9.TargetPosition))
                                 {
@@ -519,7 +519,7 @@ public class PredictionManager9 : IPredictionManager9
                         {
                             var endPosition = startPosition.Extend2D(predictionOutput.TargetPosition, input.Range);
 
-                            var rec = new Polygon.Rectangle(startPosition, endPosition, input.Radius * 1.3f);
+                            var rec = new Polygon9.Rectangle(startPosition, endPosition, input.Radius * 1.3f);
 
                             if (rec.IsOutside(output.TargetPosition.ToVector2()))
                             {

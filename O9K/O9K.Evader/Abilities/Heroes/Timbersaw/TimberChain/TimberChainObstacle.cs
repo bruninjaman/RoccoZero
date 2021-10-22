@@ -30,7 +30,7 @@ internal class TimberChainObstacle : LinearProjectileObstacle
     {
         if (this.NavMeshId == null /*&& !this.Caster.IsRotating*/)
         {
-            var chain = new Polygon.Rectangle(this.Position, this.Caster.InFront(this.Range), this.timberChain.ChainRadius);
+            var chain = new Polygon9.Rectangle(this.Position, this.Caster.InFront(this.Range), this.timberChain.ChainRadius);
             var tree = EntityManager9.Trees.Where(x => x.Distance2D(this.Position) < this.Range && chain.IsInside(x.Position))
                 .OrderBy(x => x.Distance2D(this.Position))
                 .FirstOrDefault();
@@ -45,7 +45,7 @@ internal class TimberChainObstacle : LinearProjectileObstacle
             this.EndPosition = tree.Position;
             this.ActivationDelay = this.Position.Distance2D(this.EndPosition) / this.Speed;
             this.EndObstacleTime += this.ActivationDelay * 2;
-            this.Polygon = new Polygon.Rectangle(this.Position, this.EndPosition, this.Radius);
+            this.Polygon = new Polygon9.Rectangle(this.Position, this.EndPosition, this.Radius);
             this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.Position, this.EndPosition, this.Radius);
             this.NavMeshId = 1; //hack
         }
@@ -61,7 +61,7 @@ internal class TimberChainObstacle : LinearProjectileObstacle
             var currentPosition = this.Position.Extend2D(this.EndPosition, time * this.Speed);
 
             //this.Pathfinder.NavMesh.UpdateObstacle(this.NavMeshId.Value, currentPosition, this.Radius);
-            var rectangle = (Polygon.Rectangle)this.Polygon;
+            var rectangle = (Polygon9.Rectangle)this.Polygon;
             rectangle.Start = currentPosition.ToVector2();
             rectangle.UpdatePolygon();
         }

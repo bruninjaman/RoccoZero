@@ -79,7 +79,7 @@ internal class ConeObstacle : AbilityObstacle, IUpdatable
         //}
 
         this.EndPosition = this.Caster.InFront(this.Range);
-        this.Polygon = new Polygon.Trapezoid(this.Position, this.EndPosition, this.Radius, this.EndRadius);
+        this.Polygon = new Polygon9.Trapezoid(this.Position, this.EndPosition, this.Radius, this.EndRadius);
         this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.Position, this.EndPosition, this.Radius, this.EndRadius);
         this.NavMeshId = 1; // hack
 

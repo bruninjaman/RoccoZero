@@ -7,7 +7,7 @@ using System.Linq;
 using Divine.Extensions;
 using Divine.Numerics;
 
-public class Polygon
+public class Polygon9
 {
     public List<Vector2> Points = new List<Vector2>();
 
@@ -21,7 +21,7 @@ public class Polygon
         this.Points.Add(point.ToVector2());
     }
 
-    public void Add(Polygon polygon)
+    public void Add(Polygon9 polygon)
     {
         foreach (var point in polygon.Points)
         {
@@ -67,7 +67,7 @@ public class Polygon
         return result;
     }
 
-    public class Circle : Polygon
+    public class Circle : Polygon9
     {
         /// <summary>
         ///     The center
@@ -85,7 +85,7 @@ public class Polygon
         private readonly int _quality;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Polygon.Circle" /> class.
+        ///     Initializes a new instance of the <see cref="Polygon9.Circle" /> class.
         /// </summary>
         /// <param name="center">The center.</param>
         /// <param name="radius">The radius.</param>
@@ -96,7 +96,7 @@ public class Polygon
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Polygon.Circle" /> class.
+        ///     Initializes a new instance of the <see cref="Polygon9.Circle" /> class.
         /// </summary>
         /// <param name="center">The center.</param>
         /// <param name="radius">The radius.</param>
@@ -127,7 +127,7 @@ public class Polygon
         }
     }
 
-    public class Rectangle : Polygon
+    public class Rectangle : Polygon9
     {
         public Vector2 End;
 
@@ -174,7 +174,7 @@ public class Polygon
         }
     }
 
-    public class Trapezoid : Polygon
+    public class Trapezoid : Polygon9
     {
         public Vector2 End;
 

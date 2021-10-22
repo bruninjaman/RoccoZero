@@ -76,7 +76,7 @@ internal class LinearAreaOfEffectObstacle : AbilityObstacle, IUpdatable
 
         this.StartPosition = this.Caster.InFront(-this.Radius * 0.75f);
         this.EndPosition = this.Caster.InFront(this.Range);
-        this.Polygon = new Polygon.Rectangle(this.StartPosition, this.EndPosition, this.Radius);
+        this.Polygon = new Polygon9.Rectangle(this.StartPosition, this.EndPosition, this.Radius);
         this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.StartPosition, this.EndPosition, this.Radius);
         this.NavMeshId = 1; //hack
 

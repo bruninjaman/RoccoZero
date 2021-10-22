@@ -56,7 +56,7 @@ internal class SpearOfMars : NukeAbility
         var width = this.Ability.Radius;
 
         //todo predict collision positions ?
-        var collisionRec = new Polygon.Rectangle(this.Owner.Position, targetPredictedPosition, width);
+        var collisionRec = new Polygon9.Rectangle(this.Owner.Position, targetPredictedPosition, width);
         if (targetManager.AllEnemyHeroes.Any(x => x != target && collisionRec.IsInside(x.Position)))
         {
             return false;
@@ -65,7 +65,7 @@ internal class SpearOfMars : NukeAbility
         // tree
         foreach (var tree in EntityManager9.Trees)
         {
-            var rec = new Polygon.Rectangle(
+            var rec = new Polygon9.Rectangle(
                 targetPredictedPosition,
                 this.Owner.Position.Extend2D(targetPredictedPosition, range),
                 width - 50);
@@ -80,7 +80,7 @@ internal class SpearOfMars : NukeAbility
         // building
         foreach (var building in EntityManager9.Units.Where(x => x.IsBuilding && x.IsAlive))
         {
-            var rec = new Polygon.Rectangle(
+            var rec = new Polygon9.Rectangle(
                 targetPredictedPosition,
                 this.Owner.Position.Extend2D(targetPredictedPosition, range),
                 width);
@@ -104,7 +104,7 @@ internal class SpearOfMars : NukeAbility
 
                 if ((MapManager.GetMeshCellFlags(p) & MeshCellFlags.InteractionBlocker) != 0)
                 {
-                    var rec = new Polygon.Rectangle(
+                    var rec = new Polygon9.Rectangle(
                         targetPredictedPosition,
                         this.Owner.Position.Extend2D(targetPredictedPosition, range),
                         width - 100);

@@ -48,7 +48,7 @@ internal class BoulderSmash : NukeAbility
         foreach (var unit in EntityManager9.Units.Where(
             x => x.IsUnit && (!x.IsHero || x.IsIllusion) && x.Distance(this.Owner) < this.Ability.CastRange && x.IsAlive))
         {
-            var rec = new Polygon.Rectangle(
+            var rec = new Polygon9.Rectangle(
                 this.Owner.Position.Extend2D(unit.Position, -100),
                 this.Owner.Position.Extend2D(unit.Position, this.Ability.Range),
                 this.Ability.Radius);
@@ -87,7 +87,7 @@ internal class BoulderSmash : NukeAbility
         foreach (var stone in EntityManager9.Units.Where(
             x => x.Name == "npc_dota_earth_spirit_stone" && x.Distance(this.Owner) < this.Ability.CastRange && x.IsAlive))
         {
-            var rec = new Polygon.Rectangle(
+            var rec = new Polygon9.Rectangle(
                 this.Owner.Position.Extend2D(output.TargetPosition, -100),
                 this.Owner.Position.Extend2D(output.TargetPosition, this.Ability.Range),
                 this.Ability.Radius);

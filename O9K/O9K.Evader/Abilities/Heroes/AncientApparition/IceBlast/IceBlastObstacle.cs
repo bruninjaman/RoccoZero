@@ -17,7 +17,7 @@ internal class IceBlastObstacle : AreaOfEffectObstacle
 
         this.Position = position;
         this.Radius = radius + RadiusIncrease;
-        this.Polygon = new Polygon.Circle(this.Position, this.Radius);
+        this.Polygon = new Polygon9.Circle(this.Position, this.Radius);
         this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.Position, this.Radius);
         this.NavMeshId = 1; // hack
     }

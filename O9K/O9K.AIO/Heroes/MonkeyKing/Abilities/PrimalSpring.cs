@@ -42,8 +42,8 @@ internal class PrimalSpring : NukeAbility
         }
 
         var travelDistance = this.Owner.Distance(this.castPosition) / this.Ability.Speed;
-        var predictedPolygon = new Polygon.Circle(this.castPosition, this.Ability.Radius - 200);
-        var currentPolygon = new Polygon.Circle(this.castPosition, this.Ability.Radius - (travelDistance * target.Speed) - 175);
+        var predictedPolygon = new Polygon9.Circle(this.castPosition, this.Ability.Radius - 200);
+        var currentPolygon = new Polygon9.Circle(this.castPosition, this.Ability.Radius - (travelDistance * target.Speed) - 175);
 
         var input = this.Ability.GetPredictionInput(target);
         input.Delay = (0.75f - this.Ability.BaseAbility.ChannelTime) + travelDistance;

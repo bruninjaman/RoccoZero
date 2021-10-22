@@ -61,7 +61,7 @@ internal class LinearProjectileUnitObstacle : LinearProjectileObstacle
             }
 
             this.EndPosition = this.Position.Extend2D(this.ObstacleUnit.Position, this.Range);
-            this.Polygon = new Polygon.Rectangle(this.Position, this.EndPosition, this.Radius);
+            this.Polygon = new Polygon9.Rectangle(this.Position, this.EndPosition, this.Radius);
             this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.Position, this.EndPosition, this.Radius);
             this.NavMeshId = 1; //hack
             return;

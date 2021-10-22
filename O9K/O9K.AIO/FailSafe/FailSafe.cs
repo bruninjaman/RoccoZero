@@ -275,23 +275,23 @@ internal class FailSafe : BaseMode
                     continue;
                 }
 
-                Polygon polygon = null;
+                Polygon9 polygon = null;
 
                 switch (ability)
                 {
                     case AreaOfEffectAbility aoe:
                     {
-                        polygon = new Polygon.Circle(castPosition, aoe.Radius + 50);
+                        polygon = new Polygon9.Circle(castPosition, aoe.Radius + 50);
                         break;
                     }
                     case CircleAbility circle:
                     {
-                        polygon = new Polygon.Circle(castPosition, circle.Radius + 50);
+                        polygon = new Polygon9.Circle(castPosition, circle.Radius + 50);
                         break;
                     }
                     case ConeAbility cone:
                     {
-                        polygon = new Polygon.Trapezoid(
+                        polygon = new Polygon9.Trapezoid(
                             owner.Position.Extend2D(castPosition, -cone.Radius / 2),
                             owner.Position.Extend2D(castPosition, cone.Range),
                             cone.Radius + 50,
@@ -300,7 +300,7 @@ internal class FailSafe : BaseMode
                     }
                     case LineAbility line:
                     {
-                        polygon = new Polygon.Rectangle(
+                        polygon = new Polygon9.Rectangle(
                             owner.Position,
                             owner.Position.Extend2D(castPosition, line.Range),
                             line.Radius + 50);

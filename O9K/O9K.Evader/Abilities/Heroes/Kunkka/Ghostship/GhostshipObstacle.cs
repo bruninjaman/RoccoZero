@@ -67,7 +67,7 @@ internal class GhostshipObstacle : AreaOfEffectObstacle, IUpdatable
             return;
         }
 
-        this.Polygon = new Polygon.Circle(this.EndPosition, this.Radius);
+        this.Polygon = new Polygon9.Circle(this.EndPosition, this.Radius);
         this.NavMeshObstacles = this.Pathfinder.AddNavMeshObstacle(this.EndPosition, this.Radius);
         this.NavMeshId = 1; // hack
         this.IsUpdated = true;

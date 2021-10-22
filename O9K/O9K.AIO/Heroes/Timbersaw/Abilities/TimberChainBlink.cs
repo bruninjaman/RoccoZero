@@ -73,7 +73,7 @@ internal class TimberChainBlink : BlinkAbility
                 continue;
             }
 
-            var polygon = new Polygon.Rectangle(ownerPosition, tree.Position, this.timberChain.ChainRadius);
+            var polygon = new Polygon9.Rectangle(ownerPosition, tree.Position, this.timberChain.ChainRadius);
 
             if (availableTress.Any(x => x != tree && polygon.IsInside(x.Position)))
             {

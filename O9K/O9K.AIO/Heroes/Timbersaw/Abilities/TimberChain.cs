@@ -43,7 +43,7 @@ internal class TimberChain : NukeAbility
 
         this.castPosition = output.CastPosition;
 
-        var polygon = new Polygon.Rectangle(ownerPosition, this.castPosition, this.timberChain.ChainRadius);
+        var polygon = new Polygon9.Rectangle(ownerPosition, this.castPosition, this.timberChain.ChainRadius);
         var availableTrees = EntityManager9.Trees.Where(x => x.Distance2D(ownerPosition) < this.Ability.CastRange).ToArray();
 
         foreach (var tree in availableTrees)
@@ -55,7 +55,7 @@ internal class TimberChain : NukeAbility
         }
 
         var chainEndPosition = ownerPosition.Extend2D(this.castPosition, this.Ability.CastRange);
-        polygon = new Polygon.Rectangle(this.castPosition, chainEndPosition, this.timberChain.Radius);
+        polygon = new Polygon9.Rectangle(this.castPosition, chainEndPosition, this.timberChain.Radius);
 
         foreach (var tree in availableTrees)
         {
@@ -85,7 +85,7 @@ internal class TimberChain : NukeAbility
                 continue;
             }
 
-            polygon = new Polygon.Rectangle(ownerPosition, treePosition, this.timberChain.ChainRadius);
+            polygon = new Polygon9.Rectangle(ownerPosition, treePosition, this.timberChain.ChainRadius);
             if (availableTrees.Any(x => !x.Equals(tree) && polygon.IsInside(x.Position)))
             {
                 continue;
