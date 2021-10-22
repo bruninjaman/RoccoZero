@@ -4,24 +4,38 @@ using System;
 
 using Core.Entities.Abilities.Base;
 using Core.Extensions;
-using Core.Helpers;
 using Core.Logger;
 using Core.Managers.Entity;
 using Core.Managers.Menu;
 using Core.Managers.Menu.EventArgs;
 using Core.Managers.Menu.Items;
 
+using Divine.Entity;
 using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units;
 using Divine.Extensions;
+using Divine.Game;
 using Divine.Helpers;
+using Divine.Modifier;
+using Divine.Modifier.EventArgs;
+using Divine.Numerics;
 using Divine.Order;
 using Divine.Order.EventArgs;
 using Divine.Order.Orders.Components;
+using Divine.Particle;
+using Divine.Particle.EventArgs;
+using Divine.Update;
 
 using Metadata;
 
 internal class BlinkRangeChange : IModule
 {
+    private Unit TeleportTarget;
+
+    private Vector3 TeleportPosition;
+
+    private float TeleportTime;
+
     private readonly MenuSwitcher enabled;
 
     public BlinkRangeChange(IMainMenu mainMenu)
@@ -42,6 +56,8 @@ internal class BlinkRangeChange : IModule
     {
         this.enabled.ValueChange -= this.OnValueChange;
         OrderManager.OrderAdding -= this.OnOrderAdding;
+        ModifierManager.ModifierAdded -= this.OnModifierAdded;
+        ParticleManager.ParticleAdded -= this.OnParticleAdded;
     }
 
     private void OnOrderAdding(OrderAddingEventArgs e)
@@ -67,24 +83,22 @@ internal class BlinkRangeChange : IModule
             var blink = (ActiveAbility)EntityManager9.GetAbility(order.Ability.Handle);
             var hero = blink.Owner;
 
-            // if (hero.IsChanneling)
-            // {
-            //     return;
-            // }
+            var heroPosition = hero.Position;
+
+            if (hero.HasModifier("modifier_teleporting"))
+            {
+                heroPosition = TeleportTarget?.Position ?? TeleportPosition;
+            }
 
             var blinkRange = blink.Range;
             var blinkPosition = order.Position;
-            var heroPosition = hero.Position;
+
             if (heroPosition.Distance2D(blinkPosition) < blinkRange)
             {
                 return;
             }
 
             var newBlinkPosition = heroPosition.Extend2D(blinkPosition, blinkRange - 50);
-            if (!Hud.IsPositionOnScreen(newBlinkPosition))
-            {
-                return;
-            }
 
             blink.UseAbility(newBlinkPosition);
             e.Process = false;
@@ -95,15 +109,85 @@ internal class BlinkRangeChange : IModule
         }
     }
 
+    private void OnModifierAdded(ModifierAddedEventArgs e)
+    {
+        if (e.IsCollection)
+        {
+            return;
+        }
+
+        var modifier = e.Modifier;
+        if (modifier.Ability?.Id != AbilityId.item_tpscroll && modifier.Caster != EntityManager.LocalHero)
+        {
+            return;
+        }
+
+        var modifierName = modifier.Name;
+        if (modifierName == "modifier_teleporting")
+        {
+            UpdateManager.BeginInvoke(() =>
+            {
+                if (!modifier.IsValid)
+                {
+                    return;
+                }
+
+                TeleportTarget = null;
+                TeleportTime = GameManager.RawGameTime;
+            });
+        }
+        else if (modifierName == "modifier_boots_of_travel_incoming")
+        {
+            UpdateManager.BeginInvoke(() =>
+            {
+                if (!modifier.IsValid)
+                {
+                    return;
+                }
+
+                TeleportTarget = (Unit)modifier.Owner;
+                TeleportTime = GameManager.RawGameTime;
+            });
+        }
+    }
+
+    private void OnParticleAdded(ParticleAddedEventArgs e)
+    {
+        if (e.IsCollection)
+        {
+            return;
+        }
+
+        var particle = e.Particle;
+        if (!particle.Name.Contains("teleport_end"))
+        {
+            return;
+        }
+
+        UpdateManager.BeginInvoke(() =>
+        {
+            if (!particle.IsValid || TeleportTime != GameManager.RawGameTime)
+            {
+                return;
+            }
+
+            TeleportPosition = particle.GetControlPoint(0);
+        });
+    }
+
     private void OnValueChange(object sender, SwitcherEventArgs e)
     {
         if (e.NewValue)
         {
             OrderManager.OrderAdding += this.OnOrderAdding;
+            ModifierManager.ModifierAdded += this.OnModifierAdded;
+            ParticleManager.ParticleAdded += this.OnParticleAdded;
         }
         else
         {
             OrderManager.OrderAdding -= this.OnOrderAdding;
+            ModifierManager.ModifierAdded -= this.OnModifierAdded;
+            ParticleManager.ParticleAdded -= this.OnParticleAdded;
         }
     }
 }
