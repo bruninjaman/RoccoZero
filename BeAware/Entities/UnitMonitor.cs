@@ -16,8 +16,8 @@ using Divine.Entity.Entities.Units.Heroes;
 using Divine.Entity.Entities.Units.Heroes.Components;
 using Divine.Entity.EventArgs;
 using Divine.Extensions;
-using Divine.Log;
 using Divine.Numerics;
+using Divine.Zero.Log;
 
 internal sealed class UnitMonitor
 {

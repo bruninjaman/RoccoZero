@@ -13,11 +13,11 @@ using Divine.Entity.Entities;
 using Divine.Entity.Entities.Abilities.Components;
 using Divine.Entity.Entities.Units.Heroes;
 using Divine.Extensions;
-using Divine.Log;
 using Divine.Numerics;
 using Divine.Particle;
 using Divine.Particle.EventArgs;
 using Divine.Update;
+using Divine.Zero.Log;
 
 internal sealed class ParticleMonitor
 {
@@ -127,7 +127,7 @@ internal sealed class ParticleMonitor
             {
                 return;
             }
-            
+
             if (MiranaArrow.Particle(particle, name))
             {
                 return;

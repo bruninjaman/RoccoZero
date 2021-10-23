@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 using BeAware.MenuManager;
 
-using Divine.Log;
 using Divine.Zero.Helpers;
+using Divine.Zero.Log;
 
 internal sealed class SoundHelper
 {

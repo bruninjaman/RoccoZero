@@ -8,8 +8,8 @@ using Divine.Game;
 using Divine.Helpers;
 using Divine.Input;
 using Divine.Input.EventArgs;
-using Divine.Log;
 using Divine.Numerics;
+using Divine.Zero.Log;
 
 public class PanelMove
 {
@@ -99,7 +99,7 @@ public class PanelMove
         if (e.Position.IsUnderRectangle(new RectangleF(Position.X - 5, Position.Y - 5, Size.X, Size.Y)))
         {
             DragMouseDiff = e.Position - Position;
-            
+
             PanelDragged = true;
         }
     }

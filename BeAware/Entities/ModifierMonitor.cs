@@ -13,11 +13,11 @@ using Divine.Entity.Entities.Units.Heroes;
 using Divine.Entity.Entities.Units.Heroes.Components;
 using Divine.Extensions;
 using Divine.Helpers;
-using Divine.Log;
 using Divine.Modifier;
 using Divine.Modifier.EventArgs;
 using Divine.Modifier.Modifiers;
 using Divine.Numerics;
+using Divine.Zero.Log;
 
 internal sealed class ModifierMonitor
 {

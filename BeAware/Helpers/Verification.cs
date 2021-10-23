@@ -12,10 +12,10 @@ using Divine.Entity.Entities.Abilities.Components;
 using Divine.Entity.Entities.Units.Heroes.Components;
 using Divine.Extensions;
 using Divine.Helpers;
-using Divine.Log;
 using Divine.Numerics;
 using Divine.Renderer;
 using Divine.Update;
+using Divine.Zero.Log;
 
 internal class Verification
 {

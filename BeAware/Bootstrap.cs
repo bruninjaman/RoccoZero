@@ -9,7 +9,7 @@ internal sealed class Bootstrap : Bootstrapper
 {
     private Common common;
 
-    protected override void OnPreActivate()
+    protected override void OnActivateUnsafe()
     {
         var assembly = Assembly.GetExecutingAssembly();
 
