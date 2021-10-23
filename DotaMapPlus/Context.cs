@@ -5,7 +5,7 @@ using Divine.Numerics;
 
 internal sealed class Context
 {
-    private readonly ZoomHack ZoomHack;
+    //private readonly ZoomHack ZoomHack;
 
     private readonly ConsoleCommands ConsoleCommands;
 
@@ -16,7 +16,7 @@ internal sealed class Context
         var rootMenu = MenuManager.CreateRootMenu("DotaMapPlus");
         rootMenu.SetFontColor(Color.Aqua);
 
-        ZoomHack = new ZoomHack(rootMenu);
+        //ZoomHack = new ZoomHack(rootMenu);
 
         ConsoleCommands = new ConsoleCommands(rootMenu);
 
@@ -25,7 +25,7 @@ internal sealed class Context
 
     public void Dispose()
     {
-        ZoomHack.Dispose();
+        //ZoomHack.Dispose();
         ConsoleCommands.Dispose();
         WeatherHack.Dispose();
     }
