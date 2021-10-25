@@ -1,8 +1,8 @@
 ﻿namespace CreepsBlocker;
 
 using System;
-using System.Windows.Input;
 
+using Divine.Input;
 using Divine.Menu;
 using Divine.Menu.Items;
 
