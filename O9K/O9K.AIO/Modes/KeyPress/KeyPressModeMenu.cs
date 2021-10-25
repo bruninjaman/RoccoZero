@@ -31,7 +31,7 @@ internal class KeyPressModeMenu : BaseModeMenu
     public KeyPressModeMenu(Menu rootMenu, string displayName, string tooltip = null)
         : base(rootMenu, displayName)
     {
-        this.Key = new MenuHoldKey("Key", "key" + this.SimplifiedName, System.Windows.Input.Key.None, true);
+        this.Key = new MenuHoldKey("Key", "key" + this.SimplifiedName, Divine.Input.Key.None, true);
         this.Key.AddTranslation(Lang.Ru, "Клавиша");
         this.Key.AddTranslation(Lang.Cn, "键");
 

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Input;
 
 using Abilities;
 
@@ -27,6 +26,7 @@ using Divine.Entity.Entities.Abilities.Items.Components;
 using Divine.Entity.Entities.PhysicalItems;
 using Divine.Entity.Entities.Players;
 using Divine.Game;
+using Divine.Input;
 using Divine.Order;
 using Divine.Order.EventArgs;
 using Divine.Order.Orders.Components;

@@ -10,7 +10,6 @@ using Divine.Renderer;
 
 using Logger;
 
-using Key = System.Windows.Input.Key;
 using KeyEventArgs = EventArgs.KeyEventArgs;
 
 public class MenuHoldKey : MenuItem
@@ -25,7 +24,7 @@ public class MenuHoldKey : MenuItem
 
     private MouseKey mouseKeyValue;
 
-    public MenuHoldKey(string displayName, System.Windows.Input.Key key = Key.None, bool heroUnique = false)
+    public MenuHoldKey(string displayName, Key key = Key.None, bool heroUnique = false)
         : this(displayName, displayName, key, heroUnique)
     {
     }

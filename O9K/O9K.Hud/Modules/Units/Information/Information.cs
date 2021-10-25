@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Input;
 
 using Core.Entities.Heroes;
 using Core.Entities.Units;
@@ -13,6 +12,7 @@ using Core.Managers.Menu.EventArgs;
 using Core.Managers.Menu.Items;
 
 using Divine.Game;
+using Divine.Input;
 using Divine.Modifier;
 using Divine.Modifier.EventArgs;
 using Divine.Modifier.Modifiers;

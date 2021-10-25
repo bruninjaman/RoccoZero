@@ -1,7 +1,5 @@
 ﻿namespace O9K.AIO.Heroes.EmberSpirit.Modes;
 
-using System.Windows.Input;
-
 using AIO.Modes.Permanent;
 
 using Core.Managers.Menu;
@@ -9,6 +7,7 @@ using Core.Managers.Menu.Items;
 
 using Divine.Entity.Entities.Abilities.Components;
 using Divine.Helpers;
+using Divine.Input;
 
 internal class AutoChainsModeMenu : PermanentModeMenu
 {

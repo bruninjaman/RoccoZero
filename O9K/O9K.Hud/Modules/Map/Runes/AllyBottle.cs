@@ -2,7 +2,6 @@
 
 using System;
 using System.Linq;
-using System.Windows.Input;
 
 using Core.Helpers;
 using Core.Logger;
@@ -16,6 +15,7 @@ using Divine.Entity.Entities.Runes;
 using Divine.Extensions;
 using Divine.Game;
 using Divine.Helpers;
+using Divine.Input;
 using Divine.Numerics;
 using Divine.Renderer;
 

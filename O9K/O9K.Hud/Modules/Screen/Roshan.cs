@@ -2,7 +2,6 @@
 
 using System;
 using System.Linq;
-using System.Windows.Input;
 
 using Core.Data;
 using Core.Entities.Abilities.Base;
@@ -21,6 +20,7 @@ using Divine.Game;
 using Divine.Game.EventArgs;
 using Divine.GameConsole;
 using Divine.Input;
+using Divine.Input.EventArgs;
 using Divine.Numerics;
 using Divine.Renderer;
 using Divine.Update;
@@ -30,8 +30,6 @@ using Helpers;
 using MainMenu;
 
 using Drawer = Helpers.Drawer;
-using InputManager = Divine.Input.InputManager;
-using MouseEventArgs = Divine.Input.EventArgs.MouseEventArgs;
 
 internal class RoshanTimer : IHudModule
 {

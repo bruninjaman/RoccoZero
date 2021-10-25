@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Input;
 
 using Core.Data;
 using Core.Entities.Abilities.Base;
@@ -20,6 +19,7 @@ using Divine.Entity.Entities.Players;
 using Divine.Extensions;
 using Divine.Game;
 using Divine.Game.EventArgs;
+using Divine.Input;
 using Divine.Modifier;
 using Divine.Modifier.EventArgs;
 using Divine.Numerics;

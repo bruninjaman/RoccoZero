@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
 
 using Controllables;
 using Controllables.Abilities;
@@ -32,6 +31,7 @@ using Divine.Entity.Entities.Abilities.Components;
 using Metadata;
 
 using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
+using Divine.Input;
 
 internal class Snatcher : IModule
 {

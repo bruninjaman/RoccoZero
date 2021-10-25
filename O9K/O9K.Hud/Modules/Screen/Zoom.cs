@@ -48,7 +48,7 @@ internal class Zoom : IHudModule
         this.zoom.AddTranslation(Lang.Cn, "视野");
         this.zoom.AddTooltipTranslation(Lang.Cn, "默认值：" + GameData.DefaultZoom);
 
-        this.key = menu.Add(new MenuHoldKey("Key", System.Windows.Input.Key.LeftCtrl)).SetTooltip("Change zoom with a key and mouse wheel");
+        this.key = menu.Add(new MenuHoldKey("Key", Key.LeftCtrl)).SetTooltip("Change zoom with a key and mouse wheel");
         this.key.AddTranslation(Lang.Ru, "Клавиша");
         this.key.AddTooltipTranslation(Lang.Ru, "Изменить зум с помощью клавиши и колесика мыши");
         this.key.AddTranslation(Lang.Cn, "键");

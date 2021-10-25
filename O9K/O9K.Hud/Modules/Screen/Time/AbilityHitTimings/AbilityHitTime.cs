@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
 
 using Core.Entities.Abilities.Base;
 using Core.Helpers;
@@ -14,6 +13,7 @@ using Core.Managers.Menu.EventArgs;
 using Core.Managers.Menu.Items;
 
 using Divine.Game;
+using Divine.Input;
 using Divine.Numerics;
 using Divine.Renderer;
 using Divine.Update;

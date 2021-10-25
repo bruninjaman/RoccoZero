@@ -10,7 +10,6 @@ using Divine.Renderer;
 
 using Logger;
 
-using Key = System.Windows.Input.Key;
 using KeyEventArgs = EventArgs.KeyEventArgs;
 
 public class MenuToggleKey : MenuItem
