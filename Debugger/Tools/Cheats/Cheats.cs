@@ -1,6 +1,6 @@
 ﻿namespace Debugger.Tools.Cheats;
 
-using System.Windows.Input;
+using Divine.Input;
 
 using Debugger.Menus;
 

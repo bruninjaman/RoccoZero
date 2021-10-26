@@ -21,7 +21,7 @@ internal class Bootstrap : Bootstrapper
 
     private Log Log;
 
-    protected override void OnPreActivate()
+    protected override void OnMainActivate()
     {
         //UpdateManager.BeginInvoke(OnActivate);
     }
@@ -30,10 +30,10 @@ internal class Bootstrap : Bootstrapper
     {
         MainMenu = new MainMenu();
         MainMenu.Activate();
-       
+
         Log = new Log(MainMenu);
         Log.Activate();
-        
+
         var mainModules = new Dictionary<Type, object>
         {
             { typeof(IMainMenu), MainMenu },
