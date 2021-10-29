@@ -79,7 +79,6 @@ internal class Marci : ControllableUnit
             { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
             { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
             { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
-
         };
 
         this.MoveComboAbilities.Add(AbilityId.marci_companion_run, x => this.moveRebound = new ReboundBlink(x));
