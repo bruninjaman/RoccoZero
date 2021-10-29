@@ -124,6 +124,13 @@ public sealed class UnitMonitor : IDisposable
                         var alchemist = x as Alchemist;
                         alchemist?.Raged(value);
                     }
+            },
+            {
+                "modifier_marci_unleash_flurry", (x, _, value) =>
+                    {
+                        var marci = x as Marci;
+                        marci?.Unleashed(value);
+                    }
             }
         };
 

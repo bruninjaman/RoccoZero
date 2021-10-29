@@ -24,7 +24,6 @@ using UnitManager;
 
 using KeyEventArgs = Core.Managers.Menu.EventArgs.KeyEventArgs;
 
-
 internal class ComboMode : BaseMode, IComboMode
 {
     protected Dictionary<MenuHoldKey, ComboModeMenu> ComboModeMenus { get; } =
@@ -95,7 +94,7 @@ internal class ComboMode : BaseMode, IComboMode
         {
             foreach (var abilityHandle in this.DisableToggleAbilities.Distinct().ToList())
             {
-                if (!(EntityManager9.GetAbility(abilityHandle) is IToggleable ability))
+                if (EntityManager9.GetAbility(abilityHandle) is not IToggleable ability)
                 {
                     continue;
                 }

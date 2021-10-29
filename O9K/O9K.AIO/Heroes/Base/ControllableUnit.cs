@@ -272,7 +272,7 @@ internal class ControllableUnit
         {
             return  false;
         }
-        
+
         if (!this.Owner.CanAttack(target, additionalRange))
         {
             return false;

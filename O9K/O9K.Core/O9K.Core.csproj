@@ -24,10 +24,10 @@
 
   <ItemGroup>
     <Reference Include="Divine">
-      <HintPath>..\..\..\..\..\Desktop\Divine\bin\Divine.dll</HintPath>
+      <HintPath>C:\Program Files\Divine\References\Divine.dll</HintPath>
     </Reference>
     <Reference Include="Divine.Zero">
-      <HintPath>..\..\..\..\..\Desktop\Divine\bin\Divine.Zero.dll</HintPath>
+      <HintPath>C:\Program Files\Divine\References\Divine.Zero.dll</HintPath>
     </Reference>
   </ItemGroup>
 
