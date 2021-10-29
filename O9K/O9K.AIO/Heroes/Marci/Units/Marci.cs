@@ -53,6 +53,10 @@ internal class Marci : ControllableUnit
 
     private ReboundBlink moveRebound;
 
+    private DisableAbility abyssal;
+
+    private ShieldAbility mjollnir;
+
     public Marci(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
         : base(owner, abilitySleeper, orbwalkSleeper, menu)
     {
@@ -63,7 +67,9 @@ internal class Marci : ControllableUnit
             { AbilityId.marci_guardian, x => this.sidekick = new BuffAbility(x) },
             { AbilityId.marci_unleash, x => this.unleash = new BuffAbility(x) },
 
+            { AbilityId.item_abyssal_blade, x => this.abyssal = new DisableAbility(x) },
             { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
+            { AbilityId.item_mjollnir, x => this.mjollnir = new ShieldAbility(x) },
             { AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x) },
             { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) },
             { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
@@ -73,6 +79,7 @@ internal class Marci : ControllableUnit
             { AbilityId.item_orchid, x => this.orchid = new DisableAbility(x) },
             { AbilityId.item_veil_of_discord, x => this.veil = new DebuffAbility(x) },
             { AbilityId.item_bloodthorn, x => this.bloodthorn = new Bloodthorn(x) },
+
         };
 
         this.MoveComboAbilities.Add(AbilityId.marci_companion_run, x => this.moveRebound = new ReboundBlink(x));
@@ -83,6 +90,11 @@ internal class Marci : ControllableUnit
         var abilityHelper = new AbilityHelper(targetManager, comboModeMenu, this);
 
         if (abilityHelper.UseAbility(this.blink, 400, 0))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.abyssal))
         {
             return true;
         }
@@ -118,6 +130,11 @@ internal class Marci : ControllableUnit
         }
 
         if (abilityHelper.UseAbility(this.dispose))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.mjollnir))
         {
             return true;
         }
