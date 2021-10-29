@@ -8,8 +8,6 @@ using Divine.Entity.Entities.Abilities.Components;
 
 using Metadata;
 
-using O9K.Core.Helpers;
-
 [AbilityId(AbilityId.marci_unleash)]
 public class Unleash : ActiveAbility, IBuff
 {
