@@ -99,6 +99,8 @@ public class Rebound : RangedAbility, INuke
 
     public override bool CanHit(Unit9 target)
     {
+        if (target.HasModifier("modifier_marci_grapple_victim_motion"))
+            return false;
         var canHitBase = base.CanHit(target);
         if (!canHitBase)
             return false;
