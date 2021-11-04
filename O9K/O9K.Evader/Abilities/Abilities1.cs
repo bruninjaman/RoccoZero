@@ -11,6 +11,7 @@ internal static partial class Abilities
     {
         AbilityId.item_lotus_orb,
         AbilityId.brewmaster_storm_dispel_magic, //todo check target
+        AbilityId.item_heavy_blade,
         AbilityId.satyr_trickster_purge,
         AbilityId.omniknight_repel,
         AbilityId.oracle_fortunes_end,
@@ -244,6 +245,7 @@ internal static partial class Abilities
         AbilityId.oracle_fortunes_end,
         AbilityId.satyr_trickster_purge,
         AbilityId.brewmaster_storm_dispel_magic,
+        AbilityId.item_heavy_blade,
         AbilityId.item_cyclone,
         AbilityId.item_wind_waker,
         AbilityId.invoker_tornado,

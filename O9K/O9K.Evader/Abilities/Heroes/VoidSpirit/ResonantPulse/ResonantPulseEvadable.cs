@@ -41,7 +41,8 @@ internal sealed class ResonantPulseEvadable : AreaOfEffectEvadable, IModifierCou
         this.counters.UnionWith(Abilities.Heal);
         this.counters.Add(Abilities.Armlet);
         this.counters.UnionWith(Abilities.Suicide);
-        this.counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.aghanimCounters.Add(Abilities.AttributeShift);
         this.aghanimCounters.UnionWith(Abilities.MagicImmunity);

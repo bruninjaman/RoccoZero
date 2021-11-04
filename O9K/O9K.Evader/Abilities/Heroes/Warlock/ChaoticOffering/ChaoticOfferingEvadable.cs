@@ -31,6 +31,7 @@ internal sealed class ChaoticOfferingEvadable : LinearAreaOfEffectEvadable, IMod
         this.Counters.UnionWith(Abilities.Heal);
         this.Counters.Add(Abilities.Armlet);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.Spoink);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);

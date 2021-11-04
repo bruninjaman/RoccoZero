@@ -32,6 +32,7 @@ internal sealed class TerrorizeEvadable : LinearProjectileEvadable, IModifierCou
         this.Counters.UnionWith(Abilities.StrongMagicShield);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.AllyPurge);
         this.ModifierCounters.UnionWith(Abilities.Invulnerability);

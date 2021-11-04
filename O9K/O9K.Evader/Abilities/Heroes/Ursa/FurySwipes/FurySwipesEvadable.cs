@@ -21,6 +21,7 @@ internal sealed class FurySwipesEvadable : ModifierCounterEvadable
 
         this.ModifierCounters.UnionWith(Abilities.StrongPhysShield);
         this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
     }
 
     public override bool ModifierAllyCounter { get; } = true;

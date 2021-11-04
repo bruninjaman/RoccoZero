@@ -19,6 +19,7 @@ internal sealed class SunderEvadable : TargetableEvadable
         this.Counters.Add(Abilities.LinkensSphere);
         this.Counters.Add(Abilities.LotusOrb);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.BallLightning);
         this.Counters.Add(Abilities.SleightOfFist);
         this.Counters.Add(Abilities.PhaseShift);

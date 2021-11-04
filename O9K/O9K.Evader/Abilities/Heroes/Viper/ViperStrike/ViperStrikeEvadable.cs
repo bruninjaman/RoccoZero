@@ -29,6 +29,7 @@ internal sealed class ViperStrikeEvadable : TargetableProjectileEvadable, IModif
         this.Counters.UnionWith(Abilities.MagicShield);
         this.Counters.Add(Abilities.LotusOrb);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.MagicShield);
     }

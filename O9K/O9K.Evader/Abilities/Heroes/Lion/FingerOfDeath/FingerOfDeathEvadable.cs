@@ -48,6 +48,7 @@ internal sealed class FingerOfDeathEvadable : TargetableEvadable, IModifierCount
         this.ModifierCounters.Add(Abilities.WindWaker);
         this.ModifierCounters.Add(Abilities.Stormcrafter);
         this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
     }
 
     public bool ModifierAllyCounter { get; } = true;

@@ -32,6 +32,7 @@ internal sealed class EMPEvadable : LinearAreaOfEffectEvadable, IParticle
         this.Counters.Add(Abilities.Armlet);
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.Counters.Remove(Abilities.DarkPact);
         this.Counters.Remove(Abilities.ShadowDance);

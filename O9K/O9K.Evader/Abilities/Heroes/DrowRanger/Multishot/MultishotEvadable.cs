@@ -29,6 +29,7 @@ internal sealed class MultishotEvadable : EvadableAbility, IModifierObstacle
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.UnionWith(Abilities.StrongPhysShield);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.UnionWith(Abilities.Heal);
 
         this.Counters.ExceptWith(Abilities.MagicImmunity);

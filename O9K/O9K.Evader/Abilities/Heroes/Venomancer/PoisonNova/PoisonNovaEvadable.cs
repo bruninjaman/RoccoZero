@@ -33,6 +33,7 @@ internal sealed class PoisonNovaEvadable : AreaOfEffectEvadable, IModifierCounte
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.Counters.Remove(Abilities.FatesEdict);
         this.Counters.Remove(Abilities.Nightmare);

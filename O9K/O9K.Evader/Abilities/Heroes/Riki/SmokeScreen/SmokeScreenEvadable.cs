@@ -35,6 +35,7 @@ internal sealed class SmokeScreenEvadable : LinearAreaOfEffectEvadable, IModifie
         this.Counters.Remove(Abilities.Stormcrafter);
 
         this.ModifierCounters.Add(Abilities.HurricanePike);
+        this.ModifierCounters.Add(Abilities.PsychicHeadband);
         this.ModifierCounters.UnionWith(Abilities.StrongShield);
         this.ModifierCounters.Remove(Abilities.EulsScepterOfDivinity);
         this.ModifierCounters.Remove(Abilities.WindWaker);

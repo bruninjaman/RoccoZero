@@ -34,6 +34,7 @@ internal sealed class ParalyzingCaskEvadable : TargetableProjectileEvadable, IMo
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.LotusOrb);
 
         this.Counters.Remove(Abilities.MantaStyle);

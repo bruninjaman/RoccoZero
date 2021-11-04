@@ -35,6 +35,7 @@ internal sealed class RealityRiftEvadable : TargetableEvadable, IModifierCounter
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.Invulnerability);
         this.ModifierCounters.UnionWith(Abilities.StrongPhysShield);

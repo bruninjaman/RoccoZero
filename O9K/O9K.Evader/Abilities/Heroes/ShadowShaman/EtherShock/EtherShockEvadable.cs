@@ -28,6 +28,7 @@ internal sealed class EtherShockEvadable : LinearAreaOfEffectEvadable
         this.Counters.Add(Abilities.Armlet);
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.targetCounters.Add(Abilities.Counterspell);
         this.targetCounters.Add(Abilities.LotusOrb);

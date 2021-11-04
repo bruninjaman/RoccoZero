@@ -35,6 +35,7 @@ internal sealed class DoomEvadable : TargetableEvadable, IModifierCounter
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.Spoink);
 
         this.ModifierCounters.UnionWith(Abilities.StrongMagicShield);

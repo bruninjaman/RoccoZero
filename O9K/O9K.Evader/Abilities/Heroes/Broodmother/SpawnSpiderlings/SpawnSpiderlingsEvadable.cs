@@ -21,5 +21,6 @@ internal sealed class SpawnSpiderlingsEvadable : TargetableProjectileEvadable
         this.Counters.Add(Abilities.Armlet);
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
     }
 }

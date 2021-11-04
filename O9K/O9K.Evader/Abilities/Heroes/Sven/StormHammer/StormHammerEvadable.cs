@@ -45,7 +45,9 @@ internal sealed class StormHammerEvadable : TargetableProjectileEvadable, IModif
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.PsychicHeadband);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
         this.ModifierCounters.UnionWith(Abilities.Invulnerability);

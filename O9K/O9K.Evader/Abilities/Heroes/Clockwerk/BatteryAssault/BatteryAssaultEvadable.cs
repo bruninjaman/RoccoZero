@@ -21,6 +21,7 @@ internal sealed class BatteryAssaultEvadable : ModifierCounterEvadable
         this.ModifierCounters.UnionWith(Abilities.MagicShield);
         this.ModifierCounters.UnionWith(Abilities.SlowHeal);
         this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.Remove(Abilities.Nightmare);
     }

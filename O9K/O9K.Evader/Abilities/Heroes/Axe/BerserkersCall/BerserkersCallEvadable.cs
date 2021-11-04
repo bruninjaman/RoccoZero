@@ -28,6 +28,7 @@ internal sealed class BerserkersCallEvadable : AreaOfEffectEvadable, IModifierCo
         this.Counters.Add(Abilities.Spoink);
         this.Counters.Add(Abilities.MantaStyle);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.AttributeShift);
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.UnionWith(Abilities.Invulnerability);
@@ -37,6 +38,7 @@ internal sealed class BerserkersCallEvadable : AreaOfEffectEvadable, IModifierCo
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.Armlet);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.Counters.Remove(Abilities.DarkPact);
         this.Counters.Remove(Abilities.GlimmerCape);

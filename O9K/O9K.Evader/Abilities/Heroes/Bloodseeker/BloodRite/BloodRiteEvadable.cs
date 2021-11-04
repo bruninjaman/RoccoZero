@@ -25,6 +25,7 @@ internal sealed class BloodRiteEvadable : AreaOfEffectEvadable, IModifierObstacl
         this.Counters.UnionWith(Abilities.Shield);
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.AllyPurge);
         this.ModifierCounters.Add(Abilities.MantaStyle);

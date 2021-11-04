@@ -27,6 +27,7 @@ internal sealed class ReversePolarityEvadable : AreaOfEffectEvadable, IModifierC
         this.Counters.Add(Abilities.Mischief);
         this.Counters.Add(Abilities.MantaStyle);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.AttributeShift);
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.UnionWith(Abilities.Invulnerability);
@@ -37,6 +38,7 @@ internal sealed class ReversePolarityEvadable : AreaOfEffectEvadable, IModifierC
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.Armlet);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
         this.ModifierCounters.UnionWith(Abilities.Invulnerability);

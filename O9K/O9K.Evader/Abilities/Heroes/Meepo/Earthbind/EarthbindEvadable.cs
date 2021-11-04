@@ -25,6 +25,7 @@ internal sealed class EarthbindEvadable : LinearProjectileEvadable, IModifierCou
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.Counters.Remove(Abilities.Enrage);
 

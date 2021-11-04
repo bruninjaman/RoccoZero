@@ -36,6 +36,7 @@ internal sealed class RequiemOfSoulsEvadable : AreaOfEffectEvadable, IModifierCo
         this.Counters.Add(Abilities.Armlet);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
         this.ModifierCounters.UnionWith(Abilities.Invulnerability);

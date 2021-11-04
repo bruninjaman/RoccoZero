@@ -22,6 +22,7 @@ internal sealed class OverpowerEvadable : ModifierCounterEvadable
 
         this.ModifierCounters.UnionWith(Abilities.StrongPhysShield);
         this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
     }
 
     public override bool ModifierEnemyCounter { get; } = true;

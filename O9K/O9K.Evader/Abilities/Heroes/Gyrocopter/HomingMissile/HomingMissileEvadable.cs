@@ -30,6 +30,7 @@ internal sealed class HomingMissileEvadable : EvadableAbility, IUnit, IModifierC
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.Bulwark);
 
         this.Counters.Remove(Abilities.ChemicalRage);

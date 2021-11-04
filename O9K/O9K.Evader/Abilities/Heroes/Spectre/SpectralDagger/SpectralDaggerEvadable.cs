@@ -21,6 +21,7 @@ internal sealed class SpectralDaggerEvadable : TargetableProjectileEvadable
         this.Counters.Add(Abilities.Armlet);
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
     }
 
     public override bool IsDisjointable { get; } = false;

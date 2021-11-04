@@ -34,6 +34,7 @@ internal sealed class RuptureEvadable : TargetableEvadable, IModifierCounter
 
         this.ModifierCounters.UnionWith(Abilities.StrongPhysShield);
         this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
 
         this.ModifierDisables.UnionWith(Abilities.PhysDisable);
         this.ModifierDisables.UnionWith(Abilities.Invulnerability);

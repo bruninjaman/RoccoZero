@@ -29,6 +29,7 @@ internal sealed class ChaosMeteorEvadable : LinearProjectileEvadable, IModifierC
         this.Counters.Add(Abilities.Stormcrafter);
         this.Counters.UnionWith(Abilities.StrongMagicShield);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.MagicShield);
     }

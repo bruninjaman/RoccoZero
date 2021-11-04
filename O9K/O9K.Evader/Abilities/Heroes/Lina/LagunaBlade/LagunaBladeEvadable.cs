@@ -72,7 +72,8 @@ internal sealed class LagunaBladeEvadable : TargetableEvadable, IModifierCounter
         this.modifierCounters.Add(Abilities.EulsScepterOfDivinity);
         this.modifierCounters.Add(Abilities.WindWaker);
         this.modifierCounters.Add(Abilities.Stormcrafter);
-        this.modifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
 
         this.aghanimModifierCounters.Add(Abilities.SpikedCarapace);
         this.aghanimModifierCounters.Add(Abilities.Refraction);

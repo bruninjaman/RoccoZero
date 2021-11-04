@@ -35,6 +35,7 @@ internal sealed class BurrowstrikeEvadable : LinearProjectileEvadable, IParticle
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ProactiveBlinks.UnionWith(Abilities.ProactiveBlink);
 

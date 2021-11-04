@@ -19,5 +19,6 @@ internal sealed class DoubleEdgeEvadable : TargetableEvadable
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
     }
 }

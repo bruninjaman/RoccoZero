@@ -29,6 +29,7 @@ internal sealed class ChainFrostEvadable : TargetableProjectileEvadable, IModifi
         this.Counters.UnionWith(Abilities.Shield);
         this.Counters.UnionWith(Abilities.MagicShield);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.StrongMagicShield);
     }

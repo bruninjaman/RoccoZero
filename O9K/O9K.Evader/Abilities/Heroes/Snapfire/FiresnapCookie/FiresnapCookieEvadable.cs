@@ -39,6 +39,7 @@ internal sealed class FiresnapCookieEvadable : AreaOfEffectEvadable, IModifierCo
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.Bulwark);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
