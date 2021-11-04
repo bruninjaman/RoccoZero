@@ -1,5 +1,7 @@
 ﻿using Divine.Entity.Entities.Abilities;
 using Divine.Entity.Entities.Abilities.Components;
+using O9K.Core.Entities.Abilities.Base;
+using O9K.Core.Entities.Metadata;
 
 namespace O9K.Core.Entities.Abilities.NeutralItems
 {
