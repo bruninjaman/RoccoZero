@@ -1,4 +1,6 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.LegionCommander;
+﻿using Divine.Entity.Entities.Units.Components;
+
+namespace O9K.Core.Entities.Abilities.Heroes.LegionCommander;
 
 using Base;
 using Base.Types;
@@ -13,7 +15,7 @@ using Helpers;
 using Metadata;
 
 [AbilityId(AbilityId.legion_commander_press_the_attack)]
-public class PressTheAttack : RangedAbility, IBuff, IHealthRestore
+public class PressTheAttack : RangedAbility, IBuff, IShield, IHealthRestore
 {
     private readonly SpecialData healthRestoreData;
 
@@ -58,4 +60,22 @@ public class PressTheAttack : RangedAbility, IBuff, IHealthRestore
     {
         return (int)(this.healthRestoreData.GetValue(this.Level) * this.Duration);
     }
+
+    public UnitState AppliesUnitState
+    {
+        get
+        {
+            var hasModifier = this.Owner.HasModifier("modifier_item_aghanims_shard");
+            if (hasModifier)
+            {
+                return UnitState.MagicImmune;
+            }
+
+            return UnitState.None;
+        }
+    }
+
+    public string ShieldModifierName { get; } = "modifier_legion_commander_press_the_attack_immunity";
+    public bool ShieldsAlly { get; } = true;
+    public bool ShieldsOwner { get; } = true;
 }

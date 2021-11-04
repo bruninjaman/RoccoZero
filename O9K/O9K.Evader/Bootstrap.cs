@@ -45,6 +45,11 @@ internal class Bootstrap : Bootstrapper
             { typeof(IDebugger), debugger }
         };
 
+        // foreach (var modifier in Divine.Entity.EntityManager.LocalHero.Modifiers)
+        // {
+        //     Console.WriteLine($"Modifier: {modifier.Name}");
+        // }
+
         foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
         {
             if (!type.IsClass || !typeof(IEvaderService).IsAssignableFrom(type))
