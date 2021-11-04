@@ -39,6 +39,7 @@ internal sealed class WraithfireBlastEvadable : TargetableProjectileEvadable, IM
         this.Counters.Add(Abilities.BladeMail);
         this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
         this.Counters.Add(Abilities.PsychicHeadband);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);

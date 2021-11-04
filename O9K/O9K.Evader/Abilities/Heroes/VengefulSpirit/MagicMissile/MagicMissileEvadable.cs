@@ -35,6 +35,7 @@ internal sealed class MagicMissileEvadable : TargetableProjectileEvadable, IModi
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
         this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.BladeMail);
         this.Counters.Add(Abilities.ArcanistArmor);

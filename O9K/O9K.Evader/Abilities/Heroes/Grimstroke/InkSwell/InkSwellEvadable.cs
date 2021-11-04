@@ -29,6 +29,7 @@ internal sealed class InkSwellEvadable : ModifierCounterEvadable
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.UnionWith(Abilities.Invulnerability);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
         this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.UnionWith(Abilities.MagicShield);
         this.Counters.UnionWith(Abilities.Heal);

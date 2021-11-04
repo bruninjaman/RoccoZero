@@ -26,6 +26,7 @@ internal sealed class FlamingLassoEvadable : TargetableEvadable, IModifierCounte
         this.Counters.Add(Abilities.LotusOrb);
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
         this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.SleightOfFist);
         this.Counters.Add(Abilities.BallLightning);

@@ -30,6 +30,7 @@ internal sealed class SlithereenCrushEvadable : AreaOfEffectEvadable, IModifierC
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.UnionWith(Abilities.Invulnerability);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
         this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.Bulwark);
         this.Counters.UnionWith(Abilities.StrongPhysShield);

@@ -23,6 +23,7 @@ internal sealed class EnchantTotemEvadable : AreaOfEffectEvadable, IModifierCoun
         this.Counters.Add(Abilities.Spoink);
         this.Counters.Add(Abilities.MantaStyle);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
         this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.UnionWith(Abilities.Shield);
         this.Counters.Add(Abilities.Armlet);

@@ -203,6 +203,7 @@ internal static partial class Abilities
         AbilityId.lich_sinister_gaze,
         AbilityId.mars_spear,
         AbilityId.snapfire_firesnap_cookie,
+        AbilityId.marci_grapple,
 
         //silence
 
@@ -844,6 +845,7 @@ internal static partial class Abilities
         AbilityId.windrunner_shackleshot,
         AbilityId.skeleton_king_hellfire_blast,
         AbilityId.mud_golem_hurl_boulder,
+        AbilityId.marci_grapple,
     };
 
     public static IEnumerable<AbilityId> Suicide { get; } = Enumerable.Empty<AbilityId>();

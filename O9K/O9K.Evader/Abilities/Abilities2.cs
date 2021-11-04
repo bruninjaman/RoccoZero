@@ -191,4 +191,5 @@ internal static partial class Abilities
     public static AbilityId Windrun { get; } = AbilityId.windrunner_windrun;
 
     public static AbilityId XMark { get; } = AbilityId.kunkka_x_marks_the_spot;
+    public static AbilityId Dispose { get; } = AbilityId.marci_grapple;
 }

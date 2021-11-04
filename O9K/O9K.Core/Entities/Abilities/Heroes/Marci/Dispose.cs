@@ -18,4 +18,8 @@ public class Dispose : RangedAbility, IDisable, INuke
     }
 
     public UnitState AppliesUnitState { get; } = UnitState.Stunned;
+
+    public override bool TargetsAlly { get; } = true;
+
+    public override bool TargetsEnemy { get; } = true;
 }

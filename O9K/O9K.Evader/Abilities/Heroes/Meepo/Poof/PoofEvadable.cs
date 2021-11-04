@@ -19,6 +19,7 @@ internal sealed class PoofEvadable : AreaOfEffectEvadable
         this.Counters.Add(Abilities.Spoink);
         this.Counters.UnionWith(Abilities.Shield);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
         this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.UnionWith(Abilities.StrongMagicShield);
         this.Counters.UnionWith(Abilities.Heal);

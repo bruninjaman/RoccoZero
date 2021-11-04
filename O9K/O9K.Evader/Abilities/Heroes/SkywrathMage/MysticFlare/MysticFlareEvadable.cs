@@ -23,6 +23,7 @@ internal sealed class MysticFlareEvadable : AreaOfEffectEvadable, IModifierObsta
 
         this.Counters.Add(Abilities.BallLightning);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
         this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.AttributeShift);
         this.Counters.Add(Abilities.Spoink);

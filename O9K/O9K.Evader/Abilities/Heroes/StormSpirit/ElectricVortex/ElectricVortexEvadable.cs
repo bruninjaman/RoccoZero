@@ -29,6 +29,7 @@ internal sealed class ElectricVortexEvadable : TargetableEvadable, IModifierCoun
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.UnionWith(Abilities.MagicShield);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
         this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.SleightOfFist);
         this.Counters.Add(Abilities.BallLightning);

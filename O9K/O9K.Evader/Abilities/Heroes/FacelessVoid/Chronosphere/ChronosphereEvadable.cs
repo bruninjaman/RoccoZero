@@ -34,6 +34,7 @@ internal sealed class ChronosphereEvadable : LinearAreaOfEffectEvadable, IModifi
         this.Counters.UnionWith(Abilities.Invulnerability);
         this.Counters.Add(Abilities.Supernova);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
         this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.UnionWith(Abilities.StrongPhysShield);
         this.Counters.UnionWith(Abilities.SlowHeal);

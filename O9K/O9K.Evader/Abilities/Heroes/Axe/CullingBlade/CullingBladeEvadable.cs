@@ -28,6 +28,7 @@ internal sealed class CullingBladeEvadable : TargetableEvadable
         this.Counters.Add(Abilities.Armlet);
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
         this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.CourierShield);
 
