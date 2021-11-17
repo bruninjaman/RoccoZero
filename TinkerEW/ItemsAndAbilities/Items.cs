@@ -3,6 +3,8 @@ using Divine.Entity.Entities.Abilities.Components;
 using Divine.Extensions;
 using Divine.Helpers;
 
+using System.Linq;
+
 namespace TinkerEW.ItemsAndAbilities.Items;
 
 internal partial class Items

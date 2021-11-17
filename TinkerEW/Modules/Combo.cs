@@ -8,6 +8,8 @@ using Divine.GameConsole;
 using Divine.Helpers;
 using Divine.Update;
 
+using System.Collections.Generic;
+
 using TinkerEW.ItemsAndAbilities.Abilities;
 using TinkerEW.ItemsAndAbilities.Items;
 
