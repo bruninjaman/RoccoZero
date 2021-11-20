@@ -89,6 +89,54 @@ internal class Storm : ControllableUnit
         return ability.UseAbility(targetManager.Target);
     }
 
+    public bool DispelMagicKeyBind(TargetManager targetManager)
+    {
+        if (this.dispel == null)
+        {
+            return false;
+        }
+
+        var ability = this.dispel.Ability;
+        if (!ability.CanBeCasted())
+        {
+            return false;
+        }
+
+        return dispel.UseAbility(targetManager, ComboSleeper, false);
+    }
+
+    public bool CycloneKeyBind(TargetManager targetManager)
+    {
+        if (this.cyclone == null)
+        {
+            return false;
+        }
+
+        var ability = this.cyclone.Ability;
+        if (!ability.CanBeCasted())
+        {
+            return false;
+        }
+
+        return ability.UseAbility(targetManager.Target);
+    }
+
+    public bool WindWalkKeyBind()
+    {
+        if (this.windWalk == null)
+        {
+            return false;
+        }
+
+        var ability = this.windWalk.Ability;
+        if (!ability.CanBeCasted())
+        {
+            return false;
+        }
+
+        return ability.UseAbility();
+    }
+
     protected override bool MoveComboUseBuffs(AbilityHelper abilityHelper)
     {
         if (base.MoveComboUseBuffs(abilityHelper))

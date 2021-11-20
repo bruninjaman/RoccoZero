@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 
-using Abilities;
-
 using AIO.Abilities;
 using AIO.Modes.Combo;
 
@@ -45,5 +43,21 @@ internal class Void : ControllableUnit
         }
 
         return false;
+    }
+
+    public bool AstralPulseKeyBind()
+    {
+        if (this.pulse == null)
+        {
+            return false;
+        }
+
+        var ability = this.pulse.Ability;
+        if (!ability.CanBeCasted())
+        {
+            return false;
+        }
+
+        return ability.UseAbility();
     }
 }

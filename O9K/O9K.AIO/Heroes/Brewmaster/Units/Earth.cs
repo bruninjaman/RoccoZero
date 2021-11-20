@@ -75,4 +75,20 @@ internal class Earth : ControllableUnit
 
         return false;
     }
+
+    public bool HurlBoulderKeyBind(TargetManager targetManager)
+    {
+        if (this.boulder == null)
+        {
+            return false;
+        }
+
+        var ability = this.boulder.Ability;
+        if (!ability.CanBeCasted())
+        {
+            return false;
+        }
+
+        return ability.UseAbility(targetManager.Target);
+    }
 }
