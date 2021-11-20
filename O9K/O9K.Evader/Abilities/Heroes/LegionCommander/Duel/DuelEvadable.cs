@@ -37,6 +37,7 @@ internal sealed class DuelEvadable : TargetableEvadable, IModifierCounter
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.Armlet);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.Spoink);
 
         this.Counters.Remove(Abilities.DarkPact);

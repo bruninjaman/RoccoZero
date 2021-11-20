@@ -35,6 +35,7 @@ internal sealed class RavageEvadable : AreaOfEffectEvadable, IModifierCounter
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
         this.ModifierCounters.UnionWith(Abilities.Invulnerability);

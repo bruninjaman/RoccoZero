@@ -21,6 +21,7 @@ internal static partial class Abilities
     public static AbilityId BlackKingBar { get; } = AbilityId.item_black_king_bar;
 
     public static AbilityId BladeMail { get; } = AbilityId.item_blade_mail;
+    public static AbilityId ArcanistArmor { get; } = AbilityId.item_force_field;
 
     public static AbilityId Blur { get; } = AbilityId.phantom_assassin_blur;
 
@@ -95,6 +96,7 @@ internal static partial class Abilities
     public static AbilityId EternalShroud { get; } = AbilityId.item_eternal_shroud;
 
     public static AbilityId HurricanePike { get; } = AbilityId.item_hurricane_pike;
+    public static AbilityId PsychicHeadband { get; } = AbilityId.item_psychic_headband;
 
     public static AbilityId Infest { get; } = AbilityId.life_stealer_infest;
 
@@ -189,4 +191,5 @@ internal static partial class Abilities
     public static AbilityId Windrun { get; } = AbilityId.windrunner_windrun;
 
     public static AbilityId XMark { get; } = AbilityId.kunkka_x_marks_the_spot;
+    public static AbilityId Dispose { get; } = AbilityId.marci_grapple;
 }

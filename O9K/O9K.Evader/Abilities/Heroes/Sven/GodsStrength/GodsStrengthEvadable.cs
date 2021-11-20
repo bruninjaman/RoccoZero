@@ -26,6 +26,7 @@ internal sealed class GodsStrengthEvadable : GlobalEvadable, IModifierCounter
 
         this.ModifierCounters.UnionWith(Abilities.StrongPhysShield);
         this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
     }
 
     public bool ModifierAllyCounter { get; } = false;

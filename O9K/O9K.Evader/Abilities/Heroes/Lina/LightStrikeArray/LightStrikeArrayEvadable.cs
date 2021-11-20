@@ -31,12 +31,15 @@ internal sealed class LightStrikeArrayEvadable : LinearAreaOfEffectEvadable, IMo
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.UnionWith(Abilities.Invulnerability);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
+        this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.UnionWith(Abilities.StrongMagicShield);
         this.Counters.UnionWith(Abilities.Heal);
         this.Counters.Add(Abilities.Armlet);
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.Bulwark);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);

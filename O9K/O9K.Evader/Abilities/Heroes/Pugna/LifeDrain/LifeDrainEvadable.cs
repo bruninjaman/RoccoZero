@@ -29,6 +29,7 @@ internal sealed class LifeDrainEvadable : TargetableEvadable, IModifierCounter
         this.ModifierCounters.Add(Abilities.MantaStyle);
         this.ModifierCounters.UnionWith(Abilities.MagicShield);
         this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
 
         this.ModifierDisables.UnionWith(Abilities.Disable);
         this.ModifierDisables.UnionWith(Abilities.ChannelDisable);

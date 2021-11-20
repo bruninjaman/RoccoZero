@@ -11,11 +11,12 @@ internal static partial class Abilities
     {
         AbilityId.item_lotus_orb,
         AbilityId.brewmaster_storm_dispel_magic, //todo check target
+        AbilityId.item_heavy_blade,
         AbilityId.satyr_trickster_purge,
         AbilityId.omniknight_repel,
         AbilityId.oracle_fortunes_end,
         AbilityId.abaddon_aphotic_shield,
-        //AbilityId.legion_commander_press_the_attack,
+        AbilityId.legion_commander_press_the_attack,
         //AbilityId.item_guardian_greaves,
         AbilityId.item_cyclone,
         AbilityId.item_wind_waker,
@@ -202,6 +203,7 @@ internal static partial class Abilities
         AbilityId.lich_sinister_gaze,
         AbilityId.mars_spear,
         AbilityId.snapfire_firesnap_cookie,
+        AbilityId.marci_grapple,
 
         //silence
 
@@ -244,6 +246,7 @@ internal static partial class Abilities
         AbilityId.oracle_fortunes_end,
         AbilityId.satyr_trickster_purge,
         AbilityId.brewmaster_storm_dispel_magic,
+        AbilityId.item_heavy_blade,
         AbilityId.item_cyclone,
         AbilityId.item_wind_waker,
         AbilityId.invoker_tornado,
@@ -447,6 +450,8 @@ internal static partial class Abilities
         AbilityId.life_stealer_rage,
         AbilityId.oracle_fates_edict,
         AbilityId.item_black_king_bar,
+        AbilityId.marci_guardian,
+        AbilityId.legion_commander_press_the_attack,
     };
 
     public static IEnumerable<AbilityId> MagicShield { get; } = new[]
@@ -538,6 +543,8 @@ internal static partial class Abilities
         AbilityId.spirit_breaker_bulldoze,
         AbilityId.nyx_assassin_spiked_carapace,
         AbilityId.juggernaut_blade_fury,
+        AbilityId.marci_guardian,
+        AbilityId.legion_commander_press_the_attack,
         AbilityId.life_stealer_rage,
         AbilityId.item_black_king_bar,
         AbilityId.phantom_lancer_doppelwalk,
@@ -593,6 +600,8 @@ internal static partial class Abilities
         AbilityId.spirit_breaker_bulldoze,
         AbilityId.nyx_assassin_spiked_carapace,
         AbilityId.juggernaut_blade_fury,
+        AbilityId.marci_guardian,
+        AbilityId.legion_commander_press_the_attack,
         AbilityId.life_stealer_rage,
         AbilityId.phantom_lancer_doppelwalk,
         AbilityId.alchemist_chemical_rage,
@@ -777,6 +786,8 @@ internal static partial class Abilities
         AbilityId.slark_dark_pact,
         AbilityId.slark_shadow_dance,
         AbilityId.juggernaut_blade_fury,
+        AbilityId.marci_guardian,
+        AbilityId.legion_commander_press_the_attack,
         AbilityId.life_stealer_rage,
         AbilityId.life_stealer_infest,
         AbilityId.omniknight_repel,
@@ -834,6 +845,7 @@ internal static partial class Abilities
         AbilityId.windrunner_shackleshot,
         AbilityId.skeleton_king_hellfire_blast,
         AbilityId.mud_golem_hurl_boulder,
+        AbilityId.marci_grapple,
     };
 
     public static IEnumerable<AbilityId> Suicide { get; } = Enumerable.Empty<AbilityId>();

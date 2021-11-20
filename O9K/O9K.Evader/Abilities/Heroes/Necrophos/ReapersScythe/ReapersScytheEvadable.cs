@@ -36,6 +36,7 @@ internal sealed class ReapersScytheEvadable : TargetableEvadable, IModifierCount
         this.Counters.Add(Abilities.Armlet);
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.LotusOrb);
         this.Counters.Add(Abilities.Mischief);
 

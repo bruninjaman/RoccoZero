@@ -34,6 +34,7 @@ internal sealed class CripplingFearEvadable : AreaOfEffectEvadable, IModifierCou
         this.Counters.Remove(Abilities.Stormcrafter);
 
         this.ModifierCounters.Add(Abilities.HurricanePike);
+        this.ModifierCounters.Add(Abilities.PsychicHeadband);
         this.ModifierCounters.UnionWith(Abilities.Invulnerability);
 
         this.ModifierDisables.UnionWith(Abilities.PhysDisable);

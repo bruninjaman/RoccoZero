@@ -34,6 +34,7 @@ internal sealed class SoulbindEvadable : TargetableEvadable, IModifierCounter
         this.ModifierCounters.Add(Abilities.AttributeShift);
         this.ModifierCounters.UnionWith(Abilities.StrongMagicShield);
         this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
         this.ModifierCounters.Add(Abilities.LotusOrb);
         this.ModifierCounters.Add(Abilities.SpikedCarapace);
 

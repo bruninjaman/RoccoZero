@@ -36,6 +36,7 @@ internal sealed class ShackleshotEvadable : TargetableProjectileEvadable, IModif
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
         this.ModifierCounters.UnionWith(Abilities.Invulnerability);

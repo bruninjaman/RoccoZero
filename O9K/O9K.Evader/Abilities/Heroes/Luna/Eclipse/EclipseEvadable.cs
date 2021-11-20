@@ -27,6 +27,7 @@ internal sealed class EclipseEvadable : AreaOfEffectEvadable, IModifierCounter
         this.Counters.UnionWith(Abilities.StrongMagicShield);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.Invulnerability);
         this.ModifierCounters.Add(Abilities.MantaStyle);

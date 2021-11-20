@@ -32,6 +32,7 @@ internal sealed class ManaVoidEvadable : LinearAreaOfEffectEvadable
         this.Counters.UnionWith(Abilities.StrongMagicShield);
         this.Counters.UnionWith(Abilities.Heal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.Armlet);
         this.Counters.UnionWith(Abilities.Suicide);
 

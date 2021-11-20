@@ -1,4 +1,6 @@
-﻿namespace O9K.Evader.Abilities.Heroes.LegionCommander.PressTheAttack;
+﻿using O9K.Evader.Abilities.Base.Usable.CounterAbility;
+
+namespace O9K.Evader.Abilities.Heroes.LegionCommander.PressTheAttack;
 
 using Base;
 using Base.Evadable;
@@ -24,6 +26,6 @@ internal class PressTheAttackBase : EvaderBaseAbility, IEvadable, IUsable<Counte
 
     public CounterAbility GetUsableAbility()
     {
-        return new CounterAbility(this.Ability, this.Menu);
+        return new CounterAbilityWithNotStableMagicImmune(this.Ability, this.Menu);
     }
 }

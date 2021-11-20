@@ -27,6 +27,7 @@ internal sealed class FreezingFieldEvadable : ModifierCounterEvadable
         this.ModifierCounters.UnionWith(Abilities.StrongMagicShield);
         this.ModifierCounters.UnionWith(Abilities.Shield);
         this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
     }
 
     public override bool ModifierAllyCounter { get; } = true;

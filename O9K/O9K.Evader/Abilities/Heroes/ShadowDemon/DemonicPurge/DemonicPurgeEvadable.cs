@@ -31,6 +31,7 @@ internal sealed class DemonicPurgeEvadable : TargetableEvadable, IModifierCounte
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
         this.ModifierCounters.UnionWith(Abilities.StrongMagicShield);
         this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
     }
 
     public bool ModifierAllyCounter { get; } = true;

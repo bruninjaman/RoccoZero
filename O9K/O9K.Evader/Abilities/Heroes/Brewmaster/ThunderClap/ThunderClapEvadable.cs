@@ -25,11 +25,14 @@ internal sealed class ThunderClapEvadable : AreaOfEffectEvadable, IModifierCount
         this.Counters.Add(Abilities.AttributeShift);
         this.Counters.UnionWith(Abilities.Shield);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
+        this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.UnionWith(Abilities.MagicShield);
         this.Counters.UnionWith(Abilities.Heal);
         this.Counters.Add(Abilities.Armlet);
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.AllyPurge);
     }

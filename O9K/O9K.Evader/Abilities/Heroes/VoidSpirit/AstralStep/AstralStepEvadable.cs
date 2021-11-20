@@ -34,6 +34,7 @@ internal sealed class AstralStepEvadable : LinearAreaOfEffectEvadable, IModifier
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.MagicShield);
     }

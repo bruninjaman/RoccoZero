@@ -28,6 +28,8 @@ internal sealed class NightmareEvadable : TargetableEvadable, IModifierCounter
         this.Counters.Add(Abilities.AttributeShift);
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
+        this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.SleightOfFist);
         this.Counters.Add(Abilities.BallLightning);
         this.Counters.Add(Abilities.MantaStyle);

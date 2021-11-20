@@ -26,6 +26,7 @@ internal sealed class TornadoEvadable : LinearProjectileEvadable, IUnit
         this.Counters.UnionWith(Abilities.Heal);
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.Counters.Remove(Abilities.Enrage);
 

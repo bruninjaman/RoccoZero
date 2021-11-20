@@ -25,11 +25,14 @@ internal sealed class StoneFormEvadable : AreaOfEffectEvadable, IModifierCounter
         this.Counters.Add(Abilities.Spoink);
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.UnionWith(Abilities.Invulnerability);
-        this.Counters.Add(Abilities.HurricanePike); //todo test
+        this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
+        this.Counters.Add(Abilities.PsychicHeadband); //todo test
         this.Counters.UnionWith(Abilities.MagicShield);
         this.Counters.UnionWith(Abilities.Heal);
         this.Counters.Add(Abilities.Armlet);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
         this.ModifierCounters.UnionWith(Abilities.Invulnerability);

@@ -37,6 +37,7 @@ internal sealed class LifeBreakEvadable : TargetableProjectileEvadable, IModifie
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.Add(Abilities.MantaStyle);
         this.ModifierCounters.UnionWith(Abilities.AllyPurge);

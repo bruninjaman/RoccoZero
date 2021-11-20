@@ -20,6 +20,7 @@ internal sealed class PhantomStrikeEvadable : GlobalEvadable, IModifierCounter
         this.Disables.UnionWith(Abilities.Disable);
 
         this.ModifierCounters.Add(Abilities.HurricanePike);
+        this.ModifierCounters.Add(Abilities.PsychicHeadband);
         this.ModifierCounters.UnionWith(Abilities.PhysShield);
 
         this.ModifierDisables.UnionWith(Abilities.PhysDisable);

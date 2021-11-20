@@ -32,5 +32,6 @@ internal sealed class NetherStrikeEvadable : TargetableEvadable
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
     }
 }

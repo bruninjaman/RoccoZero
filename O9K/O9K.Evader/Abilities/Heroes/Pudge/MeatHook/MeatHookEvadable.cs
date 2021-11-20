@@ -36,6 +36,7 @@ internal sealed class MeatHookEvadable : LinearProjectileEvadable, IParticle
         this.Counters.UnionWith(Abilities.Suicide);
         this.Counters.Add(Abilities.LotusOrb);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.Counters.Remove(Abilities.EulsScepterOfDivinity);
         this.Counters.Remove(Abilities.WindWaker);

@@ -17,9 +17,11 @@ internal sealed class RocketBarrageEvadable : ModifierCounterEvadable
         : base(ability, pathfinder, menu)
     {
         this.ModifierCounters.Add(Abilities.HurricanePike);
+        this.ModifierCounters.Add(Abilities.PsychicHeadband);
         this.ModifierCounters.UnionWith(Abilities.Shield);
         this.ModifierCounters.UnionWith(Abilities.MagicShield);
         this.ModifierCounters.Add(Abilities.BladeMail);
+        this.ModifierCounters.Add(Abilities.ArcanistArmor);
 
         this.ModifierDisables.UnionWith(Abilities.EnemyPurge);
     }

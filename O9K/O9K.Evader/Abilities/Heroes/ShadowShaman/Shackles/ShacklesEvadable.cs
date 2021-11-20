@@ -27,12 +27,15 @@ internal sealed class ShacklesEvadable : TargetableEvadable, IModifierCounter
         this.Counters.Add(Abilities.AttributeShift);
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
+        this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.SleightOfFist);
         this.Counters.Add(Abilities.BallLightning);
         this.Counters.Add(Abilities.MantaStyle);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
         this.ModifierCounters.UnionWith(Abilities.Invulnerability);

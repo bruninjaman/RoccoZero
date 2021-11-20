@@ -25,14 +25,11 @@ internal class BladeMailUsable : CounterAbility
             return false;
         }
 
-        switch (obstacle.EvadableAbility.Ability.DamageType)
+        return obstacle.EvadableAbility.Ability.DamageType switch
         {
-            case DamageType.Magical:
-                return !obstacle.EvadableAbility.Owner.IsMagicImmune;
-            case DamageType.Physical:
-                return !obstacle.EvadableAbility.Owner.IsAttackImmune;
-        }
-
-        return true;
+            DamageType.Magical => !obstacle.EvadableAbility.Owner.IsMagicImmune,
+            DamageType.Physical => !obstacle.EvadableAbility.Owner.IsAttackImmune,
+            _ => true
+        };
     }
 }

@@ -28,6 +28,7 @@ internal sealed class TidebringerEvadable : EvadableAbility, IAutoAttack
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.UnionWith(Abilities.PhysShield);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.CrimsonGuard);
         this.Counters.UnionWith(Abilities.Heal);
         this.Counters.UnionWith(Abilities.Suicide);

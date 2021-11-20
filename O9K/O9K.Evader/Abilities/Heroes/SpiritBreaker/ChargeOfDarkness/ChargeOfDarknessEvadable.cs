@@ -22,6 +22,8 @@ internal sealed class ChargeOfDarknessEvadable : EvadableAbility, IModifierObsta
         this.Counters.Add(Abilities.BallLightning);
         this.Counters.Add(Abilities.MantaStyle);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
+        this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.UnionWith(Abilities.Invulnerability);
         this.Counters.UnionWith(Abilities.StrongShield);
         this.Counters.Add(Abilities.AttributeShift);
@@ -29,6 +31,7 @@ internal sealed class ChargeOfDarknessEvadable : EvadableAbility, IModifierObsta
         this.Counters.UnionWith(Abilities.StrongPhysShield);
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.LotusOrb);
     }
 

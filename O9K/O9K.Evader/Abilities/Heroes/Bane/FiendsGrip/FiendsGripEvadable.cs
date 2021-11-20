@@ -29,12 +29,15 @@ internal sealed class FiendsGripEvadable : TargetableEvadable, IModifierCounter
         this.Counters.UnionWith(Abilities.StrongMagicShield);
         this.Counters.Add(Abilities.Spoink);
         this.Counters.Add(Abilities.HurricanePike);
+        this.Counters.Add(Abilities.Dispose);
+        this.Counters.Add(Abilities.PsychicHeadband);
         this.Counters.Add(Abilities.SleightOfFist);
         this.Counters.Add(Abilities.BallLightning);
         this.Counters.Add(Abilities.MantaStyle);
         this.Counters.UnionWith(Abilities.SlowHeal);
         this.Counters.UnionWith(Abilities.Invisibility);
         this.Counters.Add(Abilities.BladeMail);
+        this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.Bulwark);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
