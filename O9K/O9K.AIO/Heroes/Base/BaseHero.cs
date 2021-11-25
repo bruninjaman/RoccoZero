@@ -29,9 +29,9 @@ using UnitManager;
 
 internal class BaseHero : IDisposable
 {
-    protected IComboMode Combo { get; set; } 
+    protected IComboMode Combo { get; set; }
 
-    protected MoveComboMode moveCombo { get; set; } 
+    protected MoveComboMode moveCombo { get; set; }
 
     public BaseHero()
     {
@@ -57,11 +57,10 @@ internal class BaseHero : IDisposable
         this.CreateUnitManager();
 
         this.ShieldBreaker.UnitManager = this.UnitManager;
-        
-        
+
         // ReSharper disable once VirtualMemberCallInConstructor
         this.CreateComboMode(this, this.ComboMenus);
-        
+
         this.moveCombo = new MoveComboMode(this, this.MoveComboModeMenu);
 
         UpdateManager.BeginInvoke(1000, () => this.Menu.Enabled.ValueChange += this.EnabledOnValueChange);
