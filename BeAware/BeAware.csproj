@@ -69,9 +69,16 @@
     <Reference Include="Divine">
       <HintPath>..\..\..\..\..\..\Program Files\Divine\References\Divine.dll</HintPath>
     </Reference>
+    <Reference Include="Divine.SoundPlayer">
+      <HintPath>Resources\Divine.SoundPlayer.dll</HintPath>
+    </Reference>
     <Reference Include="Divine.Zero">
       <HintPath>..\..\..\..\..\..\Program Files\Divine\References\Divine.Zero.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="Compiler" AfterTargets="PostBuildEvent">
+    <Exec Command="if exist &quot;C:\Program Files\Divine\Divine.exe&quot; call &quot;C:\Program Files\Divine\Divine.exe&quot; -PostBuildEvent -TargetPath=&quot;$(TargetPath)&quot;" />
+  </Target>
 
 </Project>
