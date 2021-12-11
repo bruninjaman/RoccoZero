@@ -9,33 +9,34 @@ using System.Runtime.InteropServices;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
 
-using DivineSoundPlayer = Divine.SoundPlayer.SoundPlayer;
-
 public static class SoundPlayer
 {
     private static readonly Process CurrentProcess = Process.GetCurrentProcess();
 
-    private static Task WaitHandler;
+    private static readonly Task WaitHandler;
+
+    private static readonly Func<Stream, Stream> DecoderDelegate;
+
+    private static readonly Action<Stream, float> PlayDelegate;
 
     private static readonly Dictionary<string, Stream> Sounds = new();
 
     static SoundPlayer()
     {
         var assembly = Assembly.GetExecutingAssembly();
-        AssemblyLoadContext.GetLoadContext(assembly).LoadFromStream(assembly.GetManifestResourceStream("BeAware.Resources.Divine.SoundPlayer.dll"));
+        var soundPlayerAssembly = AssemblyLoadContext.GetLoadContext(assembly).LoadFromStream(assembly.GetManifestResourceStream("BeAware.Resources.Divine.SoundPlayer.dll"));
 
-        InitializeSounds();
-    }
+        var soundPlayer = soundPlayerAssembly.GetType("Divine.SoundPlayer.SoundPlayer");
+        DecoderDelegate = soundPlayer.GetMethod("Decoder").CreateDelegate<Func<Stream, Stream>>();
+        PlayDelegate = soundPlayer.GetMethod("Play").CreateDelegate<Action<Stream, float>>();
 
-    private static void InitializeSounds()
-    {
         WaitHandler = Task.Run(() =>
         {
             var assembly = Assembly.GetExecutingAssembly();
-            Sounds["check_rune_en.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.check_rune_en.wav"));
-            Sounds["check_rune_ru.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.check_rune_ru.wav"));
-            Sounds["default.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.default.wav"));
-            Sounds["item_smoke_of_deceit.wav"] = DivineSoundPlayer.Decoder(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.item_smoke_of_deceit.wav"));
+            Sounds["check_rune_en.wav"] = DecoderDelegate(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.check_rune_en.wav"));
+            Sounds["check_rune_ru.wav"] = DecoderDelegate(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.check_rune_ru.wav"));
+            Sounds["default.wav"] = DecoderDelegate(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.default.wav"));
+            Sounds["item_smoke_of_deceit.wav"] = DecoderDelegate(assembly.GetManifestResourceStream("BeAware.Resources.Sounds.item_smoke_of_deceit.wav"));
         });
     }
 
@@ -55,7 +56,7 @@ public static class SoundPlayer
             {
                 await WaitHandler;
 
-                DivineSoundPlayer.Play(stream, volume);
+                PlayDelegate(stream, volume);
             }
             catch
             {

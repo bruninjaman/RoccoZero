@@ -69,9 +69,6 @@
     <Reference Include="Divine">
       <HintPath>..\..\..\..\..\..\Program Files\Divine\References\Divine.dll</HintPath>
     </Reference>
-    <Reference Include="Divine.SoundPlayer">
-      <HintPath>Resources\Divine.SoundPlayer.dll</HintPath>
-    </Reference>
     <Reference Include="Divine.Zero">
       <HintPath>..\..\..\..\..\..\Program Files\Divine\References\Divine.Zero.dll</HintPath>
     </Reference>
