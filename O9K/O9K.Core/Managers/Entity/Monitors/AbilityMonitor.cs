@@ -100,7 +100,7 @@ public sealed class AbilityMonitor : IDisposable
                     EntityManager9.AddAbility(item.BaseAbility);
                 }
 
-                
+
                 foreach (var handle in this.GetStashItems(inventory).Select(x => x.Handle))
                 {
                     var item = EntityManager9.GetAbilityFast(handle);
@@ -296,266 +296,273 @@ public sealed class AbilityMonitor : IDisposable
         switch (e.PropertyName)
         {
             case "m_bToggleState":
+            {
+                var newValue = e.NewValue.GetBoolean();
+                if (!newValue || newValue == e.OldValue.GetBoolean())
                 {
-                    var newValue = e.NewValue.GetBoolean();
-                    if (!newValue || newValue == e.OldValue.GetBoolean())
+                    break;
+                }
+
+                UpdateManager.BeginInvoke(() =>
+                {
+                    var ability = EntityManager9.GetAbilityFast(sender.Handle);
+                    if (ability == null)
                     {
-                        break;
+                        return;
                     }
 
-                    UpdateManager.BeginInvoke(() =>
-                    {
-                        var ability = EntityManager9.GetAbilityFast(sender.Handle);
-                        if (ability == null)
-                        {
-                            return;
-                        }
+                    this.AbilityCasted?.Invoke(ability);
+                });
 
-                        this.AbilityCasted?.Invoke(ability);
-                    });
-                }
                 break;
+            }
             case "m_bInAbilityPhase":
+            {
+                var newValue = e.NewValue.GetBoolean();
+                if (newValue == e.OldValue.GetBoolean())
                 {
-                    var newValue = e.NewValue.GetBoolean();
-                    if (newValue == e.OldValue.GetBoolean())
+                    break;
+                }
+
+                UpdateManager.BeginInvoke(() =>
+                {
+                    var ability = EntityManager9.GetAbilityFast(sender.Handle);
+                    if (ability == null)
                     {
-                        break;
+                        return;
                     }
 
-                    UpdateManager.BeginInvoke(() =>
-                    {
-                        var ability = EntityManager9.GetAbilityFast(sender.Handle);
-                        if (ability == null)
-                        {
-                            return;
-                        }
+                    ability.IsCasting = newValue;
+                    ability.Owner.IsCasting = newValue;
 
-                        ability.IsCasting = newValue;
-                        ability.Owner.IsCasting = newValue;
+                    this.AbilityCastChange?.Invoke(ability);
+                });
 
-                        this.AbilityCastChange?.Invoke(ability);
-                    });
-                }
                 break;
+            }
             case "m_flEnableTime":
+            {
+                var newValue = e.NewValue.GetSingle();
+                if (newValue == e.OldValue.GetSingle())
                 {
-                    var newValue = e.NewValue.GetSingle();
-                    if (newValue == e.OldValue.GetSingle())
-                    {
-                        break;
-                    }
-
-                    UpdateManager.BeginInvoke(() =>
-                    {
-                        var ability = EntityManager9.GetAbilityFast(sender.Handle);
-                        if (ability == null)
-                        {
-                            return;
-                        }
-
-                        ability.ItemEnableTimeSleeper.SleepUntil(newValue);
-                    });
+                    break;
                 }
-                break;
-            case "m_flCastStartTime":
+
+                UpdateManager.BeginInvoke(() =>
                 {
-                    var newValue = e.NewValue.GetSingle();
-                    var oldValue = e.OldValue.GetSingle();
-                    if (newValue == oldValue)
+                    var ability = EntityManager9.GetAbilityFast(sender.Handle);
+                    if (ability == null)
                     {
-                        break;
+                        return;
                     }
 
-                    UpdateManager.BeginInvoke(() =>
+                    ability.ItemEnableTimeSleeper.SleepUntil(newValue);
+                });
+
+                break;
+            }
+            case "m_flCastStartTime":
+            {
+                var newValue = e.NewValue.GetSingle();
+                var oldValue = e.OldValue.GetSingle();
+                if (newValue == oldValue)
+                {
+                    break;
+                }
+
+                UpdateManager.BeginInvoke(() =>
+                {
+                    if (this.AbilityCasted == null)
                     {
-                        if (this.AbilityCasted == null)
-                        {
-                            return;
-                        }
+                        return;
+                    }
 
-                        var ability = EntityManager9.GetAbilityFast(sender.Handle);
-                        if (ability == null)
-                        {
-                            return;
-                        }
+                    var ability = EntityManager9.GetAbilityFast(sender.Handle);
+                    if (ability == null)
+                    {
+                        return;
+                    }
 
-                        if (!ability.IsDisplayingCharges)
-                        {
-                            return;
-                        }
+                    if (!ability.IsDisplayingCharges)
+                    {
+                        return;
+                    }
 
-                        var castTime = newValue - oldValue;
-                        if (castTime < 0 || oldValue < 0)
-                        {
-                            return;
-                        }
+                    var castTime = newValue - oldValue;
+                    if (castTime < 0 || oldValue < 0)
+                    {
+                        return;
+                    }
 
-                        var visibleTime = GameManager.RawGameTime - ability.Owner.LastNotVisibleTime;
-                        if (visibleTime < 0.05f)
-                        {
-                            return;
-                        }
+                    var visibleTime = GameManager.RawGameTime - ability.Owner.LastNotVisibleTime;
+                    if (visibleTime < 0.05f)
+                    {
+                        return;
+                    }
 
-                        if (ability.CastPoint <= 0)
+                    if (ability.CastPoint <= 0)
+                    {
+                        this.AbilityCasted(ability);
+                    }
+                    else
+                    {
+                        if (Math.Abs(ability.CastPoint - castTime) < 0.03f)
                         {
                             this.AbilityCasted(ability);
                         }
-                        else
-                        {
-                            if (Math.Abs(ability.CastPoint - castTime) < 0.03f)
-                            {
-                                this.AbilityCasted(ability);
-                            }
-                        }
-                    });
-                }
+                    }
+                });
+
                 break;
+            }
             case "m_fCooldown":
+            {
+                var newValue = e.NewValue.GetSingle();
+                var oldValue = e.OldValue.GetSingle();
+                if (newValue == oldValue)
                 {
-                    var newValue = e.NewValue.GetSingle();
-                    var oldValue = e.OldValue.GetSingle();
-                    if (newValue == oldValue)
+                    break;
+                }
+
+                UpdateManager.BeginInvoke(() =>
+                {
+                    if (this.AbilityCasted == null)
                     {
-                        break;
+                        return;
                     }
 
-                    UpdateManager.BeginInvoke(() =>
+                    if (newValue <= oldValue || oldValue > 0)
                     {
-                        if (this.AbilityCasted == null)
-                        {
-                            return;
-                        }
+                        return;
+                    }
 
-                        if (newValue <= oldValue || oldValue > 0)
-                        {
-                            return;
-                        }
+                    var ability = EntityManager9.GetAbilityFast(sender.Handle);
+                    if (ability == null)
+                    {
+                        return;
+                    }
 
-                        var ability = EntityManager9.GetAbilityFast(sender.Handle);
-                        if (ability == null)
-                        {
-                            return;
-                        }
+                    var visibleTime = GameManager.RawGameTime - ability.Owner.LastNotVisibleTime;
+                    if (visibleTime < 0.05f)
+                    {
+                        return;
+                    }
 
-                        var visibleTime = GameManager.RawGameTime - ability.Owner.LastNotVisibleTime;
-                        if (visibleTime < 0.05f)
-                        {
-                            return;
-                        }
+                    this.AbilityCasted(ability);
+                });
 
-                        this.AbilityCasted(ability);
-                    });
-                }
                 break;
+            }
             case "m_flChannelStartTime":
+            {
+                var newValue = e.NewValue.GetSingle();
+                if (newValue == e.OldValue.GetSingle())
                 {
-                    var newValue = e.NewValue.GetSingle();
-                    if (newValue == e.OldValue.GetSingle())
-                    {
-                        break;
-                    }
-
-                    UpdateManager.BeginInvoke(() =>
-                    {
-                        var ability = EntityManager9.GetAbilityFast(sender.Handle);
-                        if (ability == null)
-                        {
-                            return;
-                        }
-
-                        if (!(ability is IChanneled channeled))
-                        {
-                            return;
-                        }
-
-                        if (newValue > 0)
-                        {
-                            ability.IsChanneling = true;
-                            channeled.Owner.ChannelEndTime = newValue + channeled.ChannelTime;
-                            channeled.Owner.ChannelActivatesOnCast = channeled.IsActivatesOnChannelStart;
-
-                            this.AbilityChannel?.Invoke(ability);
-                        }
-                        else
-                        {
-                            ability.IsChanneling = false;
-                            channeled.Owner.ChannelEndTime = 0;
-                            channeled.Owner.ChannelActivatesOnCast = false;
-                        }
-                    });
+                    break;
                 }
-                break;
-            case "m_iParity":
+
+                UpdateManager.BeginInvoke(() =>
                 {
-                    if (e.NewValue.GetInt32() == e.OldValue.GetInt32())
+                    var ability = EntityManager9.GetAbilityFast(sender.Handle);
+                    if (ability == null)
                     {
-                        break;
+                        return;
                     }
 
-                    UpdateManager.BeginInvoke(() =>
+                    if (ability is not IChanneled channeled)
                     {
-                        var owner = EntityManager9.GetUnitFast(sender.Handle);
-                        
-                        if (owner == null)
+                        return;
+                    }
+
+                    if (newValue > 0)
+                    {
+                        ability.IsChanneling = true;
+                        channeled.Owner.ChannelEndTime = newValue + channeled.ChannelTime;
+                        channeled.Owner.ChannelActivatesOnCast = channeled.IsActivatesOnChannelStart;
+
+                        this.AbilityChannel?.Invoke(ability);
+                    }
+                    else
+                    {
+                        ability.IsChanneling = false;
+                        channeled.Owner.ChannelEndTime = 0;
+                        channeled.Owner.ChannelActivatesOnCast = false;
+                    }
+                });
+
+                break;
+            }
+            case "m_iParity":
+            {
+                if (e.NewValue.GetInt32() == e.OldValue.GetInt32())
+                {
+                    break;
+                }
+
+                UpdateManager.BeginInvoke(() =>
+                {
+                    var owner = EntityManager9.GetUnitFast(sender.Handle);
+
+                    if (owner == null)
+                    {
+                        return;
+                    }
+
+                    var inventory = owner.BaseInventory;
+                    var checkedItems = new List<uint>();
+
+                    foreach (var handle in this.GetInventoryItems(inventory).Select(x => x.Handle))
+                    {
+                        var item = EntityManager9.GetAbilityFast(handle);
+                        if (item == null)
                         {
-                            return;
+                            continue;
                         }
 
-                        var inventory = owner.BaseInventory;
-                        var checkedItems = new List<uint>();
+                        checkedItems.Add(handle);
 
-                        foreach (var handle in this.GetInventoryItems(inventory).Select(x => x.Handle))
+                        if (item.Owner == owner)
                         {
-                            var item = EntityManager9.GetAbilityFast(handle);
-                            if (item == null)
-                            {
-                                continue;
-                            }
-
-                            checkedItems.Add(handle);
-
-                            if (item.Owner == owner)
-                            {
-                                item.IsAvailable = true;
-                                //UpdateManager.BeginInvoke(100, () => InventoryChanged?.Invoke(null, EventArgs.Empty));
-                                continue;
-                            }
-
-                            EntityManager9.RemoveAbility(item.BaseAbility);
-                            EntityManager9.AddAbility(item.BaseAbility);
+                            item.IsAvailable = true;
+                            //UpdateManager.BeginInvoke(100, () => InventoryChanged?.Invoke(null, EventArgs.Empty));
+                            continue;
                         }
 
-                        foreach (var handle in this.GetStashItems(inventory).Select(x => x.Handle))
+                        EntityManager9.RemoveAbility(item.BaseAbility);
+                        EntityManager9.AddAbility(item.BaseAbility);
+                    }
+
+                    foreach (var handle in this.GetStashItems(inventory).Select(x => x.Handle))
+                    {
+                        var item = EntityManager9.GetAbilityFast(handle);
+                        if (item == null)
                         {
-                            var item = EntityManager9.GetAbilityFast(handle);
-                            if (item == null)
-                            {
-                                continue;
-                            }
-
-                            checkedItems.Add(handle);
-
-                            if (item.Owner == owner)
-                            {
-                                item.IsAvailable = false;
-                                //UpdateManager.BeginInvoke(100, () => InventoryChanged?.Invoke(null, EventArgs.Empty));
-                                continue;
-                            }
-
-                            EntityManager9.RemoveAbility(item.BaseAbility);
-                            EntityManager9.AddAbility(item.BaseAbility);
+                            continue;
                         }
 
-                        // stashed neutral items
-                        foreach (var item in owner.AbilitiesFast.Where(x => x.IsItem && x.IsAvailable && !checkedItems.Contains(x.Handle)))
+                        checkedItems.Add(handle);
+
+                        if (item.Owner == owner)
                         {
                             item.IsAvailable = false;
                             //UpdateManager.BeginInvoke(100, () => InventoryChanged?.Invoke(null, EventArgs.Empty));
+                            continue;
                         }
-                    });
-                }
+
+                        EntityManager9.RemoveAbility(item.BaseAbility);
+                        EntityManager9.AddAbility(item.BaseAbility);
+                    }
+
+                    // stashed neutral items
+                    foreach (var item in owner.AbilitiesFast.Where(x => x.IsItem && x.IsAvailable && !checkedItems.Contains(x.Handle)))
+                    {
+                        item.IsAvailable = false;
+                        //UpdateManager.BeginInvoke(100, () => InventoryChanged?.Invoke(null, EventArgs.Empty));
+                    }
+                });
+
                 break;
+            }
         }
     }
 

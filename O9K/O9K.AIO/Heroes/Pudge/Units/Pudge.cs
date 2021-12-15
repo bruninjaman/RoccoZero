@@ -240,7 +240,7 @@ internal class Pudge : ControllableUnit
         {
             return true;
         }
-        
+
         if (abilityHelper.UseAbility(this.gungir))
         {
             return true;
@@ -349,7 +349,7 @@ internal class Pudge : ControllableUnit
             if ((time <= damageTime // no switch before damage
                  && (attackPoint < 0.35 // no switch if low attackpoint before attack start
                      || time + (attackPoint * 0.6) > damageTime)) // or allow switch if big attack point
-                || (attackPoint < 0.25 // dont allow switch if very low attack point 
+                || (attackPoint < 0.25 // dont allow switch if very low attack point
                     && time > damageTime + (unit.GetAttackBackswing(this.Owner) * 0.6) // after attack end
                     && time <= attackStart + secondsPerAttack + 0.12) // allow if attack time passed secperatk time
                 || (echoSabre != null && !unit.IsRanged // echo sabre check
