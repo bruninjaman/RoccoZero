@@ -18,5 +18,6 @@ public class ScreamOfPain : AreaOfEffectAbility, INuke
     {
         this.RadiusData = new SpecialData(baseAbility, "area_of_effect");
         this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
+        this.DamageData = new SpecialData(baseAbility, "damage");
     }
 }
