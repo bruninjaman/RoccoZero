@@ -53,31 +53,31 @@ namespace Overwolf.Core
             NetworkManager.GCMessageReceived += NetworkManager_GCMessageReceived;
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            for (int i = 0; i < 10; i++)
-            {
-                if (!playerTable.ContainsKey(i))
-                    playerTable.Add(i, new PlayerData());
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    if (!playerTable.ContainsKey(i))
+            //        playerTable.Add(i, new PlayerData());
 
-                playerTable[i].id = TempTable[i].id;
-                playerTable[i].partyId = TempTable[i].partyId;
-                playerTable[i].heroId = (HeroId)TempTable[i].heroId;
-                playerTable[i].name = TempTable[i].name;
-                playerTable[i].laneSelectonFlags = TempTable[i].laneSelectonFlags;
+            //    playerTable[i].id = TempTable[i].id;
+            //    playerTable[i].partyId = TempTable[i].partyId;
+            //    playerTable[i].heroId = (HeroId)TempTable[i].heroId;
+            //    playerTable[i].name = TempTable[i].name;
+            //    playerTable[i].laneSelectonFlags = TempTable[i].laneSelectonFlags;
 
-                profileRequests.Add(new ProtoMessage
-                {
-                    msgId = GCMessageId.CMsgProfileRequest,
-                    accountId = playerTable[i].id,
-                    jobId = (ulong)(i + 1)
-                });
-                httpRequests.Add(new HttpMessage
-                {
-                    requestType = RequestType.GetDivineStratzData,
-                    accountId = playerTable[i].id,
-                    playerNumber = i,
-                    startDateTime = DateTime.UtcNow.AddMonths(-1)
-                });
-            }
+            //    profileRequests.Add(new ProtoMessage
+            //    {
+            //        msgId = GCMessageId.CMsgProfileRequest,
+            //        accountId = playerTable[i].id,
+            //        jobId = (ulong)(i + 1)
+            //    });
+            //    httpRequests.Add(new HttpMessage
+            //    {
+            //        requestType = RequestType.GetDivineStratzData,
+            //        accountId = playerTable[i].id,
+            //        playerNumber = i,
+            //        startDateTime = DateTime.UtcNow.AddMonths(-1)
+            //    });
+            //}
         }
 
         public class TempClass
@@ -213,13 +213,13 @@ namespace Overwolf.Core
         private async void UpdateManager_Update()
         {
             //Profile requests
-            for (int k = 0; k < profileRequests.Count; k++)
+            for (int i = 0; i < profileRequests.Count; i++)
             {
-                if (profileRequestsSleeper.Sleeping || profileRequests[k].sent)
+                if (profileRequestsSleeper.Sleeping || profileRequests[i].sent)
                     continue;
-                NetworkManager.SendGCMessageProfileRequest(profileRequests[k].accountId, profileRequests[k].jobId);
-                profileRequests[k].sent = true;
-                profileRequests.Remove(profileRequests[k]);
+                NetworkManager.SendGCMessageProfileRequest(profileRequests[i].accountId, profileRequests[i].jobId);
+                profileRequests[i].sent = true;
+                profileRequests.Remove(profileRequests[i]);
                 profileRequestsSent++;
                 //Console.WriteLine("Profile requests Sent: " + profileRequestsSent);
 
@@ -227,9 +227,9 @@ namespace Overwolf.Core
                 //Profile requests delay
                 if (profileRequestsSent % 4 == 0)
                 {
-                    //Console.WriteLine("Profile request delay 4001ms");
-                    //Console.WriteLine("Profile requests Sent: " + profileRequestsSent);
-                    //Console.WriteLine("Proto requests Sent: " + (profileRequestsSent + matchDetailsRequestsSent));
+                    Console.WriteLine("===================================================================");
+                    Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} | ProfileRequest Delay for {httpRequests[i].accountId} Delay 4001ms");
+                    Console.WriteLine("===================================================================");
                     profileRequestsSleeper.Sleep(4001);
                 }
                 //
@@ -303,7 +303,7 @@ namespace Overwolf.Core
                             if (matchDetailsRequestsSent % 9 == 0)
                             {
                                 Console.WriteLine("===================================================================");
-                                Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff:fff")} | GetMatchDetails for {httpRequests[i].matchId} Delay 500ms");
+                                Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} | GetMatchDetails for {httpRequests[i].matchId} Delay 500ms");
                                 Console.WriteLine("===================================================================");
                                 matchDetailsRequestsSleeper.Sleep(500);
                             }
