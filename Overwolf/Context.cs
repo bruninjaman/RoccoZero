@@ -5,22 +5,20 @@ using System;
 
 namespace Overwolf
 {
-    internal sealed class Context : IDisposable
+    internal sealed class Context
     {
-        public CoreMain CoreMain;
-        public MainWindowOld RendererMainOld;
-        public MainWindow RendererMain;
-        public Menu Menu { get; }
+        internal CoreMain CoreMain;
+        internal MainWindow RendererMain;
+        internal Menu Menu { get; }
 
-        public Context()
+        internal Context()
         {
             Menu = new Menu();
             CoreMain = new CoreMain(this);
-            //RendererMainOld = new MainWindowOld(this);
             RendererMain = new MainWindow(this);
         }
 
-        public void Dispose()
+        internal void Dispose()
         {
             CoreMain?.Dispose();
         }

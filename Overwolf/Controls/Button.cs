@@ -10,25 +10,34 @@ namespace Overwolf.Controls
 {
     internal sealed class Button
     {
+        internal delegate void ButtonEventHandler(Button button, ButtonEventArgs e);
+        internal event ButtonEventHandler Click;
         private RectangleF buttonRect;
-        public delegate void ButtonEventHandler(Button button, ButtonEventArgs e);
-        public event ButtonEventHandler Click;
         private bool IsKeyDown;
-        private bool Value;
+        private bool mouseHovered;
         private readonly string TextureKey;
-        private readonly float Scaling;
 
-        public Button(string textureKey, float scaling = 1f)
+        internal Button(string textureKey)
         {
             buttonRect = new RectangleF();
-            Scaling = scaling;
             TextureKey = textureKey;
             RendererManager.LoadImage(textureKey);
-            InputManager.MouseKeyDown += InputManager_MouseKeyDown;
-            InputManager.MouseKeyUp += InputManager_MouseKeyUp;
         }
 
-        private void InputManager_MouseKeyDown(MouseEventArgs e)
+        internal void InputManager_MouseMove(MouseMoveEventArgs e)
+        {
+            if (e.Position.IsUnderRectangle(buttonRect))
+            {
+                //System.Console.WriteLine("KEK");
+                mouseHovered = true;
+            }
+            else
+            {
+                mouseHovered = false;
+            }
+        }
+
+        internal void InputManager_MouseKeyDown(MouseEventArgs e)
         {
             if (e.MouseKey != MouseKey.Left)
             {
@@ -41,7 +50,7 @@ namespace Overwolf.Controls
             }
         }
 
-        private void InputManager_MouseKeyUp(MouseEventArgs e)
+        internal void InputManager_MouseKeyUp(MouseEventArgs e)
         {
             if (e.MouseKey != MouseKey.Left)
             {
@@ -50,24 +59,25 @@ namespace Overwolf.Controls
 
             if (e.Position.IsUnderRectangle(buttonRect) && IsKeyDown)
             {
-                Value = true;
-                Click?.Invoke(this, new ButtonEventArgs(Value));
-                Value = false;
+                Click?.Invoke(this, new ButtonEventArgs(IsKeyDown));
             }
             IsKeyDown = false;
         }
 
-        public void SetSize(RectangleF rect)
+        internal void SetRectangle(RectangleF rect)
         {
             buttonRect = rect;
         }
 
-        public void Draw()
+        internal void Draw()
         {
+            if (mouseHovered)
+            {
+                RendererManager.DrawImage("Overwolf.SoftRectangle", buttonRect);
+            }
             //RendererManager.DrawFilledRectangle(buttonRect, new Color(0, 0, 0, 127));
-            var scaleOffset = (buttonRect.Width - buttonRect.Width * Scaling) * 0.5f;
-            RendererManager.DrawImage(TextureKey, new RectangleF(buttonRect.X + scaleOffset, buttonRect.Y + scaleOffset, buttonRect.Width * Scaling, buttonRect.Height * Scaling));
-        }
 
+            RendererManager.DrawImage(TextureKey, new RectangleF(buttonRect.X, buttonRect.Y, buttonRect.Width, buttonRect.Height));
+        }
     }
 }

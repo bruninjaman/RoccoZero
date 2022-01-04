@@ -3,7 +3,7 @@ using Divine.Update;
 
 namespace Overwolf
 {
-    public class Bootstrap : Bootstrapper
+    internal class Bootstrap : Bootstrapper
     {
         private Context context;
 

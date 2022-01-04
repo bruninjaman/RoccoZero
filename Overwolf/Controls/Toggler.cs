@@ -6,29 +6,40 @@ using Divine.Renderer;
 
 using Overwolf.Controls.EventArgs;
 
+using System;
+
 namespace Overwolf.Renderer
 {
     internal sealed class Toggler
     {
+        internal delegate void TooglerEventHandler(Toggler button, TooglerEventArgs e);
+        internal event TooglerEventHandler ValueChanged;
         private RectangleF togglerRect;
-        public delegate void TooglerEventHandler(Toggler button, TooglerEventArgs e);
-        public event TooglerEventHandler ValueChanged;
-        public bool Value;
         private bool IsKeyDown;
+        private bool mouseHovered;
         private readonly string TextureKey;
-        private readonly float Scaling;
+        internal bool Value { get; private set; }
 
-        public Toggler(string textureKey, float scaling = 1f)
+        internal Toggler(string textureKey)
         {
             togglerRect = new RectangleF();
-            Scaling = scaling;
             TextureKey = textureKey;
-            RendererManager.LoadImage(textureKey);
-            InputManager.MouseKeyDown += InputManager_MouseKeyDown;
-            InputManager.MouseKeyUp += InputManager_MouseKeyUp;
+            RendererManager.LoadImage(textureKey);;
         }
 
-        private void InputManager_MouseKeyDown(MouseEventArgs e)
+        internal void InputManager_MouseMove(MouseMoveEventArgs e)
+        {
+            if (e.Position.IsUnderRectangle(togglerRect))
+            {
+                mouseHovered = true;
+            }
+            else
+            {
+                mouseHovered = false;
+            }
+        }
+
+        internal void InputManager_MouseKeyDown(MouseEventArgs e)
         {
             if (e.MouseKey != MouseKey.Left)
             {
@@ -41,7 +52,7 @@ namespace Overwolf.Renderer
             }
         }
 
-        private void InputManager_MouseKeyUp(MouseEventArgs e)
+        internal void InputManager_MouseKeyUp(MouseEventArgs e)
         {
             if (e.MouseKey != MouseKey.Left)
             {
@@ -51,21 +62,24 @@ namespace Overwolf.Renderer
             if (e.Position.IsUnderRectangle(togglerRect) && IsKeyDown)
             {
                 Value = !Value;
-                ValueChanged?.Invoke(this, new TooglerEventArgs());
+                ValueChanged?.Invoke(this, new TooglerEventArgs(Value));
             }
             IsKeyDown = false;
         }
 
-        public void SetRectangle(RectangleF rect)
+        internal void SetRectangle(RectangleF rect)
         {
             togglerRect = rect;
         }
 
-        public void Draw()
+        internal void Draw()
         {
+            if (mouseHovered)
+            {
+                RendererManager.DrawImage("Overwolf.SoftRectangle", togglerRect);
+            }
             //RendererManager.DrawFilledRectangle(togglerRect, new Color(0, 0, 0, 127));
-            var scaleOffset = (togglerRect.Width - (togglerRect.Width * Scaling)) * 0.5f;
-            RendererManager.DrawImage(TextureKey, new RectangleF(togglerRect.X + scaleOffset, togglerRect.Y + scaleOffset, togglerRect.Width * Scaling, togglerRect.Height * Scaling));
+            RendererManager.DrawImage(TextureKey, new RectangleF(togglerRect.X + (togglerRect.Width * 0.1f), togglerRect.Y + (togglerRect.Width * 0.1f), togglerRect.Width * 0.8f, togglerRect.Height * 0.8f));
         }
     }
 }

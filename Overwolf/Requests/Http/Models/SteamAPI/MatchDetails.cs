@@ -1,9 +1,4 @@
-﻿using Divine.Game;
-
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
-
-using static Overwolf.Data.Data;
+﻿using System.Collections.Generic;
 
 namespace Overwolf.Requests.Http.Models.SteamAPI
 {
@@ -78,6 +73,4 @@ namespace Overwolf.Requests.Http.Models.SteamAPI
     {
         public Result result { get; set; }
     }
-
-
 }

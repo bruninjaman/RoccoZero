@@ -12,6 +12,7 @@ namespace Overwolf.Data
     {
         internal class PlayerData
         {
+            internal bool partyWithNextPlayer { get; set; }
             internal uint id { get; set; }
             internal HeroId heroId { get; set; }
             internal string name { get; set; }
@@ -23,8 +24,6 @@ namespace Overwolf.Data
             internal bool isAnonymous { get; set; } = true;
             internal uint matchCount { get; set; }
             internal uint winPercent { get; set; }
-            //public int behaviorChart { get; set; }
-
         }
 
         internal class Match
@@ -56,7 +55,7 @@ namespace Overwolf.Data
 
         internal class HttpMessage
         {
-            public ulong matchId { get; internal set; }
+            internal ulong matchId { get; set; }
             internal RequestType requestType { get; set; }
             internal uint accountId { get; set; }
             internal int playerNumber { get; set; }
@@ -68,7 +67,7 @@ namespace Overwolf.Data
         internal enum RequestType
         {
             GetDivineStratzData = 0,
-            GetMatchDetails = 1,
+            GetDivineMatchDetails = 1,
         }
 
         internal enum LaneSelectonFlags
