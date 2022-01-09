@@ -12,27 +12,28 @@ using Core.Managers.Entity;
 using Core.Managers.Menu;
 using Core.Managers.Menu.EventArgs;
 using Core.Managers.Menu.Items;
+
+using Divine.Entity.Entities.Abilities.Components;
 using Divine.Modifier;
+using Divine.Modifier.EventArgs;
 using Divine.Numerics;
 using Divine.Particle;
-using Divine.Update;
-using Divine.Modifier.EventArgs;
 using Divine.Particle.Components;
 using Divine.Particle.Particles;
-using Divine.Entity.Entities.Abilities.Components;
+using Divine.Update;
 
 using MainMenu;
 
-internal class HeroDeny //: IHudModule
+internal class HeroDeny : IHudModule
 {
-    private readonly HashSet<AbilityId> denyAbilities = new HashSet<AbilityId>
+    private readonly HashSet<AbilityId> denyAbilities = new()
     {
         AbilityId.queenofpain_shadow_strike,
         AbilityId.doom_bringer_doom,
         AbilityId.venomancer_venomous_gale,
     };
 
-    private readonly HashSet<string> denyModifiers = new HashSet<string>
+    private readonly HashSet<string> denyModifiers = new()
     {
         "modifier_queenofpain_shadow_strike",
         "modifier_doom_bringer_doom",
@@ -41,7 +42,7 @@ internal class HeroDeny //: IHudModule
 
     private readonly MenuSwitcher show;
 
-    private readonly Dictionary<Unit9, Particle> units = new Dictionary<Unit9, Particle>();
+    private readonly Dictionary<Unit9, Particle> units = new();
 
     private bool added;
 

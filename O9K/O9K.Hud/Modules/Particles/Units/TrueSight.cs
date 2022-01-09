@@ -8,19 +8,20 @@ using Core.Managers.Entity;
 using Core.Managers.Menu;
 using Core.Managers.Menu.EventArgs;
 using Core.Managers.Menu.Items;
-using Divine.Modifier;
-using Divine.Particle;
-using Divine.Modifier.EventArgs;
-using Divine.Particle.Components;
-using Divine.Particle.Particles;
+
 using Divine.Entity.Entities.Components;
 using Divine.Entity.Entities.Units.Heroes;
+using Divine.Modifier;
+using Divine.Modifier.EventArgs;
+using Divine.Particle;
+using Divine.Particle.Components;
+using Divine.Particle.Particles;
 
 using MainMenu;
 
 internal class TrueSight : IHudModule
 {
-    private readonly Dictionary<uint, Particle> effects = new Dictionary<uint, Particle>();
+    private readonly Dictionary<uint, Particle> effects = new();
 
     private readonly MenuSwitcher show;
 
@@ -63,12 +64,12 @@ internal class TrueSight : IHudModule
                 return;
             }
 
-            if (!(sender is Hero))
+            if (sender is not Hero)
             {
                 return;
             }
 
-            if (modifier.Name != "modifier_truesight" && modifier.Name != "modifier_item_dustofappearance")
+            if (modifier.Name is not "modifier_truesight" and not "modifier_item_dustofappearance")
             {
                 return;
             }
@@ -98,12 +99,12 @@ internal class TrueSight : IHudModule
                 return;
             }
 
-            if (!(sender is Hero))
+            if (sender is not Hero)
             {
                 return;
             }
 
-            if (modifier.Name != "modifier_truesight" && modifier.Name != "modifier_item_dustofappearance")
+            if (modifier.Name is not "modifier_truesight" and not "modifier_item_dustofappearance")
             {
                 return;
             }
