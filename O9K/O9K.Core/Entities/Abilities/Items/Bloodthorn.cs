@@ -31,7 +31,7 @@ public class Bloodthorn : RangedAbility, /*IHasDamageAmplify,*/ IDisable
 
     public string AmplifierModifierName { get; } = "modifier_bloodthorn_debuff";
 
-    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
+    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.All;
 
     public UnitState AppliesUnitState { get; } = UnitState.Silenced;
 

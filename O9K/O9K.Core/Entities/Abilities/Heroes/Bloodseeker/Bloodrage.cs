@@ -22,14 +22,14 @@ public class Bloodrage : RangedAbility, IHasDamageAmplify, IBuff
         : base(baseAbility)
     {
         //todo different in/out dmg amp
-        this.amplifierData = new SpecialData(baseAbility, "damage_increase_incoming_pct");
+        this.amplifierData = new SpecialData(baseAbility, "spell_amp");
     }
 
     public DamageType AmplifierDamageType { get; } = DamageType.Magical | DamageType.Physical | DamageType.Pure;
 
     public string[] AmplifierModifierNames { get; } = { "modifier_bloodseeker_bloodrage" };
 
-    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.All;
+    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Outgoing;
 
     public string BuffModifierName { get; } = "modifier_bloodseeker_bloodrage";
 

@@ -7,7 +7,7 @@ using Divine.Entity.Entities.Abilities.Components;
 
 using Metadata;
 
-[AbilityId((AbilityId)6484)]
+[AbilityId(AbilityId.snapfire_gobble_up)]
 public class GobbleUp : RangedAbility
 {
     public GobbleUp(Ability baseAbility)
