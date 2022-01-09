@@ -31,20 +31,28 @@ namespace Overwolf.Renderer
         private CoreMain CoreMain;
         private readonly Vector2 ScreenSize;
         private readonly Menu MainMenu;
-        private readonly Button close_button;
-        private readonly Toggler settings_switcher;
+        private readonly Button closeButton;
+        private readonly Toggler settingsToggler;
         private string TextureBackground;
         private bool initDone;
         private RectangleF windowRect;
         private RectangleF customRect;
         private Vector2 posOffset;
         private bool IsKeyDown;
-        private RectangleF originalRect;
         private RectangleF windowHeaderRect;
         private Dictionary<int, bool> IsNormalized = new Dictionary<int, bool>();
         private Dictionary<int, Dictionary<int, RectangleF>> LastGamesPositions = new Dictionary<int, Dictionary<int, RectangleF>>();
+        private Vector2 firstPos;
+        private float roleSize;
+        private float gap;
+        internal bool isWindowOpened;
+        internal bool isSettingsOpened;
+        private RectangleF settingsRect;
+        private RectangleF closeButtonRect;
+        private RectangleF settingsTogglerRect;
+        private Color fontColor;
 
-        public MainWindow(Context context)
+        internal MainWindow(Context context)
         {
             Context = context;
             CoreMain = Context.CoreMain;
@@ -52,11 +60,11 @@ namespace Overwolf.Renderer
             MainMenu = context.Menu;
 
             LoadCFG();
-            //close_button = new Button("panorama/images/control_icons/x_close_png.vtex_c");
-            //close_button.Click += Close_button_Click;
+            closeButton = new Button("panorama/images/control_icons/x_close_png.vtex_c");
+            closeButton.Click += CloseButton_Click;
 
-            //settings_switcher = new Toggler("panorama/images/control_icons/gear_png.vtex_c", 0.8f);
-            //settings_switcher.ValueChanged += Settings_switcher_ValueChanged;
+            settingsToggler = new Toggler("panorama/images/control_icons/gear_png.vtex_c");
+            settingsToggler.ValueChanged += SettingsToggler_ValueChanged;
 
             var fileNames = new List<string>() { "Default 1", "Default 2", "Booba" };
 
@@ -71,8 +79,31 @@ namespace Overwolf.Renderer
             RendererManager.LoadImageFromAssembly("Overwolf.Default 2", "Overwolf.Resources.default_bg_2.png");
             RendererManager.LoadImageFromAssembly("Overwolf.Booba", "Overwolf.Resources.booba_bg.png");
             RendererManager.LoadImageFromAssembly("Overwolf.AddInfoBG", "Overwolf.Resources.add_info_bg.png");
-            RendererManager.LoadImage("Overwolf.MatchLose", "panorama/images/status_icons/timer_ring_psd.vtex_c", new ImageProperties { ColorTint = Color.Red }, ImageType.Default);
-            RendererManager.LoadImage("Overwolf.MatchWin", "panorama/images/status_icons/timer_ring_psd.vtex_c", new ImageProperties { ColorTint = Color.LimeGreen }, ImageType.Default);
+            RendererManager.LoadImageFromAssembly(
+                "Overwolf.SettingsBG",
+                "Overwolf.Resources.settings_bg.png",
+                new ImageProperties { ColorTint = new Color(255, 255, 255, 160) });
+            RendererManager.LoadImage(
+                "Overwolf.MatchLose",
+                "panorama/images/status_icons/timer_ring_psd.vtex_c",
+                new ImageProperties { ColorTint = Color.Red },
+                ImageType.Default);
+            RendererManager.LoadImage(
+                "Overwolf.MatchWin",
+                "panorama/images/status_icons/timer_ring_psd.vtex_c",
+                new ImageProperties { ColorTint = Color.LimeGreen },
+                ImageType.Default);
+            RendererManager.LoadImage(
+                "Overwolf.SoftCircle",
+                "panorama/images/masks/softedge_circle_sharper_png.vtex_c",
+                new ImageProperties { ColorTint = new Color(0, 0, 0, 205) },
+                ImageType.Default);
+            RendererManager.LoadImage(
+                "Overwolf.SoftRectangle",
+                "panorama/images/masks/softedge_box_irregular_png.vtex_c",
+                new ImageProperties { ColorTint = new Color(0, 0, 0, 127) },
+                ImageType.Default);
+
 
             foreach (var file in Directory.GetFiles(Path.Combine(Directories.Resources, @"Textures\Overwolf")))
             {
@@ -92,28 +123,90 @@ namespace Overwolf.Renderer
                 "\nfile along the path \"Divine\\Resources\\Textures\\Overwolf\" to get" +
                 "\n\"Divine\\Resources\\Textures\\Overwolf\\background.png\"");
 
+            MainMenu.OverwolfSwitcher.ValueChanged += OverwolfSwitcher_ValueChanged;
             MainMenu.OverwolfToggleKey.ValueChanged += OverwolfToggleKey_ValueChanged;
             MainMenu.OverwolfBackGround.ValueChanged += OverwolfBackGround_ValueChanged;
+            MainMenu.OverwolfFontColorR.ValueChanged += OverwolfFontColorR_ValueChanged;
+            MainMenu.OverwolfFontColorG.ValueChanged += OverwolfFontColorG_ValueChanged;
+            MainMenu.OverwolfFontColorB.ValueChanged += OverwolfFontColorB_ValueChanged;
+            MainMenu.OverwolfFontColorA.ValueChanged += OverwolfFontColorA_ValueChanged;
         }
 
-        private void Settings_switcher_ValueChanged(Toggler button, TooglerEventArgs e)
+        private void OverwolfFontColorA_ValueChanged(MenuSlider slider, SliderEventArgs e)
         {
+            fontColor = new Color(fontColor.R, fontColor.G, fontColor.B, e.NewValue);
         }
 
-        private void Close_button_Click(Button button, Controls.EventArgs.ButtonEventArgs e)
+        private void OverwolfFontColorB_ValueChanged(MenuSlider slider, SliderEventArgs e)
         {
+            fontColor = new Color(fontColor.R, fontColor.G, e.NewValue, fontColor.A);
+        }
+
+        private void OverwolfFontColorG_ValueChanged(MenuSlider slider, SliderEventArgs e)
+        {
+            fontColor = new Color(fontColor.R, e.NewValue, fontColor.B, fontColor.A);
+        }
+
+        private void OverwolfFontColorR_ValueChanged(MenuSlider slider, SliderEventArgs e)
+        {
+            fontColor = new Color(e.NewValue, fontColor.G, fontColor.B, fontColor.A);
+        }
+
+        private void CloseButton_Click(Button button, Controls.EventArgs.ButtonEventArgs e)
+        {
+            MainMenu.OverwolfToggleKey.Value = false;
+        }
+
+        private void SettingsToggler_ValueChanged(Toggler button, TooglerEventArgs e)
+        {
+            if (e.Value)
+            {
+                isSettingsOpened = true;
+            }
+            else
+            {
+                isSettingsOpened = false;
+            }
+        }
+
+        private void OverwolfSwitcher_ValueChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+        {
+            if (!e.Value && MainMenu.OverwolfToggleKey.Value)
+            {
+                MainMenu.OverwolfToggleKey.Value = false;
+            }
         }
 
         private void OverwolfToggleKey_ValueChanged(Divine.Menu.Items.MenuToggleKey toggleKey, ToggleKeyEventArgs e)
         {
+            if (!MainMenu.OverwolfSwitcher.Value && e.Value)
+            {
+                MainMenu.OverwolfToggleKey.Value = false;
+                return;
+            }
 
-            if (e.Value)
+            isWindowOpened = e.Value;
+
+            UpdateEvents(e.Value);
+        }
+
+        private void UpdateEvents(bool value)
+        {
+            if (value)
             {
                 RendererManager.Draw += RendererManager_Draw;
                 UpdateManager.Update += UpdateManager_Update;
                 InputManager.MouseKeyDown += InputManager_MouseKeyDown;
                 InputManager.MouseKeyUp += InputManager_MouseKeyUp;
                 InputManager.MouseMove += InputManager_MouseMove;
+
+                InputManager.MouseKeyDown += closeButton.InputManager_MouseKeyDown;
+                InputManager.MouseKeyUp += closeButton.InputManager_MouseKeyUp;
+                InputManager.MouseMove += closeButton.InputManager_MouseMove;
+
+                InputManager.MouseKeyDown += settingsToggler.InputManager_MouseKeyDown;
+                InputManager.MouseKeyUp += settingsToggler.InputManager_MouseKeyUp;
+                InputManager.MouseMove += settingsToggler.InputManager_MouseMove;
             }
             else
             {
@@ -122,17 +215,31 @@ namespace Overwolf.Renderer
                 InputManager.MouseKeyDown -= InputManager_MouseKeyDown;
                 InputManager.MouseKeyUp -= InputManager_MouseKeyUp;
                 InputManager.MouseMove -= InputManager_MouseMove;
+
+                InputManager.MouseKeyDown -= closeButton.InputManager_MouseKeyDown;
+                InputManager.MouseKeyUp -= closeButton.InputManager_MouseKeyUp;
+                InputManager.MouseMove -= closeButton.InputManager_MouseMove;
+
+                InputManager.MouseKeyDown -= settingsToggler.InputManager_MouseKeyDown;
+                InputManager.MouseKeyUp -= settingsToggler.InputManager_MouseKeyUp;
+                InputManager.MouseMove -= settingsToggler.InputManager_MouseMove;
             }
         }
 
         private void UpdateManager_Update()
         {
-
         }
 
         private void InputManager_MouseMove(MouseMoveEventArgs e)
         {
-            if (!e.Process || !IsKeyDown)
+            if (isWindowOpened && e.Position.IsUnderRectangle(windowRect))
+            {
+                e.Process = false;
+            }
+            if (e.Position.IsUnderRectangle(closeButtonRect)
+                || e.Position.IsUnderRectangle(settingsTogglerRect)
+                /*|| !e.Process */
+                || !IsKeyDown)
             {
                 return;
             }
@@ -149,7 +256,16 @@ namespace Overwolf.Renderer
 
         private void InputManager_MouseKeyDown(MouseEventArgs e)
         {
-            if (e.MouseKey != MouseKey.Left || !e.Process || IsKeyDown)
+            if (isWindowOpened && e.Position.IsUnderRectangle(windowRect))
+            {
+                e.Process = false;
+            }
+
+            if (e.MouseKey != MouseKey.Left
+                || e.Position.IsUnderRectangle(closeButtonRect)
+                || e.Position.IsUnderRectangle(settingsTogglerRect)
+                /*|| !e.Process */
+                || IsKeyDown)
             {
                 return;
             }
@@ -163,7 +279,16 @@ namespace Overwolf.Renderer
 
         private void InputManager_MouseKeyUp(MouseEventArgs e)
         {
-            if (e.MouseKey != MouseKey.Left || !IsKeyDown)
+            if (isWindowOpened && e.Position.IsUnderRectangle(windowRect))
+            {
+                e.Process = false;
+            }
+
+            if (e.MouseKey != MouseKey.Left
+                || e.Position.IsUnderRectangle(closeButtonRect)
+                || e.Position.IsUnderRectangle(settingsTogglerRect)
+                /*|| !e.Process */
+                || !IsKeyDown)
             {
                 return;
             }
@@ -177,7 +302,7 @@ namespace Overwolf.Renderer
 
         private void RendererManager_Draw()
         {
-            if (!initDone) return;
+            if (!initDone || !isWindowOpened) return;
 
             //Draw background
             if (TextureBackground == "Default 1")
@@ -190,9 +315,23 @@ namespace Overwolf.Renderer
             }
             //
 
+            //Close button
+            closeButtonRect = new RectangleF(windowRect.X + windowRect.Width - ((windowRect.Height * 0.04f) + gap), windowRect.Y + gap, windowRect.Height * 0.04f, windowRect.Height * 0.04f);
+            closeButton.SetRectangle(closeButtonRect);
+            closeButton.Draw();
+            //
+
+            //Settings button
+            settingsTogglerRect = new RectangleF(closeButtonRect.X - ((windowRect.Height * 0.04f) + (gap * 0.5f)), closeButtonRect.Y, closeButtonRect.Height, closeButtonRect.Height);
+            settingsToggler.SetRectangle(settingsTogglerRect);
+            settingsToggler.Draw();
+            //
+
             //RendererManager.DrawRectangle(windowHeaderRect, Color.Black);
 
-            float gap = windowRect.Height * 0.017f;
+            gap = windowRect.Height * 0.017f;
+            firstPos = new Vector2(windowRect.X + (gap * 2f), windowRect.Y + (windowRect.Height * 0.094f) + gap);
+            roleSize = windowRect.Height * 0.05f;
 
             //Logo & Text
             var logoRect = new RectangleF(windowRect.X + (gap * 2f), windowRect.Y + gap, windowRect.Height * 0.034f, windowRect.Height * 0.034f);
@@ -204,7 +343,7 @@ namespace Overwolf.Renderer
             RendererManager.DrawText(
                 "OVERWOLF DIVINE",
                 overwolfTextRect,
-                Color.White,
+                fontColor,
                 "Lato",
                 windowRect.Height * 0.025f);
             //
@@ -225,7 +364,7 @@ namespace Overwolf.Renderer
             RendererManager.DrawText(
                 "Most Played",
                 mostPlayedRect,
-                Color.White,
+                fontColor,
                 "Lato",
                 windowRect.Height * 0.025f);
             //
@@ -236,7 +375,7 @@ namespace Overwolf.Renderer
             RendererManager.DrawText(
                 "Matches",
                 matchesRect,
-                Color.White,
+                fontColor,
                 "Lato",
                 windowRect.Height * 0.025f);
             //
@@ -247,7 +386,7 @@ namespace Overwolf.Renderer
             RendererManager.DrawText(
                 "Win(%)",
                 winPercentRect,
-                Color.White,
+                fontColor,
                 "Lato",
                 windowRect.Height * 0.025f);
             //
@@ -258,197 +397,14 @@ namespace Overwolf.Renderer
             RendererManager.DrawText(
                 "Last Games",
                 lastGamestRect,
-                Color.White,
+                fontColor,
                 "Lato",
                 windowRect.Height * 0.025f);
             //
 
-            var firstPos = new Vector2(windowRect.X + (gap * 2f), windowRect.Y + (windowRect.Height * 0.094f) + gap);
-            var roleSize = windowRect.Height * 0.05f;
             for (int i = 1; i <= 5; i++)
             {
-                var containsKey = CoreMain.playerTable.ContainsKey(i - 1);
-                //Role Icon
-                var roleRect = new RectangleF(firstPos.X, firstPos.Y, roleSize, roleSize);
-
-                if (containsKey)
-                {
-                    //RendererManager.DrawFilledRectangle(roleRect, new Color(0, 0, 0, 127));
-                    var roleModRect = roleRect;
-                    var roleImage = $"panorama/images/rank_tier_icons/handicap/{CoreMain.playerTable[i - 1].laneSelectonFlags}icon_psd.vtex_c";
-                    if (CoreMain.playerTable[i - 1].laneSelectonFlags == Data.Data.LaneSelectonFlags.Unknown)
-                    {
-                        roleImage = "panorama/images/control_icons/question_mark_circle_psd.vtex_c";
-                        roleModRect = new RectangleF(roleRect.X + ((roleSize * 0.25f) * 0.5f), roleRect.Y + ((roleSize * 0.25f) * 0.5f), roleSize * 0.75f, roleSize * 0.75f);
-                    }
-                    RendererManager.DrawImage(roleImage, roleModRect, ImageType.Default, true);
-                }
-                //
-
-                //Party Indicator
-                //
-
-                //Rank Icon
-                var rankRect = new RectangleF(roleRect.X + roleRect.Width + (gap * 3), roleRect.Y - ((roleSize * 0.25f) * 0.5f), roleSize * 1.25f, roleSize * 1.25f);
-
-                if (containsKey)
-                {
-                    var rankNum = CoreMain.playerTable[i - 1].rankTier / 10;
-                    var pipNum = CoreMain.playerTable[i - 1].rankTier % 10;
-                    var rank = $"panorama/images/rank_tier_icons/rank{rankNum}_psd.vtex_c";
-                    var pip = $"panorama/images/rank_tier_icons/pip{pipNum}_psd.vtex_c";
-
-                    //RendererManager.DrawFilledRectangle(rankRect, new Color(0, 0, 0, 127));
-                    RendererManager.DrawImage(rank, rankRect, ImageType.Default, true);
-                    if (pipNum != 0)
-                        RendererManager.DrawImage(pip, rankRect, ImageType.Default, true);
-                }
-                //
-
-                //Player Name
-                var nameRect = new RectangleF(rankRect.X + rankRect.Width + gap, firstPos.Y, (windowRect.Width * 0.16f), roleSize);
-
-                if (containsKey)
-                {
-                    var textSize = RendererManager.MeasureText(CoreMain.playerTable[i - 1].name, "Lato", windowRect.Height * 0.025f);
-
-                    if (textSize.X >= nameRect.Width && (!IsNormalized.ContainsKey(i - 1) || !IsNormalized[i - 1]))
-                    {
-                        CoreMain.playerTable[i - 1].name = CoreMain.playerTable[i - 1].name.Remove(CoreMain.playerTable[i - 1].name.Length);
-                        IsNormalized[i - 1] = false;
-                    }
-                    else
-                    {
-                        if (IsNormalized.ContainsKey(i - 1) && IsNormalized[i - 1])
-                        {
-                            CoreMain.playerTable[i - 1].name = CoreMain.playerTable[i - 1].name.Insert(CoreMain.playerTable[i - 1].name.Length, "...");
-                            IsNormalized[i - 1] = true;
-                        }
-                    }
-                    //RendererManager.DrawFilledRectangle(nameRect, new Color(0, 0, 0, 127));
-                    RendererManager.DrawText(
-                        CoreMain.playerTable[i - 1].name,
-                        nameRect,
-                        Color.White,
-                        "Lato",
-                        FontFlags.Left | FontFlags.VerticalCenter,
-                        windowRect.Height * 0.025f);
-                }
-                //
-
-                //Most Played
-                var mostPlayedIconRect = new RectangleF(nameRect.X + nameRect.Width + gap, firstPos.Y, roleSize, roleSize);
-                var mostPlayedTextRect = new RectangleF(mostPlayedIconRect.X + mostPlayedIconRect.Width, firstPos.Y, roleSize * 1.25f, roleSize);
-                for (int k = 1; k <= 3; k++)
-                {
-                    if (containsKey
-                        && !CoreMain.playerTable[i - 1].isAnonymous
-                        && CoreMain.playerTable[i - 1].mostPlayed.Count > 0
-                        && CoreMain.playerTable[i - 1].mostPlayed.Count >= k)
-                    {
-                        //RendererManager.DrawFilledRectangle(mostPlayedIconRect, new Color(0, 0, 0, 127));
-                        RendererManager.DrawImage(CoreMain.playerTable[i - 1].mostPlayed[k - 1].heroId, mostPlayedIconRect, UnitImageType.MiniUnit, true);
-                        //RendererManager.DrawFilledRectangle(mostPlayedTextRect, new Color(0, 0, 0, 127));
-                        RendererManager.DrawText(
-                            $"{CoreMain.playerTable[i - 1].mostPlayed[k - 1].matchCount}",
-                            mostPlayedTextRect,
-                            Color.White,
-                            "Lato",
-                            FontFlags.Center | FontFlags.Top,
-                            windowRect.Height * 0.02f);
-                        RendererManager.DrawText(
-                            $"{(uint)Math.Round(((float)CoreMain.playerTable[i - 1].mostPlayed[k - 1].winCount / (float)CoreMain.playerTable[i - 1].mostPlayed[k - 1].matchCount) * 100f)}%",
-                            mostPlayedTextRect,
-                            Color.White,
-                            "Lato",
-                            FontFlags.Center | FontFlags.Bottom,
-                            windowRect.Height * 0.017f);
-                    }
-                    if (k != 3)
-                    {
-                        mostPlayedIconRect.X += mostPlayedIconRect.Width + mostPlayedTextRect.Width;
-                        mostPlayedTextRect.X += mostPlayedTextRect.Width + mostPlayedIconRect.Width;
-                    }
-                }
-
-                if (containsKey && CoreMain.playerTable[i - 1].isAnonymous)
-                {
-                    var matchesHiddenTextRect = new RectangleF(nameRect.X + nameRect.Width + gap, firstPos.Y, (mostPlayedIconRect.Width + mostPlayedTextRect.Width) * 3, roleSize);
-                    RendererManager.DrawText(
-                        "Hidden",
-                        matchesHiddenTextRect,
-                        Color.White,
-                        "Lato",
-                        FontFlags.Center | FontFlags.VerticalCenter,
-                        windowRect.Height * 0.03f);
-                }
-                //
-
-                //Matches
-                var matchesTextRect = new RectangleF(mostPlayedTextRect.X + mostPlayedTextRect.Width + gap, firstPos.Y, (windowRect.Width * 0.058f), roleSize);
-                if (containsKey)
-                {
-                    //RendererManager.DrawFilledRectangle(matchesTextRect, new Color(0, 0, 0, 127));
-                    var matchesText = $"{CoreMain.playerTable[i - 1].matchCount}";
-                    if (CoreMain.playerTable[i - 1].isAnonymous)
-                        matchesText = "Hidden";
-
-                    RendererManager.DrawText(
-                        matchesText,
-                        matchesTextRect,
-                        Color.White,
-                        "Lato",
-                        FontFlags.Center | FontFlags.VerticalCenter,
-                        windowRect.Height * 0.03f);
-                }
-                //
-
-                //Win Percent
-                var winPercentsTextRect = new RectangleF(matchesTextRect.X + matchesTextRect.Width + gap, firstPos.Y, (windowRect.Width * 0.1f), roleSize);
-                if (containsKey)
-                {
-                    //RendererManager.DrawFilledRectangle(winPercentsTextRect, new Color(0, 0, 0, 127));
-                    var winPercentsText = $"{CoreMain.playerTable[i - 1].winPercent}%";
-                    if (CoreMain.playerTable[i - 1].isAnonymous)
-                        winPercentsText = "Hidden";
-
-                    RendererManager.DrawText(
-                        winPercentsText,
-                        winPercentsTextRect,
-                        Color.White,
-                        "Lato",
-                        FontFlags.Center | FontFlags.VerticalCenter,
-                        windowRect.Height * 0.03f);
-                }
-                //
-
-                //Last Games
-                var LastGameIconRect = new RectangleF(winPercentsTextRect.X + winPercentsTextRect.Width + gap + (windowRect.Width * 0.01f), firstPos.Y, roleSize, roleSize);
-                for (int k = 1; k <= 8; k++)
-                {
-                    if (containsKey && CoreMain.playerTable[i - 1].recentMatches.Count >= k)
-                    {
-                        //RendererManager.DrawFilledRectangle(LastGameIconRect, new Color(0, 0, 0, 127));
-                        RendererManager.DrawImage(CoreMain.playerTable[i - 1].recentMatches[k - 1].heroId, LastGameIconRect, UnitImageType.RoundUnit, true);
-                        var ringColor = "Overwolf.MatchLose";
-                        if (CoreMain.playerTable[i - 1].recentMatches[k - 1].wonMatch)
-                            ringColor = "Overwolf.MatchWin";
-                        RendererManager.DrawImage(ringColor, LastGameIconRect, ImageType.Default, true);
-
-                        if (!LastGamesPositions.ContainsKey(i - 1))
-                            LastGamesPositions.Add(i - 1, new Dictionary<int, RectangleF>());
-
-                        if (!LastGamesPositions[i - 1].ContainsKey(k - 1))
-                            LastGamesPositions[i - 1].Add(k - 1, LastGameIconRect);
-                    }
-                    if (k != 8)
-                    {
-                        LastGameIconRect.X += mostPlayedIconRect.Width + gap;
-                    }
-                }
-                //
-
-                firstPos.Y += (roleSize + gap);
+                DrawInfoForPlayer(i);
             }
             firstPos.Y += (windowRect.Height * 0.03f);
             //
@@ -467,195 +423,241 @@ namespace Overwolf.Renderer
 
             for (int i = 6; i <= 10; i++)
             {
-                var containsKey = CoreMain.playerTable.ContainsKey(i - 1);
-                //Role Icon
-                var roleRect = new RectangleF(firstPos.X, firstPos.Y, roleSize, roleSize);
-
-                if (containsKey)
-                {
-                    //RendererManager.DrawFilledRectangle(roleRect, new Color(0, 0, 0, 127));
-                    var roleModRect = roleRect;
-                    var roleImage = $"panorama/images/rank_tier_icons/handicap/{CoreMain.playerTable[i - 1].laneSelectonFlags}icon_psd.vtex_c";
-                    if (CoreMain.playerTable[i - 1].laneSelectonFlags == Data.Data.LaneSelectonFlags.Unknown)
-                    {
-                        roleImage = "panorama/images/control_icons/question_mark_circle_psd.vtex_c";
-                        roleModRect = new RectangleF(roleRect.X + ((roleSize * 0.25f) * 0.5f), roleRect.Y + ((roleSize * 0.25f) * 0.5f), roleSize * 0.75f, roleSize * 0.75f);
-                    }
-                    RendererManager.DrawImage(roleImage, roleModRect, ImageType.Default, true);
-                }
-                //
-
-                //Party Indicator
-                //
-
-                //Rank Icon
-                var rankRect = new RectangleF(roleRect.X + roleRect.Width + (gap * 3), roleRect.Y - ((roleSize * 0.25f) * 0.5f), roleSize * 1.25f, roleSize * 1.25f);
-
-                if (containsKey)
-                {
-                    var rankNum = CoreMain.playerTable[i - 1].rankTier / 10;
-                    var pipNum = CoreMain.playerTable[i - 1].rankTier % 10;
-                    var rank = $"panorama/images/rank_tier_icons/rank{rankNum}_psd.vtex_c";
-                    var pip = $"panorama/images/rank_tier_icons/pip{pipNum}_psd.vtex_c";
-
-                    //RendererManager.DrawFilledRectangle(rankRect, new Color(0, 0, 0, 127));
-                    RendererManager.DrawImage(rank, rankRect, ImageType.Default, true);
-                    if (pipNum != 0)
-                        RendererManager.DrawImage(pip, rankRect, ImageType.Default, true);
-                }
-                //
-
-                //Player Name
-                var nameRect = new RectangleF(rankRect.X + rankRect.Width + gap, firstPos.Y, (windowRect.Width * 0.16f), roleSize);
-
-                if (containsKey)
-                {
-                    var textSize = RendererManager.MeasureText(CoreMain.playerTable[i - 1].name, "Lato", windowRect.Height * 0.025f);
-
-                    if (textSize.X >= nameRect.Width && (!IsNormalized.ContainsKey(i - 1) || !IsNormalized[i - 1]))
-                    {
-                        CoreMain.playerTable[i - 1].name = CoreMain.playerTable[i - 1].name.Remove(CoreMain.playerTable[i - 1].name.Length);
-                        IsNormalized[i - 1] = false;
-                    }
-                    else
-                    {
-                        if (IsNormalized.ContainsKey(i - 1) && IsNormalized[i - 1])
-                        {
-                            CoreMain.playerTable[i - 1].name = CoreMain.playerTable[i - 1].name.Insert(CoreMain.playerTable[i - 1].name.Length, "...");
-                            IsNormalized[i - 1] = true;
-                        }
-                    }
-                    //RendererManager.DrawFilledRectangle(nameRect, new Color(0, 0, 0, 127));
-                    RendererManager.DrawText(
-                        CoreMain.playerTable[i - 1].name,
-                        nameRect,
-                        Color.White,
-                        "Lato",
-                        FontFlags.Left | FontFlags.VerticalCenter,
-                        windowRect.Height * 0.025f);
-                }
-                //
-
-                //Most Played
-                var mostPlayedIconRect = new RectangleF(nameRect.X + nameRect.Width + gap, firstPos.Y, roleSize, roleSize);
-                var mostPlayedTextRect = new RectangleF(mostPlayedIconRect.X + mostPlayedIconRect.Width, firstPos.Y, roleSize * 1.25f, roleSize);
-                for (int k = 1; k <= 3; k++)
-                {
-                    if (containsKey
-                        && !CoreMain.playerTable[i - 1].isAnonymous
-                        && CoreMain.playerTable[i - 1].mostPlayed.Count > 0
-                        && CoreMain.playerTable[i - 1].mostPlayed.Count >= k)
-                    {
-                        //RendererManager.DrawFilledRectangle(mostPlayedIconRect, new Color(0, 0, 0, 127));
-                        RendererManager.DrawImage(CoreMain.playerTable[i - 1].mostPlayed[k - 1].heroId, mostPlayedIconRect, UnitImageType.MiniUnit, true);
-                        //RendererManager.DrawFilledRectangle(mostPlayedTextRect, new Color(0, 0, 0, 127));
-                        RendererManager.DrawText(
-                            $"{CoreMain.playerTable[i - 1].mostPlayed[k - 1].matchCount}",
-                            mostPlayedTextRect,
-                            Color.White,
-                            "Lato",
-                            FontFlags.Center | FontFlags.Top,
-                            windowRect.Height * 0.02f);
-                        RendererManager.DrawText(
-                            $"{(uint)Math.Round(((float)CoreMain.playerTable[i - 1].mostPlayed[k - 1].winCount / (float)CoreMain.playerTable[i - 1].mostPlayed[k - 1].matchCount) * 100f)}%",
-                            mostPlayedTextRect,
-                            Color.White,
-                            "Lato",
-                            FontFlags.Center | FontFlags.Bottom,
-                            windowRect.Height * 0.017f);
-                    }
-                    if (k != 3)
-                    {
-                        mostPlayedIconRect.X += mostPlayedIconRect.Width + mostPlayedTextRect.Width;
-                        mostPlayedTextRect.X += mostPlayedTextRect.Width + mostPlayedIconRect.Width;
-                    }
-                }
-
-                if (containsKey && CoreMain.playerTable[i - 1].isAnonymous)
-                {
-                    var matchesHiddenTextRect = new RectangleF(nameRect.X + nameRect.Width + gap, firstPos.Y, (mostPlayedIconRect.Width + mostPlayedTextRect.Width) * 3, roleSize);
-                    RendererManager.DrawText(
-                        "Hidden",
-                        matchesHiddenTextRect,
-                        Color.White,
-                        "Lato",
-                        FontFlags.Center | FontFlags.VerticalCenter,
-                        windowRect.Height * 0.03f);
-                }
-                //
-
-                //Matches
-                var matchesTextRect = new RectangleF(mostPlayedTextRect.X + mostPlayedTextRect.Width + gap, firstPos.Y, (windowRect.Width * 0.058f), roleSize);
-                if (containsKey)
-                {
-                    //RendererManager.DrawFilledRectangle(matchesTextRect, new Color(0, 0, 0, 127));
-                    var matchesText = $"{CoreMain.playerTable[i - 1].matchCount}";
-                    if (CoreMain.playerTable[i - 1].isAnonymous)
-                        matchesText = "Hidden";
-
-                    RendererManager.DrawText(
-                        matchesText,
-                        matchesTextRect,
-                        Color.White,
-                        "Lato",
-                        FontFlags.Center | FontFlags.VerticalCenter,
-                        windowRect.Height * 0.03f);
-                }
-                //
-
-                //Win Percent
-                var winPercentsTextRect = new RectangleF(matchesTextRect.X + matchesTextRect.Width + gap, firstPos.Y, (windowRect.Width * 0.1f), roleSize);
-                if (containsKey)
-                {
-                    //RendererManager.DrawFilledRectangle(winPercentsTextRect, new Color(0, 0, 0, 127));
-                    var winPercentsText = $"{CoreMain.playerTable[i - 1].winPercent}%";
-                    if (CoreMain.playerTable[i - 1].isAnonymous)
-                        winPercentsText = "Hidden";
-
-                    RendererManager.DrawText(
-                        winPercentsText,
-                        winPercentsTextRect,
-                        Color.White,
-                        "Lato",
-                        FontFlags.Center | FontFlags.VerticalCenter,
-                        windowRect.Height * 0.03f);
-                }
-                //
-
-                //Last Games
-                var LastGameIconRect = new RectangleF(winPercentsTextRect.X + winPercentsTextRect.Width + gap + (windowRect.Width * 0.01f), firstPos.Y, roleSize, roleSize);
-                for (int k = 1; k <= 8; k++)
-                {
-                    if (containsKey && CoreMain.playerTable[i - 1].recentMatches.Count >= k)
-                    {
-                        //RendererManager.DrawFilledRectangle(LastGameIconRect, new Color(0, 0, 0, 127));
-                        RendererManager.DrawImage(CoreMain.playerTable[i - 1].recentMatches[k - 1].heroId, LastGameIconRect, UnitImageType.RoundUnit, true);
-                        var ringColor = "Overwolf.MatchLose";
-                        if (CoreMain.playerTable[i - 1].recentMatches[k - 1].wonMatch)
-                            ringColor = "Overwolf.MatchWin";
-                        RendererManager.DrawImage(ringColor, LastGameIconRect, ImageType.Default, true);
-
-                        if (!LastGamesPositions.ContainsKey(i - 1))
-                            LastGamesPositions.Add(i - 1, new Dictionary<int, RectangleF>());
-
-                        if (!LastGamesPositions[i - 1].ContainsKey(k - 1))
-                            LastGamesPositions[i - 1].Add(k - 1, LastGameIconRect);
-                    }
-                    if (k != 8)
-                    {
-                        LastGameIconRect.X += mostPlayedIconRect.Width + gap;
-                    }
-                }
-                //
-
-                firstPos.Y += (roleSize + gap);
+                DrawInfoForPlayer(i);
             }
+
+            DrawAdditionalInfo();
+
+            if (isSettingsOpened)
+            {
+                settingsRect = new RectangleF(
+                    settingsTogglerRect.X + settingsTogglerRect.Width - (windowRect.Width * 0.22f),
+                    settingsTogglerRect.Y + settingsTogglerRect.Height,
+                    windowRect.Width * 0.22f,
+                    windowRect.Width * 0.16f);
+                RendererManager.DrawImage("Overwolf.SettingsBG", settingsRect);
+            }
+        }
+
+        private void DrawInfoForPlayer(int i)
+        {
+            var containsKey = CoreMain.playerTable.ContainsKey(i - 1);
+            //Role Icon
+            var roleRect = new RectangleF(firstPos.X, firstPos.Y, roleSize, roleSize);
+            if (containsKey)
+            {
+                //RendererManager.DrawFilledRectangle(roleRect, new Color(0, 0, 0, 127));
+                var roleModRect = roleRect;
+                var roleImage = $"panorama/images/rank_tier_icons/handicap/{CoreMain.playerTable[i - 1].laneSelectonFlags}icon_psd.vtex_c";
+                if (CoreMain.playerTable[i - 1].laneSelectonFlags == Data.Data.LaneSelectonFlags.Unknown)
+                {
+                    roleImage = "panorama/images/control_icons/question_mark_circle_psd.vtex_c";
+                    roleModRect = new RectangleF(roleRect.X + ((roleSize * 0.25f) * 0.5f), roleRect.Y + ((roleSize * 0.25f) * 0.5f), roleSize * 0.75f, roleSize * 0.75f);
+                }
+                RendererManager.DrawImage(roleImage, roleModRect, ImageType.Default, true);
+            }
+            //
+
+            //Party Indicator
+            var partyPosition = new Vector2(roleRect.X + roleRect.Width + (gap * 2f), roleRect.Y + (roleRect.Height * 0.5f));
+            var partyPosition2 = new Vector2(partyPosition.X + gap, partyPosition.Y);
+            var partyNextPosition = new Vector2(roleRect.X + roleRect.Width + (gap * 2f), partyPosition.Y + (roleSize + gap));
+            var partyNextPosition2 = new Vector2(partyNextPosition.X + gap, partyNextPosition.Y);
+            if (containsKey)
+            {
+                if (CoreMain.playerTable[i - 1].partyWithNextPlayer)
+                {
+
+                    var strokeStyle = RendererManager.CreateStrokeStyle(CapStyle.Round, CapStyle.Round);
+                    RendererManager.DrawLine(partyPosition, partyPosition2, fontColor, 2f, strokeStyle);
+                    RendererManager.DrawLine(partyNextPosition, partyNextPosition2, fontColor, 2f, strokeStyle);
+                    RendererManager.DrawLine(partyPosition, partyNextPosition, fontColor, 2f, strokeStyle);
+                }
+            }
+            //
+
+            //Rank Icon
+            var rankRect = new RectangleF(roleRect.X + roleRect.Width + (gap * 3), roleRect.Y - ((roleSize * 0.25f) * 0.5f), roleSize * 1.25f, roleSize * 1.25f);
+            if (containsKey)
+            {
+                var rankNum = CoreMain.playerTable[i - 1].rankTier / 10;
+                var pipNum = CoreMain.playerTable[i - 1].rankTier % 10;
+                var rank = $"panorama/images/rank_tier_icons/rank{rankNum}_psd.vtex_c";
+                var pip = $"panorama/images/rank_tier_icons/pip{pipNum}_psd.vtex_c";
+
+                //RendererManager.DrawFilledRectangle(rankRect, new Color(0, 0, 0, 127));
+                RendererManager.DrawImage(rank, rankRect, ImageType.Default, true);
+                if (pipNum != 0)
+                    RendererManager.DrawImage(pip, rankRect, ImageType.Default, true);
+            }
+            //
+
+            //Player Name
+            var nameRect = new RectangleF(rankRect.X + rankRect.Width + gap, firstPos.Y, (windowRect.Width * 0.16f), roleSize);
+            if (containsKey)
+            {
+                var textSize = RendererManager.MeasureText(CoreMain.playerTable[i - 1].name, "Lato", windowRect.Height * 0.025f);
+
+                if (textSize.X >= nameRect.Width && (!IsNormalized.ContainsKey(i - 1) || !IsNormalized[i - 1]))
+                {
+                    CoreMain.playerTable[i - 1].name = CoreMain.playerTable[i - 1].name.Remove(CoreMain.playerTable[i - 1].name.Length);
+                    IsNormalized[i - 1] = false;
+                }
+                else
+                {
+                    if (IsNormalized.ContainsKey(i - 1) && IsNormalized[i - 1])
+                    {
+                        CoreMain.playerTable[i - 1].name = CoreMain.playerTable[i - 1].name.Insert(CoreMain.playerTable[i - 1].name.Length, "...");
+                        IsNormalized[i - 1] = true;
+                    }
+                }
+                //RendererManager.DrawFilledRectangle(nameRect, new Color(0, 0, 0, 127));
+                RendererManager.DrawText(
+                    CoreMain.playerTable[i - 1].name,
+                    nameRect,
+                    fontColor,
+                    "Lato",
+                    FontFlags.Left | FontFlags.VerticalCenter,
+                    windowRect.Height * 0.025f);
+            }
+            //
+
+            //Most Played
+            var mostPlayedIconRect = new RectangleF(nameRect.X + nameRect.Width + gap, firstPos.Y, roleSize, roleSize);
+            var mostPlayedTextRect = new RectangleF(mostPlayedIconRect.X + mostPlayedIconRect.Width, firstPos.Y, roleSize * 1.25f, roleSize);
+            for (int k = 1; k <= 3; k++)
+            {
+                if (containsKey
+                    && !CoreMain.playerTable[i - 1].isAnonymous
+                    && CoreMain.playerTable[i - 1].mostPlayed.Count > 0
+                    && CoreMain.playerTable[i - 1].mostPlayed.Count >= k)
+                {
+                    //RendererManager.DrawFilledRectangle(mostPlayedIconRect, new Color(0, 0, 0, 127));
+                    RendererManager.DrawImage(CoreMain.playerTable[i - 1].mostPlayed[k - 1].heroId, mostPlayedIconRect, UnitImageType.MiniUnit, true);
+                    //RendererManager.DrawFilledRectangle(mostPlayedTextRect, new Color(0, 0, 0, 127));
+                    RendererManager.DrawText(
+                        $"{CoreMain.playerTable[i - 1].mostPlayed[k - 1].matchCount}",
+                        mostPlayedTextRect,
+                        fontColor,
+                        "Lato",
+                        FontFlags.Center | FontFlags.Top,
+                        windowRect.Height * 0.02f);
+                    RendererManager.DrawText(
+                        $"{(uint)Math.Round(((float)CoreMain.playerTable[i - 1].mostPlayed[k - 1].winCount / (float)CoreMain.playerTable[i - 1].mostPlayed[k - 1].matchCount) * 100f)}%",
+                        mostPlayedTextRect,
+                        fontColor,
+                        "Lato",
+                        FontFlags.Center | FontFlags.Bottom,
+                        windowRect.Height * 0.017f);
+                }
+                if (k != 3)
+                {
+                    mostPlayedIconRect.X += mostPlayedIconRect.Width + mostPlayedTextRect.Width;
+                    mostPlayedTextRect.X += mostPlayedTextRect.Width + mostPlayedIconRect.Width;
+                }
+            }
+
+            if (containsKey && CoreMain.playerTable[i - 1].isAnonymous)
+            {
+                var matchesHiddenTextRect = new RectangleF(nameRect.X + nameRect.Width + gap, firstPos.Y, (mostPlayedIconRect.Width + mostPlayedTextRect.Width) * 3, roleSize);
+                RendererManager.DrawText(
+                    "Hidden",
+                    matchesHiddenTextRect,
+                    fontColor,
+                    "Lato",
+                    FontFlags.Center | FontFlags.VerticalCenter,
+                    windowRect.Height * 0.03f);
+            }
+            //
+
+            //Matches
+            var matchesTextRect = new RectangleF(mostPlayedTextRect.X + mostPlayedTextRect.Width + gap, firstPos.Y, (windowRect.Width * 0.058f), roleSize);
+            if (containsKey)
+            {
+                //RendererManager.DrawFilledRectangle(matchesTextRect, new Color(0, 0, 0, 127));
+                var matchesText = $"{CoreMain.playerTable[i - 1].matchCount}";
+                if (CoreMain.playerTable[i - 1].isAnonymous)
+                    matchesText = "Hidden";
+
+                RendererManager.DrawText(
+                    matchesText,
+                    matchesTextRect,
+                    fontColor,
+                    "Lato",
+                    FontFlags.Center | FontFlags.VerticalCenter,
+                    windowRect.Height * 0.03f);
+            }
+            //
+
+            //Win Percent
+            var winPercentsTextRect = new RectangleF(matchesTextRect.X + matchesTextRect.Width + gap, firstPos.Y, (windowRect.Width * 0.1f), roleSize);
+            if (containsKey)
+            {
+                //RendererManager.DrawFilledRectangle(winPercentsTextRect, new Color(0, 0, 0, 127));
+                var winPercentsText = $"{CoreMain.playerTable[i - 1].winPercent}%";
+                if (CoreMain.playerTable[i - 1].isAnonymous)
+                    winPercentsText = "Hidden";
+
+                RendererManager.DrawText(
+                    winPercentsText,
+                    winPercentsTextRect,
+                    fontColor,
+                    "Lato",
+                    FontFlags.Center | FontFlags.VerticalCenter,
+                    windowRect.Height * 0.03f);
+            }
+            //
+
+            //Last Games
+            var LastGameIconRect = new RectangleF(winPercentsTextRect.X + winPercentsTextRect.Width + gap + (windowRect.Width * 0.01f), firstPos.Y, roleSize, roleSize);
+            for (int k = 1; k <= 8; k++)
+            {
+                if (containsKey && CoreMain.playerTable[i - 1].recentMatches.Count >= k)
+                {
+                    //RendererManager.DrawFilledRectangle(LastGameIconRect, new Color(0, 0, 0, 127));
+                    RendererManager.DrawImage(CoreMain.playerTable[i - 1].recentMatches[k - 1].heroId, LastGameIconRect, UnitImageType.RoundUnit, true);
+                    var ringColor = "Overwolf.MatchLose";
+                    if (CoreMain.playerTable[i - 1].recentMatches[k - 1].wonMatch)
+                        ringColor = "Overwolf.MatchWin";
+                    RendererManager.DrawImage(ringColor, LastGameIconRect, ImageType.Default, true);
+
+                    var ImpactRect = new RectangleF(LastGameIconRect.X + (LastGameIconRect.Width * 0.55f), LastGameIconRect.Y + (LastGameIconRect.Height * 0.55f), LastGameIconRect.Width * 0.7f, LastGameIconRect.Height * 0.7f);
+                    RendererManager.DrawImage("Overwolf.SoftCircle", ImpactRect, ImageType.Default, true);
+                    RendererManager.DrawText(
+                        $"{CoreMain.playerTable[i - 1].recentMatches[k - 1].performanceRating}",
+                        ImpactRect,
+                        fontColor,
+                        "Lato",
+                        FontFlags.Center | FontFlags.VerticalCenter,
+                        windowRect.Height * 0.015f);
+
+                    if (!LastGamesPositions.ContainsKey(i - 1))
+                        LastGamesPositions.Add(i - 1, new Dictionary<int, RectangleF>());
+
+                    if (!LastGamesPositions[i - 1].ContainsKey(k - 1))
+                        LastGamesPositions[i - 1].Add(k - 1, LastGameIconRect);
+                }
+
+                if (k != 8)
+                {
+                    LastGameIconRect.X += mostPlayedIconRect.Width + gap;
+                }
+            }
+            //
+
+            firstPos.Y += (roleSize + gap);
+        }
+
+        private void DrawAdditionalInfo()
+        {
 
             foreach (var (i, positions) in LastGamesPositions)
             {
                 foreach (var (k, LastGameIconRect) in positions)
                 {
-                    if (GameManager.MouseScreenPosition.IsUnderRectangle(LastGameIconRect))
+                    if (GameManager.MouseScreenPosition.IsUnderRectangle(LastGameIconRect)
+                        && (!isSettingsOpened
+                        || (isSettingsOpened && !GameManager.MouseScreenPosition.IsUnderRectangle(settingsRect))))
                     {
                         //Additional Info Background
                         var additionalInfoRect = new RectangleF(
@@ -829,7 +831,6 @@ namespace Overwolf.Renderer
                     }
                 }
             }
-
         }
 
         private void OverwolfBackGround_ValueChanged(MenuSelector selector, SelectorEventArgs e)
@@ -901,7 +902,6 @@ namespace Overwolf.Renderer
                         SetDefaultPos();
                         SaveCFG();
                     }
-                    originalRect = windowRect;
                     customRect = new RectangleF(
                         windowRect.X - (windowRect.Width * 0.0225f),
                         windowRect.Y - (windowRect.Height * 0.04f),

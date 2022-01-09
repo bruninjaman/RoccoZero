@@ -16,8 +16,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 using static Overwolf.Data.Data;
 
@@ -25,56 +23,56 @@ namespace Overwolf.Core
 {
     internal sealed class CoreMain
     {
-        public Dictionary<int, PlayerData> playerTable = new Dictionary<int, PlayerData>();
+        private readonly Context Context;
+        private readonly Menu MainMenu;
+        internal Dictionary<int, PlayerData> playerTable = new Dictionary<int, PlayerData>();
         private List<HttpMessage> httpRequests = new List<HttpMessage>();
         private List<ProtoMessage> profileRequests = new List<ProtoMessage>();
-        private List<ProtoMessage> matchDetailsRequests = new List<ProtoMessage>();
         private uint profileRequestsSent = 0;
-        private uint matchDetailsRequestsSent = 0;
-        //private uint stratzDataRequestsSent = 0;
         private Sleeper profileRequestsSleeper = new Sleeper();
-        private Sleeper matchDetailsRequestsSleeper = new Sleeper();
-        //private Sleeper stratzDataRequestsSleeper = new Sleeper();
+        private uint httpRequestsSent = 0;
+        private Sleeper httpRequestsSleeper = new Sleeper();
         private List<TempClass> TempTable = new List<TempClass>()
         {
-            new TempClass { id = 182304190, partyId = 123123, heroId = 12, name = "ks", laneSelectonFlags = LaneSelectonFlags.hardsupport}, //1
-            new TempClass { id = 352031777, partyId = 123123, heroId = 17, name = "Angel ", laneSelectonFlags = LaneSelectonFlags.safelane},
-            new TempClass { id = 452400903, partyId = 454545, heroId = 26, name = "Greedy", laneSelectonFlags = LaneSelectonFlags.softsupport},
-            new TempClass { id = 493967542, partyId = 454545, heroId = 50, name = "Hitman", laneSelectonFlags = LaneSelectonFlags.midlane},
-            new TempClass { id = 924944185, partyId = 454545, heroId = 76, name = "Davai Lama", laneSelectonFlags = LaneSelectonFlags.offlane},
-            new TempClass { id = 103656457, partyId = 999898, heroId = 83, name = "tw.tv/SpeedManq", laneSelectonFlags = LaneSelectonFlags.offlane},
-            new TempClass { id = 117311875, partyId = 999898, heroId = 31, name = "Pablo", laneSelectonFlags = LaneSelectonFlags.softsupport},
-            new TempClass { id = 171498131, partyId = 345345, heroId = 49, name = "Save-", laneSelectonFlags = LaneSelectonFlags.hardsupport},
-            new TempClass { id = 216264942, partyId = 345345, heroId = 22, name = "monkemajor", laneSelectonFlags = LaneSelectonFlags.midlane},
-            new TempClass { id = 218172539, partyId = 345345, heroId = 66, name = "Danial", laneSelectonFlags = LaneSelectonFlags.safelane}, // 10
-            //new TempClass { id = 120303454, partyId = 123123, heroId = 12, name = "ks", laneSelectonFlags = LaneSelectonFlags.hardsupport}, // 1
-            //new TempClass { id = 276901240, partyId = 123123, heroId = 17, name = "Angel ", laneSelectonFlags = LaneSelectonFlags.safelane},
-            //new TempClass { id = 109455705, partyId = 454545, heroId = 26, name = "Greedy", laneSelectonFlags = LaneSelectonFlags.softsupport},
-            //new TempClass { id = 107562000, partyId = 454545, heroId = 50, name = "Hitman", laneSelectonFlags = LaneSelectonFlags.midlane},
-            //new TempClass { id = 138880576, partyId = 454545, heroId = 76, name = "Davai Lama", laneSelectonFlags = LaneSelectonFlags.offlane},
-            //new TempClass { id = 1060164724, partyId = 999898, heroId = 83, name = "tw.tv/SpeedManq", laneSelectonFlags = LaneSelectonFlags.offlane},
-            //new TempClass { id = 117015167, partyId = 999898, heroId = 31, name = "Pablo", laneSelectonFlags = LaneSelectonFlags.softsupport},
-            //new TempClass { id = 317880638, partyId = 345345, heroId = 49, name = "Save-", laneSelectonFlags = LaneSelectonFlags.hardsupport},
-            //new TempClass { id = 52797075, partyId = 345345, heroId = 22, name = "monkemajor", laneSelectonFlags = LaneSelectonFlags.midlane},
-            //new TempClass { id = 120117384, partyId = 345345, heroId = 66, name = "Danial", laneSelectonFlags = LaneSelectonFlags.safelane}, //10
+            //new TempClass { id = 179035658, partyId = 123123, heroId = 12, name = "ks", laneSelectonFlags = LaneSelectonFlags.hardsupport}, //1
+            //new TempClass { id = 136829091, partyId = 123123, heroId = 17, name = "Angel ", laneSelectonFlags = LaneSelectonFlags.safelane},
+            //new TempClass { id = 152545459, partyId = 454545, heroId = 26, name = "Greedy", laneSelectonFlags = LaneSelectonFlags.softsupport},
+            //new TempClass { id = 293904640, partyId = 454545, heroId = 50, name = "Hitman", laneSelectonFlags = LaneSelectonFlags.midlane},
+            //new TempClass { id = 422748003, partyId = 454545, heroId = 76, name = "Davai Lama", laneSelectonFlags = LaneSelectonFlags.offlane},
+            //new TempClass { id = 206642367, partyId = 999898, heroId = 83, name = "tw.tv/SpeedManq", laneSelectonFlags = LaneSelectonFlags.offlane},
+            //new TempClass { id = 198366226, partyId = 999898, heroId = 31, name = "Pablo", laneSelectonFlags = LaneSelectonFlags.softsupport},
+            //new TempClass { id = 916650633, partyId = 345345, heroId = 49, name = "Save-", laneSelectonFlags = LaneSelectonFlags.hardsupport},
+            //new TempClass { id = 197104697, partyId = 345345, heroId = 22, name = "monkemajor", laneSelectonFlags = LaneSelectonFlags.midlane},
+            //new TempClass { id = 301750126, partyId = 345345, heroId = 66, name = "Danial", laneSelectonFlags = LaneSelectonFlags.safelane}, // 10
+            //new TempClass { id = 182304190, partyId = 123123, heroId = 12, name = "ks", laneSelectonFlags = LaneSelectonFlags.hardsupport}, //1
+            //new TempClass { id = 352031777, partyId = 123123, heroId = 17, name = "Angel ", laneSelectonFlags = LaneSelectonFlags.safelane},
+            //new TempClass { id = 452400903, partyId = 454545, heroId = 26, name = "Greedy", laneSelectonFlags = LaneSelectonFlags.softsupport},
+            //new TempClass { id = 493967542, partyId = 454545, heroId = 50, name = "Hitman", laneSelectonFlags = LaneSelectonFlags.midlane},
+            //new TempClass { id = 924944185, partyId = 454545, heroId = 76, name = "Davai Lama", laneSelectonFlags = LaneSelectonFlags.offlane},
+            //new TempClass { id = 103656457, partyId = 999898, heroId = 83, name = "tw.tv/SpeedManq", laneSelectonFlags = LaneSelectonFlags.offlane},
+            //new TempClass { id = 117311875, partyId = 999898, heroId = 31, name = "Pablo", laneSelectonFlags = LaneSelectonFlags.softsupport},
+            //new TempClass { id = 171498131, partyId = 345345, heroId = 49, name = "Save-", laneSelectonFlags = LaneSelectonFlags.hardsupport},
+            //new TempClass { id = 216264942, partyId = 345345, heroId = 22, name = "monkemajor", laneSelectonFlags = LaneSelectonFlags.midlane},
+            //new TempClass { id = 218172539, partyId = 345345, heroId = 66, name = "Danial", laneSelectonFlags = LaneSelectonFlags.safelane}, // 10
+            new TempClass { id = 120303454, partyId = 123123, heroId = 12, name = "ks", laneSelectonFlags = LaneSelectonFlags.hardsupport}, // 1
+            new TempClass { id = 276901240, partyId = 123123, heroId = 17, name = "Angel ", laneSelectonFlags = LaneSelectonFlags.safelane},
+            new TempClass { id = 109455705, partyId = 454545, heroId = 26, name = "Greedy", laneSelectonFlags = LaneSelectonFlags.softsupport},
+            new TempClass { id = 107562000, partyId = 454545, heroId = 50, name = "Hitman", laneSelectonFlags = LaneSelectonFlags.midlane},
+            new TempClass { id = 138880576, partyId = 454545, heroId = 76, name = "Davai Lama", laneSelectonFlags = LaneSelectonFlags.offlane},
+            new TempClass { id = 1060164724, partyId = 999898, heroId = 83, name = "tw.tv/SpeedManq", laneSelectonFlags = LaneSelectonFlags.offlane},
+            new TempClass { id = 117015167, partyId = 999898, heroId = 31, name = "Pablo", laneSelectonFlags = LaneSelectonFlags.softsupport},
+            new TempClass { id = 317880638, partyId = 345345, heroId = 49, name = "Save-", laneSelectonFlags = LaneSelectonFlags.hardsupport},
+            new TempClass { id = 52797075, partyId = 345345, heroId = 22, name = "monkemajor", laneSelectonFlags = LaneSelectonFlags.midlane},
+            new TempClass { id = 120117384, partyId = 345345, heroId = 66, name = "Danial", laneSelectonFlags = LaneSelectonFlags.safelane}, //10
         };
 
-        public CoreMain(Context context)
+        internal CoreMain(Context context)
         {
-            UpdateManager.Update += UpdateManager_Update;
-            NetworkManager.GCSOMessageUpdate += NetworkManager_GCSOMessageUpdate;
-            NetworkManager.GCMessageReceived += NetworkManager_GCMessageReceived;
+            Context = context;
+            MainMenu = Context.Menu;
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            //for (int i = 0; i < 30; i++)
-            //{
-            //    httpRequests.Add(new HttpMessage
-            //    {
-            //        requestType = RequestType.GetStratzData,
-            //        accountId = 372504224,
-            //        startDateTime = DateTime.UtcNow.AddMonths(-1)
-            //    });
-            //}
+            MainMenu.OverwolfSwitcher.ValueChanged += OverwolfSwitcher_ValueChanged;
 
             //for (int i = 0; i < 10; i++)
             //{
@@ -87,12 +85,21 @@ namespace Overwolf.Core
             //    playerTable[i].name = TempTable[i].name;
             //    playerTable[i].laneSelectonFlags = TempTable[i].laneSelectonFlags;
 
+            //    if (i < 9)
+            //    {
+            //        if (TempTable[i].partyId == TempTable[i + 1].partyId)
+            //        {
+            //            playerTable[i].partyWithNextPlayer = true;
+            //        }
+            //    }
+
             //    profileRequests.Add(new ProtoMessage
             //    {
             //        msgId = GCMessageId.CMsgProfileRequest,
             //        accountId = playerTable[i].id,
             //        jobId = (ulong)(i + 1)
             //    });
+
             //    httpRequests.Add(new HttpMessage
             //    {
             //        requestType = RequestType.GetDivineStratzData,
@@ -103,13 +110,29 @@ namespace Overwolf.Core
             //}
         }
 
-        public class TempClass
+        private void OverwolfSwitcher_ValueChanged(Divine.Menu.Items.MenuSwitcher switcher, Divine.Menu.EventArgs.SwitcherEventArgs e)
         {
-            public uint id;
-            public ulong partyId;
-            public int heroId;
-            public string name;
-            public LaneSelectonFlags laneSelectonFlags;
+            if (e.Value)
+            {
+                UpdateManager.Update += UpdateManager_Update;
+                NetworkManager.GCSOMessageUpdate += NetworkManager_GCSOMessageUpdate;
+                NetworkManager.GCMessageReceived += NetworkManager_GCMessageReceived;
+            }
+            else
+            {
+                UpdateManager.Update -= UpdateManager_Update;
+                NetworkManager.GCSOMessageUpdate -= NetworkManager_GCSOMessageUpdate;
+                NetworkManager.GCMessageReceived -= NetworkManager_GCMessageReceived;
+            }
+        }
+
+        internal class TempClass
+        {
+            internal uint id;
+            internal ulong partyId;
+            internal int heroId;
+            internal string name;
+            internal LaneSelectonFlags laneSelectonFlags;
         }
 
         private void NetworkManager_GCMessageReceived(GCMessageReceivedEventArgs e)
@@ -125,11 +148,6 @@ namespace Overwolf.Core
             //Console.WriteLine(e.Protobuf.ToJson());
 
             var jobId = (int)(e.JobId - 1);
-
-            //System.Console.WriteLine(e.Protobuf.MessageId);
-            //System.Console.WriteLine("1: " + e.JobId);
-            //System.Console.WriteLine("2: " + jobId % 10);
-            //System.Console.WriteLine("3: " + jobId / 10);
             var playerId = jobId % 10;
             if (!playerTable.ContainsKey(playerId)) return;
             var player = playerTable[playerId];
@@ -146,7 +164,11 @@ namespace Overwolf.Core
                                 accountId = player.id,
                                 jobId = e.JobId
                             });
-                            profileRequestsSleeper.Sleep(1001);
+                            //if (!profileRequestsSleeper.Sleeping)
+                            //{
+                            //    LogManager.Debug($"ProfileRequest Delay for {player.id} Delay 1000ms");
+                            //    profileRequestsSleeper.Sleep(1000);
+                            //}
                             return;
                         }
                         else if (e.Protobuf.ToJson()["result"].GetValue<string>() != "k_eSuccess")
@@ -169,62 +191,16 @@ namespace Overwolf.Core
 
                             httpRequests.Add(new HttpMessage
                             {
-                                requestType = RequestType.GetMatchDetails,
+                                requestType = RequestType.GetDivineMatchDetails,
                                 matchId = match_id,
                                 playerNumber = playerId,
                                 matchNumber = index,
                             });
 
-                            //matchDetailsRequests.Add(new ProtoMessage
-                            //{
-                            //    msgId = GCMessageId.CMsgGCMatchDetailsRequest,
-                            //    matchId = match_id,
-                            //    jobId = (ulong)(index * 10) + (ulong)(playerId + 1)
-                            //});
-
                             player.recentMatches[index].matchTimestamp = match["match_timestamp"].GetValue<uint>();
                             player.recentMatches[index].performanceRating = match["performance_rating"].GetValue<int>();
                             player.recentMatches[index].heroId = (HeroId)match["hero_id"].GetValue<uint>();
                             player.recentMatches[index].wonMatch = match["won_match"].GetValue<bool>();
-                        }
-                        break;
-                    }
-                case GCMessageId.CMsgGCMatchDetailsResponse:
-                    {
-                        var matchNumber = jobId / 10;
-                        if (e.Protobuf.ToJson()["result"].GetValue<int>() == 2)
-                        {
-                            matchDetailsRequests.Add(new ProtoMessage
-                            {
-                                msgId = GCMessageId.CMsgGCMatchDetailsRequest,
-                                matchId = (uint)player.recentMatches[matchNumber].matchId,
-                                jobId = e.JobId
-                            });
-                            matchDetailsRequestsSleeper.Sleep(1001);
-                            return;
-                        }
-                        else if (e.Protobuf.ToJson()["result"].GetValue<int>() != 1)
-                        {
-                            return;
-                        }
-                        var matchDetails = e.Protobuf.ToJson();
-                        var match = matchDetails["match"];
-                        player.recentMatches[matchNumber].duration = match["duration"].GetValue<uint>();
-
-                        foreach (var playerr in match["players"].AsArray())
-                        {
-                            if (player.id == playerr["account_id"].GetValue<uint>())
-                            {
-                                player.recentMatches[matchNumber].kills = playerr["kills"].GetValue<uint>();
-                                player.recentMatches[matchNumber].deaths = playerr["deaths"].GetValue<uint>();
-                                player.recentMatches[matchNumber].assists = playerr["assists"].GetValue<uint>();
-                                player.recentMatches[matchNumber].XPPerMin = playerr["XP_per_min"].GetValue<uint>();
-                                player.recentMatches[matchNumber].goldPerMin = playerr["gold_per_min"].GetValue<uint>();
-                                player.recentMatches[matchNumber].laneSelectionFlags = playerr["lane_selection_flags"].GetValue<uint>();
-                                player.recentMatches[matchNumber].lastHits = playerr["last_hits"].GetValue<uint>();
-                                player.recentMatches[matchNumber].denies = playerr["denies"].GetValue<uint>();
-                                break;
-                            }
                         }
                         break;
                     }
@@ -238,79 +214,25 @@ namespace Overwolf.Core
             {
                 if (profileRequestsSleeper.Sleeping || profileRequests[i].sent)
                     continue;
-                NetworkManager.SendGCMessageProfileRequest(profileRequests[i].accountId, profileRequests[i].jobId);
                 profileRequests[i].sent = true;
-                LogManager.Debug($"ProfileRequest Delay for {httpRequests[i].accountId} Sent");
-                profileRequests.Remove(profileRequests[i]);
+
+                NetworkManager.SendGCMessageProfileRequest(profileRequests[i].accountId, profileRequests[i].jobId);
+                LogManager.Debug($"ProfileRequest for {profileRequests[i].accountId} Sent {profileRequestsSent}");
+
                 profileRequestsSent++;
-                //Console.WriteLine("Profile requests Sent: " + profileRequestsSent);
-
-
-                //Profile requests delay
-                if (profileRequestsSent % 4 == 0)
+                if (profileRequestsSent % 5 == 0)
                 {
-                    LogManager.Debug($"ProfileRequest Delay for {httpRequests[i].accountId} Delay 4001ms");
-                    profileRequestsSleeper.Sleep(4001);
+                    LogManager.Debug($"ProfileRequest Delay for {profileRequests[i].accountId} Delay 3000ms");
+                    profileRequestsSleeper.Sleep(3000);
                 }
-                //
+                else if (profileRequestsSent % 1 == 0)
+                {
+                    LogManager.Debug($"ProfileRequest Delay for {profileRequests[i].accountId} Delay 200ms");
+                    profileRequestsSleeper.Sleep(200);
+                }
                 break;
             }
             //
-
-            //Match details requests
-            //for (int k = 0; k < matchDetailsRequests.Count; k++)
-            //{
-            //    if (matchDetailsRequestsSleeper.Sleeping || matchDetailsRequests[k].sent)
-            //        continue;
-            //    NetworkManager.SendGCMatchDetailsRequest(matchDetailsRequests[k].matchId, matchDetailsRequests[k].jobId);
-            //    matchDetailsRequests[k].sent = true;
-            //    matchDetailsRequests.Remove(matchDetailsRequests[k]);
-            //    matchDetailsRequestsSent++;
-            //    Console.WriteLine("Match details requests Sent: " + matchDetailsRequestsSent);
-
-
-            //    //Match details requests delay
-            //    if (matchDetailsRequestsSent % 4 == 0)
-            //    {
-            //        Console.WriteLine("Match details request delay 4001ms");
-            //        Console.WriteLine("Match details requests Sent: " + matchDetailsRequestsSent);
-            //        Console.WriteLine("Proto requests Sent: " + (profileRequestsSent + matchDetailsRequestsSent));
-            //        matchDetailsRequestsSleeper.Sleep(4001);
-            //    }
-            //    //
-            //    break;
-            //}
-            //
-
-
-            //if (!httpRequests[0].sent)
-            //{
-            //    httpRequests[0].sent = true;
-            //    var responseMessages = await HttpRequests.GetStratzDataAsync(httpRequests).ConfigureAwait(false);
-            //    foreach (var responseMessage in responseMessages)
-            //    {
-            //        //if (responseMessage.IsSuccessStatusCode)
-            //        //{
-            //        var rateLimitReset = responseMessage.Headers.FirstOrDefault(x => x.Key == "RateLimit-Reset").Value.FirstOrDefault();
-            //        var rateLimitRemaining = responseMessage.Headers.FirstOrDefault(x => x.Key == "RateLimit-Remaining").Value.FirstOrDefault();
-            //        var rateLimitRemainingSecond = responseMessage.Headers.FirstOrDefault(x => x.Key == "X-RateLimit-Remaining-Second").Value.FirstOrDefault();
-            //        var rateLimitRemainingMinutes = responseMessage.Headers.FirstOrDefault(x => x.Key == "X-RateLimit-Remaining-Minute").Value.FirstOrDefault();
-            //        var rateLimitRemainingHour = responseMessage.Headers.FirstOrDefault(x => x.Key == "X-RateLimit-Remaining-Hour").Value.FirstOrDefault();
-            //        var rateLimitRemainingDay = responseMessage.Headers.FirstOrDefault(x => x.Key == "X-RateLimit-Remaining-Day").Value.FirstOrDefault();
-
-            //        Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} | GetStratzData for httpRequests[i].accountId");
-            //        Console.WriteLine($"RateLimit-Reset: {rateLimitReset}");
-            //        Console.WriteLine($"RateLimit-Remaining: {rateLimitRemaining}");
-            //        Console.WriteLine($"RateLimit-Remaining-Second: {rateLimitRemainingSecond}");
-            //        Console.WriteLine($"RateLimit-Remaining-Minute: {rateLimitRemainingMinutes}");
-            //        Console.WriteLine($"RateLimit-Remaining-Hour: {rateLimitRemainingHour}");
-            //        Console.WriteLine($"RateLimit-Remaining-Day: {rateLimitRemainingDay}");
-            //        //Console.WriteLine(responseMessage.Headers);
-            //        Console.WriteLine("===================================================================");
-            //        //Console.WriteLine(responseMessage.Headers);
-            //        //}
-            //    }
-            //}
 
             //Http requests
             for (int i = 0; i < httpRequests.Count; i++)
@@ -319,26 +241,25 @@ namespace Overwolf.Core
                 {
                     case RequestType.GetDivineStratzData:
                         {
-                            if (/*stratzDataRequestsSleeper.Sleeping || */httpRequests[i].sent)
+                            if (httpRequestsSleeper.Sleeping || httpRequests[i].sent)
                                 continue;
                             httpRequests[i].sent = true;
+                            httpRequestsSent++;
+                            if (httpRequestsSent % 1 == 0)
+                            {
+                                LogManager.Debug($"httpRequests Delay for {httpRequests[i].accountId} Delay 100ms");
+                                httpRequestsSleeper.Sleep(100);
+                            }
+
                             LogManager.Debug($"GetDivineStratzData for {httpRequests[i].accountId} Sent");
-                            //stratzDataRequestsSent++;
-                            //if (stratzDataRequestsSent % 9 == 0)
-                            //{
-                            //    Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} | GetDivineStratzData for {httpRequests[i].accountId} Delay 100ms");
-                            //    Console.WriteLine("===================================================================");
-                            //    stratzDataRequestsSleeper.Sleep(100);
-                            //}
                             var stratzData = await HttpRequests.GetDivineStratzDataAsync(
                                 httpRequests[i].accountId,
                                 httpRequests[i].startDateTime).ConfigureAwait(false);
                             if (stratzData == null) continue;
 
                             var playerNumber = httpRequests[i].playerNumber;
-                            //Console.WriteLine("id: " + stratzData?.mainInfo?.steamAccount?.id);
-                            //Console.WriteLine("isAnonymous: " + stratzData?.mainInfo?.steamAccount?.isAnonymous);
-                            playerTable[playerNumber].isAnonymous = stratzData.mainInfo.steamAccount.isAnonymous;
+
+                            playerTable[playerNumber].isAnonymous = stratzData?.mainInfo?.steamAccount?.isAnonymous ?? true;
                             if (!playerTable[playerNumber].isAnonymous)
                             {
                                 playerTable[playerNumber].matchCount = (uint)stratzData.mainInfo.matchCount;
@@ -352,40 +273,22 @@ namespace Overwolf.Core
                             }
                             break;
                         }
-                    case RequestType.GetMatchDetails:
+                    case RequestType.GetDivineMatchDetails:
                         {
-                            if (matchDetailsRequestsSleeper.Sleeping || httpRequests[i].sent)
+                            if (httpRequestsSleeper.Sleeping || httpRequests[i].sent)
                                 continue;
                             httpRequests[i].sent = true;
-                            LogManager.Debug($"GetMatchDetails for {httpRequests[i].matchId} Sent");
-                            matchDetailsRequestsSent++;
-                            if (matchDetailsRequestsSent % 9 == 0)
+                            httpRequestsSent++;
+                            if (httpRequestsSent % 1 == 0)
                             {
-                                LogManager.Debug($"GetMatchDetails for {httpRequests[i].matchId} Delay 500ms");
-                                matchDetailsRequestsSleeper.Sleep(500);
-                            }
-                            var responseMessage = await HttpRequests.GetMatchDetailsAsync(httpRequests[i].matchId).ConfigureAwait(false);
-
-                            MatchDetails matchDetails = null;
-                            if (responseMessage.IsSuccessStatusCode)
-                            {
-                                matchDetails = await responseMessage.Content.ReadFromJsonAsync<MatchDetails>().ConfigureAwait(false);
-                            }
-                            else if ((int)responseMessage.StatusCode == 429)
-                            {
-                                httpRequests.Add(new HttpMessage
-                                {
-                                    requestType = RequestType.GetMatchDetails,
-                                    matchId = httpRequests[i].matchId,
-                                    playerNumber = httpRequests[i].playerNumber,
-                                    matchNumber = httpRequests[i].matchNumber,
-                                });
-                                LogManager.Debug($"GetMatchDetails for {httpRequests[i].matchId} Delay 500ms");
-                                matchDetailsRequestsSleeper.Sleep(500);
-                                continue;
+                                LogManager.Debug($"httpRequests Delay for {httpRequests[i].matchId} Delay 100ms");
+                                httpRequestsSleeper.Sleep(100);
                             }
 
-                            if (matchDetails == null || matchDetails.result.error != null || matchDetails.result.players == null) continue;
+                            LogManager.Debug($"GetDivineMatchDetails for {httpRequests[i].matchId} Sent");
+                            var matchDetails = await HttpRequests.GetDivineMatchDetailsAsync(httpRequests[i].matchId).ConfigureAwait(false);
+
+                            if (matchDetails == null || matchDetails?.result?.error != null || matchDetails?.result?.players == null) continue;
 
                             var playerNumber = httpRequests[i].playerNumber;
                             var matchNumber = httpRequests[i].matchNumber;
@@ -402,26 +305,11 @@ namespace Overwolf.Core
                                     playerTable[playerNumber].recentMatches[matchNumber].goldPerMin = (uint)player.gold_per_min;
                                     playerTable[playerNumber].recentMatches[matchNumber].lastHits = (uint)player.last_hits;
                                     playerTable[playerNumber].recentMatches[matchNumber].denies = (uint)player.denies;
+                                    break;
                                 }
                             }
                             break;
                         }
-                    //case RequestType.GetStratzData:
-                    //    {
-                    //        if (httpRequests[i].sent)
-                    //            continue;
-                    //        httpRequests[i].sent = true;
-                    //        var responseMessage = await HttpRequests.GetStratzDataAsync(httpRequests[i].accountId, httpRequests[i].startDateTime).ConfigureAwait(false);
-                    //        if (responseMessage.IsSuccessStatusCode)
-                    //        {
-                    //            var bool1 = responseMessage.Headers.TryGetValues("RateLimit-Reset", out var rateLimitReset);
-                    //            var bool2 = responseMessage.Headers.TryGetValues("RateLimit-Remaining", out var rateLimitRemaining);
-                    //            Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss:fff")} | GetStratzData for {httpRequests[i].accountId} RateLimit-Reset: {(bool1 ? rateLimitReset.ToList()[0] : string.Empty)} RateLimit-Remaining: {(bool2 ? rateLimitRemaining.ToList()[0] : string.Empty)}");
-                    //            Console.WriteLine("===================================================================");
-                    //            //Console.WriteLine(responseMessage.Headers);
-                    //        }
-                    //        break;
-                    //    }
                 }
                 break;
             }
@@ -432,6 +320,9 @@ namespace Overwolf.Core
         {
             var lobbyDataProto = e.Protobuf;
             if (lobbyDataProto.MessageId != GCSOMessageId.CSODOTALobby) return;
+
+            if (!Context.Menu.OverwolfToggleKey.Value)
+                Context.Menu.OverwolfToggleKey.Value = true;
 
             var lobbyDataJson = lobbyDataProto.ToJson();
             var members = lobbyDataJson["all_members"].AsArray();
@@ -447,6 +338,15 @@ namespace Overwolf.Core
                 if (ulong.TryParse(member["party_id"].GetValue<string>(), out var party_id))
                     playerTable[i].partyId = party_id;
 
+                if (i < (members.Count - 1))
+                {
+                    if (ulong.TryParse(members[i + 1]["party_id"].GetValue<string>(), out var nextParty_id)
+                        && party_id == nextParty_id)
+                    {
+                        playerTable[i].partyWithNextPlayer = true;
+                    }
+                }
+
                 playerTable[i].heroId = (HeroId)member["hero_id"].GetValue<uint>();
                 playerTable[i].name = member["name"].GetValue<string>().Windows1251ToUtf8();
                 playerTable[i].laneSelectonFlags = (LaneSelectonFlags)member["lane_selection_flags"].GetValue<int>();
@@ -458,18 +358,15 @@ namespace Overwolf.Core
                     accountId = playerTable[i].id,
                     jobId = (ulong)(i + 1)
                 });
+
                 httpRequests.Add(new HttpMessage
                 {
                     requestType = RequestType.GetDivineStratzData,
                     accountId = playerTable[i].id,
                     playerNumber = i,
-                    startDateTime = DateTime.UtcNow.AddMonths(-1)
+                    startDateTime = DateTime.Today.AddMonths(-1)
                 });
-                //NetworkManager.SendGCMessageProfileRequest(playerTable[i].id, (ulong)(i + 1));
-                //NetworkManager.SendGCClientToGCRequestPlayerRecentAccomplishments(playerTable[i].id, (ulong)(i + 1));
-                //DateTime.Today.AddDays(-DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month))
             }
-            Console.WriteLine(DateTime.UtcNow);
         }
 
         private uint SteamId64to32(ulong steamId64)
@@ -477,7 +374,7 @@ namespace Overwolf.Core
             return (uint)(steamId64 & 0xFFFFFFFF);
         }
 
-        public void Dispose()
+        internal void Dispose()
         {
         }
     }

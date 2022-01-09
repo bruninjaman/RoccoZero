@@ -2,9 +2,9 @@
 {
     internal sealed class ButtonEventArgs : System.EventArgs
     {
-        public bool Value { get; set; }
+        internal bool Value { get; set; }
 
-        public ButtonEventArgs(bool value)
+        internal ButtonEventArgs(bool value)
         {
             Value = value;
         }

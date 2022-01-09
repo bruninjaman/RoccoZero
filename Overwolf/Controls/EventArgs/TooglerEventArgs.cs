@@ -2,10 +2,10 @@
 {
     internal sealed class TooglerEventArgs : System.EventArgs
     {
-
-        public TooglerEventArgs()
+        internal bool Value { get; set; }
+        internal TooglerEventArgs(bool value)
         {
-
+            Value = value;
         }
     }
 }

@@ -1,20 +1,14 @@
 ﻿using Divine.Game;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Overwolf.Helpers
 {
-    public sealed class Sleeper
+    internal sealed class Sleeper
     {
         private bool isSleeping;
 
         private float sleepTime;
 
-        public bool Sleeping
+        internal bool Sleeping
         {
             get
             {
@@ -28,13 +22,13 @@ namespace Overwolf.Helpers
             }
         }
 
-        public void Reset()
+        internal void Reset()
         {
             sleepTime = 0;
             isSleeping = false;
         }
 
-        public void Sleep(float milliseconds)
+        internal void Sleep(float milliseconds)
         {
             sleepTime = GameManager.Time * 1000 + milliseconds;
             isSleeping = true;
