@@ -8,13 +8,11 @@ using Divine.Helpers;
 
 using Metadata;
 
-using O9K.Core.Managers.Context;
-
 internal class MainMenu : IMainMenu, IModule
 {
-    public MainMenu()
+    public MainMenu(Menu menu)
     {
-        this.RootMenu = new Menu("Item manager", "O9K.ItemManager").SetTexture(nameof(AbilityId.courier_go_to_secretshop));
+        this.RootMenu = menu;
 
         this.AutoActionsMenu = this.RootMenu.Add(new Menu("Auto actions"));
         this.AutoActionsMenu.AddTranslation(Lang.Ru, "Автоматическое использование");
@@ -63,11 +61,9 @@ internal class MainMenu : IMainMenu, IModule
 
     public void Activate()
     {
-        Context9.MenuManager.AddRootMenu(this.RootMenu);
     }
 
     public void Dispose()
     {
-        Context9.MenuManager.RemoveRootMenu(this.RootMenu);
     }
 }

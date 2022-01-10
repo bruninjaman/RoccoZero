@@ -151,13 +151,12 @@ internal class AbilityManager : IHudModule
             if (e.OldValue)
             {
                 //todo delete
-                if (AppDomain.CurrentDomain.GetAssemblies()
-                    .Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("VisionControl")))
+                if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.GetName().Name.Contains("VisionControl")))
                 {
                     Hud.DisplayWarning("O9K.Hud // VisionControl is already included in O9K.Hud");
                 }
 
-                if (AppDomain.CurrentDomain.GetAssemblies().Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("BeAware")))
+                if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.GetName().Name.Contains("BeAware")))
                 {
                     Hud.DisplayWarning("O9K.Hud // BeAware is already included in O9K.Hud");
                 }
@@ -206,6 +205,21 @@ internal class AbilityManager : IHudModule
             EntityManager.EntityRemoved -= this.OnRemoveEntity;
             UpdateManager.DestroyIngameUpdate(this.OnUpdateRemove);
             UpdateManager.DestroyIngameUpdate(this.OnUpdateWard);
+
+            foreach (var drawableAbility in drawableAbilities)
+            {
+                try
+                {
+                    drawableAbility.RemoveRange();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            }
+
+            drawableAbilities.Clear();
+            enemyUnits.Clear();
         }
     }
 

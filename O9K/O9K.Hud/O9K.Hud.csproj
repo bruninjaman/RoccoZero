@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\O9K.Core\O9K.Core.csproj" />
+    <ProjectReference Include="..\O9K.ItemManager\O9K.ItemManager.csproj" />
   </ItemGroup>
 
   <ItemGroup>

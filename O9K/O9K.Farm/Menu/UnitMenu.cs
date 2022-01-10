@@ -11,7 +11,7 @@ internal class UnitMenu
         var menu = rootMenu.GetOrAdd(new Menu(unit.DisplayName, unit.Name).SetTexture(unit.DefaultName));
 
         this.LastHitMenu = new UnitLastHitMenu(unit, menu);
-        //  this.UnitPushMenu = new UnitPushMenu(unit, menu);
+        //this.UnitPushMenu = new UnitPushMenu(unit, menu);
 
         this.AdditionalDelay = menu.GetOrAdd(new MenuSlider("Timing adjustment", "delay", 0, -250, 250));
         this.AdditionalDelay.SetTooltip("Higher value => earlier attack");
@@ -33,6 +33,8 @@ internal class UnitMenu
     public MenuSlider BonusRange { get; }
 
     public UnitLastHitMenu LastHitMenu { get; }
+
+    //public UnitPushMenu UnitPushMenu { get; }
 }
 
 internal class UnitLastHitMenu
@@ -77,4 +79,26 @@ internal class UnitLastHitMenu
     public MenuSwitcher LastHit { get; }
 
     public Menu Menu { get; }
+}
+
+internal class UnitPushMenu
+{
+    public UnitPushMenu(Unit9 unit, Menu menu)
+    {
+        var orAdd = menu.GetOrAdd(new Menu("Push settings", "push"));
+        orAdd.AddTranslation(Lang.Ru, "Настройки пуша");
+        orAdd.AddTranslation(Lang.Cn, "推送设置");
+
+        this.LastHit = orAdd.GetOrAdd(new MenuSwitcher("Last hit", "lastHit"));
+        this.LastHit.AddTranslation(Lang.Ru, "Ласт хита");
+        this.LastHit.AddTranslation(Lang.Cn, "最后一击");
+
+        this.Deny = orAdd.GetOrAdd(new MenuSwitcher(nameof(Deny), "deny"));
+        this.Deny.AddTranslation(Lang.Ru, "Денай");
+        this.Deny.AddTranslation(Lang.Cn, "反补");
+    }
+
+    public MenuSwitcher Deny { get; }
+
+    public MenuSwitcher LastHit { get; }
 }

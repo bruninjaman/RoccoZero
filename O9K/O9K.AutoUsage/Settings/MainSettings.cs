@@ -7,13 +7,9 @@ using Core.Managers.Menu.Items;
 
 internal class MainSettings : IDisposable
 {
-    private readonly IMenuManager9 menuManager;
-
-    public MainSettings(IMenuManager9 menuManager)
+    public MainSettings(Menu menu)
     {
-        this.menuManager = menuManager;
-
-        this.Menu = new Menu("Auto usage", "O9K.AutoUsage").SetTexture("techies_focused_detonate");
+        this.Menu = menu;
         var settingsMenu = this.Menu.Add(new Menu("Settings"));
         settingsMenu.AddTranslation(Lang.Ru, "Настройки");
         settingsMenu.AddTranslation(Lang.Cn, "设置");
@@ -30,7 +26,6 @@ internal class MainSettings : IDisposable
         this.LinkensBreakSettings = new GroupSettings(this.Menu, settingsMenu, "Linken\'s break", 300, false);
         this.AutocastSettings = new GroupSettings(this.Menu, settingsMenu, "Autocast", 0);
         this.TreeCutSettings = new GroupSettings(this.Menu, settingsMenu, "Tree cut", 200);
-        menuManager.AddRootMenu(this.Menu);
     }
 
     public GroupSettings TreeCutSettings { get; }
@@ -61,6 +56,5 @@ internal class MainSettings : IDisposable
 
     public void Dispose()
     {
-        this.menuManager.RemoveRootMenu(this.Menu);
     }
 }

@@ -17,10 +17,11 @@ using Core.Entities.Metadata;
 using Core.Entities.Units;
 using Core.Extensions;
 using Core.Helpers;
-using Divine.Extensions;
-using Divine.Game;
+
 using Divine.Entity.Entities.Abilities.Components;
 using Divine.Entity.Entities.Units.Heroes.Components;
+using Divine.Extensions;
+using Divine.Game;
 
 using Modes;
 
@@ -232,14 +233,14 @@ internal class EarthSpirit : ControllableUnit
 
         var abilityHelper = new AbilityHelper(targetManager, null, this);
 
-        if (this.Owner.HasModifier("modifier_earth_spirit_rolling_boulder_caster"))
-        {
-            if (abilityHelper.ForceUseAbility(this.stone, true))
-            {
-                this.ComboSleeper.Sleep(3f);
-                return;
-            }
-        }
+        //if (this.Owner.HasModifier("modifier_earth_spirit_rolling_boulder_caster"))
+        //{
+        //    if (abilityHelper.ForceUseAbility(this.stone, true))
+        //    {
+        //        this.ComboSleeper.Sleep(3f);
+        //        return;
+        //    }
+        //}
 
         var ally = targetManager.AllyHeroes
             .Where(x => !x.Equals(this.Owner) && menu.IsAllyEnabled(x.Name) && x.Distance(target) > 300 && x.Distance(target) < 1500)

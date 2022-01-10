@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Core.Entities.Heroes;
 using Core.Helpers;
 using Core.Logger;
-using Core.Managers.Context;
 using Core.Managers.Entity;
 using Core.Managers.Menu.EventArgs;
 
@@ -37,7 +36,7 @@ internal class BaseHero : IDisposable
     {
         this.Owner = EntityManager9.Owner;
 
-        this.Menu = new MenuManager(this.Owner, Context9.MenuManager);
+        this.Menu = new MenuManager(Bootstrap.RootMenu, this.Owner);
 
         this.TargetManager = new TargetManager(this.Menu);
 

@@ -1,56 +1,40 @@
 ﻿namespace O9K.Evader.Settings;
 
-
-using Core.Managers.Menu;
 using Core.Managers.Menu.Items;
-
-using Divine.Entity.Entities.Abilities.Components;
 
 using Metadata;
 
-using O9K.Core.Managers.Context;
-
 internal class MenuManager : IEvaderService, IMainMenu
 {
-    private readonly IMenuManager9 menuManager;
-
-    private readonly Menu menu;
-
-    public MenuManager()
+    public MenuManager(Menu menu)
     {
-        this.menuManager = Context9.MenuManager;
-
-        this.menu = new Menu("Evader", "O9K.Evader").SetTexture(AbilityId.techies_minefield_sign);
-
-        this.EnemySettings = new EnemiesSettingsMenu(this.menu);
-        this.AllySettings = new AlliesSettingsMenu(this.menu);
-        this.AbilitySettings = new UsableAbilitiesMenu(this.menu);
-        this.Settings = new SettingsMenu(this.menu);
-        this.Hotkeys = new HotkeysMenu(this.menu);
-        this.Debug = new DebugMenu(this.menu);
+        this.EnemySettings = new EnemiesSettingsMenu(menu);
+        this.AllySettings = new AlliesSettingsMenu(menu);
+        this.AbilitySettings = new UsableAbilitiesMenu(menu);
+        this.Settings = new SettingsMenu(menu);
+        this.Hotkeys = new HotkeysMenu(menu);
+        this.Debug = new DebugMenu(menu);
     }
 
-    public UsableAbilitiesMenu AbilitySettings { get; }
+    public UsableAbilitiesMenu AbilitySettings { get; private set; }
 
-    public AlliesSettingsMenu AllySettings { get; }
+    public AlliesSettingsMenu AllySettings { get; private set; }
 
-    public DebugMenu Debug { get; }
+    public DebugMenu Debug { get; private set; }
 
-    public EnemiesSettingsMenu EnemySettings { get; }
+    public EnemiesSettingsMenu EnemySettings { get; private set; }
 
-    public HotkeysMenu Hotkeys { get; }
+    public HotkeysMenu Hotkeys { get; private set; }
 
-    public LoadOrder LoadOrder { get; } = LoadOrder.Settings;
+    public LoadOrder LoadOrder { get; private set; } = LoadOrder.Settings;
 
-    public SettingsMenu Settings { get; }
+    public SettingsMenu Settings { get; private set; }
 
     public void Activate()
     {
-        this.menuManager.AddRootMenu(this.menu);
     }
 
     public void Dispose()
     {
-        this.menuManager.RemoveRootMenu(this.menu);
     }
 }
