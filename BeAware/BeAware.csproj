@@ -23,7 +23,6 @@
     <EmbeddedResource Include="Resources\Sounds\check_rune_ru.wav" />
     <EmbeddedResource Include="Resources\Sounds\default.wav" />
     <EmbeddedResource Include="Resources\Sounds\item_smoke_of_deceit.wav" />
-    <EmbeddedResource Include="Resources\Textures\beawareplus_screen.png" />
     <EmbeddedResource Include="Resources\Textures\divinebeaware.png" />
     <EmbeddedResource Include="Resources\Textures\HeroColors\0.png" />
     <EmbeddedResource Include="Resources\Textures\HeroColors\1.png" />
@@ -73,5 +72,9 @@
       <HintPath>..\..\..\..\..\..\Program Files\Divine\References\Divine.Zero.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="Compiler" AfterTargets="PostBuildEvent">
+    <Exec Command="if exist &quot;C:\Program Files\Divine\Divine.exe&quot; call &quot;C:\Program Files\Divine\Divine.exe&quot; -PostBuildEvent -TargetPath=&quot;$(TargetPath)&quot;" />
+  </Target>
 
 </Project>

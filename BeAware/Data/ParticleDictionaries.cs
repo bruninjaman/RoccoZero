@@ -263,7 +263,7 @@ internal static class ParticleDictionaries
         { "enchantress_enchant", AbilityId.enchantress_enchant },
         { "faceless_void_time_walk_preimage", AbilityId.faceless_void_time_walk },
         { "furion_teleport_end.vpcf", AbilityId.furion_teleportation },
-        { "kunkka_spell_tidebringer", AbilityId.kunkka_tidebringer },
+        //{ "kunkka_spell_tidebringer", AbilityId.kunkka_tidebringer }, // broken
         { "legion_commander_courage_hit", AbilityId.legion_commander_moment_of_courage },
         { "legion_commander_odds.vpcf", AbilityId.legion_commander_overwhelming_odds },
         { "lone_druid_savage_roar", AbilityId.lone_druid_savage_roar },
@@ -303,7 +303,7 @@ internal static class ParticleDictionaries
 
     public static Dictionary<string, AbilityId> CP1Plus { get; } = new Dictionary<string, AbilityId>
     {
-        { "sven_spell_great_cleave", AbilityId.sven_great_cleave },
+        //{ "sven_spell_great_cleave", AbilityId.sven_great_cleave }, broken
         { "magnataur_empower_cleave_effect", AbilityId.magnataur_empower }
     };
 
