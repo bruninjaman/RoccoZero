@@ -36,7 +36,6 @@ internal class MantaStyleUsable : CounterAbility
             bonusTime = 0.05f;
         }
 
-
         return base.GetRequiredTime(ally, enemy, obstacle) + bonusTime;
     }
 }
