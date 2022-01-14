@@ -48,7 +48,7 @@ internal sealed class InvokerEMP : Base
             return true;
         }
 
-        var handle = particle.Handle.ToString();
+        var handle = particle.GetHashCode().ToString();
         UpdateManager.BeginInvoke(1, () =>
         {
             var position = particle.GetControlPoint(0);

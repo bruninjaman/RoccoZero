@@ -221,7 +221,7 @@
 //                    $"VisibleByEnemy_{unit.Handle}",
 //                    Effects[VisibleByEnemyMenu.EffectTypeItem.SelectedIndex],
 //                    unit,
-//                    ParticleAttachment.AbsOriginFollow,
+//                    Attachment.AbsOriginFollow,
 //                    RestartType.NormalRestart,
 //                    new ControlPoint(1, VisibleByEnemyMenu.RedItem.Value, VisibleByEnemyMenu.GreenItem.Value, VisibleByEnemyMenu.BlueItem.Value),
 //                    new ControlPoint(2, VisibleByEnemyMenu.AlphaItem.Value));

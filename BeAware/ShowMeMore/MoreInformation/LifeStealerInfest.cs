@@ -49,7 +49,7 @@ internal sealed class LifeStealerInfest : Base
             effectName = "materials/ensage_ui/particles/life_stealer_infested_unit.vpcf";
         }
 
-        ParticleManager.CreateOrUpdateParticle($"LifeStealerInfest_{unit.Handle}", effectName, EntityManager.GetEntityByHandle(unit.Handle), ParticleAttachment.OverheadFollow);
+        ParticleManager.CreateParticle($"LifeStealerInfest_{unit.Handle}", effectName, Attachment.OverheadFollow, EntityManager.GetEntityByHandle(unit.Handle));
 
         while (modifier.IsValid)
         {

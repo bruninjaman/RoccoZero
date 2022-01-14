@@ -113,7 +113,7 @@ internal sealed class SpiritBreakerCharge : Base
                 }
             }
 
-            ParticleManager.CreateOrUpdateParticle($"ChargeUnit", effectName, EntityManager.GetEntityByHandle(unit.Handle), ParticleAttachment.OverheadFollow);
+            ParticleManager.CreateParticle($"ChargeUnit", effectName, Attachment.OverheadFollow, EntityManager.GetEntityByHandle(unit.Handle));
 
             var spiritBreaker = EntityManager.GetEntities<Hero>().FirstOrDefault(x => !x.IsIllusion && x.HeroId == HeroId.npc_dota_hero_spirit_breaker);
             var speed = spiritBreaker.GetAbilityById(AbilityId.spirit_breaker_charge_of_darkness).GetAbilitySpecialDataWithTalent(spiritBreaker, "movement_speed");
