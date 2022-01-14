@@ -105,7 +105,7 @@ internal class LinkensSphere : AbilityModule
 
                     this.effects[unit.Handle] = ParticleManager.CreateParticle(
                         "particles/items_fx/immunity_sphere_buff.vpcf",
-                        ParticleAttachment.CenterFollow,
+                        Attachment.CenterFollow,
                         unit.BaseUnit);
                 }
                 else

@@ -416,14 +416,10 @@ internal class ShadowFiend : ControllableUnit
                 return true;
             }
 
-            var eulsModifier = target.BaseModifiers.FirstOrDefault(x =>
-                x.Name == "modifier_eul_cyclone" || x.Name == "modifier_wind_waker");
-
+            var eulsModifier = target.BaseModifiers.FirstOrDefault(x => x.Name is "modifier_eul_cyclone" or "modifier_wind_waker");
             if (eulsModifier != null)
             {
-                var particle = ParticleManager.Particles.FirstOrDefault(x =>
-                    x.Name == "particles/items_fx/cyclone.vpcf" && x.Owner == target.BaseEntity);
-
+                var particle = eulsModifier.Particles.FirstOrDefault();
                 if (particle != null)
                 {
                     position = particle.GetControlPoint(0);

@@ -79,7 +79,7 @@ internal class TrueSight : IHudModule
                 return;
             }
 
-            var effect = ParticleManager.CreateParticle("particles/items2_fx/ward_true_sight.vpcf", ParticleAttachment.CenterFollow, sender);
+            var effect = ParticleManager.CreateParticle("particles/items2_fx/ward_true_sight.vpcf", Attachment.CenterFollow, sender);
             this.effects.Add(sender.Handle, effect);
         }
         catch (Exception ex)

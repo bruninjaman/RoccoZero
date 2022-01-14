@@ -64,7 +64,7 @@ internal class ChargeOfDarkness : AbilityModule
 
             this.effect = ParticleManager.CreateParticle(
                 "particles/units/heroes/hero_spirit_breaker/spirit_breaker_charge_target.vpcf",
-                ParticleAttachment.OverheadFollow,
+                Attachment.OverheadFollow,
                 sender);
 
             if (this.notificationsEnabled && sender is Hero)

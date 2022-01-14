@@ -202,7 +202,7 @@ internal class HeroDeny : IHudModule
 
                 effect = ParticleManager.CreateParticle(
                     "materials/ensage_ui/particles/illusions_mod_v2.vpcf",
-                    ParticleAttachment.CenterFollow,
+                    Attachment.CenterFollow,
                     unit.BaseUnit);
 
                 effect.SetControlPoint(1, new Vector3(255));

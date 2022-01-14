@@ -143,11 +143,11 @@ internal class RazeUtils
         {
             var inFront = InFront(owner, razes[i]);
 
-            ParticleManager.CreateOrUpdateParticle(
+            ParticleManager.CreateParticle(
                 $"DrawRaze_{i}",
                 "materials/ensage_ui/particles/alert_range.vpcf",
+                Attachment.AbsOrigin,
                 owner,
-                ParticleAttachment.AbsOrigin,
                 new ControlPoint(0, inFront),
                 new ControlPoint(1, chosen),
                 new ControlPoint(2, 250, 255, 7));

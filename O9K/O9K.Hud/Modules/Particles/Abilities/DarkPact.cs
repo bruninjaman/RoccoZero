@@ -69,7 +69,7 @@ internal class DarkPact : AbilityModule
 
             this.effect = ParticleManager.CreateParticle(
                 "particles/units/heroes/hero_slark/slark_dark_pact_start.vpcf",
-                ParticleAttachment.AbsOriginFollow,
+                Attachment.AbsOriginFollow,
                 sender);
 
             ModifierManager.ModifierRemoved += this.OnModifierRemoved;
