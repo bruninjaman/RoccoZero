@@ -75,7 +75,7 @@ internal abstract class Base
         ParticleManager.CreateParticle(
             $"DrawRange_{id}",
             @"materials\ensage_ui\particles\alert_range.vpcf",
-            Attachment.AbsOrigin,
+            Attachment.CustomOrigin,
             new ControlPoint(0, position),
             new ControlPoint(1, color),
             new ControlPoint(2, radius, 255, alpha));
@@ -91,7 +91,7 @@ internal abstract class Base
         ParticleManager.CreateParticle(
             $"DrawLine_{id}",
             @"materials\ensage_ui\particles\rectangle.vpcf",
-            Attachment.AbsOrigin,
+            Attachment.CustomOrigin,
             new ControlPoint(1, startPosition),
             new ControlPoint(2, endPosition),
             new ControlPoint(3, size, alpha, 0),
