@@ -158,7 +158,7 @@ internal sealed class SpiritBreakerCharge : Base
             ColorScreen = false;
             OnMinimap = false;
 
-            ParticleManager.RemoveParticle("ChargeUnit");
+            ParticleManager.DestroyParticle("ChargeUnit");
             DrawRangeRemove("Charge");
             DrawLineRemove("Charge");
             startChargePosition = Vector3.Zero;

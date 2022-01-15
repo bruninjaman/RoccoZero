@@ -91,6 +91,6 @@ internal sealed class LinkenShow
 
     private void RemoveLinkenShow(Hero hero)
     {
-        ParticleManager.RemoveParticle($"LinkenShow_{hero.Handle}");
+        ParticleManager.DestroyParticle($"LinkenShow_{hero.Handle}");
     }
 }

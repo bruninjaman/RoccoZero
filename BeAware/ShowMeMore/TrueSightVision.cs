@@ -133,6 +133,6 @@ internal sealed class TrueSightVision
 
     private void ParticleRemove(uint handle)
     {
-        ParticleManager.RemoveParticle($"TrueSightVision_{handle}");
+        ParticleManager.DestroyParticle($"TrueSightVision_{handle}");
     }
 }

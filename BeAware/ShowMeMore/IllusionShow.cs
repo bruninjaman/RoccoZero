@@ -86,7 +86,7 @@
 
 //                if (remove)
 //                {
-//                    ParticleManager.RemoveParticle($"Illusion_{hero.Handle}");
+//                    ParticleManager.DestroyParticle($"Illusion_{hero.Handle}");
 //                    continue;
 //                }
 

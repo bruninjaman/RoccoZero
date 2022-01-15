@@ -56,6 +56,6 @@ internal sealed class LifeStealerInfest : Base
             await Task.Delay(150);
         }
 
-        ParticleManager.RemoveParticle($"LifeStealerInfest_{unit.Handle}");
+        ParticleManager.DestroyParticle($"LifeStealerInfest_{unit.Handle}");
     }
 }

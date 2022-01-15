@@ -83,7 +83,7 @@ internal abstract class Base
 
     protected void DrawRangeRemove(string id)
     {
-        ParticleManager.RemoveParticle($"DrawRange_{id}");
+        ParticleManager.DestroyParticle($"DrawRange_{id}");
     }
 
     protected void DrawLine(string id, Vector3 startPosition, Vector3 endPosition, int size, int alpha, Color color)
@@ -100,7 +100,7 @@ internal abstract class Base
 
     protected void DrawLineRemove(string id)
     {
-        ParticleManager.RemoveParticle($"DrawLine_{id}");
+        ParticleManager.DestroyParticle($"DrawLine_{id}");
     }
 
     protected void DisplayMessage(string message, bool encodingDefault = false)

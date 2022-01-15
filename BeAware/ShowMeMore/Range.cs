@@ -107,6 +107,6 @@ internal sealed class Range
 
     private void Remove(int index)
     {
-        ParticleManager.RemoveParticle($"{CustomRangeName}_{index}");
+        ParticleManager.DestroyParticle($"{CustomRangeName}_{index}");
     }
 }

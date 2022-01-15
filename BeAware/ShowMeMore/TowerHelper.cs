@@ -54,7 +54,7 @@ internal sealed class TowerHelper
                 }
 
                 var id = $"TowerHelper_{tower.Handle}";
-                ParticleManager.RemoveParticle(id);
+                ParticleManager.DestroyParticle(id);
             }
         }
     }
@@ -83,7 +83,7 @@ internal sealed class TowerHelper
             }
             else
             {
-                ParticleManager.RemoveParticle(id);
+                ParticleManager.DestroyParticle(id);
             }
         }
     }
