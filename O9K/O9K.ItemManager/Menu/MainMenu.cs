@@ -3,9 +3,6 @@
 using Core.Managers.Menu;
 using Core.Managers.Menu.Items;
 
-using Divine.Entity.Entities.Abilities.Components;
-using Divine.Helpers;
-
 using Metadata;
 
 internal class MainMenu : IMainMenu, IModule
