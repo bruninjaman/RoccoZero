@@ -38,14 +38,14 @@ internal class MainMenu : IMainMenu, IModule
         this.RecoveryAbuseMenu.AddTranslation(Lang.Ru, "Абуз восстановления");
         this.RecoveryAbuseMenu.AddTranslation(Lang.Cn, "丢物品回复");
 
-        this.AbyssalAbuseMenu = this.RootMenu.Add(new Menu("Silver edge abuse"));
-        this.AbyssalAbuseMenu.AddTranslation(Lang.Ru, LocalizationHelper.LocalizeName(AbilityId.item_silver_edge) + " абуз");
-        this.AbyssalAbuseMenu.AddTranslation(Lang.Cn, LocalizationHelper.LocalizeName(AbilityId.item_silver_edge) + "滥用");
+        //this.AbyssalAbuseMenu = this.RootMenu.Add(new Menu("Silver edge abuse"));
+        //this.AbyssalAbuseMenu.AddTranslation(Lang.Ru, LocalizationHelper.LocalizeName(AbilityId.item_silver_edge) + " абуз");
+        //this.AbyssalAbuseMenu.AddTranslation(Lang.Cn, LocalizationHelper.LocalizeName(AbilityId.item_silver_edge) + "滥用");
     }
 
     public Menu AbilityLevelingMenu { get; }
 
-    public Menu AbyssalAbuseMenu { get; }
+    //public Menu AbyssalAbuseMenu { get; }
 
     public Menu AutoActionsMenu { get; }
 

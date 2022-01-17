@@ -6,7 +6,7 @@ internal interface IMainMenu
 {
     Menu AbilityLevelingMenu { get; }
 
-    Menu AbyssalAbuseMenu { get; }
+    //Menu AbyssalAbuseMenu { get; }
 
     Menu AutoActionsMenu { get; }
 
