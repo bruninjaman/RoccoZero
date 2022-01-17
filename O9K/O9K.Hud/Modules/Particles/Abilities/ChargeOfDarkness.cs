@@ -1,6 +1,7 @@
 ﻿namespace O9K.Hud.Modules.Particles.Abilities;
 
 using System;
+using System.Collections.Generic;
 
 using Core.Entities.Metadata;
 using Core.Logger;
@@ -25,7 +26,7 @@ internal class ChargeOfDarkness : AbilityModule
 {
     private readonly MenuSwitcher notificationsEnabled;
 
-    private Particle effect;
+    private readonly Dictionary<int, Particle> effect = new();
 
     public ChargeOfDarkness(INotificator notificator, IHudMenu hudMenu)
         : base(notificator, hudMenu)
@@ -44,6 +45,7 @@ internal class ChargeOfDarkness : AbilityModule
     protected override void Enable()
     {
         ModifierManager.ModifierAdded += this.OnModifierAdded;
+        ModifierManager.ModifierRemoved += this.OnModifierRemoved;
     }
 
     private void OnModifierAdded(ModifierAddedEventArgs e)
@@ -62,7 +64,7 @@ internal class ChargeOfDarkness : AbilityModule
                 return;
             }
 
-            this.effect = ParticleManager.CreateParticle(
+            this.effect[sender.Index ^ modifier.Index] = ParticleManager.CreateParticle(
                 "particles/units/heroes/hero_spirit_breaker/spirit_breaker_charge_target.vpcf",
                 Attachment.OverheadFollow,
                 sender);
@@ -75,8 +77,6 @@ internal class ChargeOfDarkness : AbilityModule
                         nameof(AbilityId.spirit_breaker_charge_of_darkness),
                         sender.Name));
             }
-
-            ModifierManager.ModifierRemoved += this.OnModifierRemoved;
         }
         catch (Exception ex)
         {
@@ -100,8 +100,12 @@ internal class ChargeOfDarkness : AbilityModule
                 return;
             }
 
-            this.effect.Dispose();
-            ModifierManager.ModifierRemoved -= this.OnModifierRemoved;
+            if (!this.effect.Remove(sender.Index ^ modifier.Index, out var particle))
+            {
+                return;
+            }
+
+            particle.Dispose();
         }
         catch (Exception ex)
         {
