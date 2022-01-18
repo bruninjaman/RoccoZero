@@ -131,7 +131,7 @@ internal class ShieldBreaker : BaseMode
                 return;
             }
 
-            if (!this.comboModeMenu.IgnoreInvisibility && this.Owner.Hero.IsInvisible)
+            if (!this.comboModeMenu.IgnoreInvisibility && this.Owner.Hero.IsInvisible && (!comboModeMenu.IgnoreInvisibilityIfVisible || !this.Owner.Hero.IsVisibleToEnemies))
             {
                 return;
             }

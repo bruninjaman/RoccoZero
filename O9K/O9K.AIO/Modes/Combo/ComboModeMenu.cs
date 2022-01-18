@@ -47,6 +47,14 @@ internal class ComboModeMenu : KeyPressModeMenu, IComboModeMenu
         this.IgnoreInvisibility.AddTranslation(Lang.Cn, "忽略隐身");
         this.IgnoreInvisibility.AddTooltipTranslation(Lang.Cn, "英雄不可见时使用技能");
 
+        this.IgnoreInvisibilityIfVisible = this.SettingsMenu.Add(
+            new MenuSwitcher("Ignore invisibility if visible", "comboInvisIfVisible" + this.SimplifiedName, false, true).SetTooltip(
+                "Use abilities when the hero is invisible but you are visible"));
+        this.IgnoreInvisibilityIfVisible.AddTranslation(Lang.Ru, "Игнорировать инвиз если видна");
+        this.IgnoreInvisibilityIfVisible.AddTooltipTranslation(Lang.Ru, "Использовать способности когда герой невидимый но вась видно");
+        this.IgnoreInvisibilityIfVisible.AddTranslation(Lang.Cn, "如果可见则忽略不可见");
+        this.IgnoreInvisibilityIfVisible.AddTooltipTranslation(Lang.Cn, "当英雄隐形但你可见时使用技能");
+
         this.comboAbilityToggler =
             this.Menu.Add(new MenuAbilityToggler("Abilities", "abilities" + this.SimplifiedName, null, true, true));
         this.comboAbilityToggler.AddTranslation(Lang.Ru, "Способности");
@@ -60,6 +68,8 @@ internal class ComboModeMenu : KeyPressModeMenu, IComboModeMenu
     public MenuSwitcher Attack { get; private set; }
 
     public MenuSwitcher IgnoreInvisibility { get; private set; }
+
+    public MenuSwitcher IgnoreInvisibilityIfVisible { get; private set; }
 
     public bool IsHarassCombo { get; }
 

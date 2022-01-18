@@ -176,7 +176,7 @@ internal class UnitManager : IUnitManager
                 continue;
             }
 
-            if (!comboModeMenu.IgnoreInvisibility && controllable.IsInvisible)
+            if (!comboModeMenu.IgnoreInvisibility && controllable.IsInvisible && (!comboModeMenu.IgnoreInvisibilityIfVisible || !controllable.Owner.IsVisibleToEnemies))
             {
                 return;
             }
@@ -497,7 +497,7 @@ internal class UnitManager : IUnitManager
                     continue;
                 }
 
-                
+
                 controllableUnit?.AddAbility(activeAbility, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
             }
         }
