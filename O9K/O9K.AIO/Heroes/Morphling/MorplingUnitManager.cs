@@ -10,9 +10,10 @@ using Core.Entities.Abilities.Base;
 using Core.Entities.Heroes.Unique;
 using Core.Logger;
 
-using Dynamic.Units;
 using Divine.Game;
 using Divine.Numerics;
+
+using Dynamic.Units;
 
 using Modes.Combo;
 

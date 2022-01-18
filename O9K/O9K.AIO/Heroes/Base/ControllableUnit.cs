@@ -340,7 +340,7 @@ internal class ControllableUnit
 
     public virtual bool MoveCombo(TargetManager targetManager, MoveComboModeMenu comboModeMenu)
     {
-        if (!this.Owner.CanUseAbilities || this.Owner.IsInvisible)
+        if (!this.Owner.CanUseAbilities)
         {
             return false;
         }
