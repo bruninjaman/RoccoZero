@@ -40,9 +40,9 @@ internal class MorphlingUnitManager : UnitManager
                 continue;
             }
 
-            if (!comboModeMenu.IgnoreInvisibility && controllable.IsInvisible)
+            if (!comboModeMenu.IgnoreInvisibility && controllable.IsInvisible && (!comboModeMenu.IgnoreInvisibilityIfVisible || !controllable.Owner.IsVisibleToEnemies))
             {
-                return;
+                continue;
             }
 
             if (controllable.Combo(this.targetManager, comboModeMenu))

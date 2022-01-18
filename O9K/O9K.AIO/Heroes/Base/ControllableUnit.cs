@@ -137,7 +137,7 @@ internal class ControllableUnit
     {
         get
         {
-            return this.Owner.IsInvisible;
+            return this.Owner.IsInvisible && !Owner.HasModifier("modifier_smoke_of_deceit");
         }
     }
 
