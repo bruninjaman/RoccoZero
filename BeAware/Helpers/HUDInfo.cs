@@ -280,6 +280,21 @@ public static class HUDInfo
 
             MinimapSize = new Vector2(0.128083f * ScreenSize.X, 0.224074f * ScreenSize.Y);
         }
+        else if (ratio == 240)
+        {
+            CompareWidth = 2178.415f;
+            PanelHeroSizeX = 52.7434f;
+
+            RadiantCompare = 2.876922f;
+            DireCompare = 2.337606f;
+
+            HpBarHeight = 11.837f;
+            HpBarWidth = 85.185f;
+            HpBarX = 44.529f;
+            HpBarY = 25.84f;
+
+            MinimapSize = new Vector2(0.094999f * ScreenSize.X, 0.224629f * ScreenSize.Y);
+        }
         else if (ratio == 213)
         {
             CompareWidth = 1600;
