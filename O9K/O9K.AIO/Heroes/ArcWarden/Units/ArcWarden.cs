@@ -394,7 +394,7 @@
 
         private bool UseMjolnir(List<Unit9> allyCreeps)
         {
-            if (this.mjollnir != null && this.mjollnir.Ability.CanBeCasted() && this.Owner.GetModifier("modifier_kill").RemainingTime < 3)
+            if (this.mjollnir != null && this.mjollnir.Ability.CanBeCasted() && this.Owner.GetModifier("modifier_kill")?.RemainingTime < 3)
             {
                 var allyCreep = allyCreeps.FirstOrDefault(x => !x.IsRanged && x.HealthPercentage > 65 && x.Distance(this.Owner) < this.mjollnir.Ability.CastRange)
                                 ?? allyCreeps.FirstOrDefault(x => x.Distance(this.Owner) < this.mjollnir.Ability.CastRange);
@@ -412,7 +412,7 @@
 
         private bool TravelTpToCreeps(List<Unit9> enemyCreeps, List<Unit9> allyCreeps)
         {
-            if (this.Owner.IsHero && this.Owner.GetModifier("modifier_kill").RemainingTime >= 10 && this.tpScroll.Ability.CanBeCasted())
+            if (this.Owner.IsHero && this.Owner.GetModifier("modifier_kill")?.RemainingTime >= 10 && this.tpScroll.Ability.CanBeCasted())
             {
                 var chosenLane = ArcWardenPanel.lane;
 
