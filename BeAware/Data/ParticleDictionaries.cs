@@ -144,7 +144,7 @@ internal static class ParticleDictionaries
         { "monkey_king_quad_tap_hit", AbilityId.monkey_king_jingu_mastery },
         { "monkey_king_disguise", AbilityId.monkey_king_mischief },
         { "monkey_king_fur_army_cast", AbilityId.monkey_king_wukongs_command },
-        { "morphling_replicate", AbilityId.morphling_replicate },
+        //{ "morphling_replicate", AbilityId.morphling_replicate },
         { "morphling_waveform_dmg", AbilityId.morphling_waveform },
         { "nevermore_necro_souls", AbilityId.nevermore_necromastery },
         { "nightstalker_void_hit", AbilityId.night_stalker_void },
