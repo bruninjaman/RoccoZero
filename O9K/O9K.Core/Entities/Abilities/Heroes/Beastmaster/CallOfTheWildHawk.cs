@@ -9,8 +9,7 @@ using Helpers;
 
 using Metadata;
 
-//todo id
-[AbilityId((AbilityId)7231)]
+[AbilityId(AbilityId.beastmaster_call_of_the_wild_hawk)]
 public class CallOfTheWildHawk : CircleAbility
 {
     public CallOfTheWildHawk(Ability baseAbility)
