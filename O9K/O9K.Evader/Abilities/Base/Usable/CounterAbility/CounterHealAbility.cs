@@ -30,19 +30,6 @@ internal class CounterHealAbility : CounterAbility
 
         var health = ally.Health;
         var damage = obstacle.GetDamage(ally);
-
-        if (obstacle.EvadableAbility.Ability.Id == AbilityId.axe_culling_blade)
-        {
-            var ability = (CullingBlade)obstacle.EvadableAbility.Ability;
-            var threshold =  ability.KillThreshold;
-
-            if (threshold < health + this.healAbility.GetHealthRestore(ally))
-            {
-                return true;
-            }
-
-        }
-
         if (damage < health)
         {
             return false;
