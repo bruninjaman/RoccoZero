@@ -20,21 +20,6 @@ public class ShallowGrave : RangedAbility, IHasDamageAmplify, IShield
     {
     }
 
-    public override AbilityBehavior AbilityBehavior
-    {
-        get
-        {
-            var behavior = base.AbilityBehavior;
-
-            if (this.Owner.HasAghanimsScepter)
-            {
-                behavior = (behavior & ~AbilityBehavior.UnitTarget) | AbilityBehavior.Point;
-            }
-
-            return behavior;
-        }
-    }
-
     public DamageType AmplifierDamageType { get; } = DamageType.Physical | DamageType.Magical | DamageType.Pure;
 
     public string[] AmplifierModifierNames { get; } = { "modifier_dazzle_shallow_grave" };
