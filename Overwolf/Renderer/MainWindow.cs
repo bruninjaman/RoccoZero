@@ -1,5 +1,4 @@
-﻿using Divine.Entity.Entities.Units.Heroes.Components;
-using Divine.Extensions;
+﻿using Divine.Extensions;
 using Divine.Game;
 using Divine.Helpers;
 using Divine.Input;
@@ -15,7 +14,6 @@ using Divine.Zero.Log;
 using Overwolf.Controls;
 using Overwolf.Controls.EventArgs;
 using Overwolf.Core;
-using Overwolf.Exstensions;
 
 using System;
 using System.Collections.Generic;
@@ -53,7 +51,6 @@ namespace Overwolf.Renderer
         private RectangleF closeButtonRect;
         private RectangleF settingsTogglerRect;
         private Color fontColor;
-        private bool fontShadow;
 
         internal MainWindow(Context context)
         {
@@ -121,7 +118,7 @@ namespace Overwolf.Renderer
                 RendererManager.LoadImageFromFile($"Overwolf.{fileName}", file);
             }
 
-            MainMenu.OverwolfBackGround = MainMenu.OverwolfCustomizationMenu.CreateSelector("Select Background", fileNames.ToArray())
+            MainMenu.OverwolfBackGround = MainMenu.RootMenu.CreateSelector("Select Background", fileNames.ToArray())
                 .SetTooltip("To use a custom background, rename and move the required \".png\"" +
                 "\nfile along the path \"Divine\\Resources\\Textures\\Overwolf\" to get" +
                 "\n\"Divine\\Resources\\Textures\\Overwolf\\background.png\"");
@@ -133,12 +130,6 @@ namespace Overwolf.Renderer
             MainMenu.OverwolfFontColorG.ValueChanged += OverwolfFontColorG_ValueChanged;
             MainMenu.OverwolfFontColorB.ValueChanged += OverwolfFontColorB_ValueChanged;
             MainMenu.OverwolfFontColorA.ValueChanged += OverwolfFontColorA_ValueChanged;
-            MainMenu.OverwolfFontShadow.ValueChanged += OverwolfFontShadow_ValueChanged;
-        }
-
-        private void OverwolfFontShadow_ValueChanged(MenuSwitcher switcher, SwitcherEventArgs e)
-        {
-            fontShadow = e.Value;
         }
 
         private void OverwolfFontColorA_ValueChanged(MenuSlider slider, SliderEventArgs e)
@@ -349,72 +340,66 @@ namespace Overwolf.Renderer
                 logoRect);
 
             var overwolfTextRect = new RectangleF(logoRect.X + logoRect.Width + gap, windowRect.Y + gap, windowRect.Width, windowRect.Height);
-            DrawTextExstensions.DrawTextWithShadow(
+            RendererManager.DrawText(
                 "OVERWOLF DIVINE",
                 overwolfTextRect,
                 fontColor,
-                "Tahoma",
-                windowRect.Height * 0.025f,
-                fontShadow);
+                "Lato",
+                windowRect.Height * 0.025f);
             //
 
             //Radiant Team Text
             var radiantTeamRect = new RectangleF(logoRect.X, logoRect.Y + logoRect.Height + gap, windowRect.Width, windowRect.Height);
-            DrawTextExstensions.DrawTextWithShadow(
+            RendererManager.DrawText(
                 "Radiant",
                 radiantTeamRect,
                 Color.LimeGreen,
-                "Tahoma",
-                windowRect.Height * 0.025f,
-                fontShadow);
+                "Lato",
+                windowRect.Height * 0.025f);
             //
 
             //Most Played Text
-            var prevTextSize = RendererManager.MeasureText("Radiant", "Tahoma", windowRect.Height * 0.025f);
+            var prevTextSize = RendererManager.MeasureText("Radiant", "Lato", windowRect.Height * 0.025f);
             var mostPlayedRect = new RectangleF(radiantTeamRect.X + prevTextSize.X + (windowRect.Width * 0.28f), radiantTeamRect.Y, windowRect.Width, windowRect.Height);
-            DrawTextExstensions.DrawTextWithShadow(
+            RendererManager.DrawText(
                 "Most Played",
                 mostPlayedRect,
                 fontColor,
-                "Tahoma",
-                windowRect.Height * 0.025f,
-                fontShadow);
+                "Lato",
+                windowRect.Height * 0.025f);
             //
 
             //Matches Text
-            prevTextSize = RendererManager.MeasureText("Most Played", "Tahoma", windowRect.Height * 0.025f);
+            prevTextSize = RendererManager.MeasureText("Most Played", "Lato", windowRect.Height * 0.025f);
             var matchesRect = new RectangleF(mostPlayedRect.X + prevTextSize.X + (windowRect.Width * 0.07f), radiantTeamRect.Y, windowRect.Width, windowRect.Height);
-            DrawTextExstensions.DrawTextWithShadow(
+            RendererManager.DrawText(
                 "Matches",
                 matchesRect,
                 fontColor,
-                "Tahoma",
-                windowRect.Height * 0.025f,
-                fontShadow);
+                "Lato",
+                windowRect.Height * 0.025f);
             //
 
             //Win Percent Text
-            prevTextSize = RendererManager.MeasureText("Matches", "Tahoma", windowRect.Height * 0.025f);
+            prevTextSize = RendererManager.MeasureText("Matches", "Lato", windowRect.Height * 0.025f);
             var winPercentRect = new RectangleF(matchesRect.X + prevTextSize.X + (windowRect.Width * 0.04f), radiantTeamRect.Y, windowRect.Width, windowRect.Height);
-            DrawTextExstensions.DrawTextWithShadow(
+            RendererManager.DrawText(
                 "Win(%)",
                 winPercentRect,
                 fontColor,
-                "Tahoma",
-                windowRect.Height * 0.025f,
-                fontShadow);
+                "Lato",
+                windowRect.Height * 0.025f);
             //
 
             //Last Games Text
-            prevTextSize = RendererManager.MeasureText("Win(%)", "Tahoma", windowRect.Height * 0.025f);
+            prevTextSize = RendererManager.MeasureText("Win(%)", "Lato", windowRect.Height * 0.025f);
             var lastGamestRect = new RectangleF(winPercentRect.X + prevTextSize.X + (windowRect.Width * 0.157f), radiantTeamRect.Y, windowRect.Width, windowRect.Height);
-            DrawTextExstensions.DrawTextWithShadow(
+            RendererManager.DrawText(
                 "Last Games",
                 lastGamestRect,
                 fontColor,
-                "Tahoma",
-                windowRect.Height * 0.025f,
-                fontShadow);
+                "Lato",
+                windowRect.Height * 0.025f);
             //
 
             for (int i = 1; i <= 5; i++)
@@ -426,13 +411,12 @@ namespace Overwolf.Renderer
 
             //Dire Team Text
             var direTeamRect = new RectangleF(logoRect.X, firstPos.Y, windowRect.Width, windowRect.Height);
-            DrawTextExstensions.DrawTextWithShadow(
+            RendererManager.DrawText(
                 "Dire",
                 direTeamRect,
                 Color.Red,
-                "Tahoma",
-                windowRect.Height * 0.025f,
-                fontShadow);
+                "Lato",
+                windowRect.Height * 0.025f);
             //
 
             firstPos.Y += gap + (windowRect.Height * 0.025f);
@@ -457,15 +441,15 @@ namespace Overwolf.Renderer
 
         private void DrawInfoForPlayer(int i)
         {
-            var containsKey = CoreMain._playerTable.ContainsKey(i - 1);
+            var containsKey = CoreMain.playerTable.ContainsKey(i - 1);
             //Role Icon
             var roleRect = new RectangleF(firstPos.X, firstPos.Y, roleSize, roleSize);
             if (containsKey)
             {
                 //RendererManager.DrawFilledRectangle(roleRect, new Color(0, 0, 0, 127));
                 var roleModRect = roleRect;
-                var roleImage = $"panorama/images/rank_tier_icons/handicap/{CoreMain._playerTable[i - 1].laneSelectonFlags}icon_psd.vtex_c";
-                if (CoreMain._playerTable[i - 1].laneSelectonFlags == Data.Data.LaneSelectonFlags.Unknown)
+                var roleImage = $"panorama/images/rank_tier_icons/handicap/{CoreMain.playerTable[i - 1].laneSelectonFlags}icon_psd.vtex_c";
+                if (CoreMain.playerTable[i - 1].laneSelectonFlags == Data.Data.LaneSelectonFlags.Unknown)
                 {
                     roleImage = "panorama/images/control_icons/question_mark_circle_psd.vtex_c";
                     roleModRect = new RectangleF(roleRect.X + ((roleSize * 0.25f) * 0.5f), roleRect.Y + ((roleSize * 0.25f) * 0.5f), roleSize * 0.75f, roleSize * 0.75f);
@@ -481,7 +465,7 @@ namespace Overwolf.Renderer
             var partyNextPosition2 = new Vector2(partyNextPosition.X + gap, partyNextPosition.Y);
             if (containsKey)
             {
-                if (CoreMain._playerTable[i - 1].partyWithNextPlayer)
+                if (CoreMain.playerTable[i - 1].partyWithNextPlayer)
                 {
 
                     var strokeStyle = RendererManager.CreateStrokeStyle(CapStyle.Round, CapStyle.Round);
@@ -496,8 +480,8 @@ namespace Overwolf.Renderer
             var rankRect = new RectangleF(roleRect.X + roleRect.Width + (gap * 3), roleRect.Y - ((roleSize * 0.25f) * 0.5f), roleSize * 1.25f, roleSize * 1.25f);
             if (containsKey)
             {
-                var rankNum = CoreMain._playerTable[i - 1].rankTier / 10;
-                var pipNum = CoreMain._playerTable[i - 1].rankTier % 10;
+                var rankNum = CoreMain.playerTable[i - 1].rankTier / 10;
+                var pipNum = CoreMain.playerTable[i - 1].rankTier % 10;
                 var rank = $"panorama/images/rank_tier_icons/rank{rankNum}_psd.vtex_c";
                 var pip = $"panorama/images/rank_tier_icons/pip{pipNum}_psd.vtex_c";
 
@@ -512,30 +496,29 @@ namespace Overwolf.Renderer
             var nameRect = new RectangleF(rankRect.X + rankRect.Width + gap, firstPos.Y, (windowRect.Width * 0.16f), roleSize);
             if (containsKey)
             {
-                var textSize = RendererManager.MeasureText(CoreMain._playerTable[i - 1].name, "Tahoma", windowRect.Height * 0.025f);
+                var textSize = RendererManager.MeasureText(CoreMain.playerTable[i - 1].name, "Lato", windowRect.Height * 0.025f);
 
                 if (textSize.X >= nameRect.Width && (!IsNormalized.ContainsKey(i - 1) || !IsNormalized[i - 1]))
                 {
-                    CoreMain._playerTable[i - 1].name = CoreMain._playerTable[i - 1].name.Remove(CoreMain._playerTable[i - 1].name.Length);
+                    CoreMain.playerTable[i - 1].name = CoreMain.playerTable[i - 1].name.Remove(CoreMain.playerTable[i - 1].name.Length);
                     IsNormalized[i - 1] = false;
                 }
                 else
                 {
                     if (IsNormalized.ContainsKey(i - 1) && IsNormalized[i - 1])
                     {
-                        CoreMain._playerTable[i - 1].name = CoreMain._playerTable[i - 1].name.Insert(CoreMain._playerTable[i - 1].name.Length, "...");
+                        CoreMain.playerTable[i - 1].name = CoreMain.playerTable[i - 1].name.Insert(CoreMain.playerTable[i - 1].name.Length, "...");
                         IsNormalized[i - 1] = true;
                     }
                 }
                 //RendererManager.DrawFilledRectangle(nameRect, new Color(0, 0, 0, 127));
-                DrawTextExstensions.DrawTextWithShadow(
-                    CoreMain._playerTable[i - 1].name,
+                RendererManager.DrawText(
+                    CoreMain.playerTable[i - 1].name,
                     nameRect,
                     fontColor,
-                    "Tahoma",
+                    "Lato",
                     FontFlags.Left | FontFlags.VerticalCenter,
-                    windowRect.Height * 0.025f,
-                    fontShadow);
+                    windowRect.Height * 0.025f);
             }
             //
 
@@ -545,29 +528,27 @@ namespace Overwolf.Renderer
             for (int k = 1; k <= 3; k++)
             {
                 if (containsKey
-                    && !CoreMain._playerTable[i - 1].isAnonymous
-                    && CoreMain._playerTable[i - 1].mostPlayed.Count > 0
-                    && CoreMain._playerTable[i - 1].mostPlayed.Count >= k)
+                    && !CoreMain.playerTable[i - 1].isAnonymous
+                    && CoreMain.playerTable[i - 1].mostPlayed.Count > 0
+                    && CoreMain.playerTable[i - 1].mostPlayed.Count >= k)
                 {
                     //RendererManager.DrawFilledRectangle(mostPlayedIconRect, new Color(0, 0, 0, 127));
-                    RendererManager.DrawImage(CoreMain._playerTable[i - 1].mostPlayed[k - 1].heroId, mostPlayedIconRect, UnitImageType.MiniUnit, true);
+                    RendererManager.DrawImage(CoreMain.playerTable[i - 1].mostPlayed[k - 1].heroId, mostPlayedIconRect, UnitImageType.MiniUnit, true);
                     //RendererManager.DrawFilledRectangle(mostPlayedTextRect, new Color(0, 0, 0, 127));
-                    DrawTextExstensions.DrawTextWithShadow(
-                        $"{CoreMain._playerTable[i - 1].mostPlayed[k - 1].matchCount}",
+                    RendererManager.DrawText(
+                        $"{CoreMain.playerTable[i - 1].mostPlayed[k - 1].matchCount}",
                         mostPlayedTextRect,
                         fontColor,
-                        "Tahoma",
+                        "Lato",
                         FontFlags.Center | FontFlags.Top,
-                        windowRect.Height * 0.02f,
-                        fontShadow);
-                    DrawTextExstensions.DrawTextWithShadow(
-                        $"{(uint)Math.Round(((float)CoreMain._playerTable[i - 1].mostPlayed[k - 1].winCount / (float)CoreMain._playerTable[i - 1].mostPlayed[k - 1].matchCount) * 100f)}%",
+                        windowRect.Height * 0.02f);
+                    RendererManager.DrawText(
+                        $"{(uint)Math.Round(((float)CoreMain.playerTable[i - 1].mostPlayed[k - 1].winCount / (float)CoreMain.playerTable[i - 1].mostPlayed[k - 1].matchCount) * 100f)}%",
                         mostPlayedTextRect,
                         fontColor,
-                        "Tahoma",
+                        "Lato",
                         FontFlags.Center | FontFlags.Bottom,
-                        windowRect.Height * 0.017f,
-                        fontShadow);
+                        windowRect.Height * 0.017f);
                 }
                 if (k != 3)
                 {
@@ -576,17 +557,16 @@ namespace Overwolf.Renderer
                 }
             }
 
-            if (containsKey && CoreMain._playerTable[i - 1].isAnonymous)
+            if (containsKey && CoreMain.playerTable[i - 1].isAnonymous)
             {
                 var matchesHiddenTextRect = new RectangleF(nameRect.X + nameRect.Width + gap, firstPos.Y, (mostPlayedIconRect.Width + mostPlayedTextRect.Width) * 3, roleSize);
-                DrawTextExstensions.DrawTextWithShadow(
+                RendererManager.DrawText(
                     "Hidden",
                     matchesHiddenTextRect,
                     fontColor,
-                    "Tahoma",
+                    "Lato",
                     FontFlags.Center | FontFlags.VerticalCenter,
-                    windowRect.Height * 0.03f,
-                    fontShadow);
+                    windowRect.Height * 0.03f);
             }
             //
 
@@ -595,18 +575,17 @@ namespace Overwolf.Renderer
             if (containsKey)
             {
                 //RendererManager.DrawFilledRectangle(matchesTextRect, new Color(0, 0, 0, 127));
-                var matchesText = $"{CoreMain._playerTable[i - 1].matchCount}";
-                if (CoreMain._playerTable[i - 1].isAnonymous)
+                var matchesText = $"{CoreMain.playerTable[i - 1].matchCount}";
+                if (CoreMain.playerTable[i - 1].isAnonymous)
                     matchesText = "Hidden";
 
-                DrawTextExstensions.DrawTextWithShadow(
+                RendererManager.DrawText(
                     matchesText,
                     matchesTextRect,
                     fontColor,
-                    "Tahoma",
+                    "Lato",
                     FontFlags.Center | FontFlags.VerticalCenter,
-                    windowRect.Height * 0.03f,
-                    fontShadow);
+                    windowRect.Height * 0.03f);
             }
             //
 
@@ -615,18 +594,17 @@ namespace Overwolf.Renderer
             if (containsKey)
             {
                 //RendererManager.DrawFilledRectangle(winPercentsTextRect, new Color(0, 0, 0, 127));
-                var winPercentsText = $"{CoreMain._playerTable[i - 1].winPercent}%";
-                if (CoreMain._playerTable[i - 1].isAnonymous)
+                var winPercentsText = $"{CoreMain.playerTable[i - 1].winPercent}%";
+                if (CoreMain.playerTable[i - 1].isAnonymous)
                     winPercentsText = "Hidden";
 
-                DrawTextExstensions.DrawTextWithShadow(
+                RendererManager.DrawText(
                     winPercentsText,
                     winPercentsTextRect,
                     fontColor,
-                    "Tahoma",
+                    "Lato",
                     FontFlags.Center | FontFlags.VerticalCenter,
-                    windowRect.Height * 0.03f,
-                    fontShadow);
+                    windowRect.Height * 0.03f);
             }
             //
 
@@ -634,25 +612,24 @@ namespace Overwolf.Renderer
             var LastGameIconRect = new RectangleF(winPercentsTextRect.X + winPercentsTextRect.Width + gap + (windowRect.Width * 0.01f), firstPos.Y, roleSize, roleSize);
             for (int k = 1; k <= 8; k++)
             {
-                if (containsKey && CoreMain._playerTable[i - 1].recentMatches.Count >= k)
+                if (containsKey && CoreMain.playerTable[i - 1].recentMatches.Count >= k)
                 {
                     //RendererManager.DrawFilledRectangle(LastGameIconRect, new Color(0, 0, 0, 127));
-                    RendererManager.DrawImage(CoreMain._playerTable[i - 1].recentMatches[k - 1].heroId, LastGameIconRect, UnitImageType.RoundUnit, true);
+                    RendererManager.DrawImage(CoreMain.playerTable[i - 1].recentMatches[k - 1].heroId, LastGameIconRect, UnitImageType.RoundUnit, true);
                     var ringColor = "Overwolf.MatchLose";
-                    if (CoreMain._playerTable[i - 1].recentMatches[k - 1].wonMatch)
+                    if (CoreMain.playerTable[i - 1].recentMatches[k - 1].wonMatch)
                         ringColor = "Overwolf.MatchWin";
                     RendererManager.DrawImage(ringColor, LastGameIconRect, ImageType.Default, true);
 
                     var ImpactRect = new RectangleF(LastGameIconRect.X + (LastGameIconRect.Width * 0.55f), LastGameIconRect.Y + (LastGameIconRect.Height * 0.55f), LastGameIconRect.Width * 0.7f, LastGameIconRect.Height * 0.7f);
                     RendererManager.DrawImage("Overwolf.SoftCircle", ImpactRect, ImageType.Default, true);
-                    DrawTextExstensions.DrawTextWithShadow(
-                        $"{CoreMain._playerTable[i - 1].recentMatches[k - 1].performanceRating}",
+                    RendererManager.DrawText(
+                        $"{CoreMain.playerTable[i - 1].recentMatches[k - 1].performanceRating}",
                         ImpactRect,
                         fontColor,
-                        "Tahoma",
+                        "Lato",
                         FontFlags.Center | FontFlags.VerticalCenter,
-                        windowRect.Height * 0.015f,
-                        false);
+                        windowRect.Height * 0.015f);
 
                     if (!LastGamesPositions.ContainsKey(i - 1))
                         LastGamesPositions.Add(i - 1, new Dictionary<int, RectangleF>());
@@ -692,10 +669,10 @@ namespace Overwolf.Renderer
                         //
 
                         //Localized Name
-                        var localizedName = LocalizationHelper.LocalizeName(CoreMain._playerTable[i].recentMatches[k].heroId);
+                        var localizedName = LocalizationHelper.LocalizeName(CoreMain.playerTable[i].recentMatches[k].heroId);
                         var localizedNameSize = RendererManager.MeasureText(
                             localizedName,
-                            "Tahoma",
+                            "Lato",
                             FontWeight.ExtraBold,
                             (additionalInfoRect.Height * 0.085f));
                         var localizedNameRect = new RectangleF(
@@ -704,22 +681,21 @@ namespace Overwolf.Renderer
                             additionalInfoRect.Width - (gap * 2),
                             localizedNameSize.Y);
                         //RendererManager.DrawFilledRectangle(localizedNameRect, new Color(0, 0, 0, 127));
-                        DrawTextExstensions.DrawTextWithShadow(
+                        RendererManager.DrawText(
                             localizedName,
                             localizedNameRect,
                             new Color(66, 66, 66),
-                            "Tahoma",
+                            "Lato",
                             FontWeight.ExtraBold,
                             FontFlags.Left | FontFlags.Top,
-                            (additionalInfoRect.Height * 0.085f),
-                            false);
+                            (additionalInfoRect.Height * 0.085f));
                         //
 
                         //XPM
                         var miniGap = gap * 0.4f;
                         var xpmSize = RendererManager.MeasureText(
-                            $"XPM - {CoreMain._playerTable[i].recentMatches[k].XPPerMin}",
-                            "Tahoma",
+                            $"XPM - {CoreMain.playerTable[i].recentMatches[k].XPPerMin}",
+                            "Lato",
                             FontWeight.Bold,
                             (additionalInfoRect.Height * 0.075f));
                         var xpmRect = new RectangleF(
@@ -728,21 +704,20 @@ namespace Overwolf.Renderer
                             localizedNameRect.Width,
                             xpmSize.Y);
                         //RendererManager.DrawFilledRectangle(xpmRect, new Color(0, 0, 0, 127));
-                        DrawTextExstensions.DrawTextWithShadow(
-                            $"XPM - {CoreMain._playerTable[i].recentMatches[k].XPPerMin}",
+                        RendererManager.DrawText(
+                            $"XPM - {CoreMain.playerTable[i].recentMatches[k].XPPerMin}",
                             xpmRect,
                             new Color(66, 66, 66, 179),
-                            "Tahoma",
+                            "Lato",
                             FontWeight.Bold,
                             FontFlags.Left | FontFlags.Top,
-                            (additionalInfoRect.Height * 0.075f),
-                            false);
+                            (additionalInfoRect.Height * 0.075f));
                         //
 
                         //GPM
                         var gpmSize = RendererManager.MeasureText(
-                            $"GPM - {CoreMain._playerTable[i].recentMatches[k].goldPerMin}",
-                            "Tahoma",
+                            $"GPM - {CoreMain.playerTable[i].recentMatches[k].goldPerMin}",
+                            "Lato",
                             FontWeight.Bold,
                             (additionalInfoRect.Height * 0.075f));
                         var gpmRect = new RectangleF(
@@ -751,21 +726,20 @@ namespace Overwolf.Renderer
                             localizedNameRect.Width,
                             gpmSize.Y);
                         //RendererManager.DrawFilledRectangle(gpmRect, new Color(0, 0, 0, 127));
-                        DrawTextExstensions.DrawTextWithShadow(
-                            $"GPM - {CoreMain._playerTable[i].recentMatches[k].goldPerMin}",
+                        RendererManager.DrawText(
+                            $"GPM - {CoreMain.playerTable[i].recentMatches[k].goldPerMin}",
                             gpmRect,
                             new Color(66, 66, 66, 179),
-                            "Tahoma",
+                            "Lato",
                             FontWeight.Bold,
                             FontFlags.Left | FontFlags.Top,
-                            (additionalInfoRect.Height * 0.075f),
-                            false);
+                            (additionalInfoRect.Height * 0.075f));
                         //
 
                         //KDA
                         var kdaSize = RendererManager.MeasureText(
-                            $"KDA - {CoreMain._playerTable[i].recentMatches[k].kills}/{CoreMain._playerTable[i].recentMatches[k].deaths}/{CoreMain._playerTable[i].recentMatches[k].assists}",
-                            "Tahoma",
+                            $"KDA - {CoreMain.playerTable[i].recentMatches[k].kills}/{CoreMain.playerTable[i].recentMatches[k].deaths}/{CoreMain.playerTable[i].recentMatches[k].assists}",
+                            "Lato",
                             FontWeight.Bold,
                             (additionalInfoRect.Height * 0.075f));
                         var kdaRect = new RectangleF(
@@ -774,21 +748,20 @@ namespace Overwolf.Renderer
                             localizedNameRect.Width,
                             kdaSize.Y);
                         //RendererManager.DrawFilledRectangle(kdaRect, new Color(0, 0, 0, 127));
-                        DrawTextExstensions.DrawTextWithShadow(
-                            $"KDA - {CoreMain._playerTable[i].recentMatches[k].kills}/{CoreMain._playerTable[i].recentMatches[k].deaths}/{CoreMain._playerTable[i].recentMatches[k].assists}",
+                        RendererManager.DrawText(
+                            $"KDA - {CoreMain.playerTable[i].recentMatches[k].kills}/{CoreMain.playerTable[i].recentMatches[k].deaths}/{CoreMain.playerTable[i].recentMatches[k].assists}",
                             kdaRect,
                             new Color(66, 66, 66, 179),
-                            "Tahoma",
+                            "Lato",
                             FontWeight.Bold,
                             FontFlags.Left | FontFlags.Top,
-                            (additionalInfoRect.Height * 0.075f),
-                            false);
+                            (additionalInfoRect.Height * 0.075f));
                         //
 
                         //Creep Stat
                         var csSize = RendererManager.MeasureText(
-                            $"CS - {CoreMain._playerTable[i].recentMatches[k].lastHits}/{CoreMain._playerTable[i].recentMatches[k].denies}",
-                            "Tahoma",
+                            $"CS - {CoreMain.playerTable[i].recentMatches[k].lastHits}/{CoreMain.playerTable[i].recentMatches[k].denies}",
+                            "Lato",
                             FontWeight.Bold,
                             (additionalInfoRect.Height * 0.075f));
                         var csRect = new RectangleF(
@@ -797,24 +770,23 @@ namespace Overwolf.Renderer
                             localizedNameRect.Width,
                             csSize.Y);
                         //RendererManager.DrawFilledRectangle(csRect, new Color(0, 0, 0, 127));
-                        DrawTextExstensions.DrawTextWithShadow(
-                            $"CS - {CoreMain._playerTable[i].recentMatches[k].lastHits}/{CoreMain._playerTable[i].recentMatches[k].denies}",
+                        RendererManager.DrawText(
+                            $"CS - {CoreMain.playerTable[i].recentMatches[k].lastHits}/{CoreMain.playerTable[i].recentMatches[k].denies}",
                             csRect,
                             new Color(66, 66, 66, 179),
-                            "Tahoma",
+                            "Lato",
                             FontWeight.Bold,
                             FontFlags.Left | FontFlags.Top,
-                            (additionalInfoRect.Height * 0.075f),
-                            false);
+                            (additionalInfoRect.Height * 0.075f));
                         //
 
                         //Duration
-                        uint mins = CoreMain._playerTable[i].recentMatches[k].duration / 60;
-                        uint secs = CoreMain._playerTable[i].recentMatches[k].duration % 60;
+                        uint mins = CoreMain.playerTable[i].recentMatches[k].duration / 60;
+                        uint secs = CoreMain.playerTable[i].recentMatches[k].duration % 60;
                         var duration = string.Format(@"{0:D2}:{1:D2}", mins, secs);
                         var durSize = RendererManager.MeasureText(
                             $"Duration - {duration}",
-                            "Tahoma",
+                            "Lato",
                             FontWeight.Bold,
                             (additionalInfoRect.Height * 0.075f));
                         var durRect = new RectangleF(
@@ -823,25 +795,20 @@ namespace Overwolf.Renderer
                             localizedNameRect.Width,
                             durSize.Y);
                         //RendererManager.DrawFilledRectangle(durRect, new Color(0, 0, 0, 127));
-                        DrawTextExstensions.DrawTextWithShadow(
+                        RendererManager.DrawText(
                             $"Duration - {duration}",
                             durRect,
                             new Color(66, 66, 66, 179),
-                            "Tahoma",
+                            "Lato",
                             FontWeight.Bold,
                             FontFlags.Left | FontFlags.Top,
-                            (additionalInfoRect.Height * 0.075f),
-                            false);
+                            (additionalInfoRect.Height * 0.075f));
                         //
 
                         //Impact
-                        var impact = CoreMain._playerTable[i].recentMatches[k].performanceRating < 0
-                            ? "(" + CoreMain._playerTable[i].recentMatches[k].performanceRating.ToString() + ")"
-                            : CoreMain._playerTable[i].recentMatches[k].performanceRating.ToString();
-
                         var impSize = RendererManager.MeasureText(
-                            $"Impact - {impact}",
-                            "Tahoma",
+                            $"Impact - {CoreMain.playerTable[i].recentMatches[k].performanceRating}",
+                            "Lato",
                             FontWeight.Bold,
                             (additionalInfoRect.Height * 0.075f));
                         var impRect = new RectangleF(
@@ -850,15 +817,14 @@ namespace Overwolf.Renderer
                             localizedNameRect.Width,
                             impSize.Y);
                         //RendererManager.DrawFilledRectangle(impRect, new Color(0, 0, 0, 127));
-                        DrawTextExstensions.DrawTextWithShadow(
-                            $"Impact - {impact}",
+                        RendererManager.DrawText(
+                            $"Impact - {CoreMain.playerTable[i].recentMatches[k].performanceRating}",
                             impRect,
                             new Color(66, 66, 66, 179),
-                            "Tahoma",
+                            "Lato",
                             FontWeight.Bold,
                             FontFlags.Left | FontFlags.Top,
-                            (additionalInfoRect.Height * 0.075f),
-                            false);
+                            (additionalInfoRect.Height * 0.075f));
                         //
 
                         //RendererManager.DrawImage("panorama/images/status_icons/information_psd.vtex_c", LastGameIconRect, ImageType.Default, true);

@@ -9,7 +9,10 @@ namespace Overwolf
 
         protected override void OnMainActivate()
         {
-            context = new Context();
+            UpdateManager.BeginInvoke(() =>
+            {
+                context = new Context();
+            });
         }
 
         protected override void OnDeactivate()
