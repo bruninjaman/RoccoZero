@@ -2,9 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <OutputType>Library</OutputType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\bg.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\bg.png" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Divine">

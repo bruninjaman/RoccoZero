@@ -1,6 +1,6 @@
 ﻿namespace TinkerEW.Modules
 {
-    internal class DamageCalculator
+    internal sealed class DamageCalculator
     {
         //TODO DamageCalculator
     }

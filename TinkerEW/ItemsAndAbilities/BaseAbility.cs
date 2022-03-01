@@ -43,7 +43,7 @@ internal class BaseAbility
         if (Ability.Owner is not Hero owner)
             return false;
 
-        if (((Hero)Ability.Owner).Mana < Ability.ManaCost)
+        if (((int)((Hero)Ability.Owner).Mana) < Ability.ManaCost)
             return false;
 
         if (!owner.IsAlive)
