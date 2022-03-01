@@ -12,7 +12,7 @@ using O9K.Core.Helpers;
 public class StickyBomb : CircleAbility, INuke, IDebuff
 {
     public StickyBomb(Ability baseAbility)
-    : base(baseAbility)
+        : base(baseAbility)
     {
         this.RadiusData = new SpecialData(baseAbility, "radius");
         this.SpeedData = new SpecialData(baseAbility, "speed");
