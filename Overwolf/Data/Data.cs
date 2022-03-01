@@ -2,7 +2,6 @@
 using Divine.Network.GC;
 
 using Overwolf.Requests.Http.Models.Divine;
-using Overwolf.Requests.Http.Models.Divine.GraphQL;
 
 using System;
 using System.Collections.Generic;
@@ -20,7 +19,7 @@ namespace Overwolf.Data
             internal LaneSelectonFlags laneSelectonFlags { get; set; }
             internal int rankTier { get; set; }
             internal ulong partyId { get; set; }
-            internal Dictionary<int, HeroesPerformance> mostPlayed { get; set; } = new Dictionary<int, HeroesPerformance>();
+            internal Dictionary<int, HeroPerformance> mostPlayed { get; set; } = new Dictionary<int, HeroPerformance>();
             internal Dictionary<int, Match> recentMatches { get; set; } = new Dictionary<int, Match>();
             internal bool isAnonymous { get; set; } = true;
             internal uint matchCount { get; set; }
@@ -56,10 +55,9 @@ namespace Overwolf.Data
 
         internal class HttpMessage
         {
-            internal RequestType requestType { get; set; }
             internal ulong matchId { get; set; }
+            internal RequestType requestType { get; set; }
             internal uint accountId { get; set; }
-            internal List<string> players { get; set; }
             internal int playerNumber { get; set; }
             internal int matchNumber { get; set; }
             internal DateTime startDateTime { get; set; }
@@ -69,8 +67,7 @@ namespace Overwolf.Data
         internal enum RequestType
         {
             GetDivineStratzData = 0,
-            GetDivineStratzGraphQLData = 1,
-            GetDivineMatchDetails = 2,
+            GetDivineMatchDetails = 1,
         }
 
         internal enum LaneSelectonFlags
