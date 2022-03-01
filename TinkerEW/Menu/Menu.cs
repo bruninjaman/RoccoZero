@@ -19,9 +19,6 @@ internal sealed class Menu
     public readonly MenuSwitcher ComboDoubleShiva;
     public readonly MenuSelector ComboBlinkMode;
     public readonly MenuSelector ComboLinkenBreakerMode;
-    private readonly MenuSwitcher MiscDamageCalculator;
-    private readonly MenuSwitcher MiscRocketsFailSwitch;
-    private readonly MenuSwitcher MiscRearmFailSwitch;
 
     public Menu()
     {
@@ -37,11 +34,6 @@ internal sealed class Menu
         ComboDoubleShiva = ComboRootMenu.CreateSwitcher("Double Shiva").SetAbilityImage(AbilityId.item_shivas_guard);
         ComboBlinkMode = ComboRootMenu.CreateSelector("Blink Mode", ComboBlinkModes).SetAbilityImage(AbilityId.item_blink);
         ComboLinkenBreakerMode = ComboRootMenu.CreateSelector("Linken`s Breaker Mode", LinkenBreakerModes).SetAbilityImage(AbilityId.item_sphere);
-
-        var MiscRootMenu = RootMenu.CreateMenu("Misc");
-        MiscDamageCalculator = MiscRootMenu.CreateSwitcher("Damage Calculator");
-        MiscRocketsFailSwitch = MiscRootMenu.CreateSwitcher("Rockets FailSwitch").SetAbilityImage(AbilityId.tinker_heat_seeking_missile);
-        MiscRearmFailSwitch = MiscRootMenu.CreateSwitcher("Rearm FailSwitch").SetAbilityImage(AbilityId.tinker_rearm);
 
         //TODO FARM
         //var FarmRootMenu = RootMenu.CreateMenu("Farm").SetAbilityImage(AbilityId.alchemist_goblins_greed);

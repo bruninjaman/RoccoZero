@@ -59,7 +59,7 @@ namespace TinkerEW
             }
             else
             {
-                if (/*Target.IsVisible && */Target.IsAlive)
+                if (Target.IsVisible && Target.IsAlive)
                 {
                     return Target;
                 }

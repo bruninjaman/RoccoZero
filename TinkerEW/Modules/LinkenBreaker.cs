@@ -4,7 +4,7 @@ using Divine.Game;
 
 namespace TinkerEW
 {
-    internal sealed class LinkenBreaker
+    internal class LinkenBreaker
     {
         private Combo Combo;
 
@@ -40,7 +40,7 @@ namespace TinkerEW
                 && Combo.Abilities.laser.CanBeCasted())
             {
                 Combo.Abilities.laser.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Abilities.laser.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Abilities.laser.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.tinker_laser, true);
                 return;
             }
@@ -50,7 +50,7 @@ namespace TinkerEW
                 && Combo.Items.rodOfAtos.CanBeCasted())
             {
                 Combo.Items.rodOfAtos.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.rodOfAtos.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.rodOfAtos.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_rod_of_atos, true);
                 return;
             }
@@ -60,7 +60,7 @@ namespace TinkerEW
                 && Combo.Items.orchid.CanBeCasted())
             {
                 Combo.Items.orchid.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.orchid.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.orchid.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_orchid, true);
                 return;
             }
@@ -70,7 +70,7 @@ namespace TinkerEW
                 && Combo.Items.etherealBlade.CanBeCasted())
             {
                 Combo.Items.etherealBlade.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.etherealBlade.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.etherealBlade.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_ethereal_blade, true);
                 return;
             }
@@ -80,7 +80,7 @@ namespace TinkerEW
                 && Combo.Items.nullifier.CanBeCasted())
             {
                 Combo.Items.nullifier.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.nullifier.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.nullifier.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_nullifier, true);
                 return;
             }
@@ -90,7 +90,7 @@ namespace TinkerEW
                 && Combo.Items.bloodthorn.CanBeCasted())
             {
                 Combo.Items.bloodthorn.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.bloodthorn.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.bloodthorn.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_bloodthorn, true);
                 return;
             }
@@ -100,7 +100,7 @@ namespace TinkerEW
                 && Combo.Items.dagon.CanBeCasted())
             {
                 Combo.Items.dagon.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.dagon.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.dagon.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_dagon, true);
                 return;
             }
@@ -110,7 +110,7 @@ namespace TinkerEW
                 && Combo.Items.scytheOfVyse.CanBeCasted())
             {
                 Combo.Items.scytheOfVyse.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.scytheOfVyse.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.scytheOfVyse.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_sheepstick, true);
                 return;
             }
@@ -123,7 +123,7 @@ namespace TinkerEW
                 && Combo.Items.etherealBlade.CanBeCasted())
             {
                 Combo.Items.etherealBlade.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.etherealBlade.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.etherealBlade.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_ethereal_blade, true);
                 return;
             }
@@ -133,7 +133,7 @@ namespace TinkerEW
                 && Combo.Items.dagon.CanBeCasted())
             {
                 Combo.Items.dagon.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.dagon.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.dagon.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_dagon, true);
                 return;
             }
@@ -143,7 +143,7 @@ namespace TinkerEW
                 && Combo.Items.orchid.CanBeCasted())
             {
                 Combo.Items.orchid.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.orchid.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.orchid.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_orchid, true);
                 return;
             }
@@ -153,7 +153,7 @@ namespace TinkerEW
                 && Combo.Items.bloodthorn.CanBeCasted())
             {
                 Combo.Items.bloodthorn.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.bloodthorn.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.bloodthorn.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_bloodthorn, true);
                 return;
             }
@@ -163,7 +163,7 @@ namespace TinkerEW
                 && Combo.Items.rodOfAtos.CanBeCasted())
             {
                 Combo.Items.rodOfAtos.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.rodOfAtos.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.rodOfAtos.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_rod_of_atos, true);
                 return;
             }
@@ -173,7 +173,7 @@ namespace TinkerEW
                 && Combo.Items.nullifier.CanBeCasted())
             {
                 Combo.Items.nullifier.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Items.nullifier.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Items.nullifier.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.item_nullifier, true);
                 return;
             }
@@ -183,7 +183,7 @@ namespace TinkerEW
                 && Combo.Abilities.laser.CanBeCasted())
             {
                 Combo.Abilities.laser.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Abilities.laser.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Abilities.laser.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 Combo.UsedAbils.Add(AbilityId.tinker_laser, true);
                 return;
             }
@@ -195,7 +195,7 @@ namespace TinkerEW
                 && Combo.Abilities.laser.CanBeCasted())
             {
                 Combo.Abilities.laser.Cast(Combo.Target);
-                Combo.ComboSleeper.Sleep((Combo.Abilities.laser.GetAbility().CastPoint) * 1000 + 120 + GameManager.AvgPing);
+                Combo.ComboSleeper.Sleep((Combo.Abilities.laser.GetAbility().CastPoint) * 1000 + 80 + GameManager.AvgPing);
                 return;
             }
         }

@@ -1,5 +1,6 @@
 ﻿using Divine.Entity;
 using Divine.Entity.Entities.Abilities.Components;
+using Divine.Extensions;
 using Divine.Helpers;
 
 namespace TinkerEW.ItemsAndAbilities.Abilities;
@@ -34,12 +35,12 @@ internal partial class Abilities
                 return;
 
             //Update abils here
-            defenseMatrix.Update(localHero.Spellbook.GetSpellById(AbilityId.tinker_defense_matrix));
-            heatSeekingMissile.Update(localHero.Spellbook.GetSpellById(AbilityId.tinker_heat_seeking_missile));
-            keenConveyance.Update(localHero.Spellbook.GetSpellById(AbilityId.tinker_keen_teleport));
-            laser.Update(localHero.Spellbook.GetSpellById(AbilityId.tinker_laser));
-            marchOfTheMachines.Update(localHero.Spellbook.GetSpellById(AbilityId.tinker_march_of_the_machines));
-            rearm.Update(localHero.Spellbook.GetSpellById(AbilityId.tinker_rearm));
+            defenseMatrix.Update(localHero.GetAbilityById(AbilityId.tinker_defense_matrix));
+            heatSeekingMissile.Update(localHero.GetAbilityById(AbilityId.tinker_heat_seeking_missile));
+            keenConveyance.Update(localHero.GetAbilityById(AbilityId.tinker_keen_teleport));
+            laser.Update(localHero.GetAbilityById(AbilityId.tinker_laser));
+            marchOfTheMachines.Update(localHero.GetAbilityById(AbilityId.tinker_march_of_the_machines));
+            rearm.Update(localHero.GetAbilityById(AbilityId.tinker_rearm));
 
             UpdateSleeper.Sleep(500);
         }

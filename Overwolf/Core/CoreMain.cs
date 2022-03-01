@@ -377,6 +377,7 @@ namespace Overwolf.Core
                                                 jobId = (ulong)(index + 1)
                                             });
                                         }
+                                        break;
                                     }
                                 }
                             }

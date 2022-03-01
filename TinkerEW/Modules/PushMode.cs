@@ -1,6 +1,6 @@
 ﻿namespace TinkerEW.Modules
 {
-    internal sealed class PushMode
+    internal class PushMode
     {
         //TODO FARM
     }
