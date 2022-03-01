@@ -7,10 +7,13 @@ using System.Reflection;
 
 using Core.Logger;
 
+using Divine.Entity.Entities.Abilities.Components;
 using Divine.Service;
 
 using Metadata;
 
+using O9K.Core.Managers.Context;
+using O9K.Core.Managers.Menu.Items;
 using O9K.Evader.Evader.EvadeModes;
 using O9K.Evader.Settings;
 
@@ -19,9 +22,18 @@ internal class Bootstrap : Bootstrapper
 {
     private readonly List<IEvaderService> evaderServices = new List<IEvaderService>();
 
+    private Menu menu;
+
+    protected override void OnMainActivate()
+    {
+        this.menu = new Menu("Evader", "O9K.Evader").SetTexture(AbilityId.techies_minefield_sign);
+
+        Context9.MenuManager.AddRootMenu(this.menu);
+    }
+
     protected override void OnActivate()
     {
-        var menuManager = new MenuManager();
+        var menuManager = new MenuManager(menu);
         var pathfinder = new Pathfinder.Pathfinder();
         var actionManager = new ActionManager.ActionManager(menuManager);
         var abilityManager = new AbilityManager.AbilityManager(pathfinder, actionManager, menuManager);
@@ -36,7 +48,7 @@ internal class Bootstrap : Bootstrapper
         evaderServices.Add(debugger);
 
         var mainEvaderServices = new Dictionary<Type, IEvaderService>()
-        {
+{
             { typeof(IMainMenu), menuManager },
             { typeof(IPathfinder), pathfinder },
             { typeof(IActionManager), actionManager },
@@ -92,6 +104,11 @@ internal class Bootstrap : Bootstrapper
         {
             Logger.Error(e);
         }
+    }
+
+    protected override void OnMainDeactivate()
+    {
+        Context9.MenuManager.RemoveRootMenu(this.menu);
     }
 
     protected override void OnDeactivate()

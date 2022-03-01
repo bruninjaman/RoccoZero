@@ -72,10 +72,10 @@ internal abstract class Base
 
     protected void DrawRange(string id, Vector3 position, float radius, Color color, int alpha)
     {
-        ParticleManager.CreateOrUpdateParticle(
+        ParticleManager.CreateParticle(
             $"DrawRange_{id}",
             @"materials\ensage_ui\particles\alert_range.vpcf",
-            ParticleAttachment.AbsOrigin,
+            Attachment.CustomOrigin,
             new ControlPoint(0, position),
             new ControlPoint(1, color),
             new ControlPoint(2, radius, 255, alpha));
@@ -83,15 +83,15 @@ internal abstract class Base
 
     protected void DrawRangeRemove(string id)
     {
-        ParticleManager.RemoveParticle($"DrawRange_{id}");
+        ParticleManager.DestroyParticle($"DrawRange_{id}");
     }
 
     protected void DrawLine(string id, Vector3 startPosition, Vector3 endPosition, int size, int alpha, Color color)
     {
-        ParticleManager.CreateOrUpdateParticle(
+        ParticleManager.CreateParticle(
             $"DrawLine_{id}",
             @"materials\ensage_ui\particles\rectangle.vpcf",
-            ParticleAttachment.AbsOrigin,
+            Attachment.CustomOrigin,
             new ControlPoint(1, startPosition),
             new ControlPoint(2, endPosition),
             new ControlPoint(3, size, alpha, 0),
@@ -100,7 +100,7 @@ internal abstract class Base
 
     protected void DrawLineRemove(string id)
     {
-        ParticleManager.RemoveParticle($"DrawLine_{id}");
+        ParticleManager.DestroyParticle($"DrawLine_{id}");
     }
 
     protected void DisplayMessage(string message, bool encodingDefault = false)

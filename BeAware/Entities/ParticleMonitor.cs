@@ -61,7 +61,7 @@ internal sealed class ParticleMonitor
         ParticleManager.ParticleAdded -= OnParticleAdded;
     }
 
-    private Hero FindHeroWithSpells(AbilityId abilityId)
+    private static Hero FindHeroWithSpells(AbilityId abilityId)
     {
         return EntityManager.GetEntities<Hero>().FirstOrDefault(x => !x.IsIllusion && x.Spellbook.Spells.Any(v => v.Id == abilityId));
     }

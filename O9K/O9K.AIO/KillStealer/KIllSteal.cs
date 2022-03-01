@@ -147,7 +147,7 @@ internal class KillSteal : BaseMode
             this.activeAbilities.Add(new KillStealAbility(ability));
         }
 
-        this.activeAbilities = this.activeAbilities.OrderByDescending(x => x.Ability is IHasDamageAmplify && !(x.Ability is INuke))
+        this.activeAbilities = this.activeAbilities.OrderByDescending(x => x.Ability is IHasDamageAmplify and not INuke)
             .ThenByDescending(x => x.Ability is IHasDamageAmplify && x.Ability is INuke)
             .ThenByDescending(x => this.highPriorityKillSteal.Contains(x.Ability.Id))
             .ThenBy(x => x.Ability.CastPoint)
@@ -305,7 +305,7 @@ internal class KillSteal : BaseMode
             {
                 continue;
             }
-            
+
             var castDelay = ability.Ability.GetCastDelay(target);
             this.AbilitySleeper.Sleep(ability.Ability.Handle, hitTime);
             this.orbwalkSleeper.Sleep(ability.Ability.Owner.Handle, castDelay);
@@ -321,21 +321,26 @@ internal class KillSteal : BaseMode
             {
                 continue;
             }
-        
+
             var amplifier = ability.Ability as IHasDamageAmplify;
             var ampsDamage = amplifier?.IsIncomingDamageAmplifier() == true;
             var targetAmplified = ampsDamage && target.HasModifier(amplifier.AmplifierModifierNames);
-        
-            if (targetAmplified && !(ability.Ability is INuke))
+
+            if (targetAmplified && ability.Ability is not INuke)
             {
                 continue;
             }
-        
+
+            if (!ability.Ability.TargetsEnemy && ability.Ability.TargetsAlly && !ability.UseAbility(this.Owner))
+            {
+                return;
+            }
+
             if (!ability.UseAbility(target))
             {
                 return;
             }
-        
+
             float delay;
             if (!targetAmplified)
             {
@@ -355,7 +360,7 @@ internal class KillSteal : BaseMode
             {
                 delay = ability.Ability.GetCastDelay(target);
             }
-        
+
             this.AbilitySleeper.Sleep(ability.Ability.Handle, ability.Ability.GetHitTime(target));
             this.orbwalkSleeper.Sleep(ability.Ability.Owner.Handle, ability.Ability.GetCastDelay(target));
             this.KillStealSleeper.Sleep(delay - ability.Ability.ActivationDelay);

@@ -174,7 +174,7 @@ public sealed class UnitMonitor : IDisposable
         GameManager.GameEvent -= this.OnGameEvent;
         OrderManager.OrderAdding -= this.OnOrderAdding;
 
-        UpdateManager.DestroyIngameUpdate(OnUpdate);
+        UpdateManager.DestroyUpdate(OnUpdate);
     }
 
     internal void CheckModifiers(Unit9 unit)

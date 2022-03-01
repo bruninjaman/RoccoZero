@@ -300,7 +300,7 @@ internal class VisibleByEnemy : IHudModule
 
                         this.particles.Add(
                             unit,
-                            ParticleManager.CreateParticle(this.effects[this.effectName], ParticleAttachment.AbsOriginFollow, unit.BaseUnit));
+                            ParticleManager.CreateParticle(this.effects[this.effectName], Attachment.AbsOriginFollow, unit.BaseUnit));
                     }
                 }
             }

@@ -18,10 +18,12 @@ using Core.Managers.Menu.Items;
 using Divine.Entity;
 using Divine.Entity.Entities.Abilities.Components;
 using Divine.Entity.Entities.Components;
+using Divine.Entity.Entities.Players;
 using Divine.Entity.Entities.Units;
 using Divine.Entity.EventArgs;
 using Divine.Extensions;
 using Divine.Game;
+using Divine.Game.EventArgs;
 using Divine.Numerics;
 using Divine.Particle;
 using Divine.Particle.EventArgs;
@@ -96,6 +98,54 @@ internal class AbilityManager : IHudModule
         this.notificationsEnabled.AddTooltipTranslation(Lang.Ru, "Оповещать об использованных опасных способностях");
         this.notificationsEnabled.AddTranslation(Lang.Cn, "启用");
         this.notificationsEnabled.AddTooltipTranslation(Lang.Cn, "通知使用过的危险能力");
+
+        GameManager.GameEvent += OnGameEvent;
+    }
+
+    private void OnGameEvent(GameEventEventArgs e)
+    {
+        var gameEvent = e.GameEvent;
+        if (e.GameEvent.Name != "dota_item_spawned")
+        {
+            return;
+        }
+
+        var playerId = gameEvent.GetInt32("player_id");
+
+        try
+        {
+            foreach (var enemy in this.enemyUnits)
+            {
+                if (!enemy.Unit.IsValid)
+                {
+                    continue;
+                }
+
+                if (enemy.Unit.BaseEntity.Owner is Player player && player.Id != playerId)
+                {
+                    continue;
+                }
+
+                if (!enemy.Unit.IsVisible)
+                {
+                    enemy.ObserversCount = 0;
+                    enemy.SentryCount = 0;
+
+                    break;
+                }
+
+                if (!this.PlacedWard(enemy, AbilityId.item_ward_observer))
+                {
+                    this.PlacedWard(enemy, AbilityId.item_ward_sentry);
+                }
+
+                break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
     }
 
     public void Activate()
@@ -151,13 +201,12 @@ internal class AbilityManager : IHudModule
             if (e.OldValue)
             {
                 //todo delete
-                if (AppDomain.CurrentDomain.GetAssemblies()
-                    .Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("VisionControl")))
+                if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.GetName().Name.Contains("VisionControl")))
                 {
                     Hud.DisplayWarning("O9K.Hud // VisionControl is already included in O9K.Hud");
                 }
 
-                if (AppDomain.CurrentDomain.GetAssemblies().Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("BeAware")))
+                if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.GetName().Name.Contains("BeAware")))
                 {
                     Hud.DisplayWarning("O9K.Hud // BeAware is already included in O9K.Hud");
                 }
@@ -206,6 +255,21 @@ internal class AbilityManager : IHudModule
             EntityManager.EntityRemoved -= this.OnRemoveEntity;
             UpdateManager.DestroyIngameUpdate(this.OnUpdateRemove);
             UpdateManager.DestroyIngameUpdate(this.OnUpdateWard);
+
+            foreach (var drawableAbility in drawableAbilities)
+            {
+                try
+                {
+                    drawableAbility.RemoveRange();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            }
+
+            drawableAbilities.Clear();
+            enemyUnits.Clear();
         }
     }
 

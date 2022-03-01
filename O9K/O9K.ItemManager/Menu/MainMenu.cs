@@ -3,18 +3,13 @@
 using Core.Managers.Menu;
 using Core.Managers.Menu.Items;
 
-using Divine.Entity.Entities.Abilities.Components;
-using Divine.Helpers;
-
 using Metadata;
-
-using O9K.Core.Managers.Context;
 
 internal class MainMenu : IMainMenu, IModule
 {
-    public MainMenu()
+    public MainMenu(Menu menu)
     {
-        this.RootMenu = new Menu("Item manager", "O9K.ItemManager").SetTexture(nameof(AbilityId.courier_go_to_secretshop));
+        this.RootMenu = menu;
 
         this.AutoActionsMenu = this.RootMenu.Add(new Menu("Auto actions"));
         this.AutoActionsMenu.AddTranslation(Lang.Ru, "Автоматическое использование");
@@ -40,14 +35,14 @@ internal class MainMenu : IMainMenu, IModule
         this.RecoveryAbuseMenu.AddTranslation(Lang.Ru, "Абуз восстановления");
         this.RecoveryAbuseMenu.AddTranslation(Lang.Cn, "丢物品回复");
 
-        this.AbyssalAbuseMenu = this.RootMenu.Add(new Menu("Silver edge abuse"));
-        this.AbyssalAbuseMenu.AddTranslation(Lang.Ru, LocalizationHelper.LocalizeName(AbilityId.item_silver_edge) + " абуз");
-        this.AbyssalAbuseMenu.AddTranslation(Lang.Cn, LocalizationHelper.LocalizeName(AbilityId.item_silver_edge) + "滥用");
+        //this.AbyssalAbuseMenu = this.RootMenu.Add(new Menu("Silver edge abuse"));
+        //this.AbyssalAbuseMenu.AddTranslation(Lang.Ru, LocalizationHelper.LocalizeName(AbilityId.item_silver_edge) + " абуз");
+        //this.AbyssalAbuseMenu.AddTranslation(Lang.Cn, LocalizationHelper.LocalizeName(AbilityId.item_silver_edge) + "滥用");
     }
 
     public Menu AbilityLevelingMenu { get; }
 
-    public Menu AbyssalAbuseMenu { get; }
+    //public Menu AbyssalAbuseMenu { get; }
 
     public Menu AutoActionsMenu { get; }
 
@@ -63,11 +58,9 @@ internal class MainMenu : IMainMenu, IModule
 
     public void Activate()
     {
-        Context9.MenuManager.AddRootMenu(this.RootMenu);
     }
 
     public void Dispose()
     {
-        Context9.MenuManager.RemoveRootMenu(this.RootMenu);
     }
 }

@@ -128,15 +128,11 @@ internal sealed class TrueSightVision
             return;
         }
 
-        ParticleManager.CreateOrUpdateParticle(
-                $"TrueSightVision_{entity.Handle}",
-                "particles/items2_fx/ward_true_sight.vpcf",
-                entity,
-                ParticleAttachment.AbsOriginFollow);
+        ParticleManager.CreateParticle($"TrueSightVision_{entity.Handle}", "particles/items2_fx/ward_true_sight.vpcf", Attachment.AbsOriginFollow, entity);
     }
 
     private void ParticleRemove(uint handle)
     {
-        ParticleManager.RemoveParticle($"TrueSightVision_{handle}");
+        ParticleManager.DestroyParticle($"TrueSightVision_{handle}");
     }
 }

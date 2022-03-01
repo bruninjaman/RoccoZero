@@ -83,8 +83,8 @@ internal class FarmManager : IDisposable
         this.menuManager.LastHitMenu.HoldKey.ValueChange += this.LastHitHoldKeyOnValueChange;
         this.menuManager.LastHitMenu.ToggleKey.ValueChange += this.LastHitToggleKeyOnValueChange;
 
-        //  this.menuManager.PushMenu.HoldKey.ValueChange += this.PushHoldKeyOnValueChange;
-        //  this.menuManager.PushMenu.ToggleKey.ValueChange += this.PushToggleKeyOnValueChange;
+        this.menuManager.PushMenu.HoldKey.ValueChange += this.PushHoldKeyOnValueChange;
+        this.menuManager.PushMenu.ToggleKey.ValueChange += this.PushToggleKeyOnValueChange;
 
         this.damageTracker.AttackCanceled += this.OnAttackCanceled;
         EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
@@ -102,8 +102,8 @@ internal class FarmManager : IDisposable
         this.menuManager.LastHitMenu.HoldKey.ValueChange -= this.LastHitHoldKeyOnValueChange;
         this.menuManager.LastHitMenu.ToggleKey.ValueChange -= this.LastHitToggleKeyOnValueChange;
 
-        //    this.menuManager.PushMenu.HoldKey.ValueChange -= this.PushHoldKeyOnValueChange;
-        //    this.menuManager.PushMenu.ToggleKey.ValueChange -= this.PushToggleKeyOnValueChange;
+        this.menuManager.PushMenu.HoldKey.ValueChange -= this.PushHoldKeyOnValueChange;
+        this.menuManager.PushMenu.ToggleKey.ValueChange -= this.PushToggleKeyOnValueChange;
 
         this.lastHitMode.Dispose();
         this.damageTracker.Dispose();

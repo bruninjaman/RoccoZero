@@ -56,7 +56,7 @@ internal class Assassinate : AbilityModule
 
             var effect = ParticleManager.CreateParticle(
                 "particles/units/heroes/hero_sniper/sniper_crosshair.vpcf",
-                ParticleAttachment.OverheadFollow,
+                Attachment.OverheadFollow,
                 sender);
 
             this.effects.Add(sender.Handle, effect);

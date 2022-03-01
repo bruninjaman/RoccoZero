@@ -7,23 +7,36 @@ using System.Reflection;
 
 using Core.Logger;
 
+using Divine.Entity.Entities.Abilities.Components;
 using Divine.Service;
 
 using Metadata;
 
+using O9K.Core.Managers.Context;
 using O9K.ItemManager.Menu;
 using O9K.ItemManager.Modules.OrderHelper;
+
+using MenuCore = Core.Managers.Menu.Items.Menu;
 
 //[ExportPlugin("O9K // Item manager", priority: int.MaxValue)]
 internal class Bootstrap : Bootstrapper
 {
     private readonly List<IModule> modules = new List<IModule>();
 
+    private MenuCore menu;
+
+    protected override void OnMainActivate()
+    {
+        this.menu = new MenuCore("Item manager", "O9K.ItemManager").SetTexture(nameof(AbilityId.courier_go_to_secretshop));
+
+        Context9.MenuManager.AddRootMenu(this.menu);
+    }
+
     protected override void OnActivate()
     {
         try
         {
-            var mainMenu = new MainMenu();
+            var mainMenu = new MainMenu(menu);
             var orderSync = new OrderSync();
 
             modules.Add(mainMenu);
@@ -69,6 +82,11 @@ internal class Bootstrap : Bootstrapper
         {
             Logger.Error(e);
         }
+    }
+
+    protected override void OnMainDeactivate()
+    {
+        Context9.MenuManager.RemoveRootMenu(this.menu);
     }
 
     protected override void OnDeactivate()

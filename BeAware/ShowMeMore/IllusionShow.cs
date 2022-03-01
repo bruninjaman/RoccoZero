@@ -86,7 +86,7 @@
 
 //                if (remove)
 //                {
-//                    ParticleManager.RemoveParticle($"Illusion_{hero.Handle}");
+//                    ParticleManager.DestroyParticle($"Illusion_{hero.Handle}");
 //                    continue;
 //                }
 
@@ -96,11 +96,11 @@
 
 //        private void Illusions(Unit unit)
 //        {
-//            ParticleManager.CreateOrUpdateParticle(
+//            ParticleManager.CreateParticle(
 //                $"Illusion_{ unit.Handle }",
 //                "materials/ensage_ui/particles/illusions_mod_v2.vpcf",
 //                unit,
-//                ParticleAttachment.AbsOrigin,
+//                Attachment.AbsOrigin,
 //                ParticleRestartType.FullRestart,
 //                new ControlPoint(1, 0, 100, 0),
 //                new ControlPoint(2, 0, 50, 255));

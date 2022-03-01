@@ -30,6 +30,6 @@ internal static class UnitDictionaries
     {
         //{ 200, AbilityId.tusk_ice_shards },
         { 325, AbilityId.skywrath_mage_arcane_bolt },
-        { 450, AbilityId.phantom_assassin_stifling_dagger }
+        //{ 450, AbilityId.phantom_assassin_stifling_dagger }
     };
 }

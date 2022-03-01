@@ -9,7 +9,7 @@ internal sealed class ShowMeMoreMenu
         var showMeMoreMenu = rootMenu.CreateMenu("Show Me More");
 
         MoreInformationMenu = new MoreInformationMenu(showMeMoreMenu);
-        VisibleByEnemyMenu = new VisibleByEnemyMenu(showMeMoreMenu);
+        //VisibleByEnemyMenu = new VisibleByEnemyMenu(showMeMoreMenu);
         TrueSightVisionMenu = new TrueSightVisionMenu(showMeMoreMenu);
         TowerHelperMenu = new TowerHelperMenu(showMeMoreMenu);
         //IllusionShowMenu = new IllusionShowMenu(showMeMoreMenu);
@@ -22,7 +22,7 @@ internal sealed class ShowMeMoreMenu
 
     public MoreInformationMenu MoreInformationMenu { get; }
 
-    public VisibleByEnemyMenu VisibleByEnemyMenu { get; }
+    //public VisibleByEnemyMenu VisibleByEnemyMenu { get; }
 
     public TrueSightVisionMenu TrueSightVisionMenu { get; }
 

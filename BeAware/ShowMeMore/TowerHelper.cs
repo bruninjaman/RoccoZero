@@ -54,7 +54,7 @@ internal sealed class TowerHelper
                 }
 
                 var id = $"TowerHelper_{tower.Handle}";
-                ParticleManager.RemoveParticle(id);
+                ParticleManager.DestroyParticle(id);
             }
         }
     }
@@ -72,18 +72,18 @@ internal sealed class TowerHelper
             var position = tower.Position;
             if (LocalHero.Distance2D(position) < 1100)
             {
-                ParticleManager.CreateOrUpdateParticle(
+                ParticleManager.CreateParticle(
                     id,
                     @"particles\ui_mouseactions\range_finder_tower_aoe_ring.vpcf",
+                    Attachment.AbsOrigin,
                     tower,
-                    ParticleAttachment.AbsOrigin,
                     new ControlPoint(2, position),
                     new ControlPoint(3, tower.AttackRange(LocalHero), 0, 0),
                     new ControlPoint(4, 255, 0, 0));
             }
             else
             {
-                ParticleManager.RemoveParticle(id);
+                ParticleManager.DestroyParticle(id);
             }
         }
     }

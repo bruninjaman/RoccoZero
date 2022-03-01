@@ -23,7 +23,7 @@ using Settings;
 
 internal class ModifierMonitor : IDisposable
 {
-    private readonly Dictionary<string, AbilityId> abilityModifiers = new Dictionary<string, AbilityId>
+    private readonly Dictionary<string, AbilityId> abilityModifiers = new()
     {
         // fix
         { "modifier_juggernaut_omnislash", AbilityId.juggernaut_omni_slash },
@@ -68,7 +68,7 @@ internal class ModifierMonitor : IDisposable
         { "modifier_clarity_potion", AbilityId.item_clarity },
         { "modifier_clumsy_net_ensnare", AbilityId.item_clumsy_net },
 
-        // force 
+        // force
         { "item_glimmer_cape", AbilityId.dota_base_ability },
         { "modifier_ancientapparition_coldfeet_freeze", AbilityId.dota_base_ability },
         { "modifier_kunkka_torrent_slow", AbilityId.dota_base_ability },
@@ -90,7 +90,7 @@ internal class ModifierMonitor : IDisposable
         { "modifier_lion_finger_of_death_delay", AbilityId.dota_base_ability },
     };
 
-    private readonly Dictionary<string, AbilityId> abilityObstacleModifiers = new Dictionary<string, AbilityId>
+    private readonly Dictionary<string, AbilityId> abilityObstacleModifiers = new()
     {
         { "modifier_bloodseeker_bloodbath_thinker", AbilityId.bloodseeker_blood_bath },
         { "modifier_disruptor_kinetic_field_thinker", AbilityId.disruptor_kinetic_field },
@@ -126,7 +126,7 @@ internal class ModifierMonitor : IDisposable
 
     private readonly List<EvadableAbility> evadable;
 
-    private readonly HashSet<string> forcedHiddenModifiers = new HashSet<string>
+    private readonly HashSet<string> forcedHiddenModifiers = new()
     {
         "modifier_ember_spirit_sleight_of_fist_marker"
     };
@@ -171,14 +171,14 @@ internal class ModifierMonitor : IDisposable
             {
                 if (!this.abilityModifiers.TryGetValue(modifierName, out abilityId))
                 {
-                    var name = modifierName.Substring("modifier_".Length);
+                    var name = modifierName["modifier_".Length..];
                     var index = name.LastIndexOf("_", StringComparison.Ordinal);
 
                     abilityId = this.TryParse(name, modifierName, index < 0);
 
                     if (index > 0 && abilityId == AbilityId.dota_base_ability)
                     {
-                        abilityId = this.TryParse(name.Substring(0, index), modifierName);
+                        abilityId = this.TryParse(name[..index], modifierName);
                     }
                 }
 
@@ -204,7 +204,7 @@ internal class ModifierMonitor : IDisposable
 
             if (this.abilityObstacleModifiers.TryGetValue(name, out var id))
             {
-                if (!(this.evadable.Find(x => x.Ability.Id == id) is IModifierObstacle modifierObstacleAbility))
+                if (this.evadable.Find(x => x.Ability.Id == id) is not IModifierObstacle modifierObstacleAbility)
                 {
                     return;
                 }
@@ -251,8 +251,7 @@ internal class ModifierMonitor : IDisposable
                 return;
             }
 
-            if ((ability.ModifierAllyCounter && !modifierOwner.IsAlly(ability.Owner))
-                || (ability.ModifierEnemyCounter && modifierOwner.IsAlly(ability.Owner)))
+            if ((ability.ModifierAllyCounter && !modifierOwner.IsAlly(ability.Owner)) || (ability.ModifierEnemyCounter && modifierOwner.IsAlly(ability.Owner)))
             {
                 ability.AddModifier(modifier, modifierOwner);
             }

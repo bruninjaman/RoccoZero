@@ -112,7 +112,7 @@ internal class AttackRange : IRange
         {
             this.particleEffect = ParticleManager.CreateParticle(
                 @"particles\ui_mouseactions\drag_selected_ring.vpcf",
-                ParticleAttachment.AbsOriginFollow,
+                Attachment.AbsOriginFollow,
                 this.unit.BaseUnit);
         }
 

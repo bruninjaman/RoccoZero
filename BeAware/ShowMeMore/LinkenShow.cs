@@ -86,11 +86,11 @@ internal sealed class LinkenShow
 
     private void AddLinkenShow(Hero hero)
     {
-        ParticleManager.CreateOrUpdateParticle($"LinkenShow_{hero.Handle}", "particles/items_fx/immunity_sphere_buff.vpcf", hero, ParticleAttachment.CenterFollow);
+        ParticleManager.CreateParticle($"LinkenShow_{hero.Handle}", "particles/items_fx/immunity_sphere_buff.vpcf", Attachment.CenterFollow, hero);
     }
 
     private void RemoveLinkenShow(Hero hero)
     {
-        ParticleManager.RemoveParticle($"LinkenShow_{hero.Handle}");
+        ParticleManager.DestroyParticle($"LinkenShow_{hero.Handle}");
     }
 }

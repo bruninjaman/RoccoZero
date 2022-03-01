@@ -10,9 +10,9 @@ using Modules;
 
 internal class HudMenu : IHudModule, IHudMenu
 {
-    public HudMenu()
+    public HudMenu(Menu menu)
     {
-        this.RootMenu = new Menu("Hud", "O9K.Hud").SetTexture("o9k.me");
+        this.RootMenu = menu;
 
         this.UnitsMenu = this.RootMenu.Add(new Menu("Units"));
         this.UnitsMenu.AddTranslation(Lang.Ru, "Юниты");
@@ -85,12 +85,9 @@ internal class HudMenu : IHudModule, IHudMenu
 
     public void Activate()
     {
-        RendererManager.LoadImage("o9k.me", @"panorama\images\textures\minimap_hero_self_psd.vtex_c");
-        Context9.MenuManager.AddRootMenu(this.RootMenu);
     }
 
     public void Dispose()
     {
-        Context9.MenuManager.RemoveRootMenu(this.RootMenu);
     }
 }

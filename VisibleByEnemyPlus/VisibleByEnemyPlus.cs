@@ -160,11 +160,11 @@ public class VisibleByEnemyPlus : Bootstrapper
 
         if (visible && unit.IsAlive /*&& unit.Position.IsOnScreen()*/)
         {
-            ParticleManager.CreateOrUpdateParticle(
+            ParticleManager.CreateParticle(
                 $"VisibleByEnemyPlus.{unit.Handle}",
                 Config.Effects[Config.EffectTypeItem],
+                Attachment.AbsOriginFollow,
                 unit,
-                ParticleAttachment.AbsOriginFollow,
                 new ControlPoint(1, Red, Green, Blue),
                 new ControlPoint(2, Alpha));
         }

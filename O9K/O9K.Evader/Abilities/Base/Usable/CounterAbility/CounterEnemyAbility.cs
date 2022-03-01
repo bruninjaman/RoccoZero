@@ -60,7 +60,7 @@ internal class CounterEnemyAbility : CounterAbility
         }
 
         var id = obstacle.EvadableAbility.Ability.Id;
-        if (id == AbilityId.item_flask || id == AbilityId.item_clarity)
+        if (id is AbilityId.item_flask or AbilityId.item_clarity)
         {
             if (!enemy.CanDie)
             {

@@ -54,7 +54,7 @@ internal class Snowball : AbilityModule
 
             this.effect = ParticleManager.CreateParticle(
                 "particles/units/heroes/hero_tusk/tusk_snowball_target.vpcf",
-                ParticleAttachment.OverheadFollow,
+                Attachment.OverheadFollow,
                 sender);
 
             ModifierManager.ModifierRemoved += this.OnModifierRemoved;

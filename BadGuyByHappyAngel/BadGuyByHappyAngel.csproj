@@ -12,15 +12,19 @@
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
 
     <UseWPF>true</UseWPF>
-
+    
     <OutputPath>.\bin\</OutputPath>
     <IntermediateOutputPath>.\obj\</IntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="Divine">
-      <HintPath>..\..\..\..\Desktop\Divine.System\bin\Divine.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\Divine\References\Divine.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="Compiler" AfterTargets="PostBuildEvent">
+    <Exec Command="if exist &quot;C:\Program Files\Divine\Divine.exe&quot; call &quot;C:\Program Files\Divine\Divine.exe&quot; -PostBuildEvent -TargetPath=&quot;$(TargetPath)&quot;" />
+  </Target>
 
 </Project>

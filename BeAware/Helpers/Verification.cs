@@ -328,9 +328,13 @@ internal class Verification
                 continue;
             }
 
-            RendererManager.DrawImage("BeAware.Resources.Textures.beawareplus_screen.png", new RectangleF(pos.X + 18, pos.Y - 35, 64, 128));
+            var rect = new RectangleF(pos.X + 25, pos.Y - 20, 50, 50);
             RendererManager.DrawImage(data.GetHeroTexturName, new RectangleF(pos.X + 25, pos.Y - 20, 50, 50), ImageType.RoundUnit, true);
-            RendererManager.DrawImage(data.GetAbilityTexturName, new RectangleF(pos.X + 34, pos.Y + 40, 35, 35), ImageType.RoundAbility, true);
+            RendererManager.DrawCircle(rect.Center, 25, Color.LimeGreen, 4);
+
+            rect = new RectangleF(pos.X + 34, pos.Y + 20, 35, 35);
+            RendererManager.DrawImage(data.GetAbilityTexturName, rect, ImageType.RoundAbility, true);
+            RendererManager.DrawCircle(rect.Center, 20, Color.LimeGreen, 4);
         }
     }
 

@@ -17,7 +17,7 @@ public static class Drawer
 
     public static void AddGreenCircle(Vector3 position)
     {
-        var green = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
+        var green = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", Attachment.CustomOrigin, null);
         green.SetControlPoint(0, position);
         green.SetControlPoint(1, new Vector3(0, 255, 0));
         green.SetControlPoint(2, new Vector3(50, 255, 0));
@@ -27,7 +27,7 @@ public static class Drawer
 
     public static void AddRedCircle(Vector3 position)
     {
-        var red = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
+        var red = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", Attachment.CustomOrigin, null);
         red.SetControlPoint(0, position);
         red.SetControlPoint(1, new Vector3(255, 0, 0));
         red.SetControlPoint(2, new Vector3(70, 255, 0));
@@ -50,7 +50,7 @@ public static class Drawer
     {
         if (greenParticle == null)
         {
-            greenParticle = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
+            greenParticle = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", Attachment.CustomOrigin, null);
             greenParticle.SetControlPoint(0, position);
             greenParticle.SetControlPoint(1, new Vector3(0, 255, 0));
             greenParticle.SetControlPoint(2, new Vector3(50, 255, 0));
@@ -63,7 +63,7 @@ public static class Drawer
     {
         if (redParticle == null)
         {
-            redParticle = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", ParticleAttachment.CustomOrigin, null);
+            redParticle = ParticleManager.CreateParticle(@"materials\ensage_ui\particles\drag_selected_ring_mod.vpcf", Attachment.CustomOrigin, null);
             greenParticle.SetControlPoint(0, position);
             redParticle.SetControlPoint(1, new Vector3(255, 0, 0));
             redParticle.SetControlPoint(2, new Vector3(70, 255, 0));

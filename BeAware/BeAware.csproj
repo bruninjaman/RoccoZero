@@ -4,8 +4,6 @@
     <OutputType>Library</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <Platforms>x64</Platforms>
-    <Configurations>Release</Configurations>
-    <Configuration>Release</Configuration>
 
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
@@ -23,7 +21,6 @@
     <EmbeddedResource Include="Resources\Sounds\check_rune_ru.wav" />
     <EmbeddedResource Include="Resources\Sounds\default.wav" />
     <EmbeddedResource Include="Resources\Sounds\item_smoke_of_deceit.wav" />
-    <EmbeddedResource Include="Resources\Textures\beawareplus_screen.png" />
     <EmbeddedResource Include="Resources\Textures\divinebeaware.png" />
     <EmbeddedResource Include="Resources\Textures\HeroColors\0.png" />
     <EmbeddedResource Include="Resources\Textures\HeroColors\1.png" />

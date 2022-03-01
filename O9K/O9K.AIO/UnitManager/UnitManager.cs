@@ -15,11 +15,12 @@ using Core.Managers.Entity;
 using Core.Managers.Menu;
 using Core.Managers.Menu.EventArgs;
 using Core.Managers.Menu.Items;
+
+using Divine.Entity.Entities.Players;
 using Divine.Game;
 using Divine.Numerics;
 using Divine.Projectile;
 using Divine.Projectile.EventArgs;
-using Divine.Entity.Entities.Players;
 
 using Heroes.Base;
 using Heroes.Dynamic.Units;
@@ -176,9 +177,9 @@ internal class UnitManager : IUnitManager
                 continue;
             }
 
-            if (!comboModeMenu.IgnoreInvisibility && controllable.IsInvisible)
+            if (!comboModeMenu.IgnoreInvisibility && controllable.IsInvisible && (!comboModeMenu.IgnoreInvisibilityIfVisible || !controllable.Owner.IsVisibleToEnemies))
             {
-                return;
+                continue;
             }
 
             if (controllable.Combo(this.targetManager, comboModeMenu))
@@ -193,6 +194,11 @@ internal class UnitManager : IUnitManager
         foreach (var controllable in this.ControllableUnits)
         {
             if (controllable.ComboSleeper.IsSleeping)
+            {
+                continue;
+            }
+
+            if (!comboModeMenu.IgnoreInvisibility && controllable.IsInvisible && (!comboModeMenu.IgnoreInvisibilityIfVisible || !controllable.Owner.IsVisibleToEnemies))
             {
                 continue;
             }
@@ -497,7 +503,7 @@ internal class UnitManager : IUnitManager
                     continue;
                 }
 
-                
+
                 controllableUnit?.AddAbility(activeAbility, this.BaseHero.ComboMenus, this.BaseHero.MoveComboModeMenu);
             }
         }

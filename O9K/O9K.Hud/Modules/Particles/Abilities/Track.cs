@@ -63,7 +63,7 @@ internal class Track : AbilityModule
 
             var effect = ParticleManager.CreateParticle(
                 "particles/econ/items/bounty_hunter/bounty_hunter_hunters_hoard/bounty_hunter_hoard_shield.vpcf",
-                ParticleAttachment.OverheadFollow,
+                Attachment.OverheadFollow,
                 sender);
 
             this.effects.Add(sender.Handle, effect);

@@ -102,11 +102,11 @@ internal sealed class Range
 
     private void AddOrUpdate(int index, float range, Color color)
     {
-        ParticleManager.RangeParticle($"{CustomRangeName}_{index}", LocalHero, range, color);
+        ParticleManager.CreateRangeParticle($"{CustomRangeName}_{index}", LocalHero, range, color);
     }
 
     private void Remove(int index)
     {
-        ParticleManager.RemoveParticle($"{CustomRangeName}_{index}");
+        ParticleManager.DestroyParticle($"{CustomRangeName}_{index}");
     }
 }

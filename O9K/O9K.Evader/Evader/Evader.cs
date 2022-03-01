@@ -69,14 +69,14 @@ internal class Evader : IEvaderService
 
         EntityManager9.UnitAdded += this.OnUnitAdded;
         EntityManager9.UnitRemoved += this.OnUnitRemoved;
-        this.updateHandler = UpdateManager.CreateIngameUpdate(0, false, this.OnUpdate);
+        this.updateHandler = UpdateManager.CreateUpdate(0, false, this.OnUpdate); // Todo CreateIngameUpdate
         this.pathfinder.AbilityCanceled += this.OnAbilityCanceled;
         this.pathfinder.ObstacleAdded += this.OnObstacleAdded;
     }
 
     public void Dispose()
     {
-        UpdateManager.DestroyIngameUpdate(this.updateHandler);
+        UpdateManager.DestroyUpdate(this.updateHandler); // Todo DestroyIngameUpdate
         EntityManager9.UnitAdded -= this.OnUnitAdded;
         EntityManager9.UnitRemoved -= this.OnUnitRemoved;
         this.pathfinder.ObstacleAdded -= this.OnObstacleAdded;

@@ -7,6 +7,7 @@ using System.Reflection;
 
 using Core.Logger;
 
+using Divine.Renderer;
 using Divine.Service;
 
 using Helpers;
@@ -15,16 +16,30 @@ using MainMenu;
 
 using Modules;
 
+using O9K.Core.Managers.Context;
 using O9K.Hud.Helpers.Notificator;
+
+using MenuCore = Core.Managers.Menu.Items.Menu;
 
 //[ExportPlugin("O9K // Hud", priority: int.MaxValue)]
 internal sealed class Bootstrap : Bootstrapper
 {
     private readonly List<IHudModule> modules = new List<IHudModule>();
 
+    private MenuCore menu;
+
+    protected override void OnMainActivate()
+    {
+        RendererManager.LoadImage("o9k.me", @"panorama\images\textures\minimap_hero_self_psd.vtex_c");
+
+        this.menu = new MenuCore("Hud", "O9K.Hud").SetTexture("o9k.me");
+
+        Context9.MenuManager.AddRootMenu(this.menu);
+    }
+
     protected override void OnActivate()
     {
-        var hudMenu = new HudMenu();
+        var hudMenu = new HudMenu(this.menu);
         var minimap = new Minimap(hudMenu);
         var topPanel = new TopPanel(hudMenu);
         var notificator = new Notificator(minimap, hudMenu);
@@ -81,9 +96,14 @@ internal sealed class Bootstrap : Bootstrapper
         }
     }
 
+    protected override void OnMainDeactivate()
+    {
+        Context9.MenuManager.RemoveRootMenu(this.menu);
+    }
+
     protected override void OnDeactivate()
     {
-        /*foreach (var hudModule in this.modules)
+        foreach (var hudModule in this.modules)
         {
             try
             {
@@ -93,6 +113,6 @@ internal sealed class Bootstrap : Bootstrapper
             {
                 Logger.Error(e);
             }
-        }*/
+        }
     }
 }

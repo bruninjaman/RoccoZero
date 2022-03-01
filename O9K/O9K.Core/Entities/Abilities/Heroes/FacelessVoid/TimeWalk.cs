@@ -28,7 +28,14 @@ public class TimeWalk : RangedAbility, IBlink
     {
         get
         {
-            return this.castRangeData.GetValue(this.Level);
+            var bonus = 0f;
+
+            if (Owner.HasAghanimShard)
+            {
+                bonus += 400f;
+            }
+
+            return this.castRangeData.GetValue(this.Level) + bonus;
         }
     }
 }

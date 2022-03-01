@@ -63,7 +63,7 @@ internal class Infest : AbilityModule
 
             this.effect = ParticleManager.CreateParticle(
                 "particles/units/heroes/hero_life_stealer/life_stealer_infested_unit.vpcf",
-                ParticleAttachment.OverheadFollow,
+                Attachment.OverheadFollow,
                 sender);
 
             if (this.notificationsEnabled && sender is Hero)

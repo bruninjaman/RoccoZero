@@ -137,7 +137,7 @@ internal class ControllableUnit
     {
         get
         {
-            return this.Owner.IsInvisible;
+            return this.Owner.IsInvisible && !Owner.HasModifier("modifier_smoke_of_deceit", "modifier_phantom_assassin_blur_active");
         }
     }
 
@@ -340,7 +340,7 @@ internal class ControllableUnit
 
     public virtual bool MoveCombo(TargetManager targetManager, MoveComboModeMenu comboModeMenu)
     {
-        if (!this.Owner.CanUseAbilities || this.Owner.IsInvisible)
+        if (!this.Owner.CanUseAbilities)
         {
             return false;
         }

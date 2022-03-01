@@ -31,6 +31,22 @@ public class LightningBolt : RangedAbility, INuke, IDisable
 
     public UnitState AppliesUnitState { get; } = UnitState.Stunned;
 
+    public override AbilityBehavior AbilityBehavior
+    {
+        get
+        {
+            var behavior = base.AbilityBehavior;
+            var talent = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_zeus_5);
+
+            if (talent?.Level > 0)
+            {
+                behavior = (behavior & ~AbilityBehavior.UnitTarget) | AbilityBehavior.Point;
+            }
+
+            return behavior;
+        }
+    }
+
     public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
     {
         var damage = base.GetRawDamage(unit, remainingHealth);

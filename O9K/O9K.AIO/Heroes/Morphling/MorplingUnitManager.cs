@@ -10,9 +10,10 @@ using Core.Entities.Abilities.Base;
 using Core.Entities.Heroes.Unique;
 using Core.Logger;
 
-using Dynamic.Units;
 using Divine.Game;
 using Divine.Numerics;
+
+using Dynamic.Units;
 
 using Modes.Combo;
 
@@ -39,9 +40,9 @@ internal class MorphlingUnitManager : UnitManager
                 continue;
             }
 
-            if (!comboModeMenu.IgnoreInvisibility && controllable.IsInvisible)
+            if (!comboModeMenu.IgnoreInvisibility && controllable.IsInvisible && (!comboModeMenu.IgnoreInvisibilityIfVisible || !controllable.Owner.IsVisibleToEnemies))
             {
-                return;
+                continue;
             }
 
             if (controllable.Combo(this.targetManager, comboModeMenu))

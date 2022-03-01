@@ -214,7 +214,7 @@ internal class ParticleMonitor : IDisposable
                 return;
             }
 
-            if (!(this.evadableAbilities.Find(x => x.Ability.Id == abilityId) is IParticle ability))
+            if (this.evadableAbilities.Find(x => x.Ability.Id == abilityId) is not IParticle ability)
             {
                 return;
             }
