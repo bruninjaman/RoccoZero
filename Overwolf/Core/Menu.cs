@@ -13,32 +13,30 @@ namespace Overwolf.Core
         internal MenuSwitcher OverwolfSwitcher { get; }
         internal MenuToggleKey OverwolfToggleKey { get; }
         internal Divine.Menu.Items.Menu OverwolfFontColorMenu { get; }
+        internal Divine.Menu.Items.Menu OverwolfCustomizationMenu { get; }
         internal MenuSlider OverwolfFontColorR { get; }
         internal MenuSlider OverwolfFontColorG { get; }
         internal MenuSlider OverwolfFontColorB { get; }
         internal MenuSlider OverwolfFontColorA { get; }
+        internal MenuSwitcher OverwolfFontShadow { get; }
         internal MenuSlider OverwolfWindowSize { get; }
         internal MenuSelector OverwolfBackGround { get; set; }
-        //internal MenuSelector OverwolfFontColor { get; set; }
 
         internal Menu()
         {
             RootMenu = MenuManager.CreateRootMenu("Overwolf.RootMenu", "Overwolf");
             OverwolfSwitcher = RootMenu.CreateSwitcher("Overwolf.Switcher", "On/Off");
             OverwolfToggleKey = RootMenu.CreateToggleKey("Overwolf.ToggleKey", "Overwolf Toggle Key", Key.None);
-            OverwolfFontColorMenu = RootMenu.CreateMenu("Overwolf.FontColorMenu", "Font Color");
-            OverwolfFontColorR = OverwolfFontColorMenu.CreateSlider("Overwolf.R", "R", 255, 0, 255).SetFontColor(Color.Red);
-            OverwolfFontColorG = OverwolfFontColorMenu.CreateSlider("Overwolf.G", "G", 255, 0, 255).SetFontColor(Color.Green);
-            OverwolfFontColorB = OverwolfFontColorMenu.CreateSlider("Overwolf.B", "B", 255, 0, 255).SetFontColor(Color.Blue);
+            OverwolfCustomizationMenu = RootMenu.CreateMenu("Overwolf.CustomizationMenu", "Customization");
+            OverwolfFontColorMenu = OverwolfCustomizationMenu.CreateMenu("Overwolf.FontColorMenu", "Font Color");
+            OverwolfFontColorR = OverwolfFontColorMenu.CreateSlider("Overwolf.R", "R", 255, 0, 255)
+                .SetFontColor(Color.Red);
+            OverwolfFontColorG = OverwolfFontColorMenu.CreateSlider("Overwolf.G", "G", 255, 0, 255)
+                .SetFontColor(Color.Green);
+            OverwolfFontColorB = OverwolfFontColorMenu.CreateSlider("Overwolf.B", "B", 255, 0, 255)
+                .SetFontColor(Color.Blue);
             OverwolfFontColorA = OverwolfFontColorMenu.CreateSlider("Overwolf.A", "A", 255, 0, 255);
-            //OverwolfFontColor = RootMenu.CreateSelector(
-            //    "Font Color",
-            //    new string[]
-            //    {
-            //        "White",
-            //        "Black",
-            //        "Gray"
-            //    });
+            OverwolfFontShadow = OverwolfCustomizationMenu.CreateSwitcher("Overwolf.FontShadow", "Font Shadow", false);
         }
 
         internal Dictionary<string, Color> OverwolfFontColors = new Dictionary<string, Color>()
