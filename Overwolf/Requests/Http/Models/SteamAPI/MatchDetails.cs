@@ -66,7 +66,7 @@ namespace Overwolf.Requests.Http.Models.SteamAPI
         public int radiant_score { get; set; }
         public int dire_score { get; set; }
         public List<PicksBan> picks_bans { get; set; }
-        public string? error { get; set; }
+        public string error { get; set; }
     }
 
     public class MatchDetails
