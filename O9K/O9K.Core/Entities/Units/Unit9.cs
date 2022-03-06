@@ -792,12 +792,13 @@ public class Unit9 : Entity9
     {
         get
         {
+            /*return this.ranges.Where(x => x.IsValid && (x.RangeIncreaseType & RangeIncreaseType.Ability) != 0)
+                                .Sum(x => x.GetRangeIncrease(this, RangeIncreaseType.Ability));*/
+
             return this.BaseUnit.BonusCastRange;
         }
     }
 
-    /*return this.ranges.Where(x => x.IsValid && (x.RangeIncreaseType & RangeIncreaseType.Ability) != 0)
-                .Sum(x => x.GetRangeIncrease(this, RangeIncreaseType.Ability));*/
     internal bool HasAegis { get; set; }
 
     internal bool HasAghanimsScepterBlessing { get; set; }

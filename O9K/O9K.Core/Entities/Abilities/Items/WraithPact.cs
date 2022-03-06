@@ -7,10 +7,10 @@ using Divine.Entity.Entities.Abilities.Components;
 
 using Metadata;
 
-[AbilityId(AbilityId.item_gem)]
-public class GemOfTrueSight : RangedAbility
+[AbilityId(AbilityId.item_wraith_pact)]
+public class WraithPact : RangedAbility
 {
-    public GemOfTrueSight(Ability baseAbility)
+    public WraithPact(Ability baseAbility)
         : base(baseAbility)
     {
     }

@@ -14,7 +14,7 @@ using Helpers.Range;
 using Metadata;
 
 [AbilityId(AbilityId.item_seer_stone)]
-public class SeerStone : PassiveAbility, IHasRangeIncrease
+public class SeerStone : RangedAbility, IHasRangeIncrease
 {
     private readonly SpecialData castRange;
 
@@ -23,6 +23,8 @@ public class SeerStone : PassiveAbility, IHasRangeIncrease
     {
         this.castRange = new SpecialData(baseAbility, "cast_range_bonus");
     }
+
+    public override float CastRange { get; } = 9999999;
 
     public bool IsRangeIncreasePermanent { get; } = true;
 

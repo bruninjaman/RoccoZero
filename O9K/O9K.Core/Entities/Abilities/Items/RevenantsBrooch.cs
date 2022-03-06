@@ -7,10 +7,10 @@ using Divine.Entity.Entities.Abilities.Components;
 
 using Metadata;
 
-[AbilityId(AbilityId.item_gem)]
-public class GemOfTrueSight : RangedAbility
+[AbilityId(AbilityId.item_revenants_brooch)]
+public class RevenantsBrooch : ActiveAbility
 {
-    public GemOfTrueSight(Ability baseAbility)
+    public RevenantsBrooch(Ability baseAbility)
         : base(baseAbility)
     {
     }

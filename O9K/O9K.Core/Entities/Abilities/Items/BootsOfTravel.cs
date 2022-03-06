@@ -18,6 +18,7 @@ public class BootsOfTravel : PassiveAbility
         this.Id = AbilityId.item_travel_boots;
     }
 }
+
 //public class BootsOfTravel : RangedAbility, IChanneled
 //{
 //    public BootsOfTravel(Ability baseAbility)
