@@ -177,10 +177,7 @@ namespace Overwolf.Core
                 _isInLobby = false;
             }
 
-            //LogManager.Debug("NetworkManager_GCMessageReceived: "+ e.Protobuf.Name + " " + e.Protobuf.MessageId + "\n" + e.Protobuf.ToJson());
-            LogManager.Debug($"{e?.Protobuf?.MessageId} JobId: {e?.JobId} Result: {e?.Protobuf?.ToJson()["result"] ?? ""}");
-            //Console.WriteLine(e.Protobuf.MessageId + "\t" + e.Protobuf.RawMessageId);
-            //Console.WriteLine(e.Protobuf.ToJson());
+            //LogManager.Debug($"{e.Protobuf.MessageId} JobId: {e.JobId} Result: {e.Protobuf.ToJson()["result"] ?? ""}");
 
             var jobId = (int)(e.JobId - 1);
             var playerId = jobId % 10;
@@ -195,11 +192,6 @@ namespace Overwolf.Core
                     accountId = player.id,
                     jobId = e.JobId
                 });
-                //if (!profileRequestsSleeper.Sleeping)
-                //{
-                //    LogManager.Debug($"ProfileRequest Delay for {player.id} Delay 1000ms");
-                //    profileRequestsSleeper.Sleep(1000);
-                //}
                 return;
             }
             else if (e.Protobuf.ToJson()["result"].GetValue<string>() != "k_eSuccess")
@@ -216,9 +208,6 @@ namespace Overwolf.Core
 
                 if (ulong.TryParse(match["match_id"].GetValue<string>(), out var match_id))
                     player.recentMatches[index].matchId = match_id;
-
-                //System.Console.WriteLine("SendGCMatchDetailsRequest: " + ((ulong)(index * 10) + (ulong)(playerId + 1)));
-                //NetworkManager.SendGCMatchDetailsRequest(match_id, (ulong)(index * 10) + (ulong)(playerId + 1));
 
                 _httpRequests.Add(new HttpMessage
                 {
@@ -237,7 +226,7 @@ namespace Overwolf.Core
 
         private async void UpdateManager_Update()
         {
-            //Console.WriteLine();
+
             //Profile requests
             if (!_isInLobby)
             {
@@ -254,12 +243,6 @@ namespace Overwolf.Core
                 LogManager.Debug($"ProfileRequest for {_profileRequests[i].accountId} Sent {_profileRequestsSent}");
 
                 _profileRequestsSent++;
-                //if (_profileRequestsSent % 5 == 0)
-                //{
-                //    LogManager.Debug($"ProfileRequest Delay for {_profileRequests[i].accountId} Delay 3000ms");
-                //    _profileRequestsSleeper.Sleep(3000);
-                //}
-                //else if (_profileRequestsSent % 1 == 0)
                 if (_profileRequestsSent % 1 == 0)
                 {
                     LogManager.Debug($"ProfileRequest Delay for {_profileRequests[i].accountId} Delay 200ms");
@@ -274,49 +257,11 @@ namespace Overwolf.Core
             {
                 switch (_httpRequests[i].requestType)
                 {
-                    case RequestType.GetDivineStratzData:
-                        {
-                            if (_httpRequestsSleeper.Sleeping || _httpRequests[i].sent)
-                                continue;
-                            _httpRequests[i].sent = true;
-                            _httpRequestsSent++;
-                            if (_httpRequestsSent % 1 == 0)
-                            {
-                                LogManager.Debug($"httpRequests Delay for {_httpRequests[i].accountId} Delay 100ms");
-                                _httpRequestsSleeper.Sleep(100);
-                            }
-
-                            LogManager.Debug($"GetDivineStratzData for {_httpRequests[i].accountId} Sent");
-                            var stratzData = await HttpRequests.GetDivineStratzDataAsync(
-                                _httpRequests[i].accountId,
-                                _httpRequests[i].startDateTime).ConfigureAwait(false);
-                            if (stratzData == null) continue;
-
-                            var playerNumber = _httpRequests[i].playerNumber;
-
-                            _playerTable[playerNumber].isAnonymous = stratzData?.mainInfo?.steamAccount?.isAnonymous ?? true;
-                            if (!_playerTable[playerNumber].isAnonymous)
-                            {
-                                _playerTable[playerNumber].matchCount = (uint)stratzData.mainInfo.matchCount;
-                                _playerTable[playerNumber].winPercent = (uint)Math.Round(((float)stratzData.mainInfo.winCount / (float)stratzData.mainInfo.matchCount) * 100f);
-                                var orderedHeroPerformance = stratzData.heroPerformance.OrderByDescending(x => x.matchCount).ToList();
-                                for (int k = 0; k < 3; k++)
-                                {
-                                    if (orderedHeroPerformance.Count < (k + 1)) continue;
-                                    //playerTable[playerNumber].mostPlayed[k] = orderedHeroPerformance[k];
-                                }
-                            }
-                            break;
-                        }
                     case RequestType.GetDivineStratzGraphQLData:
                         {
                             if (_httpRequestsSleeper.Sleeping || _httpRequests[i].sent)
                                 continue;
 
-                            //foreach (var item in httpRequests[i].players)
-                            //{
-                            //    Console.WriteLine(httpRequests[i].players.IndexOf(item) + ": " + item);
-                            //}
                             _httpRequests[i].sent = true;
                             _httpRequestsSent++;
                             if (_httpRequestsSent % 1 == 0)
@@ -350,7 +295,12 @@ namespace Overwolf.Core
                                             continue;
                                         }
 
-                                        player.matchCount = (uint)playerData.matchCount;
+                                        foreach (var heroesPerformance in playerData.heroesPerformance)
+                                        {
+                                            player.matchCount += (uint)heroesPerformance.matchCount;
+                                        }
+                                        //player.matchCount = (uint)playerData.matchCount;
+
                                         player.winPercent = (uint)Math.Round(((float)playerData.winCount / (float)playerData.matchCount) * 100f);
                                         var orderedHeroPerformance = playerData.heroesPerformance.OrderByDescending(x => x.matchCount).ToList();
                                         for (int k = 0; k < 3; k++)
@@ -463,23 +413,8 @@ namespace Overwolf.Core
                 _playerTable[i].laneSelectonFlags = (LaneSelectonFlags)member["lane_selection_flags"].GetValue<int>();
                 _playerTable[i].rankTier = member["rank_tier"].GetValue<int>();
 
-                //profileRequests.Add(new ProtoMessage
-                //{
-                //    msgId = GCMessageId.CMsgProfileRequest,
-                //    accountId = playerTable[i].id,
-                //    jobId = (ulong)(i + 1)
-                //});
-
-                //httpRequests.Add(new HttpMessage
-                //{
-                //    requestType = RequestType.GetDivineStratzData,
-                //    accountId = playerTable[i].id,
-                //    playerNumber = i,
-                //    startDateTime = DateTime.Today.AddMonths(-1)
-                //});
 
                 _requestPlayers.Add(_playerTable[i].id.ToString());
-
                 if (((members.Count < 5) && i == (members.Count - 1))
                     || (members.Count >= 5 && (i == 4 || i == 9)))
                 {
