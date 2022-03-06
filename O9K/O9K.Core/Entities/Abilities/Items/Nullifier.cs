@@ -20,4 +20,6 @@ public class Nullifier : RangedAbility, IDebuff
     }
 
     public string DebuffModifierName { get; } = "modifier_item_nullifier_mute";
+
+    public override bool CanHitSpellImmuneEnemy { get; } = true;
 }
