@@ -1,4 +1,6 @@
-﻿namespace O9K.Core.Entities.Abilities.Items;
+﻿using System;
+
+namespace O9K.Core.Entities.Abilities.Items;
 
 using Base;
 using Base.Components;
@@ -30,13 +32,14 @@ public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, I
         this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
         this.amplifierData = new SpecialData(baseAbility, "ethereal_damage_bonus");
         this.damageMultiplierData = new SpecialData(baseAbility, "blast_agility_multiplier");
+        this.amplifierData = new SpecialData(baseAbility, "spell_amp");
     }
 
     public DamageType AmplifierDamageType { get; } = DamageType.Magical;
 
-    public string[] AmplifierModifierNames { get; } = { "modifier_item_ethereal_blade_ethereal" };
+    public string[] AmplifierModifierNames { get; } = { "modifier_item_ethereal_blade_ethereal", "modifier_item_ethereal_blade" };
 
-    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
+    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.All;
 
     public UnitState AppliesUnitState { get; } = UnitState.Disarmed;
 
@@ -44,7 +47,7 @@ public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, I
 
     public string DebuffModifierName { get; } = "modifier_item_ethereal_blade_ethereal";
 
-    public bool IsAmplifierAddedToStats { get; } = true;
+    public bool IsAmplifierAddedToStats { get; } = false;
 
     public bool IsAmplifierPermanent { get; } = false;
 
@@ -56,7 +59,12 @@ public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, I
 
     public float AmplifierValue(Unit9 source, Unit9 target)
     {
-        return this.amplifierData.GetValue(this.Level) / -100;
+        if (!this.IsUsable)
+        {
+            return 0;
+        }
+
+        return this.amplifierData.GetValue(this.Level) / 100f;
     }
 
     public override int GetDamage(Unit9 unit)
