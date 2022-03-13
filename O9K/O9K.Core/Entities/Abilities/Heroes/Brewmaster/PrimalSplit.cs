@@ -14,4 +14,12 @@ public class PrimalSplit : ActiveAbility
         : base(baseAbility)
     {
     }
+
+    public override bool IsDisplayingCharges
+    {
+        get
+        {
+            return Owner.HasAghanimsScepter;
+        }
+    }
 }
