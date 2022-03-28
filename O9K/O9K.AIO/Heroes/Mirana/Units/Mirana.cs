@@ -72,7 +72,7 @@ internal class Mirana : ControllableUnit
         {
             return true;
         }
-        
+
         if (abilityHelper.UseAbility(this.gungir))
         {
             return true;
