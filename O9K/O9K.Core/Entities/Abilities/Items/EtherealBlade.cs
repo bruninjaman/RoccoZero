@@ -21,6 +21,8 @@ using Metadata;
 [AbilityId(AbilityId.item_ethereal_blade)]
 public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, IHasDamageAmplify
 {
+    private readonly SpecialData etherealAmplifierData;
+
     private readonly SpecialData amplifierData;
 
     private readonly SpecialData damageMultiplierData;
@@ -30,16 +32,16 @@ public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, I
     {
         this.DamageData = new SpecialData(baseAbility, "blast_damage_base");
         this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-        this.amplifierData = new SpecialData(baseAbility, "ethereal_damage_bonus");
+        this.etherealAmplifierData = new SpecialData(baseAbility, "ethereal_damage_bonus");
         this.damageMultiplierData = new SpecialData(baseAbility, "blast_agility_multiplier");
         this.amplifierData = new SpecialData(baseAbility, "spell_amp");
     }
 
     public DamageType AmplifierDamageType { get; } = DamageType.Magical;
 
-    public string[] AmplifierModifierNames { get; } = { "modifier_item_ethereal_blade_ethereal", "modifier_item_ethereal_blade" };
+    public string[] AmplifierModifierNames { get; } = { "modifier_item_ethereal_blade_ethereal" };
 
-    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.All;
+    public AmplifiesDamage AmplifiesDamage { get; } = AmplifiesDamage.Incoming;
 
     public UnitState AppliesUnitState { get; } = UnitState.Disarmed;
 
@@ -47,7 +49,7 @@ public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, I
 
     public string DebuffModifierName { get; } = "modifier_item_ethereal_blade_ethereal";
 
-    public bool IsAmplifierAddedToStats { get; } = false;
+    public bool IsAmplifierAddedToStats { get; } = true;
 
     public bool IsAmplifierPermanent { get; } = false;
 
@@ -59,17 +61,22 @@ public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, I
 
     public float AmplifierValue(Unit9 source, Unit9 target)
     {
-        if (!this.IsUsable)
+        var value = 0f;
+
+        if (this.IsUsable)
         {
-            return 0;
+            value += this.amplifierData.GetValue(this.Level) / 100f;
         }
 
-        return this.amplifierData.GetValue(this.Level) / 100f;
+        value += this.etherealAmplifierData.GetValue(this.Level) / -100;
+
+        return value;
     }
 
     public override int GetDamage(Unit9 unit)
     {
         var amplify = unit.GetDamageAmplification(this.Owner, this.DamageType, true);
+
         var block = unit.GetDamageBlock(this.DamageType);
         var damage = this.GetRawDamage(unit);
 
@@ -87,16 +94,16 @@ public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, I
         var damage = base.GetRawDamage(unit, remainingHealth);
         var multiplier = this.damageMultiplierData.GetValue(this.Level);
 
-        switch (this.Owner.PrimaryAttribute)
+        switch (unit.PrimaryAttribute)
         {
             case Attribute.Strength:
-                damage[this.DamageType] += multiplier * this.Owner.TotalStrength;
+                damage[this.DamageType] += multiplier * unit.TotalStrength;
                 break;
             case Attribute.Agility:
-                damage[this.DamageType] += multiplier * this.Owner.TotalAgility;
+                damage[this.DamageType] += multiplier * unit.TotalAgility;
                 break;
             case Attribute.Intelligence:
-                damage[this.DamageType] += multiplier * this.Owner.TotalIntelligence;
+                damage[this.DamageType] += multiplier * unit.TotalIntelligence;
                 break;
         }
 

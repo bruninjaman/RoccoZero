@@ -148,7 +148,7 @@ internal class KillSteal : BaseMode
         }
 
         this.activeAbilities = this.activeAbilities.OrderByDescending(x => x.Ability is IHasDamageAmplify and not INuke)
-            .ThenByDescending(x => x.Ability is IHasDamageAmplify && x.Ability is INuke)
+            .ThenByDescending(x => x.Ability is IHasDamageAmplify and INuke)
             .ThenByDescending(x => this.highPriorityKillSteal.Contains(x.Ability.Id))
             .ThenBy(x => x.Ability.CastPoint)
             .ToList();
@@ -394,7 +394,7 @@ internal class KillSteal : BaseMode
                 return;
             }
 
-            if (this.ignoredAmplifiers.Contains(ability.Id) || !(ability is ActiveAbility active))
+            if (this.ignoredAmplifiers.Contains(ability.Id) || ability is not ActiveAbility active)
             {
                 return;
             }
@@ -426,7 +426,7 @@ internal class KillSteal : BaseMode
                 return;
             }
 
-            if (!(ability is ActiveAbility))
+            if (ability is not ActiveAbility)
             {
                 return;
             }
