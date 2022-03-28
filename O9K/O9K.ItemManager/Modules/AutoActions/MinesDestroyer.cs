@@ -13,14 +13,16 @@ using Core.Managers.Entity;
 using Core.Managers.Menu;
 using Core.Managers.Menu.EventArgs;
 using Core.Managers.Menu.Items;
+
+using Divine.Entity.Entities.Abilities.Components;
 using Divine.Game;
 using Divine.Order;
-using Divine.Update;
 using Divine.Order.EventArgs;
 using Divine.Order.Orders.Components;
-using Divine.Entity.Entities.Abilities.Components;
+using Divine.Update;
 
 using Metadata;
+
 using O9K.Core.Entities.Units;
 
 internal class MinesDestroyer : IModule
