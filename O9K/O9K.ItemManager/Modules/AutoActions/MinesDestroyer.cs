@@ -21,6 +21,7 @@ using Divine.Order.Orders.Components;
 using Divine.Entity.Entities.Abilities.Components;
 
 using Metadata;
+using O9K.Core.Entities.Units;
 
 internal class MinesDestroyer : IModule
 {
@@ -143,6 +144,21 @@ internal class MinesDestroyer : IModule
         }
     }
 
+    public bool CanAttack(Unit9 target, float additionalRange = 0)
+    {
+        if (!target.IsAlive || target.IsInvulnerable || target.IsAttackImmune || !target.IsVisible)
+        {
+            return false;
+        }
+
+        if (this.owner.Hero.Distance(target) > this.owner.Hero.GetAttackRange(target, additionalRange))
+        {
+            return false;
+        }
+
+        return this.owner.Hero.CanAttack();
+    }
+
     private void OnUpdate()
     {
         try
@@ -162,7 +178,7 @@ internal class MinesDestroyer : IModule
 
             foreach (var mine in mines)
             {
-                if (!hero.CanAttack(mine, 200))
+                if (!CanAttack(mine, 200))
                 {
                     continue;
                 }
