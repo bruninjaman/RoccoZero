@@ -19,6 +19,9 @@ using Divine.Particle;
 using Divine.Particle.Components;
 using Divine.Renderer;
 
+using O9K.AIO.Menu;
+using O9K.Core.Managers.Menu.Items;
+
 using TargetManager;
 
 internal class RazeUtils
@@ -36,16 +39,23 @@ internal class RazeUtils
 
     private static TargetManager targetManager;
 
-    public static void Init(TargetManager targetManager)
+    private static MenuSwitcher Enabled;
+
+    public static void Init(TargetManager targetManager, MenuManager menu)
     {
+        Enabled = menu.Enabled;
         ShadowFiendBase.drawRazesSwitcher.ValueChange += OnValueChange;
         ShadowFiendBase.razeToMouseSwitcher.ValueChange += OnValueChangeRazeToMouse;
-        OrderManager.OrderAdding += OnUnitOrderRazeToTarget;
         RazeUtils.targetManager = targetManager;
     }
 
     private static void OnUnitOrderRazeToTarget(OrderAddingEventArgs e)
     {
+        if (!Enabled)
+        {
+            return;
+        }
+
         if (!e.IsCustom)
         {
             return;
@@ -97,10 +107,12 @@ internal class RazeUtils
         if (e.NewValue)
         {
             OrderManager.OrderAdding += OnUnitOrder;
+            OrderManager.OrderAdding += OnUnitOrderRazeToTarget;
         }
         else
         {
             OrderManager.OrderAdding -= OnUnitOrder;
+            OrderManager.OrderAdding -= OnUnitOrderRazeToTarget;
         }
     }
 
@@ -143,6 +155,11 @@ internal class RazeUtils
 
     private static void OnDraw()
     {
+        if (!Enabled)
+        {
+            return;
+        }
+
         var chosen = Colours[ShadowFiendBase.colourSelector];
         var owner = EntityManager9.Owner;
 
@@ -170,6 +187,10 @@ internal class RazeUtils
 
     private static void OnUnitOrder(OrderAddingEventArgs e)
     {
+        if (!Enabled)
+        {
+            return;
+        }
 
         var owner = EntityManager9.Owner;
         var order = e.Order.Ability;
@@ -193,7 +214,6 @@ internal class RazeUtils
             {
                 e.Process = true;
             }
-
         }
     }
 }
