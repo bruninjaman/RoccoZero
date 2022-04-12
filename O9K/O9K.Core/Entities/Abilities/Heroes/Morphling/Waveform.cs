@@ -13,8 +13,6 @@ using Metadata;
 [AbilityId(AbilityId.morphling_waveform)]
 public class Waveform : LineAbility, INuke, IBlink
 {
-    private readonly SpecialData castRangeData;
-
     private bool talentLearned;
 
     public Waveform(Ability baseAbility)
@@ -22,7 +20,6 @@ public class Waveform : LineAbility, INuke, IBlink
     {
         this.RadiusData = new SpecialData(baseAbility, "width");
         this.SpeedData = new SpecialData(baseAbility, "speed");
-        this.castRangeData = new SpecialData(baseAbility, "abilitycastrange");
     }
 
     public BlinkType BlinkType { get; } = BlinkType.Blink;
@@ -37,14 +34,6 @@ public class Waveform : LineAbility, INuke, IBlink
             }
 
             return this.talentLearned = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_morphling_6)?.Level > 0;
-        }
-    }
-
-    protected override float BaseCastRange
-    {
-        get
-        {
-            return this.castRangeData.GetValue(this.Level);
         }
     }
 }
