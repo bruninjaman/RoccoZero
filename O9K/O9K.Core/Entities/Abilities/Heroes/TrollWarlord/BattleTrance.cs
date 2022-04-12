@@ -12,23 +12,21 @@ using Entities.Units;
 
 using Metadata;
 
+using O9K.Core.Helpers;
+
 [AbilityId(AbilityId.troll_warlord_battle_trance)]
 public class BattleTrance : ActiveAbility, IHasDamageAmplify, IShield
 {
     public BattleTrance(Ability baseAbility)
         : base(baseAbility)
     {
+        this.RadiusData = new SpecialData(baseAbility, "range");
     }
 
     public override AbilityBehavior AbilityBehavior
     {
         get
         {
-            if (this.Owner.HasAghanimsScepter)
-            {
-                return AbilityBehavior.UnitTarget;
-            }
-
             return AbilityBehavior.NoTarget; // wrong base behavior
         }
     }
@@ -54,15 +52,5 @@ public class BattleTrance : ActiveAbility, IHasDamageAmplify, IShield
     public float AmplifierValue(Unit9 source, Unit9 target)
     {
         return -1;
-    }
-
-    public override bool UseAbility(bool queue = false, bool bypass = false)
-    {
-        if (this.Owner.HasAghanimsScepter)
-        {
-            return this.UseAbility(this.Owner, queue, bypass);
-        }
-
-        return base.UseAbility(queue, bypass);
     }
 }
