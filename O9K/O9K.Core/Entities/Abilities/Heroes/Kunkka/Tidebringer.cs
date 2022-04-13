@@ -70,9 +70,9 @@ public class Tidebringer : AutoCastAbility, IHasPassiveDamageIncrease
         return damage + this.Owner.GetRawAttackDamage(unit);
     }
 
-    public bool IsTidebringerAnimation(string name)
+    public static bool IsTidebringerAnimation(string name)
     {
-        return name == "tidebringer" || name == "attack1_gunsword_anim";
+        return name is "tidebringer" or "attack1_gunsword_anim";
     }
 
     Damage IHasPassiveDamageIncrease.GetRawDamage(Unit9 unit, float? remainingHealth)
