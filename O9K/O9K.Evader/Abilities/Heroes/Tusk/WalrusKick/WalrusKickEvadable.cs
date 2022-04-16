@@ -11,7 +11,6 @@ internal sealed class WalrusKickEvadable : TargetableEvadable
     public WalrusKickEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
         : base(ability, pathfinder, menu)
     {
-        this.Counters.Add(Abilities.Counterspell);
         this.Counters.Add(Abilities.LinkensSphere);
         this.Counters.Add(Abilities.AttributeShift);
         this.Counters.UnionWith(Abilities.MagicShield);
