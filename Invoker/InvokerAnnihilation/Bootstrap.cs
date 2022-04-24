@@ -21,7 +21,7 @@ public class Bootstrap : Bootstrapper
         }
         _serviceProvider = ServiceProviderBuilder.BuildServiceProvider();
         InitServices(_serviceProvider);
-        Console.WriteLine("Bootstrap activate");
+        // Console.WriteLine("Bootstrap activate");
     }
 
     private static void InitServices(IServiceProvider serviceProvider)

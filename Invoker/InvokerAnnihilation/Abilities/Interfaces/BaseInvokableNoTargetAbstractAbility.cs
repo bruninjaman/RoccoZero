@@ -21,12 +21,12 @@ public abstract class BaseInvokableNoTargetAbstractAbility : BaseInvokableAbstra
                     var invoked = Invoke();
                     if (!invoked)
                     {
-                        return false;
+                        return true;
                     }
                 }
                 else
                 {
-                    return false;
+                    return true;
                 }
             }
 

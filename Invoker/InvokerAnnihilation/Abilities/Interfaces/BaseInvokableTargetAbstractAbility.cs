@@ -22,16 +22,17 @@ public abstract class BaseInvokableTargetAbstractAbility : BaseInvokableAbstract
                     var invoked = Invoke();
                     if (!invoked)
                     {
-                        return false;
+                        return true;
                     }
                 }
                 else
                 {
-                    return false;
+                    return true;
                 }
             }
-
-            return BaseAbility!.Cast(target);
+            var castResult = BaseAbility!.Cast(target);
+            // Console.WriteLine($"[{AbilityId}] castResult: {castResult}");
+            return castResult;
         }
 
         return false;
@@ -40,7 +41,7 @@ public abstract class BaseInvokableTargetAbstractAbility : BaseInvokableAbstract
     public override bool CanBeCasted(Unit? target)
     {
         if (base.CanBeCasted() && target != null && target.IsValidTarget(CastRange, false) &&
-            (IsInvoked || CanBeInvoked()))
+            (IsInvoked || CanBeInvoked()) && (!target.IsMagicImmune() || UseOnMagicImmuneTarget))
         {
             return true;
         }

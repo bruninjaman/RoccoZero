@@ -2,6 +2,7 @@
 using Divine.Numerics;
 using Divine.Renderer;
 using InvokerAnnihilation.Abilities.AbilityManager;
+using InvokerAnnihilation.Abilities.Interfaces;
 using InvokerAnnihilation.Feature.ComboConstructor.Combos;
 using InvokerAnnihilation.Feature.ComboConstructor.Emum;
 using InvokerAnnihilation.Feature.ComboConstructor.Interface;
@@ -12,7 +13,8 @@ namespace InvokerAnnihilation.Feature.ComboConstructor.Panels.Base;
 public abstract class BaseComboBuilder : IComboBuilder
 {
     protected readonly IAbilityManager AbilityManager;
-
+    public abstract DynamicCombo DynamicComboSettings { get; set; }
+    public abstract CataclysmInCombo CataclysmInCombo { get; set; }
     protected BaseComboBuilder(ComboConstructorMenu currentMenu, string title, IAbilityManager abilityManager, IComboInfo comboInfo)
     {
         AbilityManager = abilityManager;
@@ -21,6 +23,8 @@ public abstract class BaseComboBuilder : IComboBuilder
         CurrentMenu = currentMenu;
     }
 
+    protected const float RoundValue = 12;
+
     protected ComboConstructorMenu CurrentMenu { get; }
     private string Title { get; }
     public IComboInfo ComboInfo { get; }
@@ -28,7 +32,7 @@ public abstract class BaseComboBuilder : IComboBuilder
 
     public abstract ComboBuildType Type { get; }
     public abstract void Render();
-    public abstract StandardCombo? GetCurrentCombo();
+    public abstract ComboBase? GetCurrentCombo();
     protected Color EmptyClr { get; } = new(81, 81, 81);
     protected Color ChangeClr { get; } = new(254, 30, 83);
     protected Color ContentBackgroundClr { get; } = new(45, 53, 64);
@@ -37,8 +41,8 @@ public abstract class BaseComboBuilder : IComboBuilder
     protected void RenderTitle(RectangleF rect)
     {
         var size = RendererManager.MeasureText(Title, 30);
-        RendererManager.DrawFilledRectangle(new RectangleF(rect.X, rect.Y, rect.Width, size.Y * 1.0f),
-            new Color(37, 42, 48));
+        RendererManager.DrawFilledRoundedRectangle(new RectangleF(rect.X, rect.Y, rect.Width, size.Y * 1.0f),
+            new Color(37, 42, 48), new Vector2(RoundValue));
         RendererManager.DrawText(Title, new Vector2(rect.Center.X - size.X / 2, rect.Y), Color.White, 30);
     }
 
@@ -64,6 +68,7 @@ public abstract class BaseComboBuilder : IComboBuilder
         RendererManager.DrawCircle(iconRect.Center, iconRect.Width / 2,
             dynamicCombo.IsActive ? ChangeClr : EmptyClr, 3);
         dynamicCombo.ActivateBtnPosition = iconRect;
+        RendererManager.DrawFilledRoundedRectangle(new RectangleF(position.X, position.Y, maxTextWith+iconRect.Width + extraWith, halfHeight * 2), new Color(255, 0, 0, 100), new Vector2(RoundValue));
         return maxTextWith + extraWith + iconSize;
     }
     private void RenderSunStrikeBtn(RectangleF position, float halfHeight, IScreenToggleItem cataclysmInCombo)
@@ -89,7 +94,7 @@ public abstract class BaseComboBuilder : IComboBuilder
 
     protected void RenderFooter(RectangleF position, IScreenToggleItem dynamicCombo, IScreenToggleItem cataclysmInCombo)
     {
-        RendererManager.DrawFilledRectangle(position, ContentBackgroundClr);
+        RendererManager.DrawFilledRoundedRectangle(position, ContentBackgroundClr, new Vector2(RoundValue));
         var halfHeight = position.Height / 2;
         var with = RenderDynamicComboBtn(position, halfHeight, dynamicCombo);
         RenderSunStrikeBtn(new RectangleF(position.X + with, position.Y, position.Width - with, position.Height), halfHeight, cataclysmInCombo);
@@ -102,11 +107,11 @@ public abstract class BaseComboBuilder : IComboBuilder
         {
             return;
         }
-
+        
         var ability = AbilityManager.GetAbility(abilityId);
-        if (ability == null || !ability.IsValid)
+        if (ability is not {IsValid: true})
         {
-            RendererManager.DrawFilledRectangle(rect, new(255, 0, 0, 100));
+            RendererManager.DrawFilledRectangle(rect, new Color(255, 0, 0, 100));
             return;
         }
         var cd = ability.RemainingCooldown;

@@ -1,49 +1,90 @@
-﻿using Divine.Entity;
+﻿using System.Reflection;
+using Divine.Entity;
 using Divine.Entity.Entities.Abilities;
 using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Abilities.Items;
 using Divine.Extensions;
 using Divine.Update;
 using InvokerAnnihilation.Abilities.Interfaces;
 using InvokerAnnihilation.Abilities.MainAbilities;
 using InvokerAnnihilation.Abilities.MainAbilities.Items;
+using InvokerAnnihilation.Attributes;
 
 namespace InvokerAnnihilation.Abilities.AbilityManager;
 
 public class AbilityManager : IAbilityManager
 {
-    private Dictionary<AbilityId, IAbility?> Abilities;
-
+    private Dictionary<AbilityId, IAbility?> Abilities  { get; } = new();
+    private Dictionary<AbilityId, Func<Ability?, IAbility>> DictHandlers { get; } = new();
     public AbilityManager()
     {
-        DictHandlers = new Dictionary<AbilityId, Func<Ability?, BaseAbstractAbility>>
-        {
-            {
-                AbilityId.item_cyclone,
-                ability => ability != null
-                    ? new Eul(ability)
-                    : new Eul(EntityManager.LocalHero!, AbilityId.item_cyclone)
-            },
-            {
-                AbilityId.item_sheepstick,
-                ability => ability != null
-                    ? new Hex(ability)
-                    : new Hex(EntityManager.LocalHero!, AbilityId.item_sheepstick)
-            },
-            {
-                AbilityId.item_refresher,
-                ability => ability != null
-                    ? new Refresher(ability)
-                    : new Refresher(EntityManager.LocalHero!, AbilityId.item_refresher)
-            },
-            {
-                AbilityId.item_blink,
-                ability => ability != null
-                    ? new Blink(ability)
-                    : new Blink(EntityManager.LocalHero!, AbilityId.item_blink)
-            },
-        };
         var localHero = EntityManager.LocalHero!;
-        Abilities = new Dictionary<AbilityId, IAbility?>();
+        var types = Assembly.GetExecutingAssembly().GetTypes();
+        foreach (var type in types)
+        {
+            var attribute = type.GetCustomAttribute<AbilityAttribute>();
+            if (attribute == null)
+                continue;
+            // Activator.CreateInstance(type);
+            var isItem = !attribute.Spheres.Any();
+            if (isItem)
+            {
+                var mainAbility = attribute.AbilityIds.First();
+                DictHandlers.Add(mainAbility, ability =>
+                {
+                    var instance = ability != null
+                        ? (IAbility) Activator.CreateInstance(type, ability)!
+                        : (IAbility) Activator.CreateInstance(type, EntityManager.LocalHero!, mainAbility)!;
+                    if (instance is BaseItemAbility item)
+                    {
+                        item.OwnerAbility = mainAbility;
+                    }
+                    return instance;
+                });
+                TryToAdd(attribute.AbilityIds);
+                UpdateManager.CreateUpdate(1000, () =>
+                {
+                    TryToUpdate(attribute.AbilityIds);
+                });
+            }
+            else
+            {
+                IAbility ability = (IAbility) Activator.CreateInstance(type, localHero.GetAbilityById(attribute.AbilityIds.First()), attribute.Spheres)!;
+                AddAbility(ability);
+            }
+        }
+
+
+        // DictHandlers = new Dictionary<AbilityId, Func<Ability?, BaseAbstractAbility>>
+        // {
+        //     {
+        //         AbilityId.item_cyclone,
+        //         ability => ability != null
+        //             ? new Eul(ability)
+        //             : new Eul(EntityManager.LocalHero!, AbilityId.item_cyclone)
+        //     },
+        //     {
+        //         AbilityId.item_sheepstick,
+        //         ability => ability != null
+        //             ? new Hex(ability)
+        //             : new Hex(EntityManager.LocalHero!, AbilityId.item_sheepstick)
+        //     },
+        //     {
+        //         AbilityId.item_refresher,
+        //         ability => ability != null
+        //             ? new Refresher(ability)
+        //             : new Refresher(EntityManager.LocalHero!, AbilityId.item_refresher)
+        //     },
+        //     {
+        //         AbilityId.item_blink,
+        //         ability => ability != null
+        //             ? new Blink(ability)
+        //             : new Blink(EntityManager.LocalHero!, AbilityId.item_blink)
+        //     },
+        // };
+        
+        
+        /*
         var invokerAlacrity = new Alacrity(localHero.GetAbilityById(AbilityId.invoker_alacrity), new[]
         {
             AbilityId.invoker_wex,
@@ -113,65 +154,83 @@ public class AbilityManager : IAbilityManager
             AbilityId.invoker_wex,
             AbilityId.invoker_quas,
         });
-        AddAbility(invokerTornado);
-        TryToAdd(AbilityId.item_cyclone);
-        TryToAdd(AbilityId.item_sheepstick);
-        TryToAdd(AbilityId.item_blink);
-        TryToAdd(AbilityId.item_refresher);
-        UpdateManager.CreateUpdate(1000, () =>
-        {
-            TryToUpdate(AbilityId.item_cyclone);
-            TryToUpdate(AbilityId.item_sheepstick);
-            TryToUpdate(AbilityId.item_blink);
-            TryToUpdate(AbilityId.item_refresher);
-        });
+        AddAbility(invokerTornado);*/
+        // TryToAdd(AbilityId.item_cyclone);
+        // TryToAdd(AbilityId.item_sheepstick);
+        // TryToAdd(AbilityId.item_blink);
+        // TryToAdd(AbilityId.item_refresher);
+
     }
 
-    private Dictionary<AbilityId, Func<Ability?, BaseAbstractAbility>> DictHandlers { get; set; }
+    
 
-    private void TryToUpdate(AbilityId abilityId)
+    private void TryToUpdate(AbilityId[] abilitiesId)
     {
-        if (!Abilities.TryGetValue(abilityId, out var storedItem))
+        var ownerAbility = abilitiesId.First();
+        var tempAbilityList = new List<IAbility>();
+        foreach (var abilityId in abilitiesId)
         {
-            return;
-        }
-
-        if (storedItem is {IsValid: true})
-        {
-        }
-        else
-        {
-            if (storedItem?.BaseAbility!=null && !storedItem.BaseAbility.IsValid)
+            if (!Abilities.TryGetValue(ownerAbility, out var storedItem))
             {
-                storedItem.SetAbility(null);
                 return;
             }
-            var item = EntityManager.LocalHero!.GetItemById(abilityId);
-            if (item != null && item.IsValid)
+
+            if (storedItem is {IsValid: true})
             {
-                storedItem?.SetAbility(item);
+            }
+            else
+            {
+                if (storedItem?.BaseAbility != null && !storedItem.BaseAbility.IsValid)
+                {
+                    storedItem.SetAbility(null);
+                    return;
+                }
+
+                var item = EntityManager.LocalHero!.GetItemById(abilityId);
+                if (item != null && item.IsValid)
+                {
+                    storedItem?.SetAbility(item);
+                }
             }
         }
     }
 
-    private void TryToAdd(AbilityId abilityId)
+    private void TryToAdd(AbilityId[] abilitiesId)
     {
-        var item = EntityManager.LocalHero!.GetAbilityById(abilityId);
-        if (DictHandlers.TryGetValue(abilityId, out var action))
+        var ownerAbility = abilitiesId.First();
+        var tempAbilityList = new List<IAbility>();
+        foreach (var abilityId in abilitiesId)
         {
-            var ability = action(item);
-            AddAbility(ability);
+            var item = EntityManager.LocalHero!.GetItemById(abilityId);
+            if (DictHandlers.TryGetValue(ownerAbility, out var action))
+            {
+                var ability = action(item);
+                tempAbilityList.Add(ability);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException($"Cant find handler for ability: {abilityId}");
+            }
+        }
+
+        var firstWithValidId = tempAbilityList.FirstOrDefault(x => x.IsValid);
+        if (firstWithValidId != null)
+        {
+            AddAbility(ownerAbility, firstWithValidId);
         }
         else
         {
-            throw new ArgumentOutOfRangeException($"Cant find handler for ability: {abilityId}");
+            AddAbility(tempAbilityList.First());
         }
     }
 
     private void AddAbility(IAbility ability)
     {
-        Console.WriteLine($"adding {ability.AbilityId}");
         Abilities.Add(ability.AbilityId, ability);
+    }
+    private void AddAbility(AbilityId abilityId, IAbility ability)
+    {
+        Abilities.Add(abilityId, ability);
     }
 
     public IAbility? GetAbility(AbilityId abilityId)

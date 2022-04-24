@@ -1,7 +1,9 @@
-﻿using Divine.Entity.Entities.Units.Heroes;
+﻿using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Heroes;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 using Divine.Update;
+using InvokerAnnihilation.Abilities.Interfaces;
 using InvokerAnnihilation.Config;
 using InvokerAnnihilation.Feature.ComboConstructor;
 using InvokerAnnihilation.Feature.ComboConstructor.Combos;
@@ -16,14 +18,75 @@ public sealed class ComboExecutorFeature : FeatureBase<ComboExecutorMenu>
     private readonly IComboInfo _comboInfo;
     public Hero? Target { get; set; } = null;
 
-    public ComboExecutorFeature(MenuConfig menuConfig, ComboConstructorFeature comboConstructorFeature, IAbilityExecutor abilityExecutor, IComboInfo comboInfo) : base(menuConfig.ComboExecutorMenu.Enable)
+    public ComboExecutorFeature(MenuConfig menuConfig, ComboConstructorFeature comboConstructorFeature,
+        IAbilityExecutor abilityExecutor, IComboInfo comboInfo) : base(menuConfig.ComboExecutorMenu.Enable)
     {
         _comboConstructorFeature = comboConstructorFeature;
         _abilityExecutor = abilityExecutor;
         _comboInfo = comboInfo;
         CurrentMenu = menuConfig.ComboExecutorMenu;
         UpdateThread = UpdateManager.CreateIngameUpdate(10, false, Updater);
+        PrepareAbilitiesThread = UpdateManager.CreateIngameUpdate(150, false, PrepareAbilities);
         CurrentMenu.HoldKey.ValueChanged += HoldKeyOnValueChanged;
+        CurrentMenu.PrepareKey.ValueChanged += PrepareKeyClick;
+    }
+
+    public UpdateHandler? PrepareAbilitiesThread { get; set; }
+
+    private void PrepareAbilities()
+    {
+        if (_comboInfo.IsInCombo)
+        {
+            return;
+        }
+        var comboToPrepare = _comboConstructorFeature.CurrentBuilder.GetCurrentCombo();
+        
+        var abilities = comboToPrepare.ValidAbilities
+            .Where(x => x.Value.Ability is IInvokableAbility).Take(2);
+        var first = abilities.First().Value.Ability as BaseInvokableAbstractAbility;
+        var last = abilities.Last().Value.Ability as BaseInvokableAbstractAbility;
+
+        if ((first == null || first.IsInvoked) && (last == null || last.IsInvoked))
+            return;
+
+        if (first != null)
+        {
+            if (!first.IsInvoked && first.CanBeInvoked())
+            {
+                if (last != null)
+                {
+                    if (last.BaseAbility.AbilitySlot == AbilitySlot.Slot5)
+                    {
+                        last.Invoke();
+                        return;
+                    }
+                }
+
+                first.Invoke();
+            }
+        }
+
+        if (last != null)
+        {
+            if (first != null)
+            {
+                if (first.BaseAbility.AbilitySlot == AbilitySlot.Slot5)
+                {
+                    first.Invoke();
+                    return;
+                }
+            }
+
+            last.Invoke();
+        }
+    }
+
+    private void PrepareKeyClick(MenuHoldKey holdkey, HoldKeyEventArgs e)
+    {
+        if (PrepareAbilitiesThread != null)
+        {
+            PrepareAbilitiesThread.IsEnabled = e.Value;
+        }
     }
 
     private void HoldKeyOnValueChanged(MenuHoldKey holdkey, HoldKeyEventArgs e)
@@ -49,12 +112,11 @@ public sealed class ComboExecutorFeature : FeatureBase<ComboExecutorMenu>
                     UpdateThread.IsEnabled = false;
                     throw;
                 }
-                
             }
         }
     }
 
-    public StandardCombo? CurrentCombo { get; set; } = null;
+    public ComboBase? CurrentCombo { get; set; } = null;
 
     private UpdateHandler? UpdateThread { get; }
 
@@ -77,11 +139,13 @@ public sealed class ComboExecutorFeature : FeatureBase<ComboExecutorMenu>
         {
             return;
         }
+
         var abilityToCast = CurrentCombo.Abilities[_comboInfo.ComboIndex].Ability;
         if (abilityToCast != null)
         {
-            if (!_abilityExecutor.CastAbility(abilityToCast, Target))
+            if (!_abilityExecutor.CastAbility(abilityToCast, Target) && abilityToCast.OnCooldown)
             {
+                // Console.WriteLine($"[{abilityToCast.AbilityId}] next ability: {abilityToCast.OnCooldown}");
                 IncreaseComboIndex();
             }
         }
@@ -103,7 +167,6 @@ public sealed class ComboExecutorFeature : FeatureBase<ComboExecutorMenu>
         {
             _comboInfo.ResetComboIndex();
         }
-        
     }
 
     public override ComboExecutorMenu CurrentMenu { get; set; }

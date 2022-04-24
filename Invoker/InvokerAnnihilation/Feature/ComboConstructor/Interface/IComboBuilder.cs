@@ -6,5 +6,7 @@ public interface IComboBuilder : IDisposable
 {
     ComboBuildType Type { get; }
     void Render();
-    StandardCombo? GetCurrentCombo();
+    ComboBase? GetCurrentCombo();
+    DynamicCombo DynamicComboSettings { get; set; }
+    CataclysmInCombo CataclysmInCombo { get; set; }
 }

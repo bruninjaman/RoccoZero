@@ -1,6 +1,7 @@
 ﻿using Divine.Entity.Entities.Abilities;
 using Divine.Entity.Entities.Abilities.Components;
 using InvokerAnnihilation.Abilities.Processor;
+using O9K.Core.Helpers;
 
 namespace InvokerAnnihilation.Abilities.Interfaces;
 
@@ -25,4 +26,6 @@ public abstract class BaseInvokableAbstractAbility : BaseAbstractAbility, IInvok
     public bool IsInvoked => Processor.IsInvoked();
     public AbilityId[] Spheres { get; }
     public IInvokeProcessor Processor { get; }
+    
+
 }

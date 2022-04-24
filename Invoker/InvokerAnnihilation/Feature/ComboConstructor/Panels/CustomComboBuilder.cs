@@ -6,6 +6,7 @@ using Divine.Menu.Items;
 using Divine.Numerics;
 using Divine.Renderer;
 using InvokerAnnihilation.Abilities.AbilityManager;
+using InvokerAnnihilation.Abilities.Interfaces;
 using InvokerAnnihilation.Config;
 using InvokerAnnihilation.Feature.ComboConstructor.Combos;
 using InvokerAnnihilation.Feature.ComboConstructor.Combos.Dto;
@@ -95,6 +96,7 @@ public class CustomComboBuilder : BaseComboBuilder
                 CustomCombos.Add(customCombo);
             }
         });
+        CustomCombos.First().IsActive = true;
     }
 
     public int ComboCount => CustomCombos.Count;
@@ -104,8 +106,7 @@ public class CustomComboBuilder : BaseComboBuilder
     private bool AnyComboWithAbilitySelector => CustomCombos.Any(z => z.ChangeIndex >= 0);
     public List<ICombo> Combos { get; set; }
     public List<CustomCombo> CustomCombos { get; set; } // (List<CustomCombo>) Combos.Where(x => x is CustomCombo);
-    public DynamicCombo DynamicComboSettings { get; set; }
-    public CataclysmInCombo CataclysmInCombo { get; set; }
+
 
     private void InputOnMouseClick(MouseEventArgs e)
     {
@@ -137,8 +138,9 @@ public class CustomComboBuilder : BaseComboBuilder
                         if (blocked) return;
                         // customCombo.ChangeIndex = key;
                         customCombo.Abilities[customCombo.ChangeIndex].AbilityId = abilityToSelectKey;
-                        Console.WriteLine(
-                            $"Выбрали абилку из списка {abilityToSelectKey} {rectangleF} {customCombo.ChangeIndex}");
+                        customCombo.Abilities[customCombo.ChangeIndex].SetAbility(AbilityManager.GetAbility(abilityToSelectKey));
+                        // Console.WriteLine(
+                        //     $"Выбрали абилку из списка {abilityToSelectKey} {rectangleF} {customCombo.ChangeIndex}");
                         return;
                     }
                 }
@@ -158,11 +160,12 @@ public class CustomComboBuilder : BaseComboBuilder
                     if (isLeft)
                     {
                         customCombo.ChangeIndex = key;
-                        Console.WriteLine($"Получили клик по абилке {key}");
+                        // Console.WriteLine($"Получили клик по абилке {key}");
                     }
                     else
                     {
                         customCombo.Abilities[key].AbilityId = AbilityId.dota_base_ability;
+                        customCombo.Abilities[key].SetAbility(null);
                     }
 
                     return;
@@ -176,8 +179,8 @@ public class CustomComboBuilder : BaseComboBuilder
 
             if (DynamicComboSettings.ActivateBtnPosition.Contains(mousePos))
             {
-                CustomCombos.ForEach(z => z.IsActive = false);
-                DynamicComboSettings.IsActive = true;
+                // CustomCombos.ForEach(z => z.IsActive = false);
+                // DynamicComboSettings.IsActive = true;
             }
 
             CustomCombos.ForEach(z => z.ChangeIndex = -1);
@@ -193,8 +196,12 @@ public class CustomComboBuilder : BaseComboBuilder
         var step = CurrentMenu.SizeItem + ExtraWidth;
         if (AnyComboWithAbilitySelector) maxHeight += step * 1.5f;
 
-        var rect = new RectangleF(CurrentMenu.PositionXItem, CurrentMenu.PositionYItem, maxWidth, maxHeight);
-        RendererManager.DrawFilledRectangle(rect, ContentBackgroundClr);
+        var rect = new RectangleF(CurrentMenu.PositionXItem, CurrentMenu.PositionYItem, maxWidth - ExtraWidth / 2, maxHeight);
+        if (CustomCombos.Any(x=>x.ChangeIndex >= 0))
+        {
+            rect.Height += (rect.Width / 8 - ExtraInAbilitySelector * 1.5f) * 2 + ExtraInAbilitySelector;
+        }
+        RendererManager.DrawFilledRoundedRectangle(rect, ContentBackgroundClr, new Vector2(RoundValue));
         RenderTitle(rect);
         var currentY = rect.Y;
         var maxY = rect.Y;
@@ -225,10 +232,13 @@ public class CustomComboBuilder : BaseComboBuilder
         RenderFooter(footerRect, DynamicComboSettings, CataclysmInCombo);
     }
 
-    public override StandardCombo? GetCurrentCombo()
+    public override ComboBase? GetCurrentCombo()
     {
-        throw new NotImplementedException();
+        return CustomCombos.First(x => x.IsActive);
     }
+
+    public override DynamicCombo DynamicComboSettings { get; set; }
+    public override CataclysmInCombo CataclysmInCombo { get; set; }
 
     public override void Dispose()
     {
@@ -279,10 +289,21 @@ public class CustomComboBuilder : BaseComboBuilder
             isActiveChange ? ChangeClr : EmptyClr, 30);
     }
 
-    private void RenderAbility(RectangleF rect, AbilityId abilityId)
+    private void RenderAbility(RectangleF rect, CustomComboStruct comboStruct)
     {
+        var abilityId = comboStruct.AbilityId;
+        var abilityId2= comboStruct.AbilityId;
+        if (comboStruct.Ability != null)
+        {
+            abilityId = comboStruct.Ability?.AbilityId ?? comboStruct.AbilityId;
+            if (comboStruct.Ability is BaseItemAbility itemAbility)
+            {
+                abilityId2 = itemAbility.OwnerAbility;
+            }
+            
+        }
         RendererManager.DrawImage(abilityId.ToString(), rect, ImageType.Ability, true);
-        RenderAbilityState(rect, abilityId);
+        RenderAbilityState(rect, abilityId2);
     }
     
 
@@ -295,7 +316,7 @@ public class CustomComboBuilder : BaseComboBuilder
             if (abilityStruct.AbilityId == AbilityId.dota_base_ability)
                 RenderEmptyAbilitySlot(rect, isActiveChange);
             else
-                RenderAbility(rect, abilityStruct.AbilityId);
+                RenderAbility(rect, abilityStruct);
         }
         else
         {

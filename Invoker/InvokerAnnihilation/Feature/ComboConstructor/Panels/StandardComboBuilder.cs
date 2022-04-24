@@ -7,6 +7,7 @@ using InvokerAnnihilation.Abilities.AbilityManager;
 using InvokerAnnihilation.Abilities.Interfaces;
 using InvokerAnnihilation.Config;
 using InvokerAnnihilation.Feature.ComboConstructor.Combos;
+using InvokerAnnihilation.Feature.ComboConstructor.Combos.Dto;
 using InvokerAnnihilation.Feature.ComboConstructor.Combos.Factory;
 using InvokerAnnihilation.Feature.ComboConstructor.Emum;
 using InvokerAnnihilation.Feature.ComboConstructor.Interface;
@@ -19,12 +20,13 @@ public class StandardComboBuilder : BaseComboBuilder
 {
     public List<ICombo?> Combos { get; set; }
     public List<StandardCombo?> CustomCombos { get; set; }
-    public DynamicCombo DynamicComboSettings { get; set; }
-    public CataclysmInCombo CataclysmInCombo { get; set; }
+    public override DynamicCombo DynamicComboSettings { get; set; }
+    public override CataclysmInCombo CataclysmInCombo { get; set; }
     public int ComboCount => CustomCombos.Count;
     public int MaxAbilities { get; } = 6;
 
-    public StandardComboBuilder(MenuConfig menuConfig, IAbilityManager abilityManager, IComboInfo comboInfo) : base(menuConfig.ComboConstructorMenu, "Standard Combo", abilityManager, comboInfo)
+    public StandardComboBuilder(MenuConfig menuConfig, IAbilityManager abilityManager, IComboInfo comboInfo) : base(
+        menuConfig.ComboConstructorMenu, "Standard Combo", abilityManager, comboInfo)
     {
         Combos = new List<ICombo?>
         {
@@ -36,6 +38,7 @@ public class StandardComboBuilder : BaseComboBuilder
             //     {IsActive = true},
             new StandardCombo(abilityManager, AbilityId.invoker_cold_snap, AbilityId.invoker_forge_spirit,
                 AbilityId.invoker_sun_strike),
+            new StandardCombo(abilityManager, AbilityId.invoker_tornado, AbilityId.invoker_sun_strike),
             new StandardCombo(abilityManager, AbilityId.invoker_tornado, AbilityId.invoker_chaos_meteor,
                 AbilityId.invoker_ice_wall),
             new StandardCombo(abilityManager, AbilityId.invoker_tornado, AbilityId.invoker_chaos_meteor,
@@ -67,6 +70,7 @@ public class StandardComboBuilder : BaseComboBuilder
         DynamicComboSettings = new DynamicCombo(AbilityManager);
         CataclysmInCombo = new CataclysmInCombo();
         InputManager.MouseKeyDown += InputOnMouseClick;
+        InputManager.MouseMove += InputManagerOnMouseMove;
         CustomCombos = new List<StandardCombo?>();
         Combos.ForEach(combo =>
         {
@@ -75,6 +79,20 @@ public class StandardComboBuilder : BaseComboBuilder
                 CustomCombos.Add(customCombo);
             }
         });
+    }
+
+    private void InputManagerOnMouseMove(MouseMoveEventArgs e)
+    {
+        var mousePos = e.Position;
+        var maxWidth = (MaxAbilities + 1) * (ExtraWidth + CurrentMenu.SizeItem);
+        var maxHeight = (ComboCount + 1) * (CurrentMenu.SizeItem + ExtraWidth);
+
+        var rect = new RectangleF(CurrentMenu.PositionXItem, CurrentMenu.PositionYItem, maxWidth,
+            maxHeight + CurrentMenu.SizeItem + ExtraWidth * 2);
+
+        var isIn = rect.Contains(mousePos);
+
+        e.Process = !isIn;
     }
 
     private void InputOnMouseClick(MouseEventArgs e)
@@ -91,6 +109,7 @@ public class StandardComboBuilder : BaseComboBuilder
         if (isIn)
         {
             var isLeft = e.MouseKey == MouseKey.Left;
+            e.Process = false;
             foreach (var customCombo in CustomCombos)
             {
                 if (customCombo.ActivateBtnPosition.Contains(mousePos))
@@ -108,7 +127,7 @@ public class StandardComboBuilder : BaseComboBuilder
                     if (isLeft)
                     {
                         customCombo.ChangeIndex = key;
-                        Console.WriteLine($"Получили клик по абилке {key}");
+                        // Console.WriteLine($"Получили клик по абилке {key}");
                     }
                     else
                     {
@@ -126,8 +145,8 @@ public class StandardComboBuilder : BaseComboBuilder
 
             if (DynamicComboSettings.ActivateBtnPosition.Contains(mousePos))
             {
-                CustomCombos.ForEach(z => z.IsActive = false);
-                DynamicComboSettings.IsActive = true;
+                // CustomCombos.ForEach(z => z.IsActive = false);
+                // DynamicComboSettings.IsActive = true;
             }
 
             CustomCombos.ForEach(z => z.ChangeIndex = -1);
@@ -143,7 +162,7 @@ public class StandardComboBuilder : BaseComboBuilder
         var step = CurrentMenu.SizeItem + ExtraWidth;
 
         var rect = new RectangleF(CurrentMenu.PositionXItem, CurrentMenu.PositionYItem, maxWidth, maxHeight);
-        RendererManager.DrawFilledRectangle(rect, ContentBackgroundClr);
+        RendererManager.DrawFilledRoundedRectangle(rect, ContentBackgroundClr, new Vector2(RoundValue));
         RenderTitle(rect);
         var currentY = rect.Y;
         var maxY = rect.Y;
@@ -161,7 +180,7 @@ public class StandardComboBuilder : BaseComboBuilder
         RenderFooter(footerRect, DynamicComboSettings, CataclysmInCombo);
     }
 
-    public override StandardCombo? GetCurrentCombo()
+    public override ComboBase? GetCurrentCombo()
     {
         return CustomCombos.First(x => x.IsActive);
     }
@@ -171,23 +190,34 @@ public class StandardComboBuilder : BaseComboBuilder
         var size = CurrentMenu.SizeItem;
         var iconSize = size / 1.5f;
         var btnPos = new RectangleF(startPos.X + iconSize / 2f, startPos.Y + iconSize / 3, size / 1.5f, size / 1.5f);
-        customCombo.ActivateBtnPosition = btnPos;
+        customCombo!.ActivateBtnPosition = btnPos;
         RenderCircle(btnPos, customCombo.IsActive ? CircleType.Red : CircleType.Gray);
         for (var i = 0; i < MaxAbilities; i++)
         {
             var rect = new RectangleF(startPos.X + size * (i + 1) + ExtraWidth * (i + 1), startPos.Y, size, size);
             if (customCombo.Abilities.TryGetValue(i, out var abilityStruct))
             {
-                RenderAbility(rect, abilityStruct.AbilityId, customCombo.IsActive, i);
+                RenderAbility(rect, abilityStruct, customCombo.IsActive, i);
                 RendererManager.DrawRectangle(rect, EmptyClr);
             }
         }
     }
 
-    private void RenderAbility(RectangleF rect, AbilityId abilityId, bool customComboIsActive, int i)
+    private void RenderAbility(RectangleF rect, CustomComboStruct comboStruct, bool customComboIsActive, int i)
     {
+        var abilityId = comboStruct.AbilityId;
+        var abilityId2 = comboStruct.AbilityId;
+        if (comboStruct.Ability != null)
+        {
+            abilityId = comboStruct.Ability?.AbilityId ?? comboStruct.AbilityId;
+            if (comboStruct.Ability is BaseItemAbility itemAbility)
+            {
+                abilityId2 = itemAbility.OwnerAbility;
+            }
+        }
+
         RendererManager.DrawImage(abilityId.ToString(), rect, ImageType.Ability, true);
-        RenderAbilityState(rect, abilityId);
+        RenderAbilityState(rect, abilityId2);
         if (customComboIsActive && ComboInfo.ComboIndex == i && ComboInfo.IsInCombo)
         {
             RendererManager.DrawRectangle(rect, new Color(255, 0, 0, 255), 3);

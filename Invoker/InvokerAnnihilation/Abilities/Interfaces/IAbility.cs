@@ -24,7 +24,7 @@ public interface IAbility
     bool Cast();
     bool CanBeCasted();
     
-    bool Cast(Vector3 targetPosition);
+    bool Cast(Vector3 targetPosition, Unit target);
     bool CanBeCasted(Vector3 targetPosition);
     
     bool Cast(Unit target);

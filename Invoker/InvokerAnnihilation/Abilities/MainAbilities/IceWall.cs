@@ -7,9 +7,11 @@ using Divine.Numerics;
 using Divine.Particle;
 using Divine.Prediction;
 using InvokerAnnihilation.Abilities.Interfaces;
+using InvokerAnnihilation.Attributes;
 
 namespace InvokerAnnihilation.Abilities.MainAbilities;
 
+[Ability(AbilityId.invoker_ice_wall, new []{AbilityId.invoker_quas, AbilityId.invoker_quas, AbilityId.invoker_exort})]
 public class IceWall : BaseInvokableTargetAbstractAbility
 {
     public IceWall(Ability ability, AbilityId[] spheres) : base(ability, spheres)
@@ -21,7 +23,7 @@ public class IceWall : BaseInvokableTargetAbstractAbility
     public override bool CanBeCasted(Unit? target)
     {
         if (base.CanBeCasted() && target != null &&
-            (IsInvoked || CanBeInvoked()))
+            (IsInvoked || CanBeInvoked()) && CanBeCasted(target))
         {
             var distance = Owner.Distance2D(target);
             return distance - 50 > 200 && distance - 50 < 610;
@@ -98,4 +100,6 @@ public class IceWall : BaseInvokableTargetAbstractAbility
         var distance = Owner.Distance2D(target);
         return distance - 50 > 200 && distance - 50 < 610;
     }
+    
+    public override bool UseOnMagicImmuneTarget => true;
 }

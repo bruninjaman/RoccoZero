@@ -6,7 +6,7 @@ namespace InvokerAnnihilation.Feature.ComboConstructor.Combos.Dto;
 
 public class CustomComboStruct
 {
-    public readonly IAbility? Ability;
+    public IAbility? Ability { private set; get; }
 
     public CustomComboStruct(IAbility? ability)
     {
@@ -17,6 +17,11 @@ public class CustomComboStruct
     {
         Ability = null;
         AbilityId = abilityId;
+    }
+
+    public void SetAbility(IAbility? ability)
+    {
+        Ability = ability;
     }
 
     public AbilityId AbilityId { get; set; }
