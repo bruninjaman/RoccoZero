@@ -29,13 +29,13 @@ public class Blink : BaseItemPointAbility
 
     public override bool CanBeCasted(Vector3 targetPosition)
     {
-        // if (base.CanBeCasted() && !Owner.IsInRange(targetPosition, 400) && !Owner.IsInRange(targetPosition, 1500))
-        // {
-        //     return true;
-        // }
-        //
-        // return false;
-        return base.CanBeCasted(targetPosition);
+        if (base.CanBeCasted() && !Owner.IsInRange(targetPosition, 200) && Owner.IsInRange(targetPosition, 2500))
+        {
+            return true;
+        }
+        
+        return false;
+        // return base.CanBeCasted(targetPosition);
     }
 
     public override float CastRange { get; } = 1200;

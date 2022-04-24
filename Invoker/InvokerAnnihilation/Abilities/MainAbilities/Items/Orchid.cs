@@ -6,14 +6,14 @@ using InvokerAnnihilation.Attributes;
 
 namespace InvokerAnnihilation.Abilities.MainAbilities.Items;
 
-[Ability(AbilityId.item_sheepstick)]
-public class Hex : BaseItemTargetAbility
+[Ability(AbilityId.item_orchid, AbilityId.item_bloodthorn)]
+public class Orchid : BaseItemTargetAbility
 {
-    public Hex(Ability baseAbility) : base(baseAbility)
+    public Orchid(Ability baseAbility) : base(baseAbility)
     {
     }
 
-    public Hex(Hero owner, AbilityId abilityId) : base(owner, abilityId)
+    public Orchid(Hero owner, AbilityId abilityId) : base(owner, abilityId)
     {
     }
 

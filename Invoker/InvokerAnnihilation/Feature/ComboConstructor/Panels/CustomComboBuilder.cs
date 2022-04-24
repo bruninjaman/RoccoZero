@@ -35,7 +35,6 @@ public class CustomComboBuilder : BaseComboBuilder
         AbilityId.item_refresher,
         AbilityId.item_blink,
         AbilityId.item_sheepstick,
-        AbilityId.item_bloodthorn,
         AbilityId.item_orchid
     }.ToDictionary(z => z, z => new RectangleF());
 

@@ -49,7 +49,7 @@ public class StandardComboBuilder : BaseComboBuilder
             //         AbilityId.invoker_alacrity)
             //     {IsActive = true},
             new StandardCombo(abilityManager, AbilityId.invoker_cold_snap, AbilityId.invoker_forge_spirit,
-                AbilityId.invoker_sun_strike),
+                AbilityId.invoker_alacrity),
             new StandardCombo(abilityManager, AbilityId.invoker_tornado, AbilityId.invoker_sun_strike),
             new StandardCombo(abilityManager, AbilityId.invoker_tornado, AbilityId.invoker_chaos_meteor,
                 AbilityId.invoker_ice_wall),
@@ -70,10 +70,10 @@ public class StandardComboBuilder : BaseComboBuilder
                 .SetAbilities(AbilityId.invoker_tornado, AbilityId.invoker_sun_strike, AbilityId.invoker_chaos_meteor,
                     AbilityId.item_refresher, AbilityId.invoker_deafening_blast)
                 .SetItemsToHave(AbilityId.item_refresher).Build(),
-            new ComboFactory(abilityManager)
-                .SetAbilities(AbilityId.item_blink, AbilityId.invoker_deafening_blast, AbilityId.invoker_chaos_meteor,
-                    AbilityId.invoker_sun_strike, AbilityId.item_refresher)
-                .SetItemsToHave(AbilityId.item_blink, AbilityId.item_refresher).Build(),
+            // new ComboFactory(abilityManager)
+            //     .SetAbilities(AbilityId.item_blink, AbilityId.invoker_deafening_blast, AbilityId.invoker_chaos_meteor,
+            //         AbilityId.invoker_sun_strike, AbilityId.item_refresher)
+            //     .SetItemsToHave(AbilityId.item_blink, AbilityId.item_refresher).Build(),
             new ComboFactory(abilityManager)
                 .SetAbilities(AbilityId.invoker_tornado, AbilityId.invoker_emp, AbilityId.invoker_chaos_meteor,
                     AbilityId.invoker_cold_snap, AbilityId.invoker_deafening_blast, AbilityId.item_refresher)
