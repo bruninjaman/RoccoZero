@@ -65,7 +65,7 @@ public class SunStrike : BaseInvokablePointAbstractAbility
             canCastForStun = remainingStun >= hitTime;
             if (checkForStun && canCastForStun)
             {
-                return BaseAbility!.Cast(targetPosition);
+                return !BaseAbility!.Cast(targetPosition);
             }
             else
             {
@@ -81,11 +81,11 @@ public class SunStrike : BaseInvokablePointAbstractAbility
                 if (forcedTargetPosition == Vector3.Zero)
                 {
                     // Console.WriteLine("cast to owner");
-                    return BaseAbility!.Cast(Owner);
+                    return !BaseAbility!.Cast(Owner);
                 }
                 else
                 {
-                    return BaseAbility!.Cast(targetPosition);
+                    return !BaseAbility!.Cast(targetPosition);
                 }
             }
             else

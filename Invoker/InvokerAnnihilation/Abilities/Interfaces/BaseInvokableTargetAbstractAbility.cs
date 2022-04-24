@@ -30,7 +30,7 @@ public abstract class BaseInvokableTargetAbstractAbility : BaseInvokableAbstract
                     return true;
                 }
             }
-            var castResult = BaseAbility!.Cast(target);
+            var castResult = !BaseAbility!.Cast(target);
             // Console.WriteLine($"[{AbilityId}] castResult: {castResult}");
             return castResult;
         }

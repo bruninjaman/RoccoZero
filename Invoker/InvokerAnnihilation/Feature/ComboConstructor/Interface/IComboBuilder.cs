@@ -9,4 +9,6 @@ public interface IComboBuilder : IDisposable
     ComboBase? GetCurrentCombo();
     DynamicCombo DynamicComboSettings { get; set; }
     CataclysmInCombo CataclysmInCombo { get; set; }
+    void Start();
+    void Stop();
 }

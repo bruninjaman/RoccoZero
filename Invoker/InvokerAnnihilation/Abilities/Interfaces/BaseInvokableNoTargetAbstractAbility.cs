@@ -30,7 +30,7 @@ public abstract class BaseInvokableNoTargetAbstractAbility : BaseInvokableAbstra
                 }
             }
 
-            return BaseAbility!.Cast();
+            return !BaseAbility!.Cast();
         }
 
         return false;

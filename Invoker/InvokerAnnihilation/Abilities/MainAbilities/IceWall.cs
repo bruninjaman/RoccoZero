@@ -23,7 +23,7 @@ public class IceWall : BaseInvokableTargetAbstractAbility
     public override bool CanBeCasted(Unit? target)
     {
         if (base.CanBeCasted() && target != null &&
-            (IsInvoked || CanBeInvoked()) && CanBeCasted(target))
+            (IsInvoked || CanBeInvoked()) && (!target.IsMagicImmune() || UseOnMagicImmuneTarget))
         {
             var distance = Owner.Distance2D(target);
             return distance - 50 > 200 && distance - 50 < 610;
@@ -86,7 +86,7 @@ public class IceWall : BaseInvokableTargetAbstractAbility
                 AbilitySleeper.Sleep(1000);
                 Owner.Move(mepred);
                 Owner.Move(vec1, true);
-                return BaseAbility!.Cast(true);
+                return !BaseAbility!.Cast(true);
             }
             return false;
         }

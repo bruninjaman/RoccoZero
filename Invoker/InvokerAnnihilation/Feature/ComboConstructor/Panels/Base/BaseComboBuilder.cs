@@ -15,6 +15,9 @@ public abstract class BaseComboBuilder : IComboBuilder
     protected readonly IAbilityManager AbilityManager;
     public abstract DynamicCombo DynamicComboSettings { get; set; }
     public abstract CataclysmInCombo CataclysmInCombo { get; set; }
+    public abstract void Start();
+    public abstract void Stop();
+
     protected BaseComboBuilder(ComboConstructorMenu currentMenu, string title, IAbilityManager abilityManager, IComboInfo comboInfo)
     {
         AbilityManager = abilityManager;

@@ -13,16 +13,11 @@ public abstract class ComboBase : ICombo
     protected ComboBase(IAbilityManager abilityManager)
     {
         AbilityManager = abilityManager;
-        Abilities = new Dictionary<int, CustomComboStruct>
+        Abilities = new Dictionary<int, CustomComboStruct>();
+        for (int i = 0; i < 15; i++)
         {
-            {0, new CustomComboStruct(AbilityId.dota_base_ability)},
-            {1, new CustomComboStruct(AbilityId.dota_base_ability)},
-            {2, new CustomComboStruct(AbilityId.dota_base_ability)},
-            {3, new CustomComboStruct(AbilityId.dota_base_ability)},
-            {4, new CustomComboStruct(AbilityId.dota_base_ability)},
-            {5, new CustomComboStruct(AbilityId.dota_base_ability)},
-            {6, new CustomComboStruct(AbilityId.dota_base_ability)}
-        };
+            Abilities.Add(i, new CustomComboStruct(AbilityId.dota_base_ability));
+        }
         ChangeIndex = -1;
         IsActive = false;
         ActivateBtnPosition = RectangleF.Empty;

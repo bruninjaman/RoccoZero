@@ -1,5 +1,8 @@
-﻿using Divine.Entity.Entities.Abilities.Components;
+﻿using System.Runtime.Serialization;
+using Divine.Entity;
+using Divine.Entity.Entities.Abilities.Components;
 using Divine.Entity.Entities.Units.Heroes;
+using Divine.Helpers;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 using Divine.Update;
@@ -39,8 +42,9 @@ public sealed class ComboExecutorFeature : FeatureBase<ComboExecutorMenu>
         {
             return;
         }
+
         var comboToPrepare = _comboConstructorFeature.CurrentBuilder.GetCurrentCombo();
-        
+
         var abilities = comboToPrepare.ValidAbilities
             .Where(x => x.Value.Ability is IInvokableAbility).Take(2);
         var first = abilities.First().Value.Ability as BaseInvokableAbstractAbility;
@@ -148,6 +152,18 @@ public sealed class ComboExecutorFeature : FeatureBase<ComboExecutorMenu>
                 // Console.WriteLine($"[{abilityToCast.AbilityId}] next ability: {abilityToCast.OnCooldown}");
                 IncreaseComboIndex();
             }
+        }
+
+        if (CurrentCombo.Abilities.All(x =>x.Value.Ability is null or {OnCooldown: true}))
+        {
+            if (MultiSleeper<string>.Sleeping("AttackCooldown"))
+            {
+                return;
+            }
+
+            MultiSleeper<string>.Sleep("AttackCooldown", 350);
+            var me = EntityManager.LocalHero!;
+            me.Attack(Target);
         }
     }
 

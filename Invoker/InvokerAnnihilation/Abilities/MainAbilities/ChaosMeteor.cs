@@ -64,7 +64,7 @@ public class ChaosMeteor : BaseInvokablePointAbstractAbility
         var canCastForInvul = false;
         if (isStunned && !isInvul)
         {
-            return BaseAbility!.Cast(targetPosition);
+            return !BaseAbility!.Cast(targetPosition);
         }
 
         if (isInvul)
@@ -72,7 +72,7 @@ public class ChaosMeteor : BaseInvokablePointAbstractAbility
             canCastForInvul = remainingInvul <= hitTime;
             if (checkForInvul && canCastForInvul)
             {
-                return BaseAbility!.Cast(targetPosition);
+                return !BaseAbility!.Cast(targetPosition);
             }
             else
             {
@@ -80,7 +80,7 @@ public class ChaosMeteor : BaseInvokablePointAbstractAbility
         }
         else if (target.HasAnyModifiers(Consts.MeteorBurn))
         {
-            return BaseAbility!.Cast(targetPosition);
+            return !BaseAbility!.Cast(targetPosition);
         }
 
 

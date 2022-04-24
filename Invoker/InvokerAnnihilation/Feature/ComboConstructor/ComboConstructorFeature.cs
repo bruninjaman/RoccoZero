@@ -17,20 +17,15 @@ public sealed class ComboConstructorFeature : FeatureBase<ComboConstructorMenu>
         CustomComboBuilder = comboBuilders.First(z => z is CustomComboBuilder);
         StandardComboBuilder = comboBuilders.First(z => z is StandardComboBuilder);
         CurrentBuilder = StandardComboBuilder;
-
+        CurrentBuilder.Start();
         CurrentMenu.UseCustomBuilder.ValueChanged += UseCustomBuilderOnValueChanged;
     }
 
     private void UseCustomBuilderOnValueChanged(MenuSwitcher switcher, SwitcherEventArgs e)
     {
-        if (e.Value)
-        {
-            CurrentBuilder = CustomComboBuilder;
-        }
-        else
-        {
-            CurrentBuilder = StandardComboBuilder;
-        }
+        CurrentBuilder.Stop();
+        CurrentBuilder = e.Value ? CustomComboBuilder : StandardComboBuilder;
+        CurrentBuilder.Start();
     }
 
     public override ComboConstructorMenu CurrentMenu { get; set; }

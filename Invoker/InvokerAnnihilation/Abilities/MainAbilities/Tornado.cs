@@ -72,7 +72,7 @@ public class Tornado : BaseInvokablePointAbstractAbility
                 return ChainCast(target);
             }
 
-            return BaseAbility!.Cast(targetPosition);
+            return !BaseAbility!.Cast(targetPosition);
         }
 
         return false;

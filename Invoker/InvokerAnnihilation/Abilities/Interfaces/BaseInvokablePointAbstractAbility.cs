@@ -35,7 +35,7 @@ public abstract class BaseInvokablePointAbstractAbility : BaseInvokableAbstractA
                 }
             }
 
-            return BaseAbility!.Cast(targetPosition);
+            return !BaseAbility!.Cast(targetPosition);
         }
 
         return false;
@@ -58,7 +58,7 @@ public abstract class BaseInvokablePointAbstractAbility : BaseInvokableAbstractA
             canCastForStun = remainingStun >= hitTime;
             if (checkForStun && canCastForStun)
             {
-                return BaseAbility!.Cast(targetPosition);
+                return !BaseAbility!.Cast(targetPosition);
             }
             else
             {
@@ -70,7 +70,7 @@ public abstract class BaseInvokablePointAbstractAbility : BaseInvokableAbstractA
             canCastForInvul = remainingInvul <= hitTime;
             if (checkForInvul && canCastForInvul)
             {
-                return BaseAbility!.Cast(targetPosition);
+                return !BaseAbility!.Cast(targetPosition);
             }
             else
             {

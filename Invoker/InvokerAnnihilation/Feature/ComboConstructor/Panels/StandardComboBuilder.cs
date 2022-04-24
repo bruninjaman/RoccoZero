@@ -21,7 +21,19 @@ public class StandardComboBuilder : BaseComboBuilder
     public List<ICombo?> Combos { get; set; }
     public List<StandardCombo?> CustomCombos { get; set; }
     public override DynamicCombo DynamicComboSettings { get; set; }
-    public override CataclysmInCombo CataclysmInCombo { get; set; }
+    public override CataclysmInCombo CataclysmInCombo { get; set; } = new CataclysmInCombo();
+    public override void Start()
+    {
+        InputManager.MouseKeyDown += InputOnMouseClick;
+        InputManager.MouseMove += InputManagerOnMouseMove;
+    }
+
+    public override void Stop()
+    {
+        InputManager.MouseKeyDown -= InputOnMouseClick;
+        InputManager.MouseMove -= InputManagerOnMouseMove;
+    }
+
     public int ComboCount => CustomCombos.Count;
     public int MaxAbilities { get; } = 6;
 
@@ -68,9 +80,7 @@ public class StandardComboBuilder : BaseComboBuilder
                 .SetItemsToHave(AbilityId.item_refresher).Build(),
         };
         DynamicComboSettings = new DynamicCombo(AbilityManager);
-        CataclysmInCombo = new CataclysmInCombo();
-        InputManager.MouseKeyDown += InputOnMouseClick;
-        InputManager.MouseMove += InputManagerOnMouseMove;
+        // CataclysmInCombo = new CataclysmInCombo();
         CustomCombos = new List<StandardCombo?>();
         Combos.ForEach(combo =>
         {
@@ -227,5 +237,6 @@ public class StandardComboBuilder : BaseComboBuilder
     public override void Dispose()
     {
         InputManager.MouseKeyDown -= InputOnMouseClick;
+        InputManager.MouseMove -= InputManagerOnMouseMove;
     }
 }
