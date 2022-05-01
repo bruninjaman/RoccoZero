@@ -28,7 +28,7 @@ public class BlinkStrike : RangedAbility, INuke, IBlink
         : base(baseAbility)
     {
         this.DamageData = new SpecialData(baseAbility, "bonus_damage");
-        this.castRangeData = new SpecialData(baseAbility, "abilitycastrange");
+        this.castRangeData = new SpecialData(baseAbility, "AbilityCastRange");
     }
 
     public BlinkType BlinkType { get; } = BlinkType.Targetable;

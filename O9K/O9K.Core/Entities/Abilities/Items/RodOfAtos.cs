@@ -22,5 +22,5 @@ public class RodOfAtos : RangedAbility, IDisable, IAppliesImmobility
 
     public string ImmobilityModifierName { get; } = "modifier_rod_of_atos_debuff";
 
-    public override float Speed { get; } = 1750;
+    public override float Speed { get; } = 1900;
 }

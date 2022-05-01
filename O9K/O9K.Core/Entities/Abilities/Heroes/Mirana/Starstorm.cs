@@ -16,6 +16,7 @@ public class Starstorm : AreaOfEffectAbility, INuke
     public Starstorm(Ability baseAbility)
         : base(baseAbility)
     {
+        this.DamageData = new SpecialData(baseAbility, "damage");
         this.RadiusData = new SpecialData(baseAbility, "starfall_radius");
     }
 }

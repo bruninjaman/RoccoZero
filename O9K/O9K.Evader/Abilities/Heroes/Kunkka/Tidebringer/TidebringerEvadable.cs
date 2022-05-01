@@ -65,7 +65,7 @@ internal sealed class TidebringerEvadable : EvadableAbility, IAutoAttack
                 {
                     try
                     {
-                        if (!this.Tidebringer.IsTidebringerAnimation(this.Owner.BaseUnit.AnimationName))
+                        if (!Tidebringer.IsTidebringerAnimation(this.Owner.BaseUnit.AnimationName))
                         {
                             return;
                         }

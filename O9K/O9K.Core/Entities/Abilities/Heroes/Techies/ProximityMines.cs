@@ -1,4 +1,6 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Techies;
+﻿using System;
+
+namespace O9K.Core.Entities.Abilities.Heroes.Techies;
 
 using Base;
 

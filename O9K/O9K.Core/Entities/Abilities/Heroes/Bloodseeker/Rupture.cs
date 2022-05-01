@@ -23,14 +23,6 @@ public class Rupture : RangedAbility, IDebuff
 
     public string DebuffModifierName { get; } = "modifier_bloodseeker_rupture";
 
-    public override bool IsDisplayingCharges
-    {
-        get
-        {
-            return this.Owner.HasAghanimsScepter;
-        }
-    }
-
     protected override float BaseCastRange
     {
         get

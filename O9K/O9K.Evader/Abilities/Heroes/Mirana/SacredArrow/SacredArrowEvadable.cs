@@ -45,7 +45,6 @@ internal sealed class SacredArrowEvadable : LinearProjectileEvadable, IUnit, IMo
         this.Counters.Add(Abilities.BladeMail);
         this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.Bulwark);
-        this.Counters.UnionWith(Abilities.VsDisableProjectile);
 
         this.ModifierCounters.UnionWith(Abilities.AllyStrongPurge);
         this.ModifierCounters.Add(Abilities.PressTheAttack);

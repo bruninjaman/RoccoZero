@@ -57,7 +57,7 @@ public class HurricanePike : RangedAbility, IBlink, IHasRangeIncrease
 
     public string RangeModifierName { get; } = "modifier_item_hurricane_pike";
 
-    public override float Speed { get; } = 1200;
+    public override float Speed { get; } = 1500;
 
     public override bool CanHit(Unit9 target)
     {

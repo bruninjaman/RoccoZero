@@ -9,16 +9,10 @@ using Divine.Entity.Entities.Abilities.Components;
 using Metadata;
 
 [AbilityId(AbilityId.brewmaster_drunken_brawler)]
-public class DrunkenBrawler : ActiveAbility, IBuff
+public class DrunkenBrawler : ToggleAbility
 {
     public DrunkenBrawler(Ability baseAbility)
         : base(baseAbility)
     {
     }
-
-    public string BuffModifierName { get; } = "modifier_brewmaster_drunken_brawler";
-
-    public bool BuffsAlly { get; } = false;
-
-    public bool BuffsOwner { get; } = true;
 }

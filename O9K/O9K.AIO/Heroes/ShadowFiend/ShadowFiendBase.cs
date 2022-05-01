@@ -25,7 +25,7 @@ internal class ShadowFiendBase : BaseHero
         razeToMouseSwitcher = razeMenu.Add(new MenuSwitcher("Raze to mouse"));
         drawRazesSwitcher = razeMenu.Add(new MenuSwitcher("Draw razes"));
         colourSelector = razeMenu.Add(new MenuSelector("Colour", RazeUtils.Colours.Keys));
-        RazeUtils.Init(this.TargetManager);
+        RazeUtils.Init(this.TargetManager, this.Menu);
     }
 
 }

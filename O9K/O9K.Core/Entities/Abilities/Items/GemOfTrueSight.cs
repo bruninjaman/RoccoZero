@@ -8,7 +8,7 @@ using Divine.Entity.Entities.Abilities.Components;
 using Metadata;
 
 [AbilityId(AbilityId.item_gem)]
-public class GemOfTrueSight : PassiveAbility
+public class GemOfTrueSight : RangedAbility
 {
     public GemOfTrueSight(Ability baseAbility)
         : base(baseAbility)

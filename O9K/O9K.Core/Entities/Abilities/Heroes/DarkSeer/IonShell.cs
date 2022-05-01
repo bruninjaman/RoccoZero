@@ -24,4 +24,12 @@ public class IonShell : RangedAbility, IBuff
     public bool BuffsAlly { get; } = true;
 
     public bool BuffsOwner { get; } = true;
+
+    public override bool IsDisplayingCharges
+    {
+        get
+        {
+            return Owner.HasAghanimShard;
+        }
+    }
 }

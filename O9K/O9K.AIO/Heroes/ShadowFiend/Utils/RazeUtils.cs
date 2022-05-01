@@ -19,6 +19,9 @@ using Divine.Particle;
 using Divine.Particle.Components;
 using Divine.Renderer;
 
+using O9K.AIO.Menu;
+using O9K.Core.Managers.Menu.Items;
+
 using TargetManager;
 
 internal class RazeUtils
@@ -36,45 +39,66 @@ internal class RazeUtils
 
     private static TargetManager targetManager;
 
-    public static void Init(TargetManager targetManager)
+    private static MenuSwitcher Enabled;
+
+    public static void Init(TargetManager targetManager, MenuManager menu)
     {
+        Enabled = menu.Enabled;
         ShadowFiendBase.drawRazesSwitcher.ValueChange += OnValueChange;
         ShadowFiendBase.razeToMouseSwitcher.ValueChange += OnValueChangeRazeToMouse;
-        OrderManager.OrderAdding += OnUnitOrderRazeToTarget;
         RazeUtils.targetManager = targetManager;
     }
 
     private static void OnUnitOrderRazeToTarget(OrderAddingEventArgs e)
     {
-        var owner = EntityManager9.Owner;
-        var order = e.Order.Ability;
-
-        if (owner.HeroId != HeroId.npc_dota_hero_nevermore || !e.IsCustom)
+        if (!Enabled)
         {
             return;
         }
 
-        if (order is not null && e.Order.Type == OrderType.Cast && (order.Id == AbilityId.nevermore_shadowraze1
-                                                                    || order.Id == AbilityId.nevermore_shadowraze2
-                                                                    || order.Id == AbilityId.nevermore_shadowraze3))
+        if (!e.IsCustom)
         {
-            var predictedPosition = targetManager.Target.GetPredictedPosition(order.GetCastPoint());
+            return;
+        }
 
-            var additionalDelay = owner.Hero.GetTurnTime(predictedPosition);
+        var order = e.Order;
+        if (order.Type != OrderType.Cast)
+        {
+            return;
+        }
 
-            var targetPredictedPositionWithDelay =
-                targetManager.Target.GetPredictedPosition(order.GetCastPoint() + additionalDelay);
+        var ability = order.Ability;
+        if (ability == null)
+        {
+            return;
+        }
 
-            if (owner.Hero.GetAngle(targetPredictedPositionWithDelay) > 0.2)
-            {
-                owner.Hero.MoveToDirection(targetPredictedPositionWithDelay);
-                e.Process = true;
-            }
-            else
-            {
-                e.Process = true;
-            }
+        var owner = EntityManager9.Owner;
+        if (ability.Owner != owner)
+        {
+            return;
+        }
 
+        if (ability.Id is not AbilityId.nevermore_shadowraze1 and not AbilityId.nevermore_shadowraze2 and not AbilityId.nevermore_shadowraze3)
+        {
+            return;
+        }
+
+        var predictedPosition = targetManager.Target.GetPredictedPosition(ability.GetCastPoint());
+
+        var additionalDelay = owner.Hero.GetTurnTime(predictedPosition);
+
+        var targetPredictedPositionWithDelay =
+            targetManager.Target.GetPredictedPosition(ability.GetCastPoint() + additionalDelay);
+
+        if (owner.Hero.GetAngle(targetPredictedPositionWithDelay) > 0.2)
+        {
+            owner.Hero.MoveToDirection(targetPredictedPositionWithDelay);
+            e.Process = true;
+        }
+        else
+        {
+            e.Process = true;
         }
     }
 
@@ -83,10 +107,12 @@ internal class RazeUtils
         if (e.NewValue)
         {
             OrderManager.OrderAdding += OnUnitOrder;
+            OrderManager.OrderAdding += OnUnitOrderRazeToTarget;
         }
         else
         {
             OrderManager.OrderAdding -= OnUnitOrder;
+            OrderManager.OrderAdding -= OnUnitOrderRazeToTarget;
         }
     }
 
@@ -102,7 +128,7 @@ internal class RazeUtils
 
             for (var i = 0; i < 3; i++)
             {
-                ParticleManager.RemoveParticle($"DrawRaze_{i}");
+                ParticleManager.DestroyParticle($"DrawRaze_{i}");
             }
         }
     }
@@ -129,10 +155,15 @@ internal class RazeUtils
 
     private static void OnDraw()
     {
+        if (!Enabled)
+        {
+            return;
+        }
+
         var chosen = Colours[ShadowFiendBase.colourSelector];
         var owner = EntityManager9.Owner;
 
-        if (owner.HeroId !=  HeroId.npc_dota_hero_nevermore)
+        if (owner.HeroId != HeroId.npc_dota_hero_nevermore)
         {
             return;
         }
@@ -156,6 +187,10 @@ internal class RazeUtils
 
     private static void OnUnitOrder(OrderAddingEventArgs e)
     {
+        if (!Enabled)
+        {
+            return;
+        }
 
         var owner = EntityManager9.Owner;
         var order = e.Order.Ability;
@@ -179,7 +214,6 @@ internal class RazeUtils
             {
                 e.Process = true;
             }
-
         }
     }
 }

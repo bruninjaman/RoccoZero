@@ -122,7 +122,7 @@ public class SpecialData
 
             if (this.talent != null)
             {
-                this.talentValue = this.talent.AbilitySpecialData.First(x => x.Name == "value").Value;
+                this.talentValue = this.talent.AbilitySpecialData.FirstOrDefault(x => x.Name == "value")?.Value ?? 0f;
                 this.getDataFunc = this.GetValueWithTalent;
             }
             else

@@ -77,7 +77,7 @@ public class Rebound : RangedAbility, INuke
 
     //    return true;
     //}
-    
+
     private bool CheckRange(Unit9 baseTargetUnit, Unit9 jumpTarget)
     {
         var dist = baseTargetUnit.Distance(jumpTarget);

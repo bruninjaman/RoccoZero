@@ -6,14 +6,17 @@ using Base.Evadable.Components;
 
 using Core.Entities.Abilities.Base;
 using Core.Entities.Units;
-using Divine.Modifier.Modifiers;
+
 using Divine.Entity.Entities.Units;
+using Divine.Modifier.Modifiers;
 
 using Metadata;
 
+using O9K.Evader.Pathfinder.Obstacles.Abilities.Proactive;
+
 using Pathfinder.Obstacles.Modifiers;
 
-internal sealed class PhantomsEmbraceEvadable : EvadableAbility, IModifierCounter, IModifierObstacle
+internal sealed class PhantomsEmbraceEvadable : EvadableAbility, IModifierCounter, IModifierObstacle, IProactiveCounter
 {
     public PhantomsEmbraceEvadable(Ability9 ability, IPathfinder pathfinder, IMainMenu menu)
         : base(ability, pathfinder, menu)
@@ -35,6 +38,8 @@ internal sealed class PhantomsEmbraceEvadable : EvadableAbility, IModifierCounte
         this.ModifierCounters.Add(Abilities.Stormcrafter);
         this.ModifierCounters.Add(Abilities.HeavenlyGrace);
         this.ModifierCounters.Add(Abilities.AphoticShield);
+
+        this.ProactiveCounters.Add(Abilities.Counterspell);
     }
 
     public bool AllyModifierObstacle { get; } = true;
@@ -62,5 +67,11 @@ internal sealed class PhantomsEmbraceEvadable : EvadableAbility, IModifierCounte
 
     protected override void AddObstacle()
     {
+    }
+
+    public void AddProactiveObstacle()
+    {
+        var obstacle = new ProactiveAbilityObstacle(this);
+        this.Pathfinder.AddObstacle(obstacle);
     }
 }

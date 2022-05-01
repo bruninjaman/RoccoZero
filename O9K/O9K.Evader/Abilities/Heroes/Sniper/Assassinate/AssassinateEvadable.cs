@@ -34,6 +34,7 @@ internal sealed class AssassinateEvadable : ProjectileEvadable
         this.Counters.Add(Abilities.BladeMail);
         this.Counters.Add(Abilities.ArcanistArmor);
         this.Counters.Add(Abilities.LotusOrb);
+        this.Counters.Add(Abilities.Blur);
     }
 
     public override bool IsDisjointable { get; } = false;

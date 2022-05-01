@@ -1,4 +1,6 @@
-﻿namespace O9K.Core.Entities.Abilities.Items;
+﻿using System;
+
+namespace O9K.Core.Entities.Abilities.Items;
 
 using Base;
 using Base.Components;
@@ -19,6 +21,8 @@ using Metadata;
 [AbilityId(AbilityId.item_ethereal_blade)]
 public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, IHasDamageAmplify
 {
+    private readonly SpecialData etherealAmplifierData;
+
     private readonly SpecialData amplifierData;
 
     private readonly SpecialData damageMultiplierData;
@@ -28,8 +32,9 @@ public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, I
     {
         this.DamageData = new SpecialData(baseAbility, "blast_damage_base");
         this.SpeedData = new SpecialData(baseAbility, "projectile_speed");
-        this.amplifierData = new SpecialData(baseAbility, "ethereal_damage_bonus");
+        this.etherealAmplifierData = new SpecialData(baseAbility, "ethereal_damage_bonus");
         this.damageMultiplierData = new SpecialData(baseAbility, "blast_agility_multiplier");
+        this.amplifierData = new SpecialData(baseAbility, "spell_amp");
     }
 
     public DamageType AmplifierDamageType { get; } = DamageType.Magical;
@@ -56,12 +61,22 @@ public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, I
 
     public float AmplifierValue(Unit9 source, Unit9 target)
     {
-        return this.amplifierData.GetValue(this.Level) / -100;
+        var value = 0f;
+
+        if (this.IsUsable)
+        {
+            value += this.amplifierData.GetValue(this.Level) / 100f;
+        }
+
+        value += this.etherealAmplifierData.GetValue(this.Level) / -100;
+
+        return value;
     }
 
     public override int GetDamage(Unit9 unit)
     {
         var amplify = unit.GetDamageAmplification(this.Owner, this.DamageType, true);
+
         var block = unit.GetDamageBlock(this.DamageType);
         var damage = this.GetRawDamage(unit);
 
@@ -79,16 +94,16 @@ public class EtherealBlade : RangedAbility, IShield, IDisable, INuke, IDebuff, I
         var damage = base.GetRawDamage(unit, remainingHealth);
         var multiplier = this.damageMultiplierData.GetValue(this.Level);
 
-        switch (this.Owner.PrimaryAttribute)
+        switch (unit.PrimaryAttribute)
         {
             case Attribute.Strength:
-                damage[this.DamageType] += multiplier * this.Owner.TotalStrength;
+                damage[this.DamageType] += multiplier * unit.TotalStrength;
                 break;
             case Attribute.Agility:
-                damage[this.DamageType] += multiplier * this.Owner.TotalAgility;
+                damage[this.DamageType] += multiplier * unit.TotalAgility;
                 break;
             case Attribute.Intelligence:
-                damage[this.DamageType] += multiplier * this.Owner.TotalIntelligence;
+                damage[this.DamageType] += multiplier * unit.TotalIntelligence;
                 break;
         }
 

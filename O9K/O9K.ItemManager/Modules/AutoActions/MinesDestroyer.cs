@@ -13,14 +13,17 @@ using Core.Managers.Entity;
 using Core.Managers.Menu;
 using Core.Managers.Menu.EventArgs;
 using Core.Managers.Menu.Items;
+
+using Divine.Entity.Entities.Abilities.Components;
 using Divine.Game;
 using Divine.Order;
-using Divine.Update;
 using Divine.Order.EventArgs;
 using Divine.Order.Orders.Components;
-using Divine.Entity.Entities.Abilities.Components;
+using Divine.Update;
 
 using Metadata;
+
+using O9K.Core.Entities.Units;
 
 internal class MinesDestroyer : IModule
 {
@@ -143,6 +146,21 @@ internal class MinesDestroyer : IModule
         }
     }
 
+    public bool CanAttack(Unit9 target, float additionalRange = 0)
+    {
+        if (!target.IsAlive || target.IsInvulnerable || target.IsAttackImmune || !target.IsVisible)
+        {
+            return false;
+        }
+
+        if (this.owner.Hero.Distance(target) > this.owner.Hero.GetAttackRange(target, additionalRange))
+        {
+            return false;
+        }
+
+        return this.owner.Hero.CanAttack();
+    }
+
     private void OnUpdate()
     {
         try
@@ -162,7 +180,7 @@ internal class MinesDestroyer : IModule
 
             foreach (var mine in mines)
             {
-                if (!hero.CanAttack(mine, 200))
+                if (!CanAttack(mine, 200))
                 {
                     continue;
                 }

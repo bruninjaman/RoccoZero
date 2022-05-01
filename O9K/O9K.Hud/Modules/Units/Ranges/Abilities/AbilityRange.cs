@@ -96,7 +96,6 @@ internal class AbilityRange : IRange
         if (!this.forceCastRange && (this.ability.AbilityBehavior & (AbilityBehavior.Point | AbilityBehavior.UnitTarget)) == 0)
         {
             var castRange = this.ability.Radius;
-            // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (castRange == this.Range)
             {
                 return;
@@ -109,7 +108,6 @@ internal class AbilityRange : IRange
         else
         {
             var castRange = this.ability.CastRange;
-            // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (castRange == this.Range)
             {
                 return;
