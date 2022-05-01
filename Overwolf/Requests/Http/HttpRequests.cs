@@ -39,7 +39,7 @@ namespace Overwolf.Requests.Http
         {
             var swatch = new Stopwatch();
             swatch.Start();
-            var task = await httpClient.GetAsync(new Uri($"https://stratz.divinecheat.com/Steam/{matchId}"))
+            var task = await httpClient.GetAsync(new Uri($"https://stratz.divine.wtf/Steam/{matchId}"))
                 .ConfigureAwait(false);
             swatch.Stop();
 
@@ -63,7 +63,7 @@ namespace Overwolf.Requests.Http
 
             var swatch = new Stopwatch();
             swatch.Start();
-            var task = await httpClient.PostAsync(new Uri($"https://stratz.divinecheat.com/Stratz/graphQL"), content)
+            var task = await httpClient.PostAsync(new Uri($"https://stratz.divine.wtf/Stratz/graphQL"), content)
                 .ConfigureAwait(false);
             swatch.Stop();
             LogManager.Debug($"GetDivineStratzGraphQLData StatusCode: {(int)task.StatusCode} {task.StatusCode} was {(int)(swatch.Elapsed.TotalMilliseconds)}ms");
