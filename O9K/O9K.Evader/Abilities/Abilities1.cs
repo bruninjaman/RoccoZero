@@ -48,6 +48,7 @@ internal static partial class Abilities
         AbilityId.item_cyclone,
         AbilityId.item_wind_waker,
         AbilityId.item_black_king_bar,
+        AbilityId.phantom_assassin_blur,
     };
 
     public static IEnumerable<AbilityId> Blink { get; } = new[]
@@ -423,6 +424,7 @@ internal static partial class Abilities
         AbilityId.sandking_sand_storm,
         AbilityId.templar_assassin_meld,
         AbilityId.weaver_shukuchi,
+        AbilityId.phantom_assassin_blur,
         AbilityId.item_glimmer_cape,
         AbilityId.item_invis_sword,
         AbilityId.item_silver_edge,
@@ -563,6 +565,7 @@ internal static partial class Abilities
         AbilityId.item_trickster_cloak,
         AbilityId.windrunner_windrun,
         AbilityId.weaver_shukuchi,
+        AbilityId.phantom_assassin_blur,
         AbilityId.templar_assassin_meld,
         AbilityId.nyx_assassin_vendetta,
         AbilityId.sven_warcry,
@@ -611,6 +614,7 @@ internal static partial class Abilities
         AbilityId.clinkz_wind_walk,
         AbilityId.windrunner_windrun,
         AbilityId.weaver_shukuchi,
+        AbilityId.phantom_assassin_blur,
         AbilityId.templar_assassin_meld,
         AbilityId.nyx_assassin_vendetta,
         AbilityId.sven_warcry,
@@ -863,6 +867,7 @@ internal static partial class Abilities
         AbilityId.item_manta,
         AbilityId.alchemist_chemical_rage,
         AbilityId.huskar_life_break,
+        AbilityId.phantom_assassin_blur,
         (AbilityId)419 //Swiftslash
     };
 
@@ -876,5 +881,6 @@ internal static partial class Abilities
         AbilityId.antimage_counterspell,
         AbilityId.storm_spirit_ball_lightning,
         AbilityId.ember_spirit_sleight_of_fist,
+        AbilityId.phantom_assassin_blur,
     };
 }

@@ -38,6 +38,7 @@ internal sealed class EtherealBladeEvadable : ProjectileEvadable, IModifierCount
         this.ModifierCounters.Add(Abilities.PressTheAttack);
         this.ModifierCounters.Add(Abilities.Enrage);
         this.ModifierCounters.Add(Abilities.ChemicalRage);
+        this.ModifierCounters.Add(Abilities.Blur);
         this.ModifierCounters.UnionWith(Abilities.MagicShield);
     }
 
