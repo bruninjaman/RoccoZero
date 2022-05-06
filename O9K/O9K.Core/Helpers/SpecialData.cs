@@ -71,7 +71,7 @@ public class SpecialData
 
             if (this.talent != null)
             {
-                this.talentValue = this.talent.AbilitySpecialData.First(x => x.Name == "value").Value;
+                this.talentValue = data.Bonuses.FirstOrDefault(x => x.Name == talentId.ToString())?.Value ?? this.talent.AbilitySpecialData.First(x => x.Name == "value")?.Value ?? 0f;
                 this.getDataFunc = this.GetValueWithTalent;
             }
             else
@@ -122,7 +122,7 @@ public class SpecialData
 
             if (this.talent != null)
             {
-                this.talentValue = this.talent.AbilitySpecialData.FirstOrDefault(x => x.Name == "value")?.Value ?? 0f;
+                this.talentValue = data.Bonuses.FirstOrDefault(x => x.Name == talentId.ToString())?.Value ?? this.talent.AbilitySpecialData.First(x => x.Name == "value")?.Value ?? 0f;
                 this.getDataFunc = this.GetValueWithTalent;
             }
             else
