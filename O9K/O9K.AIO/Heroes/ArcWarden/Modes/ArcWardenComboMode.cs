@@ -9,12 +9,15 @@
     using Base;
 
     using Core.Logger;
+    using Core.Managers.Entity;
     using Core.Managers.Menu.EventArgs;
     using Core.Managers.Menu.Items;
 
     using CustomUnitManager;
 
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Game;
+    using Divine.Helpers;
     using Divine.Order;
     using Divine.Update;
 
@@ -32,8 +35,7 @@
             this.UpdateHandler.IsEnabled = false;
             OrderManager.OrderAdding -= this.OnOrderAdding;
 
-            this.ComboModeMenus.Where(x =>
-                x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange -= this.ToggleKeyOnValueChanged;
+            this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange -= this.ToggleKeyOnValueChanged;
 
             foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
             {
@@ -46,7 +48,7 @@
             UpdateManager.DestroyIngameUpdate(this.UpdateHandler);
             OrderManager.OrderAdding -= this.OnOrderAdding;
 
-            this.ComboModeMenus.Where(x => x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange -= this.ToggleKeyOnValueChanged;
+            this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange -= this.ToggleKeyOnValueChanged;
 
             foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
             {
@@ -58,7 +60,7 @@
         {
             OrderManager.OrderAdding += this.OnOrderAdding;
 
-            this.ComboModeMenus.Where(x => x.Value.SimplifiedName == "clonecombo").First().Key.ValueChange += this.ToggleKeyOnValueChanged;
+            this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange += this.ToggleKeyOnValueChanged;
 
             foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
             {
@@ -73,15 +75,22 @@
                 return;
             }
 
-            var arcUnitManager = this.UnitManager as ArcWardenUnitManager;
-
-            if (arcUnitManager != null)
+            if (this.UnitManager is ArcWardenUnitManager arcUnitManager)
             {
                 try
                 {
                     if (this.ComboModeMenu.SimplifiedName == "clonecombo")
                     {
-                        if (!arcUnitManager.CloneControllableUnits.Any(x => x.IsValid))
+                        var firstOrDefault = EntityManager9.Owner.Hero.Abilities
+                                                           .FirstOrDefault(ability9 => ability9.Id == AbilityId.arc_warden_tempest_double && ability9.CanBeCasted());
+                        
+                        if (firstOrDefault != null && firstOrDefault.CanBeCasted())
+                        {
+                            firstOrDefault.BaseAbility.Cast();
+                            MultiSleeper<string>.Sleep("ArcWardenTempestCast", 2000);
+                        }
+
+                        if (!arcUnitManager.CloneControllableUnits.Any() && !MultiSleeper<string>.Sleeping("ArcWardenTempestCast"))
                         {
                             this.TurnOffCombo();
                         }
