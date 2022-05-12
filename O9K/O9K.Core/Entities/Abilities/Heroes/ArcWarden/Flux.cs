@@ -18,7 +18,7 @@ public class Flux : RangedAbility, IDebuff
     public Flux(Ability baseAbility)
         : base(baseAbility)
     {
-        this.castRangeData = new SpecialData(baseAbility, "abilitycastrange");
+        this.castRangeData = new SpecialData(baseAbility, "AbilityCastRange");
     }
 
     public string DebuffModifierName { get; } = string.Empty; // debuff stacks

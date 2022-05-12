@@ -111,20 +111,19 @@ internal class ArcWarden : ControllableUnit, IPushUnit
             { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkDaggerArcWarden(x) },
             { AbilityId.item_hurricane_pike, x => this.pike = new HurricanePike(x) },
             { AbilityId.item_force_staff, x => this.force = new ForceStaff(x) },
-
             { AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x) },
             { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) },
 
             { AbilityId.item_silver_edge, x => this.silver = new BuffAbility(x) },
             { AbilityId.item_invis_sword, x => this.shadow = new BuffAbility(x) },
 
-            { AbilityId.item_tpscroll, x => this.tpScroll = new TravelBoots(x) }
+            { AbilityId.item_tpscroll, x => this.tpScroll = new TravelBoots(x) },
         };
     }
 
     public bool PushCombo()
     {
-        if (OrderManager.Orders.Count() != 0)
+        if (OrderManager.Orders.Any())
         {
             return false;
         }
@@ -140,39 +139,37 @@ internal class ArcWarden : ControllableUnit, IPushUnit
         var enemyCreeps =  EntityManager9.EnemyUnits.Where(
             x => x.IsCreep && x.IsValid && x.IsAlive).ToList();
 
-        if (TpCount > 0 && this.TravelTpToCreeps(enemyCreeps, allyCreeps))
+        if (TpCount > 0 && TravelTpToCreeps(enemyCreeps, allyCreeps))
         {
             return true;
         }
 
-        if (this.UseMjolnir(allyCreeps))
+        if (UseMjolnir(allyCreeps))
         {
             return true;
         }
 
         var nearestTower =
             EntityManager9.EnemyUnits
-                .Where(x => x.BaseUnit.NetworkName == ClassId.CDOTA_BaseNPC_Tower.ToString() && x.IsValid && x.IsAlive)
-                .OrderBy(y => this.Owner.Distance(y))
-                .FirstOrDefault();
+                          .Where(x => x.BaseUnit.NetworkName == ClassId.CDOTA_BaseNPC_Tower.ToString() && x.IsValid && x.IsAlive)
+                          .MinBy(y => this.Owner.Distance(y));
 
         if (nearestTower == null)
         {
-            nearestTower = EntityManager9.EnemyUnits.Where(x => x.IsBuilding && x.IsValid && x.IsAlive && x.CanDie).OrderBy(y => this.Owner.Distance(y))
-                .FirstOrDefault();
+            nearestTower = EntityManager9.EnemyUnits.Where(x => x.IsBuilding && x.IsValid && x.IsAlive && x.CanDie).MinBy(y => this.Owner.Distance(y));
         }
 
         var currentLane = this.laneHelper.GetCurrentLane(this.Owner);
         var attackPoint = this.laneHelper.GetClosestAttackPoint(this.Owner, currentLane);
 
-        if (this.UseSpark(enemyCreeps))
+        if (UseSpark(enemyCreeps))
         {
             return true;
         }
 
         if (nearestTower?.Distance(this.Owner) <= 900)
         {
-            if (this.UseMagneticFieldNearTower(nearestTower))
+            if (UseMagneticFieldNearTower(nearestTower))
             {
                 return true;
             }
@@ -183,7 +180,7 @@ internal class ArcWarden : ControllableUnit, IPushUnit
             }
         }
 
-        if (this.UseMagneticFieldNearCreeps(enemyCreeps))
+        if (UseMagneticFieldNearCreeps(enemyCreeps))
         {
             return true;
         }
@@ -291,7 +288,7 @@ internal class ArcWarden : ControllableUnit, IPushUnit
 
             return true;
         }
-
+        
         if (abilityHelper.UseAbility(this.flux))
         {
             return true;
@@ -376,7 +373,7 @@ internal class ArcWarden : ControllableUnit, IPushUnit
         {
             if (this.spark.Ability.CanBeCasted())
             {
-                var enemyCreep = enemyCreeps.FirstOrDefault(unit => unit.Distance(this.Owner) <= 1000 && unit.IsRanged) ??  enemyCreeps.FirstOrDefault(unit => unit.Distance(this.Owner) <= 1000);
+                var enemyCreep = enemyCreeps.FirstOrDefault(unit => unit.Distance(this.Owner) <= 1000 && unit.IsRanged) ?? enemyCreeps.FirstOrDefault(unit => unit.Distance(this.Owner) <= 1000);
 
                 if (enemyCreep != null)
                 {
@@ -442,17 +439,17 @@ internal class ArcWarden : ControllableUnit, IPushUnit
 
             var allyTwr =
                 EntityManager9.AllyUnits.Where(
-                        x => x.IsTower && x.IsValid && x.IsAlive && this.laneHelper.GetCurrentLane(x) ==  chosenLane &&
-                             x.HealthPercentage > 0.1)
-                    .OrderBy(y => y.Distance(finalPos))
-                    .FirstOrDefault();
+                                               x => x.IsTower && x.IsValid && x.IsAlive && this.laneHelper.GetCurrentLane(x) == chosenLane &&
+                                                    x.HealthPercentage > 0.1)
+                              .OrderBy(y => y.Distance(finalPos))
+                              .FirstOrDefault();
 
             Unit9 tpTarget = null;
 
             if (ally != null && allyTwr != null)
             {
-                var dist1 = finalPos.Distance2D(ally.Position);
-                var dist2 = finalPos.Distance2D(allyTwr.Position);
+                float dist1 = finalPos.Distance2D(ally.Position);
+                float dist2 = finalPos.Distance2D(allyTwr.Position);
 
                 if (dist1 > dist2)
                 {
@@ -467,12 +464,12 @@ internal class ArcWarden : ControllableUnit, IPushUnit
             if (tpTarget != null && tpTarget.Distance(this.Owner) > 1500)
             {
                 var point = this.laneHelper.GetPath(chosenLane).Last();
-                var distance1 = point.Distance2D(tpTarget.Position);
-                var distance2 = point.Distance2D(this.Owner.Position);
+                float distance1 = point.Distance2D(tpTarget.Position);
+                float distance2 = point.Distance2D(this.Owner.Position);
 
                 if (distance1 < distance2 || this.laneHelper.GetCurrentLane(this.Owner) != chosenLane)
                 {
-                    if (this.UseTp(tpTarget))
+                    if (UseTp(tpTarget))
                     {
                         TpCount--;
 
@@ -492,6 +489,6 @@ internal class ArcWarden : ControllableUnit, IPushUnit
             return false;
         }
 
-        return  this.tpScroll.Ability.UseAbility(unit);
+        return this.tpScroll.Ability.UseAbility(unit);
     }
 }
