@@ -134,12 +134,13 @@
         {
             if (e.NewValue)
             {
-                if (this.UpdateHandler.IsEnabled && this.ComboModeMenu.SimplifiedName != this.cloneCombo_SimplefiedName)
+                if (this.UpdateHandler.IsEnabled && 
+                    this.ComboModeMenu?.SimplifiedName != this.cloneCombo_SimplefiedName)
                 {
                     this.IgnoreComboEnd = true;
                 }
 
-                bool theVar = this.ComboModeMenu.SimplifiedName != this.cloneCombo_SimplefiedName;
+                bool theVar = this.ComboModeMenu?.SimplifiedName != this.cloneCombo_SimplefiedName;
                 
                 this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
                 TargetManager.TargetLocked = theVar;
@@ -192,7 +193,7 @@
                 if (arcUnitManager.CloneControllableUnits.Any() && this.ComboModeMenu.SimplifiedName != this.cloneCombo_SimplefiedName)
                 {
                     this.ComboModeMenu = this.ComboModeMenus.Values.FirstOrDefault(x => x.SimplifiedName == this.cloneCombo_SimplefiedName);
-
+                    TargetManager.TargetLocked = true;
                     return;
                 }
             }
