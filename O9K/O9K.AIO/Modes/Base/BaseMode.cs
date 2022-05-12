@@ -26,7 +26,7 @@ internal abstract class BaseMode : IDisposable
 
     protected Owner Owner { get; }
 
-    protected TargetManager TargetManager { get; }
+    public TargetManager TargetManager { get; }
 
     public virtual void Dispose()
     {
