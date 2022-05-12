@@ -143,7 +143,7 @@ internal class ComboMode : BaseMode, IComboMode
             }
 
             this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
-            this.TargetManager.TargetLocked = true;
+            TargetManager.TargetLocked = true;
             this.UpdateHandler.IsEnabled = true;
         }
         else
@@ -155,7 +155,7 @@ internal class ComboMode : BaseMode, IComboMode
             }
 
             this.UpdateHandler.IsEnabled = false;
-            this.TargetManager.TargetLocked = false;
+            TargetManager.TargetLocked = false;
             this.ComboEnd();
         }
     }

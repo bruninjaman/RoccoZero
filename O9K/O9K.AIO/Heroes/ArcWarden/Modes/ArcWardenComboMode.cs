@@ -23,11 +23,17 @@
 
     using Draw;
 
+    using TargetManager;
+
     internal class ArcWardenComboMode : ComboMode
     {
+        private string cloneCombo_SimplefiedName = "clonecombo";
+        public static TargetManager StaticTargetManager { get; set; }
+
         public ArcWardenComboMode(BaseHero baseHero, IEnumerable<ComboModeMenu> comboMenus)
             : base(baseHero, comboMenus)
         {
+            StaticTargetManager = this.TargetManager;
         }
 
         public override void Disable()
@@ -35,9 +41,9 @@
             this.UpdateHandler.IsEnabled = false;
             OrderManager.OrderAdding -= this.OnOrderAdding;
 
-            this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange -= this.ToggleKeyOnValueChanged;
+            this.ComboModeMenus.First(x => x.Value.SimplifiedName == this.cloneCombo_SimplefiedName).Key.ValueChange -= this.ToggleKeyOnValueChanged;
 
-            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
+            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != this.cloneCombo_SimplefiedName))
             {
                 comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
             }
@@ -48,9 +54,9 @@
             UpdateManager.DestroyIngameUpdate(this.UpdateHandler);
             OrderManager.OrderAdding -= this.OnOrderAdding;
 
-            this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange -= this.ToggleKeyOnValueChanged;
+            this.ComboModeMenus.First(x => x.Value.SimplifiedName == this.cloneCombo_SimplefiedName).Key.ValueChange -= this.ToggleKeyOnValueChanged;
 
-            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
+            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != this.cloneCombo_SimplefiedName))
             {
                 comboMenu.Key.ValueChange -= this.KeyOnValueChanged;
             }
@@ -60,9 +66,9 @@
         {
             OrderManager.OrderAdding += this.OnOrderAdding;
 
-            this.ComboModeMenus.First(x => x.Value.SimplifiedName == "clonecombo").Key.ValueChange += this.ToggleKeyOnValueChanged;
+            this.ComboModeMenus.First(x => x.Value.SimplifiedName == this.cloneCombo_SimplefiedName).Key.ValueChange += this.ToggleKeyOnValueChanged;
 
-            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != "clonecombo"))
+            foreach (var comboMenu in this.ComboModeMenus.Where(x => x.Value.SimplifiedName != this.cloneCombo_SimplefiedName))
             {
                 comboMenu.Key.ValueChange += this.KeyOnValueChanged;
             }
@@ -79,14 +85,14 @@
             {
                 try
                 {
-                    if (this.ComboModeMenu.SimplifiedName == "clonecombo")
+                    if (this.ComboModeMenu.SimplifiedName == this.cloneCombo_SimplefiedName)
                     {
-                        var firstOrDefault = EntityManager9.Owner.Hero.Abilities
+                        var tempestAbility = EntityManager9.Owner.Hero.Abilities
                                                            .FirstOrDefault(ability9 => ability9.Id == AbilityId.arc_warden_tempest_double && ability9.CanBeCasted());
                         
-                        if (firstOrDefault != null && firstOrDefault.CanBeCasted())
+                        if (tempestAbility != null && tempestAbility.CanBeCasted() && !arcUnitManager.CloneControllableUnits.Any())
                         {
-                            firstOrDefault.BaseAbility.Cast();
+                            tempestAbility.BaseAbility.Cast();
                             MultiSleeper<string>.Sleep("ArcWardenTempestCast", 2000);
                         }
 
@@ -96,9 +102,9 @@
                         }
                     }
 
-                    if (this.TargetManager.HasValidTarget)
+                    if (TargetManager.HasValidTarget)
                     {
-                        if (this.ComboModeMenu.SimplifiedName == "clonecombo")
+                        if (this.ComboModeMenu.SimplifiedName == this.cloneCombo_SimplefiedName)
                         {
                             arcUnitManager.ExecuteCloneCombo(this.ComboModeMenu);
                         }
@@ -108,7 +114,7 @@
                         }
                     }
 
-                    if (this.ComboModeMenu.SimplifiedName == "clonecombo")
+                    if (this.ComboModeMenu.SimplifiedName == this.cloneCombo_SimplefiedName)
                     {
                         arcUnitManager.CloneOrbwalk(this.ComboModeMenu);
                     }
@@ -128,15 +134,16 @@
         {
             if (e.NewValue)
             {
-                if (this.UpdateHandler.IsEnabled && this.ComboModeMenu.SimplifiedName != "clonecombo")
+                if (this.UpdateHandler.IsEnabled && this.ComboModeMenu.SimplifiedName != this.cloneCombo_SimplefiedName)
                 {
                     this.IgnoreComboEnd = true;
                 }
 
+                bool theVar = this.ComboModeMenu.SimplifiedName != this.cloneCombo_SimplefiedName;
+                
                 this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
-                this.TargetManager.TargetLocked = true;
+                TargetManager.TargetLocked = theVar;
                 this.UpdateHandler.IsEnabled = true;
-                ArcWardenPanel.unitName = this.TargetManager.Target?.BaseUnit.InternalName;
                 PushMode.Instance.TurnOffAutoPush();
             }
             else
@@ -152,7 +159,7 @@
                 return;
             }
 
-            if (this.TargetManager.TargetLocked != true)
+            if (TargetManager.TargetLocked != true)
             {
                 if (this.UpdateHandler.IsEnabled)
                 {
@@ -160,9 +167,9 @@
                 }
 
                 this.ComboModeMenu = this.ComboModeMenus[(MenuHoldKey)sender];
-                this.TargetManager.TargetLocked = true;
+                TargetManager.TargetLocked = true;
                 this.UpdateHandler.IsEnabled = true;
-                ArcWardenPanel.unitName = this.TargetManager.Target?.BaseUnit.InternalName;
+                ArcWardenPanel.unitName = TargetManager.Target?.BaseUnit.InternalName;
                 PushMode.Instance.TurnOffAutoPush();
             }
             else
@@ -180,8 +187,18 @@
                 return;
             }
 
+            if (this.UnitManager is ArcWardenUnitManager arcUnitManager)
+            {
+                if (arcUnitManager.CloneControllableUnits.Any() && this.ComboModeMenu.SimplifiedName != this.cloneCombo_SimplefiedName)
+                {
+                    this.ComboModeMenu = this.ComboModeMenus.Values.FirstOrDefault(x => x.SimplifiedName == this.cloneCombo_SimplefiedName);
+
+                    return;
+                }
+            }
+
             this.UpdateHandler.IsEnabled = false;
-            this.TargetManager.TargetLocked = false;
+            TargetManager.TargetLocked = false;
             ArcWardenPanel.unitName = null;
 
             this.ComboEnd();

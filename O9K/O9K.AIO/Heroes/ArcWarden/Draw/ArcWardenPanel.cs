@@ -16,6 +16,8 @@
     using Divine.Numerics;
     using Divine.Renderer;
 
+    using Modes;
+
     using Utils;
 
     public static class ArcWardenPanel
@@ -62,6 +64,8 @@
 
         public static void OnDraw()
         {
+            unitName = ArcWardenComboMode.StaticTargetManager.Target?.BaseUnit.InternalName;
+
             if (GameManager.IsShopOpen)
             {
                 return;

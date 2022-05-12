@@ -294,11 +294,6 @@ internal class ArcWarden : ControllableUnit, IPushUnit
             return true;
         }
 
-        if (abilityHelper.UseAbility(this.tempestDouble))
-        {
-            return true;
-        }
-
         if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWardenMagneticField") &&
             abilityHelper.UseAbility(this.magneticFieldAbility))
         {
@@ -389,7 +384,7 @@ internal class ArcWarden : ControllableUnit, IPushUnit
         return false;
     }
 
-    private bool UseMjolnir(List<Unit9> allyCreeps)
+        private bool UseMjolnir(List<Unit9> allyCreeps)
     {
         if (this.mjollnir != null && this.mjollnir.Ability.CanBeCasted() && this.Owner.GetModifier("modifier_kill").RemainingTime < 3)
         {
