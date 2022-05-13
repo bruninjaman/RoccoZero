@@ -18,7 +18,7 @@ public class Blink : RangedAbility, IBlink
     public Blink(Ability baseAbility)
         : base(baseAbility)
     {
-        this.castRangeData = new SpecialData(baseAbility, "blink_range");
+        this.castRangeData = new SpecialData(baseAbility, "AbilityCastRange");
     }
 
     public BlinkType BlinkType { get; } = BlinkType.Blink;
