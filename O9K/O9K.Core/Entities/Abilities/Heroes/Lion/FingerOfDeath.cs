@@ -18,7 +18,7 @@ public class FingerOfDeath : RangedAbility, INuke
 {
     private readonly SpecialData damagePerKillData;
 
-    private readonly SpecialData scepterDamageData;
+    private readonly float scepterBonusDamage;
 
     public FingerOfDeath(Ability baseAbility)
         : base(baseAbility)
@@ -26,7 +26,7 @@ public class FingerOfDeath : RangedAbility, INuke
         this.ActivationDelayData = new SpecialData(baseAbility, "damage_delay");
         this.DamageData = new SpecialData(baseAbility, "damage");
         this.damagePerKillData = new SpecialData(baseAbility, "damage_per_kill");
-        this.scepterDamageData = new SpecialData(baseAbility, "damage_scepter");
+        this.scepterBonusDamage = DamageData.AbilitySpecialData.ScepterBonus.Value;
     }
 
     public override Damage GetRawDamage(Unit9 unit, float? remainingHealth = null)
@@ -37,13 +37,11 @@ public class FingerOfDeath : RangedAbility, INuke
             [this.DamageType] = kills * this.damagePerKillData.GetValue(this.Level)
         };
 
+        damage[this.DamageType] += this.DamageData.GetValue(this.Level);
+
         if (this.Owner.HasAghanimsScepter)
         {
-            damage[this.DamageType] += this.scepterDamageData.GetValue(this.Level);
-        }
-        else
-        {
-            damage[this.DamageType] += this.DamageData.GetValue(this.Level);
+            damage[this.DamageType] += scepterBonusDamage;
         }
 
         return damage;

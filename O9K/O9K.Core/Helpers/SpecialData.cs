@@ -61,7 +61,7 @@ public class SpecialData
     {
         try
         {
-            var data = ability.AbilitySpecialData.First(x => x.Name == name);
+            AbilitySpecialData = ability.AbilitySpecialData.First(x => x.Name == name);
 
             var unit = ability.Owner as Unit;
             if (unit != null)
@@ -71,7 +71,7 @@ public class SpecialData
 
             if (this.talent != null)
             {
-                this.talentValue = data.Bonuses.FirstOrDefault(x => x.Name == talentId.ToString())?.Value ?? this.talent.AbilitySpecialData.First(x => x.Name == "value")?.Value ?? 0f;
+                this.talentValue = AbilitySpecialData.Bonuses.FirstOrDefault(x => x.Name == talentId.ToString())?.Value ?? this.talent.AbilitySpecialData.First(x => x.Name == "value")?.Value ?? 0f;
                 this.getDataFunc = this.GetValueWithTalent;
             }
             else
@@ -79,11 +79,11 @@ public class SpecialData
                 this.getDataFunc = this.GetValueDefault;
             }
 
-            this.value = new float[data.Count];
+            this.value = new float[AbilitySpecialData.Count];
 
             for (var i = 0u; i < this.value.Length; i++)
             {
-                this.value[i] = data.GetValue(i);
+                this.value[i] = AbilitySpecialData.GetValue(i);
             }
         }
         catch
@@ -108,8 +108,8 @@ public class SpecialData
     {
         try
         {
-            var data = ability.AbilitySpecialData.First(x => x.Name == name);
-            var talentId = data.SpecialBonusAbility;
+            AbilitySpecialData = ability.AbilitySpecialData.First(x => x.Name == name);
+            var talentId = AbilitySpecialData.SpecialBonusAbility;
 
             if (talentId != AbilityId.dota_base_ability)
             {
@@ -122,7 +122,7 @@ public class SpecialData
 
             if (this.talent != null)
             {
-                this.talentValue = data.Bonuses.FirstOrDefault(x => x.Name == talentId.ToString())?.Value ?? this.talent.AbilitySpecialData.First(x => x.Name == "value")?.Value ?? 0f;
+                this.talentValue = AbilitySpecialData.Bonuses.FirstOrDefault(x => x.Name == talentId.ToString())?.Value ?? this.talent.AbilitySpecialData.First(x => x.Name == "value")?.Value ?? 0f;
                 this.getDataFunc = this.GetValueWithTalent;
             }
             else
@@ -130,7 +130,7 @@ public class SpecialData
                 this.getDataFunc = this.GetValueDefault;
             }
 
-            if (data.Count == 0)
+            if (AbilitySpecialData.Count == 0)
             {
                 this.value = ability.KeyValue.GetSubKey(name)
                     .GetString().Split()
@@ -139,11 +139,11 @@ public class SpecialData
             }
             else
             {
-                this.value = new float[data.Count];
+                this.value = new float[AbilitySpecialData.Count];
 
                 for (var i = 0u; i < this.value.Length; i++)
                 {
-                    this.value[i] = data.GetValue(i);
+                    this.value[i] = AbilitySpecialData.GetValue(i);
                 }
             }
         }
@@ -201,15 +201,15 @@ public class SpecialData
         try
         {
             var abilityData = Ability.GetAbilityDataById(abilityId);
-            var specialData = abilityData.AbilitySpecialData.FirstOrDefault(x => x.Name == key);
+            AbilitySpecialData = abilityData.AbilitySpecialData.FirstOrDefault(x => x.Name == key);
 
-            if (specialData != null)
+            if (AbilitySpecialData != null)
             {
-                this.value = new float[specialData.Count];
+                this.value = new float[AbilitySpecialData.Count];
 
                 for (var i = 0u; i < this.value.Length; i++)
                 {
-                    this.value[i] = specialData.GetValue(i);
+                    this.value[i] = AbilitySpecialData.GetValue(i);
                 }
             }
             else
@@ -265,6 +265,8 @@ public class SpecialData
             Logger.Error(ex);
         }
     }
+
+    public AbilitySpecialData AbilitySpecialData { get; }
 
     // ReSharper disable once RedundantAssignment
     public float GetTalentValue(uint level)
