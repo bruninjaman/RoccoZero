@@ -21,7 +21,7 @@ public class Dismember : RangedAbility, IChanneled, IDisable
         : base(baseAbility)
     {
         this.DamageData = new SpecialData(baseAbility, "dismember_damage");
-        this.channelTimeData = new SpecialData(baseAbility, "abilitychanneltime");
+        this.channelTimeData = new SpecialData(baseAbility, "AbilityChannelTime");
     }
 
     public UnitState AppliesUnitState { get; } = UnitState.Stunned;
