@@ -28,10 +28,17 @@ internal static class MenuFactory
 
         var rootMenu = MenuManager.CreateRootMenu(rootMenuAttribute.Name, rootMenuAttribute.DisplayName);
 
-        var textureAttribute = type.GetCustomAttribute<TextureAttribute>();
-        if (textureAttribute != null)
+        var imageAttribute = type.GetCustomAttributes<ImageAttribute>().LastOrDefault();
+        if (imageAttribute != null)
         {
-            //rootMenu.SetImage();
+            if (imageAttribute is HeroImageAttribute heroImageAttribute)
+            {
+                rootMenu.SetHeroImage(heroImageAttribute.HeroId);
+            }
+            else if (imageAttribute is AbilityImageAttribute abilityImageAttribute)
+            {
+                rootMenu.SetAbilityImage(abilityImageAttribute.AbilityId);
+            }
         }
 
         var tooltipAttribute = type.GetCustomAttributes<TooltipAttribute>().LastOrDefault();
@@ -40,7 +47,9 @@ internal static class MenuFactory
             rootMenu.SetTooltip(tooltipAttribute.Text);
         }
 
-        foreach (var property in type.GetProperties())
+        var properties = obj.GetType().GetProperties();
+
+        foreach (var property in properties.OrderBy(x => Priority(properties, x)))
         {
             var menuAttribute = property.GetCustomAttribute<MenuAttribute>();
             if (menuAttribute != null)
@@ -64,13 +73,32 @@ internal static class MenuFactory
     {
         var menu = parentMenu.CreateMenu(name, displayName);
 
-        var tooltipAttribute = parentProperty.GetCustomAttributes<TooltipAttribute>().LastOrDefault();
+        var imageAttribute = parentProperty.GetCustomAttributes<ImageAttribute>(false).LastOrDefault()
+                ?? parentProperty.GetCustomAttributes<ImageAttribute>().LastOrDefault();
+
+        if (imageAttribute != null)
+        {
+            if (imageAttribute is HeroImageAttribute heroImageAttribute)
+            {
+                menu.SetHeroImage(heroImageAttribute.HeroId);
+            }
+            else if (imageAttribute is AbilityImageAttribute abilityImageAttribute)
+            {
+                menu.SetAbilityImage(abilityImageAttribute.AbilityId);
+            }
+        }
+
+        var tooltipAttribute = parentProperty.GetCustomAttributes<TooltipAttribute>(false).LastOrDefault()
+                ?? parentProperty.GetCustomAttributes<TooltipAttribute>().LastOrDefault();
+
         if (tooltipAttribute != null)
         {
             menu.SetTooltip(tooltipAttribute.Text);
         }
 
-        foreach (var property in obj.GetType().GetProperties())
+        var properties = obj.GetType().GetProperties();
+
+        foreach (var property in properties.OrderBy(x => Priority(properties, x)))
         {
             var menuAttribute = property.GetCustomAttribute<MenuAttribute>();
             if (menuAttribute != null)
@@ -313,6 +341,21 @@ internal static class MenuFactory
 
         if (menuItem != null)
         {
+            var imageAttribute = property.GetCustomAttributes<ImageAttribute>(false).LastOrDefault()
+                ?? property.GetCustomAttributes<ImageAttribute>().LastOrDefault();
+
+            if (imageAttribute != null)
+            {
+                if (imageAttribute is HeroImageAttribute heroImageAttribute)
+                {
+                    menuItem.SetHeroImage(heroImageAttribute.HeroId);
+                }
+                else if (imageAttribute is AbilityImageAttribute abilityImageAttribute)
+                {
+                    menuItem.SetAbilityImage(abilityImageAttribute.AbilityId);
+                }
+            }
+
             var tooltipAttribute = property.GetCustomAttributes<TooltipAttribute>(false).LastOrDefault()
                 ?? property.GetCustomAttributes<TooltipAttribute>().LastOrDefault();
 
@@ -320,6 +363,8 @@ internal static class MenuFactory
             {
                 menuItem.SetTooltip(tooltipAttribute.Text);
             }
+
+            property.SetValue(obj, menuItem);
         }
     }
 
@@ -336,5 +381,16 @@ internal static class MenuFactory
         }
 
         return valueAttributes;
+    }
+
+    private static int Priority(PropertyInfo[] propertyInfos, PropertyInfo propertyInfo)
+    {
+        var priorityAttribute = propertyInfo.GetCustomAttribute<PriorityAttribute>();
+        if (priorityAttribute != null)
+        {
+            return priorityAttribute.Value;
+        }
+
+        return Array.IndexOf(propertyInfos, propertyInfo);
     }
 }

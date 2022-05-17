@@ -3,6 +3,7 @@ using Divine.Core.ComboFactory.Menus.Combo;
 using Divine.Core.ComboFactory.Menus.Settings;
 using Divine.Core.ComboFactory.Menus.TargetSelector;
 using Divine.Core.Managers.Menu;
+using Divine.Entity.Entities.Abilities.Components;
 
 using Ensage.SDK.Menu;
 using Ensage.SDK.Menu.Attributes;
@@ -66,11 +67,11 @@ namespace Divine.Core.ComboFactory.Menus
         [Priority(5)]
         public BaseEscapeMenu EscapeMenu { get; } = new BaseEscapeMenu();
 
-        [Menu("Disable"), Texture(@"items\item_sheepstick.png")]
+        [Menu("Disable"), AbilityImage(AbilityId.item_sheepstick)]
         [Priority(7)]
         public virtual BaseDisableMenu DisableMenu { get; } = new BaseDisableMenu();
 
-        [Menu("Linken Breaker"), Texture(@"items\item_sphere.png")]
+        [Menu("Linken Breaker"), AbilityImage(AbilityId.item_sphere)]
         [Priority(8)]
         public abstract BaseLinkenBreakerMenu LinkenBreakerMenu { get; }
 
@@ -78,7 +79,7 @@ namespace Divine.Core.ComboFactory.Menus
         [Priority(9)]
         public AutoItemsMenu AutoItemsMenu { get; } = new AutoItemsMenu();
 
-        [Menu("Blade Mail"), Texture(@"items\item_blade_mail.png")]
+        [Menu("Blade Mail"), AbilityImage(AbilityId.item_blade_mail)]
         [Priority(10)]
         public virtual BaseBladeMailMenu BladeMailMenu { get; }
 

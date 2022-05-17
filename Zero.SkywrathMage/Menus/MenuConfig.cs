@@ -1,5 +1,6 @@
 ﻿using Divine.Core.ComboFactory.Menus;
 using Divine.Core.ComboFactory.Menus.Combo;
+using Divine.Entity.Entities.Units.Heroes.Components;
 using Divine.SkywrathMage.Menus.Combo;
 
 using Ensage.SDK.Menu;
@@ -7,7 +8,7 @@ using Ensage.SDK.Menu.Attributes;
 
 namespace Divine.SkywrathMage.Menus
 {
-    [Menu("Zero.SkywrathMage"), Texture(@"horizontal_heroes\npc_dota_hero_skywrath_mage.png")]
+    [Menu("Zero.SkywrathMage"), HeroImage(HeroId.npc_dota_hero_skywrath_mage)]
     internal sealed class MenuConfig : BaseMenuConfig
     {
         public override BaseComboMenu ComboMenu { get; } = new ComboMenu();

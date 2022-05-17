@@ -1,4 +1,5 @@
 ﻿using Divine.Core.ComboFactory.Menus.Combo;
+using Divine.Entity.Entities.Abilities.Components;
 using Divine.Menu.Items;
 
 using Ensage.SDK.Menu;
@@ -12,7 +13,7 @@ namespace Divine.SkywrathMage.Menus.Combo
 
         public override BaseItemsMenu ItemsMenu { get; } = new ItemsMenu();
 
-        [Menu("Mystic Flare"), Texture(@"spells\skywrath_mage_mystic_flare.png")]
+        [Menu("Mystic Flare"), AbilityImage(AbilityId.skywrath_mage_mystic_flare)]
         public MysticFlareMenu MysticFlareMenu { get; } = new MysticFlareMenu();
     }
 }

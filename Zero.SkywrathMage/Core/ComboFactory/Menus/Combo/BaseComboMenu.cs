@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 
+using Divine.Entity.Entities.Abilities.Components;
 using Divine.Input;
 using Divine.Menu.Items;
 
@@ -24,10 +25,10 @@ namespace Divine.Core.ComboFactory.Menus.Combo
         [Menu("Items")]
         public abstract BaseItemsMenu ItemsMenu { get; }
 
-        [Menu("Blink Dagger"), Texture(@"items\item_blink.png")]
+        [Menu("Blink Dagger"), AbilityImage(AbilityId.item_blink)]
         public virtual BaseBlinkDaggerMenu BlinkDaggerMenu { get; }
 
-        [Menu("Aeon Disk"), Texture(@"items\item_aeon_disk.png")]
+        [Menu("Aeon Disk"), AbilityImage(AbilityId.item_aeon_disk)]
         public BaseAeonDiskMenu AeonDiskMenu { get; } = new BaseAeonDiskMenu();
 
         [Menu("With Mute")]
