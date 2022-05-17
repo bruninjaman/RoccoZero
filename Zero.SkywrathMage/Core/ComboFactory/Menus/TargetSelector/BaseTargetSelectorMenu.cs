@@ -12,10 +12,10 @@ namespace Divine.Core.ComboFactory.Menus.TargetSelector
         public TargetEffectsMenu TargetEffectsMenu { get; } = new TargetEffectsMenu();
 
         [Item("Select:")]
+        [Value("Near Mouse", "Lowest Health")]
         public MenuSelector TargetSelectorItem { get; set; }
 
         [Item("Target Lock")]
-        [DefaultValue(true)]
         public MenuSwitcher TargetLockItem { get; set; }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-using Divine.Menu.Items;
+﻿using Divine.Menu.Items;
 
 using Ensage.SDK.Menu;
 
@@ -10,7 +8,7 @@ namespace Divine.Core.ComboFactory.Menus
     {
         [Item("Cancel Combo")]
         [Tooltip("Cancel Combo if there is enemy Blade Mail")]
-        [DefaultValue(false)]
+        [Value(false)]
         public MenuSwitcher BladeMailItem { get; set; }
     }
 }

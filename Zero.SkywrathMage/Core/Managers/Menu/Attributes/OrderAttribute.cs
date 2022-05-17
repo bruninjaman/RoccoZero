@@ -1,4 +1,4 @@
-﻿// <copyright file="OrderAttribute.cs" company="Ensage">
+﻿// <copyright file="PriorityAttribute.cs" company="Ensage">
 //    Copyright (c) 2018 Ensage.
 // </copyright>
 
@@ -7,9 +7,9 @@ namespace Ensage.SDK.Menu.Attributes
     using System;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
-    public class OrderAttribute : Attribute
+    public class PriorityAttribute : Attribute
     {
-        public OrderAttribute(int orderNumber)
+        public PriorityAttribute(int orderNumber)
         {
             this.OrderNumber = orderNumber;
         }

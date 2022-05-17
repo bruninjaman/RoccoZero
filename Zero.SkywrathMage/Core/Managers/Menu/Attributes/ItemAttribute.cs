@@ -1,19 +1,23 @@
-﻿// <copyright file="ItemAttribute.cs" company="Ensage">
-//    Copyright (c) 2017 Ensage.
-// </copyright>
-
-namespace Ensage.SDK.Menu
+﻿namespace Ensage.SDK.Menu
 {
     using System;
 
     [AttributeUsage(AttributeTargets.Property)]
     public class ItemAttribute : Attribute
     {
-        public ItemAttribute(string name = null)
+        public ItemAttribute(string displayName)
+            : this(displayName, displayName)
         {
-            this.Name = name;
+        }
+
+        public ItemAttribute(string name, string displayName)
+        {
+            Name = name;
+            DisplayName = displayName;
         }
 
         public string Name { get; }
+
+        public string DisplayName { get; }
     }
 }

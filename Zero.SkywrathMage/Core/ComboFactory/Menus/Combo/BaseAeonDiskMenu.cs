@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-using Divine.Menu.Items;
+﻿using Divine.Menu.Items;
 
 using Ensage.SDK.Menu;
 
@@ -10,7 +8,6 @@ namespace Divine.Core.ComboFactory.Menus.Combo
     {
         [Item("Cancel Important Spells and Items")]
         [Tooltip("If Combo Breaker is ready then it will not use Important Spells and Items")]
-        [DefaultValue(true)]
         public MenuSwitcher EnableItem { get; set; }
     }
 }

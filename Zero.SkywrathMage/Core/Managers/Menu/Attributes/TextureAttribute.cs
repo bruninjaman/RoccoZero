@@ -7,13 +7,9 @@
     {
         public TextureAttribute(string textureKey)
         {
-            this.TextureKey = textureKey;
+            TextureKey = textureKey;
         }
 
         public string TextureKey { get; }
-
-        public virtual void Load()
-        {
-        }
     }
 }

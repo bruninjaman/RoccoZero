@@ -47,51 +47,51 @@ namespace Divine.Core.ComboFactory.Menus
         }
 
         [Menu("Combo")]
-        [Order(1)]
+        [Priority(1)]
         public abstract BaseComboMenu ComboMenu { get; }
 
         [Menu("Kill Steal")]
-        [Order(2)]
+        [Priority(2)]
         public abstract BaseKillStealMenu KillStealMenu { get; }
 
         [Menu("More")]
-        [Order(3)]
+        [Priority(3)]
         public virtual BaseMoreMenu MoreMenu { get; }
 
         [Menu("Farm")]
-        [Order(4)]
+        [Priority(4)]
         public virtual BaseFarmMenu FarmMenu { get; }
 
         [Menu("Escape")]
-        [Order(5)]
+        [Priority(5)]
         public BaseEscapeMenu EscapeMenu { get; } = new BaseEscapeMenu();
 
-        [Menu("Disable"), TextureDivine(@"items\item_sheepstick.png")]
-        [Order(7)]
+        [Menu("Disable"), Texture(@"items\item_sheepstick.png")]
+        [Priority(7)]
         public virtual BaseDisableMenu DisableMenu { get; } = new BaseDisableMenu();
 
-        [Menu("Linken Breaker"), TextureDivine(@"items\item_sphere.png")]
-        [Order(8)]
+        [Menu("Linken Breaker"), Texture(@"items\item_sphere.png")]
+        [Priority(8)]
         public abstract BaseLinkenBreakerMenu LinkenBreakerMenu { get; }
 
         [Menu("Auto Items")]
-        [Order(9)]
+        [Priority(9)]
         public AutoItemsMenu AutoItemsMenu { get; } = new AutoItemsMenu();
 
-        [Menu("Blade Mail"), TextureDivine(@"items\item_blade_mail.png")]
-        [Order(10)]
+        [Menu("Blade Mail"), Texture(@"items\item_blade_mail.png")]
+        [Priority(10)]
         public virtual BaseBladeMailMenu BladeMailMenu { get; }
 
         [Menu("Radius")]
-        [Order(11)]
+        [Priority(11)]
         public virtual BaseRadiusMenu RadiusMenu { get; }
 
         [Menu("Target Selector")]
-        [Order(12)]
+        [Priority(12)]
         public BaseTargetSelectorMenu TargetSelectorMenu { get; } = new BaseTargetSelectorMenu();
 
         [Menu("Settings")]
-        [Order(13)]
+        [Priority(13)]
         public BaseSettingsMenu SettingsMenu { get; } = new BaseSettingsMenu();
     }
 }

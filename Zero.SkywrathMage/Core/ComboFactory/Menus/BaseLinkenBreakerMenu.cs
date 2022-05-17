@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-using Divine.Menu.Items;
+﻿using Divine.Menu.Items;
 
 using Ensage.SDK.Menu;
 using Ensage.SDK.Menu.Attributes;
@@ -12,26 +10,28 @@ namespace Divine.Core.ComboFactory.Menus
         [Item("Linkens Sphere:")]
         public MenuText LinkensSphereString { get; set; }
 
-        [Item("Priority:")]
-        [Order(3)]
+        [Item("PriorityLinkensItem", "Priority:")]
+        [Parameter("Priority", true)]
+        [Priority(3)]
         public abstract MenuAbilityToggler PriorityLinkensItem { get; set; }
 
-        [Item(" ")]
+        [Item("EmptyString", " ")]
         public MenuText EmptyString { get; set; }
 
         [Item("Antimage Spell Shield:")]
         public MenuText AntimageSpellShieldString { get; set; }
 
-        [Item("Priority:")]
-        [Order(5)]
+        [Item("PrioritySpellShieldItem", "Priority:")]
+        [Parameter("Priority", true)]
+        [Priority(5)]
         public abstract MenuAbilityToggler PrioritySpellShieldItem { get; set; }
 
-        [Item(" ")]
+        [Item("EmptyString2", " ")]
         public MenuText EmptyString2 { get; set; }
 
         [Item("Use Only From Range")]
         [Tooltip("Use only from the Range and do not use another Ability")]
-        [DefaultValue(false)]
+        [Value(false)]
         public MenuSwitcher UseOnlyFromRangeItem { get; set; }
     }
 }

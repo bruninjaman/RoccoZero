@@ -1,4 +1,5 @@
-﻿using Divine.Menu.Items;
+﻿using Divine.Entity.Entities.Abilities.Components;
+using Divine.Menu.Items;
 
 using Ensage.SDK.Menu;
 

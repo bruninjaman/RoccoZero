@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 
+using Divine.Input;
 using Divine.Menu.Items;
 
 using Ensage.SDK.Menu;
@@ -23,30 +24,33 @@ namespace Divine.Core.ComboFactory.Menus.Combo
         [Menu("Items")]
         public abstract BaseItemsMenu ItemsMenu { get; }
 
-        [Menu("Blink Dagger"), TextureDivine(@"items\item_blink.png")]
+        [Menu("Blink Dagger"), Texture(@"items\item_blink.png")]
         public virtual BaseBlinkDaggerMenu BlinkDaggerMenu { get; }
 
-        [Menu("Aeon Disk"), TextureDivine(@"items\item_aeon_disk.png")]
+        [Menu("Aeon Disk"), Texture(@"items\item_aeon_disk.png")]
         public BaseAeonDiskMenu AeonDiskMenu { get; } = new BaseAeonDiskMenu();
 
         [Menu("With Mute")]
         public BaseWithMuteMenu WithMuteMenu { get; } = new BaseWithMuteMenu();
 
         [Item("Combo Hotkey")]
+        [Value(Key.D)]
         public MenuHoldKey ComboHotkeyItem { get; set; }
 
         [Item("Orbwalker:")]
+        [Value("Default", "Distance", "Free", "Only Attack", "No Move")]
         public virtual MenuSelector OrbwalkerItem { get; set; }
 
         [Item("Min Distance In Orbwalk:")]
+        [Value(600, 200, 600)]
         public MenuSlider MinDisInOrbwalkItem { get; set; }
 
         [Item("Full Distance Mode")]
-        [DefaultValue(false)]
+        [Value(false)]
         public MenuSwitcher FullDistanceModeItem { get; set; }
 
         [Item("Full Free Mode")]
-        [DefaultValue(false)]
+        [Value(false)]
         public MenuSwitcher FullFreeModeItem { get; set; }
     }
 }
