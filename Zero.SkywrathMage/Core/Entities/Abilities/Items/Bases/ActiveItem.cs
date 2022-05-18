@@ -9,7 +9,6 @@ using Divine.Entity.Entities.Abilities.Items;
 using Divine.Entity.Entities.Runes;
 using Divine.Entity.Entities.Trees;
 using Divine.Game;
-using Divine.Helpers;
 using Divine.Numerics;
 
 public abstract class ActiveItem : CItem, IActiveAbility

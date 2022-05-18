@@ -26,8 +26,6 @@ public abstract class BaseDamageCalculation
 
     protected CHero Owner { get; } = UnitManager.Owner;
 
-    private static Log Log { get; } = LogManager.GetCurrentClassLogger();
-
     protected BaseDamageCalculation(BaseMenuConfig menuConfig)
     {
         SettingsMenu = menuConfig.SettingsMenu;

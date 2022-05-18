@@ -17,24 +17,6 @@ namespace Divine.Core.Entities.Abilities.Items
         internal override void Dispose()
         {
             base.Dispose();
-
-            Owner.TownPortalScroll = null;
-        }
-
-        private CUnit owner;
-
-        public override CUnit Owner
-        {
-            get
-            {
-                return owner;
-            }
-
-            internal set
-            {
-                owner = value;
-                owner.TownPortalScroll = this;
-            }
         }
 
         public float ChannelDuration

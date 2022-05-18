@@ -14,29 +14,6 @@ namespace Divine.Core.Entities.Abilities.Items
         {
         }
 
-        internal override void Dispose()
-        {
-            base.Dispose();
-
-            Owner.LinkensSphere = null;
-        }
-
-        private CUnit owner;
-
-        public override CUnit Owner
-        {
-            get
-            {
-                return owner;
-            }
-
-            internal set
-            {
-                owner = value;
-                owner.LinkensSphere = this;
-            }
-        }
-
         public string TargetModifierName { get; } = "modifier_item_sphere_target";
     }
 }

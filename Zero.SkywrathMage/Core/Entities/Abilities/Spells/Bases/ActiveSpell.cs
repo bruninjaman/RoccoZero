@@ -10,7 +10,6 @@ using Divine.Entity.Entities.Runes;
 using Divine.Entity.Entities.Trees;
 using Divine.Extensions;
 using Divine.Game;
-using Divine.Helpers;
 using Divine.Numerics;
 
 public abstract class ActiveSpell : CAbility, IActiveAbility

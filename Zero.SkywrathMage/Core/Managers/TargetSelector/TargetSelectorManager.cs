@@ -26,8 +26,6 @@ namespace Divine.Core.Managers.TargetSelector
 
         public CHero Target { get; private set; }
 
-        public CHero UnitTarget { get; private set; }
-
         private ISelector Selector { get; set; }
 
         private readonly Dictionary<string, ISelector> SelectorService = new Dictionary<string, ISelector>
