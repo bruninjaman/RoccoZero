@@ -32,37 +32,39 @@ namespace Divine.Core.ComboFactory.Commons
 
         public BaseCommon()
         {
-            //if (TargetSelector == null)
-            //{
-            //    TargetSelector = new TargetSelectorManager(MenuConfig);
-            //}
+            if (TargetSelector == null)
+            {
+                TargetSelector = new TargetSelectorManager(MenuConfig);
+            }
 
-            //AutoItem = new AutoItemManager(MenuConfig);
+            AutoItem = new AutoItemManager(MenuConfig);
 
-            //UpdateManager.BeginInvoke(() =>
-            //{
-            //    if (Renderer == null)
-            //    {
-            //        Renderer = new BaseRenderer(this);
-            //    }
-            //});
+            UpdateManager.BeginInvoke(() =>
+            {
+                if (Renderer == null)
+                {
+                    Renderer = new BaseRenderer(this);
+                }
+            });
         }
 
         public virtual void Dispose()
         {
-            //Renderer.Dispose();
+            Renderer.Dispose();
 
-            //AutoItem.Dispose();
+            AutoItem.Dispose();
 
-            //Combo.Dispose();
-            //KillSteal.Dispose();
+            Combo.Dispose();
+            KillSteal.Dispose();
 
-            //DamageCalculation.Dispose();
+            DamageCalculation.Dispose();
 
-            //TargetSelector.Dispose();
+            TargetSelector.Dispose();
 
-            //MenuConfig.Dispose();
-            //Abilities.Dispose();
+            MenuConfig.Dispose();
+            Abilities.Dispose();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

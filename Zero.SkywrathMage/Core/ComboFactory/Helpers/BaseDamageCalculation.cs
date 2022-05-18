@@ -30,23 +30,18 @@ public abstract class BaseDamageCalculation
     {
         SettingsMenu = menuConfig.SettingsMenu;
 
-        if (!SettingsMenu.DisableDamageCalculationItem)
-        {
-            UpdateManager.CreateIngameUpdate(20, OnUpdate);
-        }
-
-        SettingsMenu.DisableDamageCalculationItem.ValueChanged += DisableChanged;
+        SettingsMenu.EnableDamageCalculationItem.ValueChanged += EnableChanged;
     }
 
     public void Dispose()
     {
-        if (!SettingsMenu.DisableDamageCalculationItem)
+        if (SettingsMenu.EnableDamageCalculationItem)
         {
             UpdateManager.DestroyIngameUpdate(OnUpdate);
         }
     }
 
-    private void DisableChanged(MenuSwitcher switcher, SwitcherEventArgs e)
+    private void EnableChanged(MenuSwitcher switcher, SwitcherEventArgs e)
     {
         if (e.Value)
         {

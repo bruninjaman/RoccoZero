@@ -60,7 +60,6 @@ namespace Divine.Core.Managers.TargetSelector
 
         private void TargetSelectorChanging(MenuSelector selector, SelectorEventArgs e)
         {
-            new DivineMessage(new Message(e.NewValue, Color.Aqua));
             Selector = SelectorService[e.NewValue];
         }
 

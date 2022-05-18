@@ -5,7 +5,7 @@ using Divine.Core.ComboFactory.Commons;
 using Divine.Core.ComboFactory.Helpers;
 using Divine.Core.ComboFactory.Menus;
 
-//using Divine.SkywrathMage.Combos;
+using Divine.SkywrathMage.Combos;
 using Divine.SkywrathMage.Features;
 using Divine.SkywrathMage.Helpers;
 using Divine.SkywrathMage.Menus;
@@ -26,13 +26,13 @@ internal sealed class Common : BaseCommon
 
     public UpdateMode UpdateMode { get; }
 
-    //private AutoCombo AutoCombo { get; }
+    private AutoCombo AutoCombo { get; }
 
     private Farm Farm { get; }
 
-    //private AutoArcaneBolt AutoArcaneBolt { get; }
+    private AutoArcaneBolt AutoArcaneBolt { get; }
 
-    //private SpamArcaneBolt SpamArcaneBolt { get; }
+    private SpamArcaneBolt SpamArcaneBolt { get; }
 
     private Disable Disable { get; }
 
@@ -46,16 +46,16 @@ internal sealed class Common : BaseCommon
     {
         DamageCalculation = new DamageCalculation(this);
 
-        //LinkenBreaker = new LinkenBreaker(this);
-        //KillSteal = new KillSteal(this);
-        //Combo = new Combo(this);
+        LinkenBreaker = new LinkenBreaker(this);
+        KillSteal = new KillSteal(this);
+        Combo = new Combo(this);
 
         UpdateMode = new UpdateMode(this);
 
-        //AutoCombo = new AutoCombo(this);
+        AutoCombo = new AutoCombo(this);
         Farm = new Farm(this);
-        //AutoArcaneBolt = new AutoArcaneBolt(this);
-        //SpamArcaneBolt = new SpamArcaneBolt(this);
+        AutoArcaneBolt = new AutoArcaneBolt(this);
+        SpamArcaneBolt = new SpamArcaneBolt(this);
         Disable = new Disable(this);
         EulControl = new EulControl(this);
         ExecuteOrder = new ExecuteOrder(this);
@@ -70,10 +70,10 @@ internal sealed class Common : BaseCommon
         ExecuteOrder.Dispose();
         EulControl.Dispose();
         Disable.Dispose();
-        //SpamArcaneBolt.Dispose();
-        //AutoArcaneBolt.Dispose();
+        SpamArcaneBolt.Dispose();
+        AutoArcaneBolt.Dispose();
         Farm.Dispose();
-        //AutoCombo.Dispose();
+        AutoCombo.Dispose();
 
         UpdateMode.Dispose();
     }

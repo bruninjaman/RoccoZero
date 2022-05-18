@@ -9,15 +9,15 @@ namespace Divine.Core.ComboFactory.Menus.TargetSelector
         [Item("Enable")]
         public MenuSwitcher EnableItem { get; set; }
 
-        [Item("Red:")]
+        [Item("Red1", "Red:")]
         [Value(255, 0, 255)]
         public MenuSlider RedItem { get; set; }
 
-        [Item("Green:")]
+        [Item("Green1", "Green:")]
         [Value(0, 0, 255)]
         public MenuSlider GreenItem { get; set; }
 
-        [Item("Blue:")]
+        [Item("Blue1", "Blue:")]
         [Value(0, 0, 255)]
         public MenuSlider BlueItem { get; set; }
 
@@ -27,15 +27,15 @@ namespace Divine.Core.ComboFactory.Menus.TargetSelector
         [Item("Free Enable")]
         public MenuSwitcher FreeEnableItem { get; set; }
 
-        [Item("Red:")]
+        [Item("Red2", "Red:")]
         [Value(0, 0, 255)]
         public MenuSlider FreeRedItem { get; set; }
 
-        [Item("Green:")]
+        [Item("Green2", "Green:")]
         [Value(255, 0, 255)]
         public MenuSlider FreeGreenItem { get; set; }
 
-        [Item("Blue:")]
+        [Item("Blue2", "Blue:")]
         [Value(255, 0, 255)]
         public MenuSlider FreeBlueItem { get; set; }
 

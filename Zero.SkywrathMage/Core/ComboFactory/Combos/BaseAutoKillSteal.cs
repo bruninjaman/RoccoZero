@@ -22,12 +22,6 @@ namespace Divine.Core.ComboFactory.Combos
         {
             KillStealMenu = menuConfig.KillStealMenu;
 
-            if (KillStealMenu.EnableItem)
-            {
-                UpdateHandler = UpdateManager.CreateIngameUpdate(0, false, Stop);
-                RunAsync();
-            }
-
             KillStealMenu.EnableItem.ValueChanged += EnableChanged;
         }
 

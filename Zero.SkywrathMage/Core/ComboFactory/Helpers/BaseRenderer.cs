@@ -51,31 +51,12 @@ namespace Divine.Core.ComboFactory.Helpers
 
             PanelMove = new PanelMove(new Vector2(TextPanelMenu.X, TextPanelMenu.Y));
 
-            if (!SettingsMenu.DisableDrawingItem)
-            {
-                RendererManager.LoadImageFromResources(@"others\green_arrow.png");
-
-                if (TextPanelMenu.ComboPanelItem)
-                {
-                    Size.Y += 60;
-                }
-
-                PanelMove.Size = Size;
-
-                RendererManager.Draw += OnDraw;
-
-                TextPanelMenu.MoveItem.ValueChanged += MoveChanged;
-                PanelMove.ValueChanged += PanelMoveChanged;
-
-                TextPanelMenu.ComboPanelItem.ValueChanged += ComboPanelChanged;
-            }
-
-            SettingsMenu.DisableDrawingItem.ValueChanged += DisableChanged;
+            SettingsMenu.EnableDrawingItem.ValueChanged += DisableChanged;
         }
 
         public virtual void Dispose()
         {
-            if (!SettingsMenu.DisableDrawingItem)
+            if (SettingsMenu.EnableDrawingItem)
             {
                 TextPanelMenu.ComboPanelItem.ValueChanged -= ComboPanelChanged;
 
@@ -229,7 +210,7 @@ namespace Divine.Core.ComboFactory.Helpers
                 }
             }
 
-            if (!SettingsMenu.DisableDamageCalculationItem)
+            if (SettingsMenu.EnableDamageCalculationItem)
             {
                 foreach (var data in BaseDamageCalculation.DamageDate)
                 {
