@@ -14,11 +14,11 @@ namespace Divine.Core.ComboFactory.Menus.Settings.Drawing
         public MenuSwitcher MoveItem { get; set; }
 
         [Item("X")]
-        [Value(0, 0, 5000)]
+        [Value(0, -5000, 5000)]
         public MenuSlider X { get; set; }
 
         [Item("Y")]
-        [Value(0, 0, 5000)]
+        [Value(0, -5000, 5000)]
         public MenuSlider Y { get; set; }
     }
 }

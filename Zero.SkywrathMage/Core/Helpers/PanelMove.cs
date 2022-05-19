@@ -90,7 +90,7 @@ namespace Divine.Core.Helpers
 
         private void OnMouseKeyDown(MouseEventArgs e)
         {
-            if (e.MouseKey == MouseKey.Left)
+            if (e.MouseKey != MouseKey.Left)
             {
                 return;
             }
@@ -104,7 +104,7 @@ namespace Divine.Core.Helpers
 
         private void OnMouseKeyUp(MouseEventArgs e)
         {
-            if (e.MouseKey == MouseKey.Left)
+            if (e.MouseKey != MouseKey.Left)
             {
                 return;
             }

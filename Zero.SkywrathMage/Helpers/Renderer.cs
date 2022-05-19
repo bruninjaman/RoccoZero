@@ -1,4 +1,5 @@
 ﻿using Divine.Core.ComboFactory.Helpers;
+using Divine.Core.Helpers;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
 using Divine.Numerics;
@@ -54,7 +55,7 @@ namespace Divine.SkywrathMage.Helpers
 
             if (TextPanelMenu.ComboPanelItem)
             {
-                var position = new Vector2(TextPanelMenu.X, TextPanelMenu.Y);
+                var position = new Vector2(HUDInfo.ScreenSize.X - 200, HUDInfo.ScreenSize.Y - 310) + new Vector2(TextPanelMenu.X, TextPanelMenu.Y);
 
                 var combo = ComboMenu.ComboHotkeyItem;
                 var ownerHealth = ((float)Owner.Health / Owner.MaximumHealth) * 100;

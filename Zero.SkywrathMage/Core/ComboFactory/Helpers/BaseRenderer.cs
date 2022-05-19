@@ -49,7 +49,8 @@ namespace Divine.Core.ComboFactory.Helpers
 
             TargetSelector = common.TargetSelector;
 
-            PanelMove = new PanelMove(new Vector2(TextPanelMenu.X, TextPanelMenu.Y));
+            var panel = new Vector2(HUDInfo.ScreenSize.X - 200, HUDInfo.ScreenSize.Y - 310);
+            PanelMove = new PanelMove(panel + new Vector2(TextPanelMenu.X, TextPanelMenu.Y));
 
             SettingsMenu.EnableDrawingItem.ValueChanged += DisableChanged;
         }
@@ -125,8 +126,10 @@ namespace Divine.Core.ComboFactory.Helpers
                 return;
             }
 
-            TextPanelMenu.X.Value = (int)position.X;
-            TextPanelMenu.X.Value = (int)position.Y;
+            var panel = position - new Vector2(HUDInfo.ScreenSize.X - 200, HUDInfo.ScreenSize.Y - 310);
+
+            TextPanelMenu.X.Value = (int)panel.X;
+            TextPanelMenu.Y.Value = (int)panel.Y;
         }
 
         private void ComboPanelChanged(MenuSwitcher switcher, SwitcherEventArgs e)
@@ -172,7 +175,8 @@ namespace Divine.Core.ComboFactory.Helpers
 
             if (comboPanelItem)
             {
-                var position = new Vector2(TextPanelMenu.X, TextPanelMenu.Y);
+                var position = new Vector2(HUDInfo.ScreenSize.X - 200, HUDInfo.ScreenSize.Y - 310) + new Vector2(TextPanelMenu.X, TextPanelMenu.Y);
+
                 if (PanelMove.ActivateMove)
                 {
                     var movePosition = position - new Vector2(5);
