@@ -26,5 +26,5 @@ public class Gleipnir : CircleAbility, IDisable, IAppliesImmobility
 
     public string ImmobilityModifierName { get; } = "modifier_gungnir_debuff";
 
-    public override float Speed { get; } = 1750;
+    public override float Speed { get; } = 1900;
 }
