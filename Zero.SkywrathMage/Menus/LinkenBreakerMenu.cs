@@ -10,6 +10,7 @@ namespace Divine.SkywrathMage.Menus
     {
         [Value(AbilityId.item_force_staff, true)]
         [Value(AbilityId.item_cyclone, true)]
+        [Value(AbilityId.item_wind_waker, true)]
         [Value(AbilityId.item_orchid, true)]
         [Value(AbilityId.item_bloodthorn, true)]
         [Value(AbilityId.item_nullifier, true)]
@@ -21,6 +22,7 @@ namespace Divine.SkywrathMage.Menus
 
         [Value(AbilityId.item_force_staff, true)]
         [Value(AbilityId.item_cyclone, true)]
+        [Value(AbilityId.item_wind_waker, true)]
         [Value(AbilityId.item_orchid, false)]
         [Value(AbilityId.item_bloodthorn, false)]
         [Value(AbilityId.item_rod_of_atos, true)]

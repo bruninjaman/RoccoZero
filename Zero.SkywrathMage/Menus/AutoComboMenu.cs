@@ -30,6 +30,7 @@ namespace Divine.SkywrathMage.Menus
         [Value(AbilityId.item_bloodthorn, true)]
         [Value(AbilityId.item_nullifier, true)]
         [Value(AbilityId.item_rod_of_atos, true)]
+        [Value(AbilityId.item_gungir, true)]
         [Value(AbilityId.item_ethereal_blade, true)]
         [Value(AbilityId.item_veil_of_discord, true)]
         [Value(AbilityId.item_dagon_5, true)]

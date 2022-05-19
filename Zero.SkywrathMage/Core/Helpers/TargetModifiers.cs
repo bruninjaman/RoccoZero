@@ -37,6 +37,11 @@ public sealed class TargetModifiers
                 ModifierAtos = modifier;
             }
 
+            if (name == ModifierData.ModifierGleipnir)
+            {
+                ModifierGleipnir = modifier;
+            }
+
             if (name == ModifierData.ModifierSilver)
             {
                 IsSilverDebuff = true;
@@ -76,6 +81,8 @@ public sealed class TargetModifiers
     public Modifier ModifierHex { get; }
 
     public Modifier ModifierAtos { get; }
+
+    public Modifier ModifierGleipnir { get; }
 
     public bool IsSilverDebuff { get; }
 

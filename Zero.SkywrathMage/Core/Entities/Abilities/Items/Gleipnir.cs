@@ -7,10 +7,10 @@ using Divine.Entity.Entities.Units.Components;
 
 namespace Divine.Core.Entities.Abilities.Items
 {
-    [Item(AbilityId.item_rod_of_atos)]
-    public sealed class RodOfAtos : RangedItem, IHasTargetModifier
+    [Item(AbilityId.item_gungir)]
+    public sealed class Gleipnir : CircleItem, IHasTargetModifier
     {
-        public RodOfAtos(Item item)
+        public Gleipnir(Item item)
             : base(item)
         {
         }
@@ -19,6 +19,6 @@ namespace Divine.Core.Entities.Abilities.Items
 
         public override float Speed { get; } = 1900;
 
-        public string TargetModifierName { get; } = "modifier_rod_of_atos_debuff";
+        public string TargetModifierName { get; } = "modifier_gungnir_debuff";
     }
 }

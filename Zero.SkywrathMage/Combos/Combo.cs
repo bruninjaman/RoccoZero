@@ -192,8 +192,10 @@ namespace Divine.SkywrathMage.Combos
                             await Task.Delay(nullifier.GetCastDelay(target), token);
                         }
 
-                        // Atos
                         var modifierAtos = targetModifiers.ModifierAtos;
+                        var modifierGleipnir = targetModifiers.ModifierGleipnir;
+
+                        // Atos
                         var atos = Abilities.Atos;
                         if (atos != null
                             && ItemsMenu.ItemsSelection[atos.Id]
@@ -201,10 +203,26 @@ namespace Divine.SkywrathMage.Combos
                             && atos.CanBeCasted
                             && atos.CanHit(target)
                             && modifierAtos.IsModifier(0.5f)
+                            && modifierGleipnir.IsModifier(0.5f)
                             && modifierStun.IsModifier(0.5f))
                         {
                             atos.UseAbility(target);
                             await Task.Delay(atos.GetCastDelay(target), token);
+                        }
+
+                        // Gleipnir
+                        var gleipnir = Abilities.Gleipnir;
+                        if (gleipnir != null
+                            && ItemsMenu.ItemsSelection[gleipnir.Id]
+                            && !comboBreaker
+                            && gleipnir.CanBeCasted
+                            && gleipnir.CanHit(target)
+                            && modifierAtos.IsModifier(0.5f)
+                            && modifierGleipnir.IsModifier(0.5f)
+                            && modifierStun.IsModifier(0.5f))
+                        {
+                            gleipnir.UseAbility(target);
+                            await Task.Delay(gleipnir.GetCastDelay(target), token);
                         }
 
                         // AncientSeal

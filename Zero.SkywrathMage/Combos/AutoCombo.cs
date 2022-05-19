@@ -191,8 +191,10 @@ internal sealed class AutoCombo : BaseTaskHandler
                 await Task.Delay(nullifier.GetCastDelay(target), token);
             }
 
-            // Atos
             var modifierAtos = targetModifiers.ModifierAtos;
+            var modifierGleipnir = targetModifiers.ModifierGleipnir;
+
+            // Atos
             var atos = Abilities.Atos;
             if (atos != null
                 && AutoComboMenu.ItemsSelection[atos.Id]
@@ -203,6 +205,20 @@ internal sealed class AutoCombo : BaseTaskHandler
             {
                 atos.UseAbility(target);
                 await Task.Delay(atos.GetCastDelay(target), token);
+            }
+
+            // Gleipnir
+            var gleipnir = Abilities.Gleipnir;
+            if (gleipnir != null
+                && AutoComboMenu.ItemsSelection[gleipnir.Id]
+                && gleipnir.CanBeCasted
+                && gleipnir.CanHit(target)
+                && modifierAtos.IsModifier(0.5f)
+                && modifierGleipnir.IsModifier(0.5f)
+                && modifierStun.IsModifier(0.5f))
+            {
+                gleipnir.UseAbility(target);
+                await Task.Delay(gleipnir.GetCastDelay(target), token);
             }
 
             // AncientSeal

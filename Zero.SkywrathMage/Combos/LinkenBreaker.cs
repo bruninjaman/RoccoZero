@@ -24,6 +24,7 @@ namespace Divine.SkywrathMage.Combos
                 return new CAbility[]
                 {
                     Abilities.Eul,
+                    Abilities.WindWaker,
                     Abilities.ForceStaff,
                     Abilities.Orchid,
                     Abilities.Bloodthorn,

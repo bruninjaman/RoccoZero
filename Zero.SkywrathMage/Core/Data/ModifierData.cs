@@ -6,6 +6,8 @@
 
         public static string ModifierAtos { get; } = "modifier_rod_of_atos_debuff";
 
+        public static string ModifierGleipnir { get; } = "modifier_gungnir_debuff";
+
         public static string ModifierSilver { get; } = "modifier_silver_edge_debuff";
 
         public static string ModifierLegionDuel { get; } = "modifier_legion_commander_duel";
