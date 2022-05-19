@@ -1,5 +1,6 @@
 namespace Divine.Core.Entities.Abilities.Items.Bases;
 
+using System;
 using System.Linq;
 
 using Divine.Core.Extensions;
@@ -26,7 +27,6 @@ public abstract class ActiveItem : CItem, IActiveAbility
             {
                 return false;
             }
-
 
             if (Owner.IsStunned() || Owner.IsMuted())
             {

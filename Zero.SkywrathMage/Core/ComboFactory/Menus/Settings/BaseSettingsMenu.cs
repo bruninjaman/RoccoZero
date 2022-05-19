@@ -12,12 +12,10 @@ namespace Divine.Core.ComboFactory.Menus.Settings
 
         [Item("Enable Damage Calculation")]
         [Tooltip("Disabling Damage Calculation will give you some FPS! But you will lose KillSteal and Drawing Damage Calculation")]
-        [Value(false)]
         public MenuSwitcher EnableDamageCalculationItem { get; set; }
 
         [Item("Enable Drawing")]
         [Tooltip("Disabling Drawing will give you some FPS!")]
-        [Value(false)]
         public MenuSwitcher EnableDrawingItem { get; set; }
     }
 }

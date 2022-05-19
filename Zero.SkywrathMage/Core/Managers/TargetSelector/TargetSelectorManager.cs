@@ -4,12 +4,10 @@ using Divine.Core.ComboFactory.Menus;
 using Divine.Core.ComboFactory.Menus.Combo;
 using Divine.Core.ComboFactory.Menus.TargetSelector;
 using Divine.Core.Entities;
-using Divine.Core.Helpers;
 using Divine.Core.Managers.TargetSelector.Selector;
 using Divine.Core.Managers.TargetSelector.TargetEffects;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
-using Divine.Numerics;
 using Divine.Update;
 
 namespace Divine.Core.Managers.TargetSelector
