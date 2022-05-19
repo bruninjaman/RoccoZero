@@ -63,9 +63,9 @@ namespace Divine.Core.ComboFactory.Menus
         [Priority(4)]
         public virtual BaseFarmMenu FarmMenu { get; }
 
-        [Menu("Escape")]
-        [Priority(5)]
-        public BaseEscapeMenu EscapeMenu { get; } = new BaseEscapeMenu();
+        //[Menu("Escape")]
+        //[Priority(5)]
+        //public BaseEscapeMenu EscapeMenu { get; } = new BaseEscapeMenu();
 
         [Menu("Disable"), AbilityImage(AbilityId.item_sheepstick)]
         [Priority(7)]
