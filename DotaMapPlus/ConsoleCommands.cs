@@ -3,6 +3,7 @@
 using Divine.GameConsole;
 using Divine.Menu.EventArgs;
 using Divine.Menu.Items;
+using Divine.Service;
 
 internal sealed class ConsoleCommands
 {
@@ -16,8 +17,13 @@ internal sealed class ConsoleCommands
     {
         var consoleCommandsMenu = rootMenu.CreateMenu("Console Commands");
         FogItem = consoleCommandsMenu.CreateSwitcher("Fog Disable");
-        FilteringItem = consoleCommandsMenu.CreateSwitcher("Filtering Disable1", "Filtering Disable", false);
+        FilteringItem = consoleCommandsMenu.CreateSwitcher("Filtering Disable2", "Filtering Disable", false);
         ParticleHackItem = consoleCommandsMenu.CreateSwitcher("Particle Hack Enable");
+
+        if (DivineService.UserId != "2951089c-bef8-487b-a0cc-2bf92c28268b")
+        {
+            FilteringItem.IsHidden = true;
+        }
 
         FogItem.ValueChanged += FogItemChanged;
         FilteringItem.ValueChanged += FilteringItemChanged;
