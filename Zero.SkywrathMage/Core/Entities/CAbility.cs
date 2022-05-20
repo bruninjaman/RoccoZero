@@ -116,7 +116,7 @@ public class CAbility : CEntity
     {
         get
         {
-            return Base.CastRange;
+            return Base.BaseCastRange;
         }
     }
 
