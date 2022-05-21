@@ -24,8 +24,9 @@
     </Reference>
   </ItemGroup>
 
-  <Target Name="Compiler" AfterTargets="PostBuildEvent">
-    <Exec Command="if exist &quot;C:\Users\RoccoZero\Desktop\Divine.System\bin\Release\Divine.Client.exe&quot; call &quot;C:\Users\RoccoZero\Desktop\Divine.System\bin\Release\Divine.Client.exe&quot; -PostBuildEvent -TargetPath=&quot;$(TargetPath)&quot;" />
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFolder="$(SolutionDir)Zero.SkywrathMage\Resources" />
+    <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFolder="$(SolutionDir)Zero.Zeus\Resources" />
   </Target>
 
 </Project>
