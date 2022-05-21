@@ -340,7 +340,7 @@ public class CAbility : CEntity
 
     public AbilityType AbilityType { get; }
 
-    public AbilityBehavior AbilityBehavior { get; }
+    public virtual AbilityBehavior AbilityBehavior { get; }
 
     public TargetTeamType TargetTeamType
     {

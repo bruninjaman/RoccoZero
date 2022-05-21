@@ -20,6 +20,22 @@ namespace Divine.Core.Entities.Abilities.Spells.Zeus
 
         public override UnitState AppliesUnitState { get; } = UnitState.Stunned | UnitState.ProvidesVision;
 
+        public override AbilityBehavior AbilityBehavior
+        {
+            get
+            {
+                var behavior = base.AbilityBehavior;
+                var talent = Owner.GetAbilityById(AbilityId.special_bonus_unique_zeus_5);
+
+                if (talent?.Level > 0)
+                {
+                    behavior = (behavior & ~AbilityBehavior.UnitTarget) | AbilityBehavior.Point;
+                }
+
+                return behavior;
+            }
+        }
+
         public float Radius
         {
             get
