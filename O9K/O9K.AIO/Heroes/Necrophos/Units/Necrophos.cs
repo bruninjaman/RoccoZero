@@ -47,6 +47,8 @@ internal class Necrophos : ControllableUnit
 
     private NukeAbility scythe;
 
+    private NukeAbility seeker;
+
     private DebuffAbility shiva;
 
     private ShieldAbility shroud;
@@ -62,6 +64,7 @@ internal class Necrophos : ControllableUnit
         {
             { AbilityId.necrolyte_death_pulse, x => this.pulse = new NukeAbility(x) },
             { AbilityId.necrolyte_sadist, x => this.shroud = new ShieldAbility(x) },
+            { AbilityId.necrolyte_death_seeker, x => this.seeker = new NukeAbility(x) },
             { AbilityId.necrolyte_reapers_scythe, x => this.scythe = new NukeAbility(x) },
 
             { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
@@ -143,6 +146,11 @@ internal class Necrophos : ControllableUnit
         }
 
         if (abilityHelper.UseAbility(this.pulse))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.seeker))
         {
             return true;
         }

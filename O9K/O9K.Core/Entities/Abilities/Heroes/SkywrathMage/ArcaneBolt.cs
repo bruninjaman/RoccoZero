@@ -30,7 +30,7 @@ public class ArcaneBolt : RangedAbility, INuke
     {
         get
         {
-            if (this.Owner.GetAbilityById((AbilityId)411)?.Level > 0)
+            if (this.Owner.GetAbilityById(AbilityId.special_bonus_unique_skywrath_6)?.Level > 0)
             {
                 return true;
             }
