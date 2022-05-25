@@ -400,12 +400,6 @@ public static class UnitExtensions
         {
             switch (item.Id)
             {
-                case AbilityId.item_null_talisman:
-                    {
-                        spellAmp += item.AbilitySpecialData.First(x => x.Name == "bonus_spell_amp").Value / 100.0f;
-                    }
-                    break;
-
                 case AbilityId.item_kaya:
                     {
                         if (kaya)
