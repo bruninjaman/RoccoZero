@@ -139,6 +139,7 @@ internal class LegionCommander : ControllableUnit
             {
                 if (abilityHelper.ForceUseAbility(this.blink))
                 {
+                    this.duel.Ability.BaseAbility.Cast(targetManager.Target);
                     return true;
                 }
             }
