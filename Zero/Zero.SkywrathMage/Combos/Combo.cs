@@ -122,7 +122,7 @@ namespace Divine.SkywrathMage.Combos
                 {
                     if (!target.IsShieldAbilities(targetModifiers) || targetModifiers.IsSilverDebuff)
                     {
-                        var comboBreaker = !AeonDiskMenu.EnableItem || target.ComboBreaker();
+                        var comboBreaker = AeonDiskMenu.EnableItem && target.ComboBreaker();
 
                         // Hex
                         var modifierStun = targetModifiers.ModifierStun;

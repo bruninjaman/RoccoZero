@@ -107,7 +107,7 @@ internal sealed class AutoCombo : BaseTaskHandler
                 return;
             }
 
-            if (!AeonDiskMenu.EnableItem || target.ComboBreaker())
+            if (AeonDiskMenu.EnableItem && target.ComboBreaker())
             {
                 return;
             }

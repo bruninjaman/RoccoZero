@@ -148,7 +148,7 @@ internal sealed class Combo : BaseCombo
             {
                 if (!target.IsShieldAbilities(targetModifiers) || targetModifiers.IsSilverDebuff)
                 {
-                    var comboBreaker = !AeonDiskMenu.EnableItem || target.ComboBreaker();
+                    var comboBreaker = AeonDiskMenu.EnableItem && target.ComboBreaker();
 
                     // Hex
                     var modifierStun = targetModifiers.ModifierStun;
