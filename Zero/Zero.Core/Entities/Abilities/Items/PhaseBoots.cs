@@ -7,7 +7,7 @@ using Divine.Entity.Entities.Abilities.Items;
 namespace Divine.Core.Entities.Abilities.Items
 {
     [Item(AbilityId.item_phase_boots)]
-    public sealed class PhaseBoots : PassiveItem, IHasModifier
+    public sealed class PhaseBoots : ActiveItem, IHasModifier
     {
         public PhaseBoots(Item item)
             : base(item)

@@ -93,37 +93,48 @@ internal sealed class AutoPhaseBoots
             return;
         }
 
-        await Task.Delay(80);
-
-        if (!PhaseBoots.CanBeCasted || !owner.IsAlive || owner.IsChanneling() || !owner.CanUseAbilitiesInInvisibility && owner.IsUnsafeInvisible || owner.IsInvisible())
-        {
-            return;
-        }
-
         switch (order.Type)
         {
             case OrderType.AttackPosition:
             case OrderType.AttackTarget:
-                {
-                    var position = order.Target?.Position ?? order.Position;
-                    if (Math.Max(owner.Distance2D(position) - owner.AttackRange(), 0) >= DistanceCheckItem.Value)
-                    {
-                        PhaseBoots.UseAbility();
-                    }
+            {
+                var target = order.Target;
+                var position = order.Position;
 
+                await Task.Delay(80);
+
+                if (!PhaseBoots.CanBeCasted || !owner.IsAlive || owner.IsChanneling() || !owner.CanUseAbilitiesInInvisibility && owner.IsUnsafeInvisible || owner.IsInvisible())
+                {
                     break;
                 }
+
+                if (Math.Max(owner.Distance2D(target?.Position ?? position) - owner.AttackRange(), 0) >= DistanceCheckItem.Value)
+                {
+                    PhaseBoots.UseAbility();
+                }
+
+                break;
+            }
             case OrderType.MoveTarget:
             case OrderType.MovePosition:
-                {
-                    var position = order.Target?.Position ?? order.Position;
-                    if (owner.Distance2D(position) >= DistanceCheckItem.Value)
-                    {
-                        PhaseBoots.UseAbility();
-                    }
+            {
+                var target = order.Target;
+                var position = order.Position;
 
+                await Task.Delay(80);
+
+                if (!PhaseBoots.CanBeCasted || !owner.IsAlive || owner.IsChanneling() || !owner.CanUseAbilitiesInInvisibility && owner.IsUnsafeInvisible || owner.IsInvisible())
+                {
                     break;
                 }
+
+                if (owner.Distance2D(target?.Position ?? position) >= DistanceCheckItem.Value)
+                {
+                    PhaseBoots.UseAbility();
+                }
+
+                break;
+            }
         }
     }
 }
