@@ -1,6 +1,6 @@
 ﻿namespace BAIO.Interfaces
 {
-    using Ensage;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
     public interface IHeroMetadata
     {

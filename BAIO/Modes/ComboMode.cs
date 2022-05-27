@@ -3,8 +3,10 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Ensage;
-    using Ensage.SDK.Extensions;
+
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
+
     using Ensage.SDK.Orbwalker.Modes;
 
     public abstract class ComboMode : KeyPressOrbwalkingModeAsync
@@ -59,7 +61,7 @@
 
             if (!this.baseHero.Config.General.LockTarget || (this.CurrentTarget == null) || !this.CurrentTarget.IsValid || !this.CurrentTarget.IsAlive)
             {
-                this.CurrentTarget = this.baseHero.Context.TargetSelector.Active.GetTargets().Where(x => x.Distance2D(this.Owner) <= this.MaxTargetRange).OrderByDescending(x => !x.IsIllusion).FirstOrDefault();
+                this.CurrentTarget = this.baseHero.Context.TargetSelector.GetTargets().Where(x => x.Distance2D(this.Owner) <= this.MaxTargetRange).OrderByDescending(x => !x.IsIllusion).FirstOrDefault();
             }
 
             return true;
@@ -70,11 +72,11 @@
             if (this.CurrentTarget != null && this.CurrentTarget.IsValid && !this.CurrentTarget.IsEthereal() && !this.CurrentTarget.IsInvulnerable() &&
                 (!this.baseHero.Config.General.KiteMode || this.Owner.Distance2D(this.CurrentTarget) <= this.Owner.AttackRange(this.CurrentTarget)))
             {
-                this.baseHero.Context.Orbwalker.Active.OrbwalkTo(this.CurrentTarget);
+                this.baseHero.Context.Orbwalker.OrbwalkTo(this.CurrentTarget);
             }
             else
             {
-                this.baseHero.Context.Orbwalker.Active.OrbwalkTo(null);
+                this.baseHero.Context.Orbwalker.OrbwalkTo(null);
             }
         }
     }

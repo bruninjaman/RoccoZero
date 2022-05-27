@@ -1,41 +1,52 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ensage;
-using Ensage.Common.Extensions;
-using Ensage.Common.Extensions.SharpDX;
-using Ensage.Common.Objects;
-using Ensage.Common.Objects.UtilityObjects;
-using static Ensage.SDK.Extensions.AbilityExtensions;
-using Ensage.SDK.Helpers;
-using SharpDX;
+
+using BAIO.Core;
+using BAIO.Core.Extensions;
+
+using Divine.Entity;
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units;
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Extensions;
+using Divine.GameConsole;
+using Divine.Numerics;
+using Divine.Renderer;
 
 namespace BAIO
 {
     public static class Extensions
     {
-        private static ConcurrentDictionary<uint, bool> canHitDictionary = new ConcurrentDictionary<uint, bool>();
+        private static Dictionary<uint, bool> canHitDictionary = new Dictionary<uint, bool>();
+
         private static MultiSleeper sleeper = new MultiSleeper();
 
+        private static readonly HashSet<string> EtherealModifiers = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "modifier_ghost_state",
+            "modifier_item_ethereal_blade_ethereal",
+            "modifier_pugna_decrepify",
+            "modifier_necrolyte_sadist_active"
+        };
+
         public static IEnumerable<TEntity> GetAlliesInRange<TEntity>(this Unit unit, float range)
-    where TEntity : Unit, new()
+            where TEntity : Unit, new()
         {
             var handle = unit.Handle;
             var team = unit.Team;
-            var pos = unit.NetworkPosition;
+            var pos = unit.Position;
             var sqrRange = range * range;
 
-            return EntityManager<TEntity>
-                .Entities.Where(e => e.Handle != handle && e.IsVisible && e.IsAlive && e.Team == team && pos.DistanceSquared(e.NetworkPosition) < sqrRange)
-                .OrderBy(e => pos.DistanceSquared(e.NetworkPosition));
+            return EntityManager
+                .GetEntities<TEntity>().Where(e => e.Handle != handle && e.IsVisible && e.IsAlive && e.Team == team && pos.DistanceSquared(e.Position) < sqrRange)
+                .OrderBy(e => pos.DistanceSquared(e.Position));
         }
 
         public static Vector3 FacePosition(Unit unit)
         {
-            Vector3 vector3 = unit.Position + unit.Vector3FromPolarAngle(0.0f, 1f);
+            var vector3 = unit.Position + unit.Vector3FromPolarAngle(0.0f, 1f);
             return new Vector3(vector3.X, vector3.Y, 0.0f);
         }
 
@@ -51,7 +62,7 @@ namespace BAIO
                 return false;
             }
 
-            var name = abilityName ?? ability.StoredName();
+            var name = abilityName ?? ability.Name;
             if (ability.Owner.Equals(target))
             {
                 return true;
@@ -83,7 +94,7 @@ namespace BAIO
                     range += radius / 2;
                 }
 
-                if (name.Contains("earthshaker_enchant_totem") && (ability.Owner as Hero).AghanimState())
+                if (name.Contains("earthshaker_enchant_totem") && (ability.Owner as Hero).HasAghanimsScepter())
                 {
                     range += 1100;
                 }
@@ -100,8 +111,7 @@ namespace BAIO
                     return true;
                 }
 
-                canHitDictionary[id] = name == "pudge_rot" && target.HasModifier("modifier_pudge_meat_hook")
-                                       && position.Distance2D(target) < 1500;
+                canHitDictionary[id] = name == "pudge_rot" && target.HasModifier("modifier_pudge_meat_hook") && position.Distance2D(target.Position) < 1500;
                 sleeper.Sleep(50, id);
                 return canHitDictionary[id];
             }
@@ -128,7 +138,8 @@ namespace BAIO
             }
 
             canHitDictionary[id] = name == "pudge_dismember" && target.HasModifier("modifier_pudge_meat_hook")
-                                   && position.Distance2D(target) < 600;
+                                   && position.Distance2D(target.Position) < 600;
+
             sleeper.Sleep(50, id);
             return canHitDictionary[id];
         }
@@ -145,7 +156,7 @@ namespace BAIO
                 return false;
             }
 
-            return CanHit(ability, target, ability.Owner.Position, abilityName);
+            return ability.CanHit(target, ability.Owner.Position, abilityName);
         }
 
         public static float GetAbilityCastRange(Unit owner, Ability ability)
@@ -166,29 +177,29 @@ namespace BAIO
 
                 if (ability.Id == AbilityId.earthshaker_enchant_totem)
                 {
-                    range += Ensage.SDK.Extensions.AbilityExtensions.GetAbilitySpecialData(ability, "distance_scepter");
+                    range += ability.GetAbilitySpecialData("distance_scepter");
                     return range;
                 }
 
                 if (ability.Id == AbilityId.faceless_void_time_walk)
                 {
-                    range += Ensage.SDK.Extensions.AbilityExtensions.GetAbilitySpecialDataWithTalent(ability, owner, "range");
+                    range += ability.GetAbilitySpecialDataWithTalent(owner, "range");
                     return range;
                 }
 
                 range += ability.GetCastRange() >= ability.AbilitySpecialData.First(x => x.Name.Contains("range")).GetValue(ability.Level - 1)
                     ? ability.GetCastRange() : ability.AbilitySpecialData.First(x => x.Name.Contains("range")).GetValue(ability.Level - 1);
-                var aetherLens = owner.GetItemById(Ensage.Common.Enums.ItemId.item_aether_lens);
+                var aetherLens = owner.GetItemById(AbilityId.item_aether_lens);
                 if (aetherLens != null)
                 {
-                    range += Ensage.SDK.Extensions.AbilityExtensions.GetAbilitySpecialData(aetherLens, "cast_range_bonus");
+                    range += aetherLens.GetAbilitySpecialData("cast_range_bonus");
                 }
                 var talent = owner.Spellbook.Spells.FirstOrDefault(x => x.Level > 0 && x.Name.StartsWith("special_bonus_cast_range_"));
                 if (talent != null)
                 {
-                    range += Ensage.SDK.Extensions.AbilityExtensions.GetAbilitySpecialData(talent, "value");
+                    range += talent.GetAbilitySpecialData("value");
                 }
-                if (ability.Id == AbilityId.viper_viper_strike && Ensage.SDK.Extensions.UnitExtensions.HasAghanimsScepter(owner))
+                if (ability.Id == AbilityId.viper_viper_strike && owner.HasAghanimsScepter())
                 {
                     range += 400f;
                 }
@@ -197,15 +208,15 @@ namespace BAIO
             catch (IndexOutOfRangeException)
             {
                 range += ability.AbilitySpecialData.First(x => x.Name.Contains("range")).Value;
-                var aetherLens = owner.GetItemById(Ensage.Common.Enums.ItemId.item_aether_lens);
+                var aetherLens = owner.GetItemById(AbilityId.item_aether_lens);
                 if (aetherLens != null)
                 {
-                    range += Ensage.SDK.Extensions.AbilityExtensions.GetAbilitySpecialData(aetherLens, "cast_range_bonus");
+                    range += aetherLens.GetAbilitySpecialData("cast_range_bonus");
                 }
                 var talent = owner.Spellbook.Spells.FirstOrDefault(x => x.Level > 0 && x.Name.StartsWith("special_bonus_cast_range_"));
                 if (talent != null)
                 {
-                    range += Ensage.SDK.Extensions.AbilityExtensions.GetAbilitySpecialData(talent, "value");
+                    range += talent.GetAbilitySpecialData("value");
                 }
                 return range;
             }
@@ -222,11 +233,11 @@ namespace BAIO
             {
                 var radius = 0f;
                 radius += ability.AbilitySpecialData.First(x => x.Name.Contains("radius")).Value;
-                if (Ensage.SDK.Extensions.UnitExtensions.GetAbilityById(owner, ability.AbilitySpecialData.First(x => x.Name.Contains("radius"))
-                        .SpecialBonusAbility) != null && Ensage.SDK.Extensions.UnitExtensions.GetAbilityById(owner, ability.AbilitySpecialData.First(x => x.Name.Contains("radius"))
+                if (owner.GetAbilityById(ability.AbilitySpecialData.First(x => x.Name.Contains("radius"))
+                        .SpecialBonusAbility) != null && owner.GetAbilityById(ability.AbilitySpecialData.First(x => x.Name.Contains("radius"))
                         .SpecialBonusAbility).Level > 0)
                 {
-                    radius += Ensage.SDK.Extensions.UnitExtensions.GetAbilityById(owner,
+                    radius += owner.GetAbilityById(
                         ability.AbilitySpecialData.First(x => x.Name.Contains("radius"))
                             .SpecialBonusAbility).GetAbilitySpecialData("value");
                 }
@@ -246,10 +257,11 @@ namespace BAIO
         public static bool PositionCamera(float x, float y)
         {
             var pos = new Vector3(x, y, 256);
-            Vector2 screenposVector2;
-            if (!Drawing.WorldToScreen(pos, out screenposVector2))
+
+            var screenposVector2 = RendererManager.WorldToScreen(pos, true);
+            if (screenposVector2.IsZero)
             {
-                Game.ExecuteCommand($"dota_camera_set_lookatpos {x} {y}");
+                GameConsoleManager.ExecuteCommand($"dota_camera_set_lookatpos {x} {y}");
                 return true;
             }
 
@@ -259,14 +271,19 @@ namespace BAIO
         {
             var x = unit.Position.X;
             var y = unit.Position.Y;
-            Vector2 screenposVector2;
-            if (!Drawing.WorldToScreen(unit.Position, out screenposVector2))
+            var screenposVector2 = RendererManager.WorldToScreen(unit.Position, true);
+            if (screenposVector2.IsZero)
             {
-                Game.ExecuteCommand($"dota_camera_set_lookatpos {x} {y}");
+                GameConsoleManager.ExecuteCommand($"dota_camera_set_lookatpos {x} {y}");
                 return true;
             }
 
             return true;
+        }
+
+        public static bool IsEthereal(this Unit unit)
+        {
+            return unit.HasModifiers(EtherealModifiers, false);
         }
     }
 }

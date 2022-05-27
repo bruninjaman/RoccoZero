@@ -1,38 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using BAIO.Heroes.Base;
+
+using BAIO.Core.Handlers;
 using BAIO.Interfaces;
 using BAIO.Modes;
 using BAIO.UnitManager;
-using Ensage;
-using Ensage.Common.Extensions;
-using Ensage.SDK.Handlers;
-using Ensage.SDK.Helpers;
-using Ensage.SDK.Orbwalker;
+
+using Divine.Entity;
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Players;
+using Divine.Entity.Entities.Units;
+using Divine.Entity.Entities.Units.Heroes;
+using Divine.Entity.Entities.Units.Heroes.Components;
+using Divine.Extensions;
+using Divine.Game;
+using Divine.Menu.EventArgs;
+using Divine.Menu.Items;
+using Divine.Numerics;
+using Divine.Particle;
+using Divine.Update;
+using Divine.Zero.Log;
+
 using Ensage.SDK.Service;
-using EnsageSharp.Sandbox;
-using log4net;
-using Newtonsoft.Json;
-using PlaySharp.Toolkit.Logging;
-using SharpDX;
 
 namespace BAIO
 {
-    public abstract class BaseHero : ControllableService, IHero
+    public abstract class BaseHero : IHero
     {
         public Config Config;
 
-        private static readonly ILog Log = AssemblyLogs.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        [Import(typeof(IServiceContext))]
         internal IServiceContext Context { get; private set; }
 
         internal Hero Owner { get; private set; }
@@ -55,8 +55,6 @@ namespace BAIO
 
         public TaskHandler WardsHandler { get; private set; }
 
-
-
         protected abstract ComboMode GetComboMode();
 
         protected virtual HarassMode GetHarassMode()
@@ -73,9 +71,9 @@ namespace BAIO
             // ¯\_(ツ)_/¯
         }
 
-        protected void KillstealPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnKillstealPropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
         {
-            if (this.Config.General.Killsteal)
+            if (e.Value)
             {
                 this.KillstealHandler.RunAsync();
             }
@@ -107,46 +105,25 @@ namespace BAIO
 
             if (this.ComboMode.CanExecute && (this.ComboMode.CurrentTarget != null))
             {
-                this.Context.Particle.DrawTargetLine(this.Owner, "TargetIndicator", this.ComboMode.CurrentTarget.NetworkPosition);
+                ParticleManager.CreateTargetLineParticle("TargetIndicator", this.Owner, this.ComboMode.CurrentTarget.Position, Color.Red);
             }
             else
             {
-                this.Context.Particle.Remove("TargetIndicator");
+                ParticleManager.DestroyParticle("TargetIndicator");
             }
         }
 
-        private void DrawTargetLinePropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnDrawTargetLinePropertyChanged(MenuSwitcher switcher, SwitcherEventArgs e)
         {
-            if (!this.Config.General.DrawTargetIndicator)
+            if (!e.Value)
             {
-                this.Context.Particle.Remove("TargetIndicator");
-            }
-        }
-
-        private void NoobFailSafe()
-        {
-            var orbwalker = this.Context.Orbwalker;
-            if (!orbwalker.IsActive)
-            {
-                orbwalker.Activate();
-            }
-
-            var targetSelector = this.Context.TargetSelector;
-            if (!targetSelector.IsActive)
-            {
-                targetSelector.Activate();
-            }
-
-            var prediction = this.Context.Prediction;
-            if (!prediction.IsActive)
-            {
-                prediction.Activate();
+                ParticleManager.DestroyParticle("TargetIndicator");
             }
         }
 
         private async Task Bodyblock(CancellationToken token)
         {
-            if (Game.IsPaused || !this.Config.General.ComboKey.Value.Active || this.ComboMode.CurrentTarget == null)
+            if (GameManager.IsPaused || !this.Config.General.ComboKey || this.ComboMode.CurrentTarget == null)
             {
                 await Task.Delay(250, token);
                 return;
@@ -169,12 +146,12 @@ namespace BAIO
 
             if (BodyBlockerUnit != null && this.Config.Hero.Enabled)
             {
-                var angle = Ensage.SDK.Extensions.UnitExtensions.FindRotationAngle(this.ComboMode.CurrentTarget, this.BodyBlockerUnit.Position);
+                var angle = this.ComboMode.CurrentTarget.FindRotationAngle(this.BodyBlockerUnit.Position);
 
                 if (angle > 1.3)
                 {
                     var delta = angle * 0.6f;
-                    var position = this.ComboMode.CurrentTarget.NetworkPosition;
+                    var position = this.ComboMode.CurrentTarget.Position;
                     var side1 = position + this.ComboMode.CurrentTarget.Vector3FromPolarAngle(delta)
                                 * Math.Max(this.Config.Hero.BlockSensitivity.Value, 150);
                     var side2 = position + this.ComboMode.CurrentTarget.Vector3FromPolarAngle(-delta)
@@ -209,7 +186,7 @@ namespace BAIO
 
         private async Task OnUpdate(CancellationToken token)
         {
-            if (Game.IsPaused || !this.Config.General.ComboKey.Value.Active)
+            if (GameManager.IsPaused || !this.Config.General.ComboKey)
             {
                 await Task.Delay(250, token);
                 return;
@@ -224,15 +201,15 @@ namespace BAIO
             {
                 if (unit.Unit != BodyBlockerUnit && this.Config.Hero.ControlUnits && unit.Unit.Name != "npc_dota_templar_assassin_psionic_trap")
                 {
-                    if (this.ComboMode.CurrentTarget == null || UnitExtensions.IsInvul(this.ComboMode.CurrentTarget) ||
+                    if (this.ComboMode.CurrentTarget == null || Core.Extensions.UnitExtensions.IsInvul(this.ComboMode.CurrentTarget) ||
                         this.ComboMode.CurrentTarget.IsAttackImmune())
                     {
-                        Player.AttackEntity(unit.Unit, (Unit) null);
+                        Player.Attack(unit.Unit, (Unit) null);
                         //unit.UnitMovementManager.Orbwalk(null);
                     }
                     else
                     {
-                        Player.AttackEntity(unit.Unit, this.ComboMode.CurrentTarget);
+                        Player.Attack(unit.Unit, this.ComboMode.CurrentTarget);
                         //unit.UnitMovementManager.Orbwalk(this.ComboMode.CurrentTarget);
                     }
                 }
@@ -243,14 +220,14 @@ namespace BAIO
                 var ability4 = unit.Ability4;
 
                 if (this.ComboMode.CurrentTarget != null && this.Config.Hero.UseUnitAbilities &&
-                    !UnitExtensions.IsInvul(this.ComboMode.CurrentTarget) && !this.ComboMode.CurrentTarget.IsAttackImmune() && !this.ComboMode.CurrentTarget.IsMagicImmune() &&
-                        (ability1 != null && AbilityExtensions.CanBeCasted(ability1) ||
-                         ability2 != null && AbilityExtensions.CanBeCasted(ability2) ||
-                         ability3 != null && AbilityExtensions.CanBeCasted(ability3) ||
-                         ability4 != null && AbilityExtensions.CanBeCasted(ability4)))
+                    !Core.Extensions.UnitExtensions.IsInvul(this.ComboMode.CurrentTarget) && !this.ComboMode.CurrentTarget.IsAttackImmune() && !this.ComboMode.CurrentTarget.IsMagicImmune() &&
+                        (ability1 != null && Core.Extensions.AbilityExtensions.CanBeCasted(ability1) ||
+                         ability2 != null && Core.Extensions.AbilityExtensions.CanBeCasted(ability2) ||
+                         ability3 != null && Core.Extensions.AbilityExtensions.CanBeCasted(ability3) ||
+                         ability4 != null && Core.Extensions.AbilityExtensions.CanBeCasted(ability4)))
                 {
                     if (ability1 != null
-                        && AbilityExtensions.CanBeCasted(ability1)
+                        && Core.Extensions.AbilityExtensions.CanBeCasted(ability1)
                         && UnitCastingChecks(ability1.Name, unit.Unit, this.ComboMode.CurrentTarget, ability1)
                         && (ability1.TargetTeamType == TargetTeamType.Enemy ||
                             ability1.TargetTeamType == TargetTeamType.None)
@@ -259,41 +236,41 @@ namespace BAIO
                     {
                         if (ability1.AbilityBehavior.HasFlag(AbilityBehavior.NoTarget))
                         {
-                            if (ability1.UseAbility())
+                            if (ability1.Cast())
                             {
                                 await Task.Delay(180, token);
                             }
                         }
                         else if (ability1.AbilityBehavior.HasFlag(AbilityBehavior.UnitTarget))
                         {
-                            if (ability1.UseAbility(this.ComboMode.CurrentTarget))
+                            if (ability1.Cast(this.ComboMode.CurrentTarget))
                             {
                                 await Task.Delay(180, token);
                             }
                         }
                         else if (ability1.AbilityBehavior.HasFlag(AbilityBehavior.Point))
                         {
-                            if (ability1.UseAbility(this.ComboMode.CurrentTarget.Position))
+                            if (ability1.Cast(this.ComboMode.CurrentTarget.Position))
                             {
                                 await Task.Delay(180, token);
                             }
                         }
                     }
                     else if (ability1 != null
-                             && AbilityExtensions.CanBeCasted(ability1)
+                             && Core.Extensions.AbilityExtensions.CanBeCasted(ability1)
                              && ability1.TargetTeamType == TargetTeamType.Allied
                              && unit.Unit.Distance2D(this.Owner) <= Extensions.GetAbilityCastRange(unit.Unit, ability1))
                     {
-                        if (ability1.UseAbility(this.Owner))
+                        if (ability1.Cast(this.Owner))
                         {
                             await Task.Delay(180, token);
                         }
                     }
 
                     if (ability2 != null
-                        && AbilityExtensions.CanBeCasted(ability2)
+                        && Core.Extensions.AbilityExtensions.CanBeCasted(ability2)
                         && UnitCastingChecks(ability2.Name, unit.Unit, this.ComboMode.CurrentTarget, ability2)
-                        && AbilityExtensions.CanHit(ability2, this.ComboMode.CurrentTarget)
+                        && Core.Extensions.AbilityExtensions.CanHit(ability2, this.ComboMode.CurrentTarget)
                         && (ability2.TargetTeamType == TargetTeamType.Enemy ||
                             ability2.TargetTeamType == TargetTeamType.None)
                         && (unit.Unit.Distance2D(this.ComboMode.CurrentTarget) <= Extensions.GetAbilityCastRange(unit.Unit, ability2) ||
@@ -301,41 +278,41 @@ namespace BAIO
                     {
                         if (ability2.AbilityBehavior.HasFlag(AbilityBehavior.NoTarget))
                         {
-                            if (ability2.UseAbility())
+                            if (ability2.Cast())
                             {
                                 await Task.Delay(180, token);
                             }
                         }
                         else if (ability2.AbilityBehavior.HasFlag(AbilityBehavior.UnitTarget))
                         {
-                            if (ability2.UseAbility(this.ComboMode.CurrentTarget))
+                            if (ability2.Cast(this.ComboMode.CurrentTarget))
                             {
                                 await Task.Delay(180, token);
                             }
                         }
                         else if (ability2.AbilityBehavior.HasFlag(AbilityBehavior.Point))
                         {
-                            if (ability2.UseAbility(this.ComboMode.CurrentTarget.Position))
+                            if (ability2.Cast(this.ComboMode.CurrentTarget.Position))
                             {
                                 await Task.Delay(180, token);
                             }
                         }
                     }
                     else if (ability2 != null
-                             && AbilityExtensions.CanBeCasted(ability2)
+                             && Core.Extensions.AbilityExtensions.CanBeCasted(ability2)
                              && ability2.TargetTeamType == TargetTeamType.Allied
                              && unit.Unit.Distance2D(this.Owner) <= Extensions.GetAbilityCastRange(unit.Unit, ability2))
                     {
-                        if (ability2.UseAbility(this.Owner))
+                        if (ability2.Cast(this.Owner))
                         {
                             await Task.Delay(180, token);
                         }
                     }
 
                     if (ability3 != null
-                        && AbilityExtensions.CanBeCasted(ability3)
+                        && Core.Extensions.AbilityExtensions.CanBeCasted(ability3)
                         && UnitCastingChecks(ability3.Name, unit.Unit, this.ComboMode.CurrentTarget, ability3)
-                        && AbilityExtensions.CanHit(ability3, this.ComboMode.CurrentTarget)
+                        && Core.Extensions.AbilityExtensions.CanHit(ability3, this.ComboMode.CurrentTarget)
                         && (ability3.TargetTeamType == TargetTeamType.Enemy ||
                             ability3.TargetTeamType == TargetTeamType.None)
                         && (unit.Unit.Distance2D(this.ComboMode.CurrentTarget) <= Extensions.GetAbilityCastRange(unit.Unit, ability3) ||
@@ -343,41 +320,41 @@ namespace BAIO
                     {
                         if (ability3.AbilityBehavior.HasFlag(AbilityBehavior.NoTarget))
                         {
-                            if (ability3.UseAbility())
+                            if (ability3.Cast())
                             {
                                 await Task.Delay(180, token);
                             }
                         }
                         else if (ability3.AbilityBehavior.HasFlag(AbilityBehavior.UnitTarget))
                         {
-                            if(ability3.UseAbility(this.ComboMode.CurrentTarget))
+                            if(ability3.Cast(this.ComboMode.CurrentTarget))
                             {
                                 await Task.Delay(180, token);
                             }
                         }
                         else if (ability3.AbilityBehavior.HasFlag(AbilityBehavior.Point))
                         {
-                            if(ability3.UseAbility(this.ComboMode.CurrentTarget.Position))
+                            if(ability3.Cast(this.ComboMode.CurrentTarget.Position))
                             {
                                 await Task.Delay(180, token);
                             }
                         }
                     }
                     else if (ability3 != null
-                             && AbilityExtensions.CanBeCasted(ability3)
+                             && Core.Extensions.AbilityExtensions.CanBeCasted(ability3)
                              && ability3.TargetTeamType == TargetTeamType.Allied
                              && unit.Unit.Distance2D(this.Owner) <= Extensions.GetAbilityCastRange(unit.Unit, ability3))
                     {
-                        if (ability3.UseAbility(this.Owner))
+                        if (ability3.Cast(this.Owner))
                         {
                             await Task.Delay(180, token);
                         }
                     }
 
                     if (ability4 != null
-                        && AbilityExtensions.CanBeCasted(ability4)
+                        && Core.Extensions.AbilityExtensions.CanBeCasted(ability4)
                         && UnitCastingChecks(ability4.Name, unit.Unit, this.ComboMode.CurrentTarget, ability4)
-                        && AbilityExtensions.CanHit(ability4, this.ComboMode.CurrentTarget)
+                        && Core.Extensions.AbilityExtensions.CanHit(ability4, this.ComboMode.CurrentTarget)
                         && (ability4.TargetTeamType == TargetTeamType.Enemy ||
                             ability4.TargetTeamType == TargetTeamType.None)
                         && (unit.Unit.Distance2D(this.ComboMode.CurrentTarget) <= Extensions.GetAbilityCastRange(unit.Unit, ability4) ||
@@ -385,7 +362,7 @@ namespace BAIO
                     {
                         if (ability4.AbilityBehavior.HasFlag(AbilityBehavior.NoTarget))
                         {
-                            if (ability4.UseAbility())
+                            if (ability4.Cast())
                             {
                                 await Task.Delay(180, token);
 
@@ -393,25 +370,25 @@ namespace BAIO
                         }
                         else if (ability4.AbilityBehavior.HasFlag(AbilityBehavior.UnitTarget))
                         {
-                            if (ability4.UseAbility(this.ComboMode.CurrentTarget))
+                            if (ability4.Cast(this.ComboMode.CurrentTarget))
                             {
                                 await Task.Delay(180, token);
                             }
                         }
                         else if (ability4.AbilityBehavior.HasFlag(AbilityBehavior.Point))
                         {
-                            if (ability4.UseAbility(this.ComboMode.CurrentTarget.Position))
+                            if (ability4.Cast(this.ComboMode.CurrentTarget.Position))
                             {
                                 await Task.Delay(180, token);
                             }
                         }
                     }
                     else if (ability4 != null
-                             && AbilityExtensions.CanBeCasted(ability4)
+                             && Core.Extensions.AbilityExtensions.CanBeCasted(ability4)
                              && ability4.TargetTeamType == TargetTeamType.Allied
                              && unit.Unit.Distance2D(this.Owner) <= Extensions.GetAbilityCastRange(unit.Unit, ability4))
                     {
-                        if (ability4.UseAbility(this.Owner))
+                        if (ability4.Cast(this.Owner))
                         {
                             await Task.Delay(180, token);
                         }
@@ -421,7 +398,7 @@ namespace BAIO
 
             await Task.Delay(100, token);
         }
-        private int WardsRange => this.Owner.AghanimState() ? 875 : 650;
+        private int WardsRange => this.Owner.HasAghanimsScepter() ? 875 : 650;
 
         public virtual async Task WardsAttack(CancellationToken tk)
         {
@@ -430,17 +407,17 @@ namespace BAIO
                 return;
             }
 
-            var wardsShouldAttack = EntityManager<Unit>.Entities.Where(x =>
-                x != null && !Game.IsPaused && x.IsValid && x.Distance2D(this.ComboMode.CurrentTarget) <= WardsRange &&
+            var wardsShouldAttack = EntityManager.GetEntities<Unit>().Where(x =>
+                x != null && !GameManager.IsPaused && x.IsValid && x.Distance2D(this.ComboMode.CurrentTarget) <= WardsRange &&
                 x.Name.Contains("npc_dota_shadow_shaman_ward") &&
-                Ensage.SDK.Extensions.UnitExtensions.CanAttack(x, this.ComboMode.CurrentTarget)).ToList();
+                UnitExtensions.CanAttack(x, this.ComboMode.CurrentTarget)).ToList();
 
             if (!wardsShouldAttack.Any())
             {
                 return;
             }
 
-            if (Player.EntitiesAttack(wardsShouldAttack, this.ComboMode.CurrentTarget))
+            if (Player.Attack(wardsShouldAttack, this.ComboMode.CurrentTarget))
             {
                 await Task.Delay(200, tk);
             }
@@ -448,8 +425,8 @@ namespace BAIO
             await Task.Delay(100, tk);
             //foreach (var ward in wardsShouldAttack)
             //{
-            //    if (ward == null || Game.IsPaused || !ward.IsValid ||
-            //        !Ensage.SDK.Extensions.UnitExtensions.CanAttack(ward, this.ComboMode.CurrentTarget) ||
+            //    if (ward == null || GameManager.IsPaused || !ward.IsValid ||
+            //        !Core.SDK.Extensions.UnitExtensions.CanAttack(ward, this.ComboMode.CurrentTarget) ||
             //        ward.Distance2D(this.ComboMode.CurrentTarget) >= WardsRange) continue;
 
             //    if (ward.Attack(this.ComboMode.CurrentTarget))
@@ -475,17 +452,14 @@ namespace BAIO
             return true;
         }
 
-        protected override void OnActivate()
+        protected virtual void OnActivate()
         {
             try
             {
+                this.Context = new ServiceContext();
+
                 this.Context.Inventory.Attach(this);
-                this.Owner = (Hero) this.Context.Owner;
-
-                NoobFailSafe();
-
-                this.Context.Orbwalker.Settings.Attack.Value = true;
-                this.Context.Orbwalker.Settings.Move.Value = true;
+                this.Owner = EntityManager.LocalHero;
 
                 this.Config = new Config(this.Owner.HeroId);
                 this.ComboMode = this.GetComboMode();
@@ -493,21 +467,21 @@ namespace BAIO
                 this.HarassMode = this.GetHarassMode();
                 this.Context.Orbwalker.RegisterMode(this.HarassMode);
 
-                this.KillstealHandler = UpdateManager.Run(this.KillStealAsync, true, this.Config.General.Killsteal);
+                this.KillstealHandler = TaskHandler.Run(this.KillStealAsync, true, this.Config.General.Killsteal);
 
-                UpdateManager.Subscribe(this.TargetIndicatorUpdater);
+                UpdateManager.CreateIngameUpdate(this.TargetIndicatorUpdater);
 
-                this.Config.General.DrawTargetIndicator.PropertyChanged += this.DrawTargetLinePropertyChanged;
-                this.Config.General.Killsteal.PropertyChanged += this.KillstealPropertyChanged;
+                this.Config.General.DrawTargetIndicator.ValueChanged += this.OnDrawTargetLinePropertyChanged;
+                this.Config.General.Killsteal.ValueChanged += this.OnKillstealPropertyChanged;
                 this.Context.Inventory.CollectionChanged += this.InventoryChanged;
 
                 this.Updater = new Updater(this);
-                this.UnitHandler = UpdateManager.Run(OnUpdate);
-                this.BodyBlockHandler = UpdateManager.Run(Bodyblock);
+                this.UnitHandler = TaskHandler.Run(OnUpdate);
+                this.BodyBlockHandler = TaskHandler.Run(Bodyblock);
 
                 if (this.Owner.HeroId == HeroId.npc_dota_hero_shadow_shaman)
                 {
-                    this.WardsHandler = UpdateManager.Run(WardsAttack);
+                    this.WardsHandler = TaskHandler.Run(WardsAttack);
                 }
 
                 Printer.Print($"Thanks for purchasing/trialing my assembly!!");
@@ -520,32 +494,34 @@ namespace BAIO
             }
             catch (NullReferenceException)
             {
-                Printer.Print($"Please enable orbwalker in Ensage.SDK > Plugins menu.");
+                Printer.Print($"Please enable orbwalker in Core.SDK > Plugins menu.");
             }
             catch (Exception e)
             {
-                Log.Error($"Exception in OnActivate: {e}");
+                LogManager.Error($"Exception in OnActivate: {e}");
             }
         }
 
-        protected override void OnDeactivate()
+        protected virtual void OnDeactivate()
         {
             this.Context.Inventory.Detach(this);
 
             this.Context.Orbwalker.UnregisterMode(this.HarassMode);
             this.Context.Orbwalker.UnregisterMode(this.ComboMode);
 
-            this.Config.General.DrawTargetIndicator.PropertyChanged -= this.DrawTargetLinePropertyChanged;
-            this.Config.General.Killsteal.PropertyChanged -= this.KillstealPropertyChanged;
+            this.Config.General.DrawTargetIndicator.ValueChanged -= this.OnDrawTargetLinePropertyChanged;
+            this.Config.General.Killsteal.ValueChanged -= this.OnKillstealPropertyChanged;
             this.Context.Inventory.CollectionChanged -= this.InventoryChanged;
 
-            UpdateManager.Unsubscribe(this.TargetIndicatorUpdater);
+            UpdateManager.DestroyIngameUpdate(this.TargetIndicatorUpdater);
             this.UnitHandler?.Cancel();
             this.BodyBlockHandler?.Cancel();
             this.KillstealHandler.Cancel();
 
             this.Config.Dispose();
-            
+
+            this.Context.Dispose();
+
         }
     }
 }

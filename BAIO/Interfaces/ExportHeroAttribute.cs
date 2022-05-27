@@ -1,16 +1,15 @@
 ﻿namespace BAIO.Interfaces
 {
     using System;
-    using System.ComponentModel.Composition;
 
-    using Ensage;
+    using Divine.Entity.Entities.Units.Heroes.Components;
 
-    [MetadataAttribute]
+    using Attribute = System.Attribute;
+
     [AttributeUsage(AttributeTargets.Class)]
-    public class ExportHeroAttribute : ExportAttribute, IHeroMetadata
+    public class ExportHeroAttribute : Attribute, IHeroMetadata
     {
         public ExportHeroAttribute(HeroId id)
-            : base(typeof(IHero))
         {
             this.Id = id;
         }

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Ensage;
-using Ensage.SDK.Service;
-using log4net;
-using PlaySharp.Toolkit.Logging;
+
+using Divine.Entity.Entities.Abilities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units;
 
 namespace BAIO.UnitManager
 {
@@ -15,10 +11,7 @@ namespace BAIO.UnitManager
     {
         public readonly BaseHero Main;
         public Unit Unit;
-        public int Handle;
-        private static readonly ILog Log = AssemblyLogs.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        public UnitMovementManager UnitMovementManager { get; set; }
+        public uint Handle;
 
         public Ability Ability { get; set; }
         public Ability Ability2 { get; set; }
@@ -29,16 +22,11 @@ namespace BAIO.UnitManager
         {
             Main = main;
             Unit = unit;
-            Handle = unit.Handle.Handle;
-            Ability = unit.Spellbook.Spells.Count(x => x.Name != "lone_druid_spirit_bear_return" && !x.AbilityBehavior.HasFlag(AbilityBehavior.Passive)) > 0 ? unit.Spellbook.SpellQ : null;
-            Ability2 = unit.Spellbook.Spells.Count(x => !x.Name.StartsWith("special_") && !x.AbilityBehavior.HasFlag(AbilityBehavior.Passive)) > 1 ? unit.Spellbook.SpellW : null;
-            Ability3 = unit.Spellbook.Spells.Count(x => !x.Name.StartsWith("special_") && !x.AbilityBehavior.HasFlag(AbilityBehavior.Passive)) > 2 ? unit.Spellbook.SpellE : null;
-            Ability4 = unit.Spellbook.Spells.Count(x => !x.Name.StartsWith("special_") && !x.AbilityBehavior.HasFlag(AbilityBehavior.Passive)) > 3 ? unit.Spellbook.SpellR : null;
-
-            if (unit.Name != "npc_dota_templar_assassin_psionic_trap")
-            {
-                UnitMovementManager = new UnitMovementManager(new EnsageServiceContext(unit));
-            }
+            Handle = unit.Handle;
+            Ability = unit.Spellbook.Spells.Count(x => x.Name != "lone_druid_spirit_bear_return" && !x.AbilityBehavior.HasFlag(AbilityBehavior.Passive)) > 0 ? unit.Spellbook.Spell1 : null;
+            Ability2 = unit.Spellbook.Spells.Count(x => !x.Name.StartsWith("special_") && !x.AbilityBehavior.HasFlag(AbilityBehavior.Passive)) > 1 ? unit.Spellbook.Spell2 : null;
+            Ability3 = unit.Spellbook.Spells.Count(x => !x.Name.StartsWith("special_") && !x.AbilityBehavior.HasFlag(AbilityBehavior.Passive)) > 2 ? unit.Spellbook.Spell3 : null;
+            Ability4 = unit.Spellbook.Spells.Count(x => !x.Name.StartsWith("special_") && !x.AbilityBehavior.HasFlag(AbilityBehavior.Passive)) > 3 ? unit.Spellbook.Spell6 : null;
         }
 
         public static bool operator ==(UnitManager left, UnitManager right)
@@ -73,7 +61,7 @@ namespace BAIO.UnitManager
 
         public override int GetHashCode()
         {
-            return Handle;
+            return (int)Handle;
         }
     }
 }

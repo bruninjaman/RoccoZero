@@ -1,13 +1,18 @@
-﻿using System.Collections.Generic;
-using EnsageSharp.Sandbox;
-using Newtonsoft.Json;
-
-namespace BAIO
+﻿namespace BAIO
 {
     using System;
-    using Ensage;
-    using Ensage.Common.Menu;
-    using Ensage.SDK.Menu;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Reflection;
+    using System.Text.Json;
+
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units.Heroes.Components;
+    using Divine.Game;
+    using Divine.Input;
+    using Divine.Menu;
+    using Divine.Menu.Items;
+    using Divine.Service;
 
     public class Config : IDisposable
     {
@@ -15,12 +20,12 @@ namespace BAIO
 
         public Config(HeroId id)
         {
-            this.Factory = MenuFactory.Create("BAIO");
-            this.General = new GeneralMenu(this.Factory);
-            this.Hero = new HeroMenu(this.Factory, id.ToString());
+            this.RootMenu = MenuManager.CreateRootMenu("BAIO");
+            this.General = new GeneralMenu(this.RootMenu);
+            this.Hero = new HeroMenu(this.RootMenu, id);
         }
 
-        public MenuFactory Factory { get; }
+        public RootMenu RootMenu { get; }
 
         public GeneralMenu General { get; set; }
 
@@ -34,57 +39,60 @@ namespace BAIO
 
         protected virtual void Dispose(bool disposing)
         {
-            if (this.disposed)
-            {
-                return;
-            }
+            //if (this.disposed)
+            //{
+            //    return;
+            //}
 
-            if (disposing)
-            {
-                this.Factory.Dispose();
-            }
+            //if (disposing)
+            //{
+            //    this.RootMenu.Dispose();
+            //}
 
-            this.disposed = true;
+            //this.disposed = true;
         }
 
         public class GeneralMenu : IDisposable
         {
             private bool disposed;
 
-            public GeneralMenu(MenuFactory factory)
+            public GeneralMenu(RootMenu rootMenu)
             {
-                this.Factory = factory.Menu("General");
+                this.Factory = rootMenu.CreateMenu("General");
 
-                this.Enabled = this.Factory.Item("Enabled", true);
+                this.Enabled = this.Factory.CreateSwitcher("Enabled");
 
-                this.ComboKey = this.Factory.Item("Combo Key", new KeyBind(32));
+                this.ComboKey = this.Factory.CreateHoldKey("Combo Key", Key.None);
+                this.HarassKey = this.Factory.CreateHoldKey("Harass Key", Key.None);
 
-                this.Killsteal = this.Factory.Item("Killsteal", true);
-                this.Killsteal.Item.Tooltip = "Enable Killsteal";
+                this.Killsteal = this.Factory.CreateSwitcher("Killsteal");
+                this.Killsteal.SetTooltip("Enable Killsteal");
 
-                this.DrawTargetIndicator = this.Factory.Item("Draw Target Indicator", true);
-                this.DrawTargetIndicator.Item.Tooltip = "Draws Target Indicator on top of the target";
+                this.DrawTargetIndicator = this.Factory.CreateSwitcher("Draw Target Indicator");
+                this.DrawTargetIndicator.SetTooltip("Draws Target Indicator on top of the target");
 
-                this.LockTarget = this.Factory.Item("Lock Target", true);
-                this.LockTarget.Item.Tooltip = "Keep your target until it's dead or you release the key";
+                this.LockTarget = this.Factory.CreateSwitcher("Lock Target");
+                this.LockTarget.SetTooltip("Keep your target until it's dead or you release the key");
 
-                this.KiteMode = this.Factory.Item("Kite mode", true);
-                this.KiteMode.Item.Tooltip = "Only try to attack when in attack range";
+                this.KiteMode = this.Factory.CreateSwitcher("Kite mode");
+                this.KiteMode.SetTooltip("Only try to attack when in attack range");
             }
 
-            public MenuItem<KeyBind> ComboKey { get; }
+            public MenuHoldKey ComboKey { get; }
 
-            public MenuItem<bool> DrawTargetIndicator { get; }
+            public MenuHoldKey HarassKey { get; }
 
-            public MenuFactory Factory { get; }
+            public MenuSwitcher DrawTargetIndicator { get; }
 
-            public MenuItem<bool> Killsteal { get; }
+            public Menu Factory { get; }
 
-            public MenuItem<bool> KiteMode { get; }
+            public MenuSwitcher Killsteal { get; }
 
-            public MenuItem<bool> LockTarget { get; }
+            public MenuSwitcher KiteMode { get; }
 
-            public MenuItem<bool> Enabled { get; }
+            public MenuSwitcher LockTarget { get; }
+
+            public MenuSwitcher Enabled { get; }
 
             public void Dispose()
             {
@@ -94,17 +102,17 @@ namespace BAIO
 
             protected virtual void Dispose(bool disposing)
             {
-                if (this.disposed)
-                {
-                    return;
-                }
+                //if (this.disposed)
+                //{
+                //    return;
+                //}
 
-                if (disposing)
-                {
-                    this.Factory.Dispose();
-                }
+                //if (disposing)
+                //{
+                //    this.Factory.Dispose();
+                //}
 
-                this.disposed = true;
+                //this.disposed = true;
             }
         }
 
@@ -113,77 +121,67 @@ namespace BAIO
             private bool disposed;
             public Dictionary<int, string> Translations { get; set; }
 
-            public HeroMenu(MenuFactory factory, string heroName)
+            public HeroMenu(RootMenu rootMenu, HeroId heroId)
             {
-                var lang = SandboxConfig.Language;
-                if (lang == "zh-Hans" || lang == "zh-Hant")
+                var assembly = Assembly.GetExecutingAssembly();
+
+                var lang = DivineService.Language;
+                if (lang == Language.Cn)
                 {
-                    Translations = JsonConvert.DeserializeObject<Dictionary<int, string>>(Resource1.cn);
+                    var stream = assembly.GetManifestResourceStream("BAIO.Localization.cn.json");
+                    Translations = JsonSerializer.Deserialize<Dictionary<int, string>>(new StreamReader(stream).ReadToEnd());;
                 }
-                else if (lang == "bg")
+                else if (lang == Language.Ru)
                 {
-                    Translations = JsonConvert.DeserializeObject<Dictionary<int, string>>(Resource1.ru);
+                    var stream = assembly.GetManifestResourceStream("BAIO.Localization.ru.json");
+                    Translations = JsonSerializer.Deserialize<Dictionary<int, string>>(new StreamReader(stream).ReadToEnd());
                 }
                 else
                 {
-                    Translations = JsonConvert.DeserializeObject<Dictionary<int, string>>(Resource1.en);
+                    var stream = assembly.GetManifestResourceStream("BAIO.Localization.en.json");
+                    Translations = JsonSerializer.Deserialize<Dictionary<int, string>>(new StreamReader(stream).ReadToEnd());
                 }
 
-                this.Factory = factory.MenuWithTexture(Game.Localize(heroName), heroName);
-                this.ItemMenu = Factory.Menu("Items", "items");
-                this.LinkenBreakerMenu = ItemMenu.Menu("Linken Breakers", "linkenbreakers");
-                this.LinkenBreakerPriorityMenu = LinkenBreakerMenu.Item("Priority", new PriorityChanger(LinkenAbilityPriorityList));
-                this.LinkenBreakerTogglerMenu = LinkenBreakerMenu.Item("Toggler", new AbilityToggler(LinkenAbilityTogglerDic));
+                this.Factory = rootMenu.CreateMenu(GameManager.GetLocalize(heroId.ToString())).SetHeroImage(heroId);
+                this.ItemMenu = Factory.CreateMenu("Items", "items");
+                this.LinkenBreakerMenu = ItemMenu.CreateMenu("Linken Breakers", "linkenbreakers");
+                this.LinkenBreakerTogglerMenu = LinkenBreakerMenu.CreateAbilityToggler("AbilityToggler", "", LinkenAbilityTogglerDic, true);
 
-                this.UnitController = Factory.MenuWithTexture(Translations[2], "npc_dota_neutral_centaur_khan");
-                this.Bodyblocker = this.UnitController.MenuWithTexture(Translations[3], "earthshaker_fissure");
+                this.UnitController = Factory.CreateMenu(Translations[2]).SetImage("npc_dota_neutral_centaur_khan", MenuImageType.Unit);
+                this.Bodyblocker = this.UnitController.CreateMenu(Translations[3]).SetAbilityImage(AbilityId.earthshaker_fissure);
                 var ucMenu = this.UnitController;
                 var bb = this.Bodyblocker;
-                this.ControlUnits = ucMenu.Item(Translations[4], true);
-                this.Enabled = bb.Item(Translations[5], true);
-                this.UseUnitAbilities = ucMenu.Item(Translations[6], true);
-                this.BlockSensitivity = bb.Item(Translations[7], new Slider(150, 50, 300));
-                this.BlockSensitivity.Item.Tooltip = Translations[8];
+                this.ControlUnits = ucMenu.CreateSwitcher(Translations[4]);
+                this.Enabled = bb.CreateSwitcher(Translations[5]);
+                this.UseUnitAbilities = ucMenu.CreateSwitcher(Translations[6]);
+                this.BlockSensitivity = bb.CreateSlider(Translations[7], 150, 50, 300);
+                this.BlockSensitivity.SetTooltip(Translations[8]);
             }
 
-            public MenuFactory Factory { get; }
-            public MenuFactory ItemMenu { get; }
-            public MenuFactory LinkenBreakerMenu { get; }
-            public MenuFactory UnitController;
-            public MenuFactory Bodyblocker;
+            public Menu Factory { get; }
+            public Menu ItemMenu { get; }
+            public Menu LinkenBreakerMenu { get; }
+            public Menu UnitController;
+            public Menu Bodyblocker;
 
-            public MenuItem<PriorityChanger> LinkenBreakerPriorityMenu;
-            public MenuItem<AbilityToggler> LinkenBreakerTogglerMenu;
+            public MenuAbilityToggler LinkenBreakerTogglerMenu;
 
-            public MenuItem<bool> ControlUnits;
-            public MenuItem<bool> Enabled;
-            public MenuItem<Slider> BlockSensitivity;
-            public MenuItem<bool> UseUnitAbilities;
+            public MenuSwitcher ControlUnits;
+            public MenuSwitcher Enabled;
+            public MenuSlider BlockSensitivity;
+            public MenuSwitcher UseUnitAbilities;
 
-
-            public Dictionary<string, bool> LinkenAbilityTogglerDic = new Dictionary<string, bool>
-        {
-                { "item_sheepstick", true},
-                { "item_rod_of_atos", true},
-                { "item_nullifier", true },
-                { "item_bloodthorn", true },
-                { "item_orchid", true },
-                { "item_cyclone", true },
-                { "item_force_staff", true },
-                { "item_diffusal_blade", true }
-        };
-
-            public List<string> LinkenAbilityPriorityList = new List<string>
-        {
-                { "item_sheepstick" },
-                { "item_rod_of_atos" },
-                { "item_nullifier" },
-                { "item_bloodthorn" },
-                { "item_orchid" },
-                { "item_cyclone" },
-                { "item_force_staff" },
-                { "item_diffusal_blade" }
-        };
+            public Dictionary<AbilityId, bool> LinkenAbilityTogglerDic = new Dictionary<AbilityId, bool>
+            {
+                    { AbilityId.item_sheepstick, true},
+                    { AbilityId.item_rod_of_atos, true},
+                    { AbilityId.item_nullifier, true },
+                    { AbilityId.item_bloodthorn, true },
+                    { AbilityId.item_orchid, true },
+                    { AbilityId.item_cyclone, true },
+                    { AbilityId.item_force_staff, true },
+                    { AbilityId.item_diffusal_blade, true }
+            };
 
             public void Dispose()
             {
@@ -193,17 +191,17 @@ namespace BAIO
 
             protected virtual void Dispose(bool disposing)
             {
-                if (this.disposed)
-                {
-                    return;
-                }
+                //if (this.disposed)
+                //{
+                //    return;
+                //}
 
-                if (disposing)
-                {
-                    this.Factory.Dispose();
-                }
+                //if (disposing)
+                //{
+                //    this.Factory.Dispose();
+                //}
 
-                this.disposed = true;
+                //this.disposed = true;
             }
         }
     }

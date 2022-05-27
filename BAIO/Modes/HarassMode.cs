@@ -4,10 +4,10 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Ensage;
-    using Ensage.Common.Threading;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Helpers;
+    using Divine.Entity;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Extensions;
+
     using Ensage.SDK.Orbwalker.Modes;
 
     public class HarassMode : AttackOrbwalkingModeAsync
@@ -15,12 +15,10 @@
         private readonly BaseHero BaseHero;
 
         public HarassMode(BaseHero hero)
-            : base(hero.Context, "BAIO Harass", 88, false, false, false, false, true, true)
+            : base(hero.Context, hero.Config.General.HarassKey)
         {
             this.BaseHero = hero;
         }
-
-        protected float BonusAttackRange => this.Selector?.BonusRange ?? 0.0f;
 
         public override async Task ExecuteAsync(CancellationToken token)
         {
@@ -31,9 +29,11 @@
                 return;
             }
 
-            var harrasTarget = EntityManager<Hero>.Entities.Where(x => x.IsVisible && x.IsAlive && !x.IsIllusion && x.IsEnemy(this.Owner) && this.Owner.IsInAttackRange(x, this.BonusAttackRange))
-                                                  .OrderBy(x => x.Health)
-                                                  .FirstOrDefault();
+            var harrasTarget = EntityManager.GetEntities<Hero>()
+                .Where(x => x.IsVisible && x.IsAlive && !x.IsIllusion && x.IsEnemy(this.Owner) && this.Owner.IsInAttackRange(x))
+                .OrderBy(x => x.Health)
+                .FirstOrDefault();
+
             if (harrasTarget != null)
             {
                 this.Orbwalker.OrbwalkTo(harrasTarget);
@@ -41,7 +41,7 @@
             }
 
             this.Orbwalker.OrbwalkTo(null);
-            await Await.Delay(10, token);
+            await Task.Delay(10, token);
         }
     }
 }

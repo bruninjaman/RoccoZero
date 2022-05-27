@@ -48,7 +48,7 @@ internal class Bootstrap : Bootstrapper
         evaderServices.Add(debugger);
 
         var mainEvaderServices = new Dictionary<Type, IEvaderService>()
-{
+        {
             { typeof(IMainMenu), menuManager },
             { typeof(IPathfinder), pathfinder },
             { typeof(IActionManager), actionManager },
@@ -56,11 +56,6 @@ internal class Bootstrap : Bootstrapper
             { typeof(IEvadeModeManager), evadeModeManager },
             { typeof(IDebugger), debugger }
         };
-
-        // foreach (var modifier in Divine.Entity.EntityManager.LocalHero.Modifiers)
-        // {
-        //     Console.WriteLine($"Modifier: {modifier.Name}");
-        // }
 
         foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
         {
