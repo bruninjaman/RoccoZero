@@ -16,9 +16,12 @@ public class ScytheOfVyse : RangedAbility, IDisable, IAppliesImmobility
     public ScytheOfVyse(Ability baseAbility)
         : base(baseAbility)
     {
+        StaticImmobilityModifierName = this.ImmobilityModifierName;
     }
 
     public UnitState AppliesUnitState { get; } = UnitState.Hexed | UnitState.Silenced | UnitState.Disarmed;
 
     public string ImmobilityModifierName { get; } = "modifier_sheepstick_debuff";
+    
+    public static string StaticImmobilityModifierName { get; private set; }
 }
