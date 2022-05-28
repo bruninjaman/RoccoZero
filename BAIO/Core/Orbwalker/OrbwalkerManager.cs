@@ -21,6 +21,11 @@
         {
             this.Context = context;
             this.Owner = context.Owner;
+
+            this.Orbwalker = new Orbwalker(Context);
+            Orbwalker.Activate();
+
+            this.OnUpdateHandler = UpdateManager.CreateIngameUpdate(100, this.OnUpdate);
         }
 
         public Orbwalker Orbwalker { get; private set; }
@@ -87,22 +92,7 @@
             }
         }
 
-        public void OnActivate()
-        {
-            try
-            {
-                this.Orbwalker = new Orbwalker(Context);
-                Orbwalker.Activate();
-
-                this.OnUpdateHandler = UpdateManager.CreateIngameUpdate(100, this.OnUpdate);
-            }
-            catch (Exception e)
-            {
-                LogManager.Warn(e);
-            }
-        }
-
-        public void OnDeactivate()
+        public void Dispose()
         {
             UpdateManager.DestroyIngameUpdate(this.OnUpdateHandler);
 

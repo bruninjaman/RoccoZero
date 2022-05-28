@@ -4,6 +4,8 @@ using System;
 
 using Divine.Entity.Entities.Units;
 
+using Ensage.SDK.Abilities;
+using Ensage.SDK.Inventory;
 using Ensage.SDK.Orbwalker;
 
 using Ensage.SDK.TargetSelector;
@@ -14,13 +16,11 @@ public interface IServiceContext : IDisposable
 
     //IAbilityDetector AbilityDetector { get; }
 
-    //AbilityFactory AbilityFactory { get; }
+    AbilityFactory AbilityFactory { get; }
 
-    //IInventoryManager Inventory { get; }
+    IInventoryManager Inventory { get; }
 
     IOrbwalkerManager Orbwalker { get; }
-
-    //IPredictionManager Prediction { get; }
 
     ITargetSelectorManager TargetSelector { get; }
 }
