@@ -483,18 +483,10 @@ namespace BAIO
                 {
                     this.WardsHandler = TaskHandler.Run(WardsAttack);
                 }
-
-                Printer.Print($"Thanks for purchasing/trialing my assembly!!");
-                Printer.Print($"If you encounter any bugs/errors please report them over forum");
-                Printer.Print($"Have fun! -beminee");
             }
             catch (TaskCanceledException)
             {
                 // ignore.
-            }
-            catch (NullReferenceException)
-            {
-                Printer.Print($"Please enable orbwalker in Core.SDK > Plugins menu.");
             }
             catch (Exception e)
             {

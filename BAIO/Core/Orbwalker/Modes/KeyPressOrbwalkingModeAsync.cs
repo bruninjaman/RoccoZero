@@ -25,12 +25,12 @@ namespace Ensage.SDK.Orbwalker.Modes
 
         public MenuHoldKey MenuKey { get; }
 
-        protected virtual void OnActivate()
+        protected override void OnActivate()
         {
             this.MenuKey.ValueChanged += this.MenuKeyOnPropertyChanged;
         }
 
-        protected virtual void OnDeactivate()
+        protected override void OnDeactivate()
         {
             this.MenuKey.ValueChanged -= this.MenuKeyOnPropertyChanged;
         }

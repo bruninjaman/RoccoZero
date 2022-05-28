@@ -103,8 +103,9 @@ namespace BAIO.Heroes.Modes.Combo
             }
             catch (Exception e)
             {
-                LogManager.Debug($"{e}");
+                LogManager.Error(e);
             }
+
             this.OrbwalkToTarget();
         }
 

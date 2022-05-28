@@ -9,6 +9,7 @@ using BAIO.Modes;
 using Divine.Entity;
 using Divine.Entity.Entities.Units.Heroes;
 using Divine.Entity.Entities.Units.Heroes.Components;
+using Divine.Entity.EventArgs;
 using Divine.Extensions;
 using Divine.Game;
 using Divine.Menu.Items;
@@ -140,6 +141,37 @@ namespace BAIO.Heroes.Base
             this.MantaHeroes = itemMenu.CreateHeroToggler("Manta", new());
             this.NullifierHeroes = itemMenu.CreateHeroToggler("Nullifier", new());
             this.AbyssalBladeHeroes = itemMenu.CreateHeroToggler("Abyssal Blade", new());
+
+            EntityManager.EntityAdded += OnEntityAdded;
+            EntityManager.EntityRemoved += OnEntityRemoved;
+        }
+
+        private void OnEntityAdded(EntityAddedEventArgs e)
+        {
+            if (e.Entity is not Hero hero || hero.IsIllusion || hero.IsAlly(Owner))
+            {
+                return;
+            }
+
+            var heroId = hero.HeroId;
+            BlinkHeroes.AddValue(heroId, true);
+            MantaHeroes.AddValue(heroId, true);
+            NullifierHeroes.AddValue(heroId, true);
+            AbyssalBladeHeroes.AddValue(heroId, true);
+        }
+
+        private void OnEntityRemoved(EntityRemovedEventArgs e)
+        {
+            if (e.Entity is not Hero hero || hero.IsIllusion || hero.IsAlly(Owner))
+            {
+                return;
+            }
+
+            var heroId = hero.HeroId;
+            BlinkHeroes.RemoveValue(heroId);
+            MantaHeroes.RemoveValue(heroId);
+            NullifierHeroes.RemoveValue(heroId);
+            AbyssalBladeHeroes.RemoveValue(heroId);
         }
 
         protected override async Task KillStealAsync(CancellationToken token)
