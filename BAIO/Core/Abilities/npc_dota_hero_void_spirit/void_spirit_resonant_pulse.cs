@@ -4,13 +4,13 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_void_spirit
 {
-    using System;
     using System.Linq;
 
-    using Ensage.SDK.Helpers;
-    using Ensage.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
 
-    using SharpDX;
+    using Ensage.SDK.Helpers;
 
     public class void_spirit_resonant_pulse : ActiveAbility, IAreaOfEffectAbility
     {

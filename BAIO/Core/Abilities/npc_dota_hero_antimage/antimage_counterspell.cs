@@ -2,6 +2,8 @@
 //    Copyright (c) 2017 Ensage.
 // </copyright>
 
+using Divine.Entity.Entities.Abilities;
+
 using Ensage.SDK.Abilities.Components;
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_antimage

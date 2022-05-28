@@ -4,8 +4,11 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_storm_spirit
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
 
     public class storm_spirit_electric_vortex : RangedAbility, IHasTargetModifier, IHasModifier, IAreaOfEffectAbility
     {

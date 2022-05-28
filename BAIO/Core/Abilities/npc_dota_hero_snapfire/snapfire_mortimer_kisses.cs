@@ -6,12 +6,13 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_snapfire
 {
     using System.Linq;
 
-    using SharpDX;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
+    using Divine.Numerics;
 
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
     using Ensage.SDK.Helpers;
-    using Ensage.SDK.Geometry;
 
     public class snapfire_mortimer_kisses : CircleAbility, IHasModifier, IHasTargetModifier, IHasDot, IChannable
     {
@@ -92,7 +93,7 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_snapfire
                 return false;
             }
 
-            lastRedirectPosition = target.NetworkPosition;
+            lastRedirectPosition = target.Position;
             return Owner.Move(target.Position);
         }
 

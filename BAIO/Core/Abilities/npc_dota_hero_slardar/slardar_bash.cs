@@ -1,12 +1,8 @@
-﻿// <copyright file="slardar_bash.cs" company="Ensage">
-//    Copyright (c) 2018 Ensage.
-// </copyright>
-
-namespace Ensage.SDK.Abilities.npc_dota_hero_slardar
+﻿namespace Ensage.SDK.Abilities.npc_dota_hero_slardar
 {
-    using Ensage.Common.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Extensions;
 
-    using Ensage.SDK.Extensions;
     using Ensage.SDK.Abilities.Components;
 
     public class slardar_bash : PassiveAbility, IHasTargetModifierTexture, IHasModifier, IHasTargetModifier

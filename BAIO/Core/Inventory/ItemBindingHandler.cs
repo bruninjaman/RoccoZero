@@ -7,6 +7,7 @@ namespace Ensage.SDK.Inventory
     using Divine.Entity.Entities.Abilities.Components;
     using Divine.Zero.Log;
 
+    using Ensage.SDK.Abilities;
     using Ensage.SDK.Persistence;
 
     public class ItemBindingHandler

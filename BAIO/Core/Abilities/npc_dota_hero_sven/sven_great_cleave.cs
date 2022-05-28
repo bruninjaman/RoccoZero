@@ -4,7 +4,8 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_sven
 {
-    using Ensage.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Extensions;
 
     public class sven_great_cleave : PassiveAbility, IAreaOfEffectAbility
     {

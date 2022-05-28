@@ -6,9 +6,10 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_void_spirit
 {
     using System;
 
-    using Ensage.SDK.Extensions;
-
-    using SharpDX;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Extensions;
+    using Divine.Game;
+    using Divine.Numerics;
 
     public class void_spirit_aether_remnant : LineAbility
     {
@@ -56,12 +57,7 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_void_spirit
                 return false;
             }
 
-            if (!this.Ability.TargetPosition(startPosition) || !this.Ability.TargetPosition(direction))
-            {
-                return false;
-            }
-
-            var result = this.Ability.UseAbility(startPosition);
+            var result = this.Ability.Cast(startPosition, direction);
 
             if (result)
             {

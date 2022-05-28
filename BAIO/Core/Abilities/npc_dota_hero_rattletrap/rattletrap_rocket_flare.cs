@@ -1,10 +1,10 @@
-// <copyright file="rattletrap_rocket_flare.cs" company="Ensage">
-//    Copyright (c) 2017 Ensage.
-// </copyright>
-
 namespace Ensage.SDK.Abilities.npc_dota_hero_rattletrap
 {
-    using Ensage.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
+
     using Ensage.SDK.Helpers;
 
     public class rattletrap_rocket_flare : CircleAbility

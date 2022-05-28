@@ -1,14 +1,13 @@
 ﻿namespace BAIO
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
 
     using Divine.Entity;
     using Divine.Entity.Entities.Units.Heroes;
     using Divine.Entity.Entities.Units.Heroes.Components;
     using Divine.Service;
-    using Divine.Zero.Log;
 
     using Interfaces;
 
@@ -25,7 +24,7 @@
     {
         private Hero Owner;
 
-        private Lazy<IHero, IHeroMetadata> Hero;
+        private IHero Hero;
 
         private readonly HeroId[] SupportedHeroes =
         {
@@ -57,48 +56,30 @@
 
         private readonly HeroId[] ExcludeFromDynamicCombo = new[] { HeroId.npc_dota_hero_phantom_lancer, HeroId.npc_dota_hero_broodmother };
 
-        [ImportMany(typeof(IHero))]
-        protected IEnumerable<Lazy<IHero, IHeroMetadata>> Heroes { get; set; }
-
         protected override void OnActivate()
         {
             Owner = EntityManager.LocalHero;
 
             if (SupportedHeroes.Contains(this.Owner.HeroId))
             {
-                this.Hero = this.Heroes.FirstOrDefault(e => e.Metadata.Id == this.Owner.HeroId);
-                if (Hero != null)
-                {
-                    this.Hero.Value.Activate();
-                }
+                var type = Assembly.GetExecutingAssembly().ExportedTypes.FirstOrDefault(x => x.GetCustomAttribute<ExportHeroAttribute>()?.Id == Owner.HeroId);
+
+                this.Hero = (IHero)Activator.CreateInstance(type);
+                this.Hero.Activate();
             }
 
-            if ((Hero == null || !Hero.IsValueCreated))
+            if (Hero == null && !ExcludeFromDynamicCombo.Contains(this.Owner.HeroId))
             {
-                this.Hero = this.Heroes.FirstOrDefault(e => e.Metadata.Id == HeroId.npc_dota_hero_base);
-                if (Hero != null && !ExcludeFromDynamicCombo.Contains(this.Owner.HeroId))
-                {
-                    this.Hero.Value.Activate();
-                }
-            }
+                var type = Assembly.GetExecutingAssembly().ExportedTypes.FirstOrDefault(x => x.GetCustomAttribute<ExportHeroAttribute>()?.Id == HeroId.npc_dota_hero_base);
 
-            if (!SupportedHeroes.Contains(this.Owner.HeroId))
-            {
-                LogManager.Info("This hero is not supported. You need BAIO.DynamicCombo plugin for that hero.");
-            }
-        }
-
-        private int MenuConfigurationKey
-        {
-            get
-            {
-                return 289;
+                this.Hero = (IHero)Activator.CreateInstance(type);
+                this.Hero.Activate();
             }
         }
 
         protected override void OnDeactivate()
         {
-            this.Hero.Value.Deactivate();
+            this.Hero?.Deactivate();
         }
     }
 }

@@ -6,7 +6,7 @@ using Ensage.SDK.Abilities.Components;
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_obsidian_destroyer
 {
-    using Ensage.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities;
 
     public class obsidian_destroyer_equilibrium : ActiveAbility, IHasModifier, IHasTargetModifier
     {

@@ -4,6 +4,8 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_huskar
 {
+    using Divine.Entity.Entities.Abilities;
+
     public class huskar_berserkers_blood : PassiveAbility
     {
         public huskar_berserkers_blood(Ability ability)

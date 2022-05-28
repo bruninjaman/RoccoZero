@@ -16,6 +16,7 @@ namespace Ensage.SDK.Inventory
     using Divine.Update;
     using Divine.Zero.Log;
 
+    using Ensage.SDK.Abilities;
     using Ensage.SDK.Inventory.Metadata;
     using Ensage.SDK.Service;
 

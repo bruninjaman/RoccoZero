@@ -4,8 +4,10 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_juggernaut
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
 
     public class juggernaut_blade_dance : PassiveAbility, IHasCritChance
     {

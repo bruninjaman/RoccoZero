@@ -5,6 +5,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
+using BAIO.Core.UnitData;
+
 using Divine.Entity.Entities;
 using Divine.Entity.Entities.Abilities;
 using Divine.Entity.Entities.Abilities.Items;
@@ -13,6 +15,8 @@ using Divine.Entity.Entities.Units.Components;
 using Divine.Entity.Entities.Units.Heroes;
 using Divine.Extensions;
 using Divine.Helpers;
+using Divine.Modifier.Modifiers.Exceptions;
+using Divine.Modifier.Modifiers;
 using Divine.Numerics;
 
 internal static class UnitExtensions
@@ -24,6 +28,8 @@ internal static class UnitExtensions
     private static readonly Dictionary<string, Ability> abilityDictionary = new();
 
     private static readonly Dictionary<string, bool> boolDictionary = new();
+
+    private static Dictionary<string, Modifier> modifierDictionary = new();
 
     public static Item FindItem(this Unit unit, string name, bool cache = false)
     {
@@ -205,5 +211,58 @@ internal static class UnitExtensions
 
         Utils.Sleep(150, n);
         return canMove;
+    }
+
+    public static double AttackRate(this Unit unit)
+    {
+        return UnitDatabase.GetAttackRate(unit);
+    }
+
+    public static Modifier FindModifier(this Unit unit, string modifierName)
+    {
+        if (Utils.SleepCheck("Ensage.Common.FindModifierReset"))
+        {
+            modifierDictionary = new();
+            Utils.Sleep(20000, "Ensage.Common.FindModifierReset");
+        }
+
+        var name = unit.Handle + modifierName;
+        Modifier modifier;
+        var found = modifierDictionary.TryGetValue(name, out modifier);
+        var isValid = true;
+        if (found)
+        {
+            try
+            {
+                var test = modifier.RemainingTime;
+            }
+            catch (ModifierNotFoundException)
+            {
+                isValid = false;
+            }
+        }
+
+        if (found && isValid && !Utils.SleepCheck("Ensage.Common.FindModifier" + name))
+        {
+            return modifier;
+        }
+
+        modifier = unit.Modifiers.FirstOrDefault(x => x.Name == modifierName);
+        if (modifier == null)
+        {
+            return null;
+        }
+
+        if (modifierDictionary.ContainsKey(name))
+        {
+            modifierDictionary[name] = modifier;
+        }
+        else
+        {
+            modifierDictionary.TryAdd(name, modifier);
+        }
+
+        Utils.Sleep(100, "Ensage.Common.FindModifier" + name);
+        return modifier;
     }
 }

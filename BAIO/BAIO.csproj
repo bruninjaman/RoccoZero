@@ -34,7 +34,7 @@
       <HintPath>..\..\..\..\..\..\Program Files\Divine\References\Divine.dll</HintPath>
     </Reference>
     <Reference Include="Divine.Zero">
-      <HintPath>..\..\..\..\Desktop\Divine.System\bin\Release\References\Divine.Zero.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Divine\References\Divine.Zero.dll</HintPath>
     </Reference>
   </ItemGroup>
 

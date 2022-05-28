@@ -6,7 +6,11 @@ using Ensage.SDK.Abilities.Components;
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_snapfire
 {
-    using Ensage.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
+
     using Ensage.SDK.Helpers;
 
     public class snapfire_firesnap_cookie : RangedAbility, IHasHealthRestore

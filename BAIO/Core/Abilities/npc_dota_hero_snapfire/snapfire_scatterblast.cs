@@ -4,6 +4,10 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_snapfire
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
+
     using Ensage.SDK.Extensions;
     using Ensage.SDK.Helpers;
 

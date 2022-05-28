@@ -4,6 +4,10 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_huskar
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
     using Ensage.SDK.Extensions;
 

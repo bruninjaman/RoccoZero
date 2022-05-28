@@ -4,8 +4,10 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_drow_ranger
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
 
     public class drow_ranger_marksmanship : PassiveAbility, IHasModifier, IAreaOfEffectAbility, IHasProcChance
     {

@@ -4,8 +4,10 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_ember_spirit
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
 
     /// <summary>
     ///     This ability should be only used to activate a remnant. Use <see cref="ember_spirit_fire_remnant" />.

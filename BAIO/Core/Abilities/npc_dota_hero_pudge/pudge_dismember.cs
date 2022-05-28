@@ -6,8 +6,14 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_pudge
 {
     using System.Linq;
 
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
     using Ensage.SDK.Helpers;
 
     public class pudge_dismember : RangedAbility, IChannable, IHasDot

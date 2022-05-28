@@ -1,16 +1,16 @@
-// <copyright file="juggernaut_omni_slash.cs" company="Ensage">
-//    Copyright (c) 2017 Ensage.
-// </copyright>
-
-using Ensage.Common.Extensions;
-
 namespace Ensage.SDK.Abilities.npc_dota_hero_juggernaut
 {
-    using System.Linq;
     using System;
+    using System.Linq;
+
+    using BAIO.Core.Extensions;
+
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
 
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
     using Ensage.SDK.Helpers;
 
     public class juggernaut_omni_slash : RangedAbility, IAreaOfEffectAbility, IHasDot, IHasModifier

@@ -4,6 +4,8 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_slardar
 {
+    using Divine.Entity.Entities.Abilities;
+
     using Ensage.SDK.Abilities.Components;
 
     public class slardar_sprint : ActiveAbility, IHasModifier

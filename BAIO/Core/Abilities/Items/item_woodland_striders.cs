@@ -5,9 +5,8 @@
 namespace Ensage.SDK.Abilities.Items
 {
     using Divine.Entity.Entities.Abilities.Items;
-    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
 
     public class item_woodland_striders : ActiveAbility, IHasModifier
     {

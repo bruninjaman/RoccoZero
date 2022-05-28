@@ -523,5 +523,15 @@ namespace BAIO
             this.Context.Dispose();
 
         }
+
+        public void Activate()
+        {
+            OnActivate();
+        }
+
+        public void Deactivate()
+        {
+            OnDeactivate();
+        }
     }
 }

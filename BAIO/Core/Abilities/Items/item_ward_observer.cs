@@ -4,9 +4,10 @@
 
 namespace Ensage.SDK.Abilities.Items
 {
-    using Divine.Entity.Entities.Abilities.Items;
-    using Divine.Extensions;
     using System.Linq;
+
+    using Divine.Entity.Entities.Abilities.Items;
+    using Divine.Game;
 
     public class item_ward_observer : RangedAbility, IItemInfo
     {
@@ -19,7 +20,7 @@ namespace Ensage.SDK.Abilities.Items
         {
             get
             {
-                var itemStockInfo = GameManager.StockInfo.FirstOrDefault(x => x.AbilityId == this.Ability.Id && x.Team == this.Owner.Team);
+                var itemStockInfo = GameManager.ItemStockInfos.FirstOrDefault(x => x.AbilityId == this.Ability.Id && x.Team == this.Owner.Team);
                 return itemStockInfo?.StockCount ?? 0;
             }
         }

@@ -4,6 +4,8 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_puck
 {
+    using Divine.Entity.Entities.Abilities;
+
     using Ensage.SDK.Abilities.Components;
 
     public class puck_phase_shift : ActiveAbility, IChannable, IHasModifier
@@ -23,7 +25,7 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_puck
                     return 0;
                 }
 
-                return this.Ability.GetChannelTime(level - 1);
+                return this.Ability.AbilityData.GetChannelMaximumTime(level - 1);
             }
         }
 

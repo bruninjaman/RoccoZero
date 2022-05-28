@@ -7,11 +7,13 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_storm_spirit
     using System;
     using System.Linq;
 
-    using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Helpers;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
+    using Divine.Numerics;
 
-    using SharpDX;
+    using Ensage.SDK.Abilities.Components;
+    using Ensage.SDK.Helpers;
 
     public class storm_spirit_ball_lightning : RangedAbility, IHasModifier, IAreaOfEffectAbility
     {

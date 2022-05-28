@@ -8,7 +8,11 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_obsidian_destroyer
 {
     using System.Linq;
 
-    using Ensage.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Extensions;
+
     using Ensage.SDK.Helpers;
 
     public class obsidian_destroyer_sanity_eclipse : CircleAbility, IHasModifier

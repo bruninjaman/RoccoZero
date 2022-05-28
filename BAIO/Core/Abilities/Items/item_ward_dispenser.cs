@@ -5,7 +5,7 @@
 namespace Ensage.SDK.Abilities.Items
 {
     using Divine.Entity.Entities.Abilities.Items;
-    using Divine.Extensions;
+    
     public class item_ward_dispenser : RangedAbility
     {
         public item_ward_dispenser(Item item)

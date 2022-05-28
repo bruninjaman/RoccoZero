@@ -1,14 +1,12 @@
-﻿// <copyright file="snapfire_lil_shredder.cs" company="Ensage">
-//    Copyright (c) 2019 Ensage.
-// </copyright>
-
-using Ensage.Common.Extensions;
-using Ensage.SDK.Abilities.Components;
-
-namespace Ensage.SDK.Abilities.npc_dota_hero_snapfire
+﻿namespace Ensage.SDK.Abilities.npc_dota_hero_snapfire
 {
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Helpers;
+    using BAIO.Core.Extensions;
+
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Extensions;
+
+    using Ensage.SDK.Abilities.Components;
 
     public class snapfire_lil_shredder : ActiveAbility, IHasModifier, IHasTargetModifier
     {

@@ -4,8 +4,12 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_puck
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
     using Ensage.SDK.Helpers;
 
     public class puck_dream_coil : CircleAbility, IAreaOfEffectAbility, IHasTargetModifier

@@ -4,6 +4,9 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_dark_willow
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
     using Ensage.SDK.Extensions;
 

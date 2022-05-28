@@ -4,8 +4,11 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_ember_spirit
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
 
     public class ember_spirit_fire_remnant : LineAbility, IHasModifier
     {
@@ -33,7 +36,7 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_ember_spirit
             get
             {
                 return this.Owner.HasAghanimsScepter() ?
-                    ((this.Ability.GetAbilitySpecialData("speed_multiplier") / 100) * this.Owner.MovementSpeed) * this.Ability.GetAbilitySpecialData("scepter_speed_multiplier") 
+                    ((this.Ability.GetAbilitySpecialData("speed_multiplier") / 100) * this.Owner.MovementSpeed) * this.Ability.GetAbilitySpecialData("scepter_speed_multiplier")
                     : (this.Ability.GetAbilitySpecialData("speed_multiplier") / 100) * this.Owner.MovementSpeed;
             }
         }

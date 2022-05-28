@@ -4,6 +4,8 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_pudge
 {
+    using Divine.Entity.Entities.Abilities;
+
     using Ensage.SDK.Abilities.Components;
 
     public class pudge_flesh_heap : PassiveAbility, IHasModifier

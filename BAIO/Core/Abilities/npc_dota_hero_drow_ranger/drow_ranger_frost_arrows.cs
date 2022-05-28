@@ -4,10 +4,12 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_drow_ranger
 {
-    using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Heroes;
+    using Divine.Extensions;
 
-    using PlaySharp.Toolkit.Helper.Annotations;
+    using Ensage.SDK.Abilities.Components;
 
     public class drow_ranger_frost_arrows : OrbAbility, IHasTargetModifier
     {
@@ -18,7 +20,7 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_drow_ranger
 
         public string TargetModifierName { get; } = "modifier_drow_ranger_frost_arrows_slow";
 
-        public float GetModifierDuration([NotNull] Unit target)
+        public float GetModifierDuration(Unit target)
         {
             if (target is Hero)
             {

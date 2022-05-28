@@ -4,7 +4,9 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_antimage
 {
-    using Ensage.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Extensions;
 
     public class antimage_blink : RangedAbility
     {

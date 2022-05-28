@@ -4,9 +4,12 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_pudge
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Extensions;
+    using Divine.Prediction.Collision;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Prediction.Collision;
 
     public class pudge_meat_hook : LineAbility, IHasTargetModifier
     {

@@ -6,8 +6,11 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_dark_willow
 {
     using System.Linq;
 
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
     using Ensage.SDK.Helpers;
 
     public class dark_willow_bramble_maze : CircleAbility, IHasDot

@@ -5,9 +5,10 @@
 namespace Ensage.SDK.Abilities.Items
 {
     using Divine.Entity.Entities.Abilities.Items;
+    using Divine.Entity.Entities.Units.Components;
     using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
 
     public class item_minotaur_horn : ActiveAbility, IHasModifier
     {

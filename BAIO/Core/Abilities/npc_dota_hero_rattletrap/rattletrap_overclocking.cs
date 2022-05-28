@@ -3,8 +3,8 @@
 // </copyright>
 namespace Ensage.SDK.Abilities.npc_dota_hero_rattletrap
 {
-    using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Extensions;
 
     class rattletrap_overclocking : ActiveAbility
     {

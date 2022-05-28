@@ -4,8 +4,11 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_dark_willow
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
 
     public class dark_willow_cursed_crown : AreaOfEffectAbility, IHasTargetModifier, IHasTargetModifierTexture
     {

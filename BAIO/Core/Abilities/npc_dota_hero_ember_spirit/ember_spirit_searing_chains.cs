@@ -6,6 +6,11 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_ember_spirit
 {
     using System.Linq;
 
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
     using Ensage.SDK.Extensions;
     using Ensage.SDK.Helpers;

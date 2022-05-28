@@ -21,6 +21,7 @@
     using Divine.Update;
     using Divine.Zero.Log;
 
+    using Ensage.SDK.Inventory;
     using Ensage.SDK.Service;
 
     public sealed class Orbwalker : IOrbwalker

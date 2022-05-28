@@ -3,7 +3,11 @@
 // </copyright>
 namespace Ensage.SDK.Abilities.npc_dota_hero_drow_ranger
 {
-    using Ensage.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
+
     using Ensage.SDK.Helpers;
 
     public class drow_ranger_multishot : ConeAbility
@@ -29,7 +33,7 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_drow_ranger
             var amplify = this.Owner.GetSpellAmplification();
             foreach (var target in targets)
             {
-                var damage = (Ability.GetAbilitySpecialData("arrow_damage_pct") / 100f) * Owner.GetAttackDamage(target, false, amplify); 
+                var damage = (Ability.GetAbilitySpecialData("arrow_damage_pct") / 100f) * Owner.GetAttackDamage(target, false, amplify);
                 var reduction = this.Ability.GetDamageReduction(target, this.DamageType);
                 totalDamage += DamageHelpers.GetSpellDamage(damage, amplify, reduction);
             }

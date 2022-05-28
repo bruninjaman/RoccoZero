@@ -6,9 +6,12 @@ using Ensage.SDK.Helpers;
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_void_spirit
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Abilities.Components;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
-    using Ensage.SDK.Prediction.Collision;
 
     public class void_spirit_astral_step : LineAbility, IHasTargetModifier
     {

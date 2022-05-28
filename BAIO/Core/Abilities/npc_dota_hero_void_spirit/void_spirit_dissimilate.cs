@@ -4,12 +4,11 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_void_spirit
 {
-    using System;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
 
     using Ensage.SDK.Helpers;
-    using Ensage.SDK.Extensions;
-
-    using SharpDX;
 
     public class void_spirit_dissimilate : ActiveAbility
     {

@@ -4,10 +4,14 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_rattletrap
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Extensions;
+    using Divine.Prediction.Collision;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
     using Ensage.SDK.Helpers;
-    using Ensage.SDK.Prediction.Collision;
 
     public class rattletrap_hookshot : LineAbility, IHasTargetModifierTexture
     {

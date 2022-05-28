@@ -7,8 +7,10 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_obsidian_destroyer
     using System;
     using System.Linq;
 
-    using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Extensions;
+
     using Ensage.SDK.Helpers;
 
     public class obsidian_destroyer_arcane_orb : OrbAbility

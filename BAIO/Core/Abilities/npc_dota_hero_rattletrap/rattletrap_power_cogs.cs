@@ -4,8 +4,10 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_rattletrap
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
 
     public class rattletrap_power_cogs : ActiveAbility, IAreaOfEffectAbility, IHasTargetModifier
     {

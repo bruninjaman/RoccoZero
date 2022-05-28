@@ -4,6 +4,8 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_bristleback
 {
+    using Divine.Entity.Entities.Abilities;
+
     using Ensage.SDK.Abilities.Components;
 
     public class bristleback_warpath : PassiveAbility, IHasModifier

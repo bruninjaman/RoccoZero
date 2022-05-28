@@ -4,7 +4,9 @@
 
 namespace Ensage.SDK.Abilities.Items
 {
+    using Divine.Entity.Entities.Abilities.Components;
     using Divine.Entity.Entities.Abilities.Items;
+    using Divine.Entity.Entities.Units.Components;
 
     using Ensage.SDK.Abilities.Components;
 

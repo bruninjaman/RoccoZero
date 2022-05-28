@@ -6,8 +6,12 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_magnataur
 {
     using System.Linq;
 
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
 
     public class magnataur_reverse_polarity : ActiveAbility, IHasTargetModifier, IAreaOfEffectAbility
     {

@@ -4,8 +4,11 @@
 
 namespace Ensage.SDK.Abilities.npc_dota_hero_sven
 {
+    using Divine.Entity.Entities.Abilities;
+    using Divine.Entity.Entities.Units.Components;
+    using Divine.Extensions;
+
     using Ensage.SDK.Abilities.Components;
-    using Ensage.SDK.Extensions;
 
     public class sven_storm_bolt : AreaOfEffectAbility, IHasTargetModifierTexture
     {

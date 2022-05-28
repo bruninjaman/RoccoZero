@@ -4,8 +4,6 @@
 
 namespace Ensage.SDK.Abilities.Components
 {
-    using Ensage.SDK.Utils;
-
     public interface IHasProcChance
     {
         /// <summary>
