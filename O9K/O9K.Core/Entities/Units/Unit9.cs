@@ -53,6 +53,8 @@ public class Unit9 : Entity9
     private readonly List<Modifier> immobilityModifiers = new();
 
     private readonly List<Modifier> invulnerabilityModifiers = new();
+    
+    private readonly List<Modifier> strongDisableModifiers = new();
 
     private readonly List<IHasPassiveDamageIncrease> passiveDamageAbilities = new();
 
@@ -1083,7 +1085,19 @@ public class Unit9 : Entity9
 
         return modifiers.Max(x => x.RemainingTime);
     }
+    
+    public virtual float GetStrongDisableDuration()
+    {
+        var modifiers = this.strongDisableModifiers.Where(x => x.IsValid && x.ElapsedTime > 0.1f).ToList();
 
+        if (modifiers.Count == 0)
+        {
+            return 0;
+        }
+
+        return modifiers.Max(x => x.RemainingTime);
+    }
+    
     public virtual float GetInvulnerabilityDuration()
     {
         var modifiers = this.invulnerabilityModifiers.Where(x => x.IsValid && x.ElapsedTime > 0.1f).ToList();
@@ -1302,6 +1316,11 @@ public class Unit9 : Entity9
             if (invulnerability)
             {
                 this.invulnerabilityModifiers.Add(modifier);
+            }
+
+            if (modifier.IsStunDebuff || modifier.Name == ScytheOfVyse.StaticImmobilityModifierName)
+            {
+                this.strongDisableModifiers.Add(modifier);
             }
         }
         else

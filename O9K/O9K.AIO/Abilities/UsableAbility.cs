@@ -1,14 +1,14 @@
 ﻿namespace O9K.AIO.Abilities;
 
-using System;
-using Divine.Entity.Entities.Abilities.Components;
-using O9K.Core.Extensions;
-
 using System.Collections.Generic;
 
 using Core.Entities.Abilities.Base;
+using Core.Entities.Abilities.Base.Types;
 using Core.Entities.Units;
 using Core.Helpers;
+
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.Units.Components;
 
 using Menus;
 
@@ -65,14 +65,35 @@ internal abstract class UsableAbility
 
     protected virtual bool ChainStun(Unit9 target, bool invulnerability)
     {
-        var immobile = invulnerability ? target.GetInvulnerabilityDuration() : target.GetImmobilityDuration();
+        float? immobile = null;
+
+        if (this.Ability is IDisable disable)
+        {
+            var appliesUnitState = disable.AppliesUnitState;
+
+            if ((appliesUnitState & UnitState.Hexed) == UnitState.Hexed || (appliesUnitState & UnitState.Stunned) == UnitState.Stunned)
+            {
+                immobile = target.GetStrongDisableDuration();
+            }
+        }
+
+        if (!immobile.HasValue)
+        {
+            immobile = invulnerability ? target.GetInvulnerabilityDuration() : target.GetImmobilityDuration();
+        }
+
         if (immobile <= 0)
         {
             return false;
         }
 
-        var hitTime = this.Ability.GetHitTime(target);
+        float hitTime = this.Ability.GetHitTime(target);
 
+        if (this.Ability.Id == AbilityId.item_sheepstick)
+        {
+            hitTime += 0.1f;
+        }
+        
         if (target.IsInvulnerable)
         {
             hitTime -= 0.1f;
