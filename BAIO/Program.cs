@@ -63,13 +63,6 @@
             if (SupportedHeroes.Contains(this.Owner.HeroId))
             {
                 var type = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.GetCustomAttribute<ExportHeroAttribute>()?.Id == Owner.HeroId);
-                this.Hero = (IHero)Activator.CreateInstance(type);
-                this.Hero.Activate();
-            }
-
-            if (Hero == null && !ExcludeFromDynamicCombo.Contains(this.Owner.HeroId))
-            {
-                var type = Assembly.GetExecutingAssembly().ExportedTypes.FirstOrDefault(x => x.GetCustomAttribute<ExportHeroAttribute>()?.Id == HeroId.npc_dota_hero_base);
                 if (type != null)
                 {
                     this.Hero = (IHero)Activator.CreateInstance(type);
