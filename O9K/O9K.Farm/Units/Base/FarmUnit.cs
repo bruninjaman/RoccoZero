@@ -154,7 +154,7 @@ internal class FarmUnit : IEquatable<FarmUnit>
         var delay = turnTime + distance + ping + 0.25f;
 
         var attackPoint = this.Unit.GetAttackPoint(target.Unit);
-        this.AttackSleeper.Sleep(0.2f);
+        this.FakeAttackSleeper.Sleep(0.7f);
         this.MoveSleeper.Sleep(attackPoint + delay + this.Menu.AdditionalDelay / 1000f);
         this.LastMovePosition = Vector3.Zero;
         this.Target = target;
