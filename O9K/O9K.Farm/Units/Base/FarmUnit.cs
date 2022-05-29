@@ -131,7 +131,12 @@ internal class FarmUnit : IEquatable<FarmUnit>
     }
     
     public virtual bool FakeAttack(FarmUnit target)
-    {
+    { 
+        if (this.AttackSleeper.IsSleeping)
+        {
+            return false;
+        }
+        
         if (this.FakeAttackSleeper.IsSleeping)
         {
             return false;

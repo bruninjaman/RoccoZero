@@ -1,6 +1,5 @@
 ﻿namespace O9K.Farm.Core.Modes;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -77,16 +76,17 @@ internal class LastHitMode : BaseMode
                 continue;
             }
 
-            foreach (var damageInfo in attack.Where(x => x.IsInAttackRange)
-                .OrderByDescending(x => x.Delay))
+            foreach (var damageInfo in attack
+                                       // .Where(x => x.IsInAttackRange)
+                                       .OrderByDescending(x => x.Delay))
             {
                 //todo force attack if target will die soon
 
                 if (damageInfo.Unit.Farm(ally))
                 {
-                    return true;
                 }
             }
+            return true;
         }
 
         return false;
@@ -243,18 +243,26 @@ internal class LastHitMode : BaseMode
             {
                 continue;
             }
-
-            foreach (var damageInfo in attack.Where(x => x.IsInAttackRange)
-                .OrderByDescending(x => x.Delay))
+            
+            bool result = false;
+            foreach (var damageInfo in attack
+                         // .Where(x => x.IsInAttackRange)
+                         .OrderByDescending(x => x.Delay))
             {
                 //todo force attack if target will die soon
 
                 if (damageInfo.Unit.Farm(enemy))
                 {
+                    result = true;
                 }
             }
-            return true;
+
+            if (result)
+            {
+                return true;
+            }
         }
+
         return false;
     }
     
@@ -312,17 +320,22 @@ internal class LastHitMode : BaseMode
                 continue;
             }
 
+            bool result = false;
+
             foreach (var damageInfo in attack.Where(x => x.IsInAttackRange)
                                              .OrderByDescending(x => x.Delay))
             {
                 //todo force attack if target will die soon
 
                 if (damageInfo.Unit.FakeFarm(enemy))
-                {
-                    Console.WriteLine("FAKE FARM!");
+                { 
+                    result = true;
                 }
             }
-            return true;
+            if (result)
+            {
+                return true;
+            }
         }
         return false;
     }
