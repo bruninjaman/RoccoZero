@@ -28,7 +28,7 @@ internal class DamageInfo
     public DamageInfo(FarmUnit unit, FarmUnit target, bool dummy)
     {
         this.Unit = unit;
-        this.Delay =  unit.GetAttackDelay(target) * 2;
+        this.Delay =  unit.GetSimpleAttackDelay(target) * 3;
         this.PredictedHealth = target.GetPredictedHealth(unit, this.Delay);
 
         if (this.PredictedHealth <= 0)
