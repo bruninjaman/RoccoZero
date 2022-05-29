@@ -49,7 +49,6 @@ internal class UnitManager : IDisposable
 
         EntityManager9.UnitAdded += this.OnUnitAdded;
         EntityManager9.UnitRemoved += this.OnUnitRemoved;
-        EntityManager9.UnitMonitor.AttackEnd += this.OnAttackEnd;
         EntityManager9.UnitMonitor.UnitDied += this.OnUnitDied;
 
         // RendererManager.Draw += this.DrawingOnOnDraw;
@@ -68,7 +67,6 @@ internal class UnitManager : IDisposable
     {
         EntityManager9.UnitAdded -= this.OnUnitAdded;
         EntityManager9.UnitRemoved -= this.OnUnitRemoved;
-        EntityManager9.UnitMonitor.AttackEnd -= this.OnAttackEnd;
         EntityManager9.UnitMonitor.UnitDied -= this.OnUnitDied;
     }
 
@@ -148,31 +146,6 @@ internal class UnitManager : IDisposable
     //         20);
     // }
     // }
-
-    private void OnAttackEnd(Unit9 unit)
-    {
-        if (!FarmManager.IsFarmActive())
-        {
-            return;
-        }
-
-        var controllable = this.GetControllableUnit(unit);
-
-        if (controllable == null)
-        {
-            return;
-        }
-
-        if (controllable.IsHero)
-        {
-            controllable.Stop();
-        }
-        else
-        {
-            controllable.ResetSleepers();
-        }
-
-    }
 
     private void OnUnitAdded(Unit9 unit)
     {

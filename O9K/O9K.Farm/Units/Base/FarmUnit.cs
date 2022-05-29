@@ -83,11 +83,11 @@ internal class FarmUnit : IEquatable<FarmUnit>
 
         if (this.Unit.IsRanged || forceRanged)
         {
-            damage = new RangedDamage(this, target, attackStartTime, 0, 0f);  // BEFORE WAS 0.05f
+            damage = new RangedDamage(this, target, attackStartTime, 0, 0.05f);  // BEFORE WAS 0.05f
         }
         else
         {
-            damage = new MeleeDamage(this, target, attackStartTime, 0f); // BEFORE WAS 0.033f
+            damage = new MeleeDamage(this, target, attackStartTime, 0.033f); // BEFORE WAS 0.033f
         }
 
         target.IncomingDamage.Add(damage);
@@ -123,7 +123,7 @@ internal class FarmUnit : IEquatable<FarmUnit>
         this.MoveSleeper.Sleep(attackPoint + delay + this.Menu.AdditionalDelay / 1000f);
         this.LastMovePosition = Vector3.Zero;
         this.Target = target;
-        this.AddDamage(target, GameManager.RawGameTime + distance - ping, false, false);
+        // this.AddDamage(target, GameManager.RawGameTime + distance - ping, false, false);
 
         return true;
     }
@@ -224,6 +224,16 @@ internal class FarmUnit : IEquatable<FarmUnit>
         }
 
         return attackPoint + moveTime + projectileTime + turnTime + ping + customDelay;
+    }
+
+
+    public float GetSimpleAttackDelay(FarmUnit target)
+    {
+        var attackPoint = this.Unit.GetAttackPoint(target.Unit);
+        var distance3D = this.Unit.Distance3D(target.Unit);
+        var projectileTime = this.Unit.IsRanged ? Math.Max(distance3D, 0) / this.Unit.ProjectileSpeed : 0;
+
+        return attackPoint + projectileTime;
     }
 
     public virtual int GetAverageDamage(FarmUnit target)

@@ -60,9 +60,8 @@ internal abstract class BaseMode : IDisposable
         {
             return;
         }
-        
-        IEnumerable<FarmUnit> myFarmUnits;
-        myFarmUnits = this.units.Where(x => x.IsControllable);
+
+        var myFarmUnits = this.units.Where(x => x.IsControllable);
 
         List<FarmUnit> myFarmUnitToStop = new();
         float damages = 0;
@@ -72,24 +71,23 @@ internal abstract class BaseMode : IDisposable
         {
             if (unit.Target?.Equals(target) != true)
             {
-                continue;
+                return;
             }
 
             if (!unit.AttackSleeper.IsSleeping)
             {
-                continue;
+                return;
             }
 
-            var newDelay = unit.AttackStartTime + unit.GetAttackDelay(target) - GameManager.RawGameTime;
+            var newDelay = unit.AttackStartTime + unit.GetSimpleAttackDelay(target) - GameManager.RawGameTime;
             delay = delay > newDelay ? delay : newDelay;
             damages += unit.GetDamage(target);
             myFarmUnitToStop.Add(unit);
         }
 
-        if (target.GetPredictedHealth(delay) > damages)
+        if (myFarmUnitToStop.Count != 0 && target.GetPredictedHealth(delay) > damages)
         {
-            Player.Stop(myFarmUnitToStop.Select(x => x.Unit.BaseUnit));
-            myFarmUnitToStop.ForEach(x => x.ResetSleepers());
+            myFarmUnitToStop.ForEach(x => x.Stop());
         }
     }
 
