@@ -1,5 +1,6 @@
 ﻿namespace O9K.Farm.Core.Modes;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -250,11 +251,10 @@ internal class LastHitMode : BaseMode
 
                 if (damageInfo.Unit.Farm(enemy))
                 {
-                    return true;
                 }
             }
+            return true;
         }
-
         return false;
     }
     
@@ -287,12 +287,15 @@ internal class LastHitMode : BaseMode
             {
                 continue;
             }
+
+            var attack = new List<DamageInfo>();
             var canKill = false;
             var damage = 0f;
 
             foreach (var damageInfo in damages.OrderBy(x => x.Delay))
             {
                 damage += damageInfo.MinDamage;
+                attack.Add(damageInfo);
 
                 if (damage < damageInfo.PredictedHealth)
                 {
@@ -303,7 +306,23 @@ internal class LastHitMode : BaseMode
 
                 break;
             }
-            return canKill;
+
+            if (!canKill)
+            {
+                continue;
+            }
+
+            foreach (var damageInfo in attack.Where(x => x.IsInAttackRange)
+                                             .OrderByDescending(x => x.Delay))
+            {
+                //todo force attack if target will die soon
+
+                if (damageInfo.Unit.FakeFarm(enemy))
+                {
+                    Console.WriteLine("FAKE FARM!");
+                }
+            }
+            return true;
         }
         return false;
     }

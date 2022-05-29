@@ -26,6 +26,8 @@ internal class FarmUnit : IEquatable<FarmUnit>
     }
 
     public Sleeper AttackSleeper { get; } = new();
+    
+    public Sleeper FakeAttackSleeper { get; } = new();
 
     public float AttackStartTime { get; set; }
 
@@ -127,6 +129,33 @@ internal class FarmUnit : IEquatable<FarmUnit>
 
         return true;
     }
+    
+    public virtual bool FakeAttack(FarmUnit target)
+    {
+        if (this.FakeAttackSleeper.IsSleeping)
+        {
+            return false;
+        }
+
+        if (!this.Unit.Attack(target.Unit))
+        {
+            return false;
+        }
+
+        this.Unit.BaseUnit.Stop();
+        var ping = GameManager.Ping / 2000;
+        var turnTime = this.Unit.GetTurnTime(target.Unit.Position);
+        var distance = Math.Max(this.Unit.Distance(target.Unit) - this.Unit.GetAttackRange(target.Unit), 0) / this.Unit.Speed;
+        var delay = turnTime + distance + ping + 0.25f;
+
+        var attackPoint = this.Unit.GetAttackPoint(target.Unit);
+        this.AttackSleeper.Sleep(0.2f);
+        this.MoveSleeper.Sleep(attackPoint + delay + this.Menu.AdditionalDelay / 1000f);
+        this.LastMovePosition = Vector3.Zero;
+        this.Target = target;
+        
+        return true;
+    }
 
     public virtual void AttackStart(IReadOnlyList<FarmUnit> units, float attackStartTime)
     {
@@ -191,9 +220,12 @@ internal class FarmUnit : IEquatable<FarmUnit>
 
     public bool Farm(FarmUnit enemy)
     {
-
         return this.Attack(enemy);
-
+    }
+    
+    public bool FakeFarm(FarmUnit enemy)
+    {
+        return this.FakeAttack(enemy);
     }
 
     public float GetAttackDelay(FarmUnit target)
