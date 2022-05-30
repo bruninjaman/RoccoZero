@@ -76,16 +76,17 @@ internal class LastHitMode : BaseMode
                 continue;
             }
 
-            foreach (var damageInfo in attack.Where(x => x.IsInAttackRange)
-                .OrderByDescending(x => x.Delay))
+            foreach (var damageInfo in attack
+                                       // .Where(x => x.IsInAttackRange)
+                                       .OrderByDescending(x => x.Delay))
             {
                 //todo force attack if target will die soon
 
                 if (damageInfo.Unit.Farm(ally))
                 {
-                    return true;
                 }
             }
+            return true;
         }
 
         return false;
@@ -193,7 +194,7 @@ internal class LastHitMode : BaseMode
         IReadOnlyList<FarmUnit> myUnits)
     {
         foreach (var enemy in enemies.Where(x => x.CanBeKilled)
-            .OrderBy(x => x.GetPredictedHealth(2)).ThenBy(x => x.GetPredictedDeathTime(allies)))
+                                     .OrderBy(x => x.GetPredictedDeathTime(allies)))
         {
             var damages = new List<DamageInfo>();
 
@@ -242,19 +243,100 @@ internal class LastHitMode : BaseMode
             {
                 continue;
             }
-
-            foreach (var damageInfo in attack.Where(x => x.IsInAttackRange)
-                .OrderByDescending(x => x.Delay))
+            
+            bool result = false;
+            foreach (var damageInfo in attack
+                         // .Where(x => x.IsInAttackRange)
+                         .OrderByDescending(x => x.Delay))
             {
                 //todo force attack if target will die soon
 
                 if (damageInfo.Unit.Farm(enemy))
                 {
-                    return true;
+                    result = true;
                 }
+            }
+
+            if (result)
+            {
+                return true;
             }
         }
 
+        return false;
+    }
+    
+    public bool ShouldWait(IReadOnlyList<FarmUnit> enemies, IReadOnlyList<FarmUnit> allies,
+                           IReadOnlyList<FarmUnit> myUnits)
+    {
+        foreach (var enemy in enemies.Where(x => x.CanBeKilled)
+                                     .OrderBy(x => x.GetPredictedDeathTime(allies)))
+        {
+            var damages = new List<DamageInfo>();
+
+            foreach (var unit in myUnits)
+            {
+                if (!unit.CanAttack(enemy))
+                {
+                    continue;
+                }
+
+                var damageInfo = new DamageInfo(unit, enemy, true);
+
+                if (!damageInfo.IsValid)
+                {
+                    continue;
+                }
+
+                damages.Add(damageInfo);
+            }
+
+            if (damages.Count == 0)
+            {
+                continue;
+            }
+
+            var attack = new List<DamageInfo>();
+            var canKill = false;
+            var damage = 0f;
+
+            foreach (var damageInfo in damages.OrderBy(x => x.Delay))
+            {
+                damage += damageInfo.MinDamage;
+                attack.Add(damageInfo);
+
+                if (damage < damageInfo.PredictedHealth)
+                {
+                    continue;
+                }
+
+                canKill = true;
+
+                break;
+            }
+
+            if (!canKill)
+            {
+                continue;
+            }
+
+            bool result = false;
+
+            foreach (var damageInfo in attack.Where(x => x.IsInAttackRange)
+                                             .OrderByDescending(x => x.Delay))
+            {
+                //todo force attack if target will die soon
+
+                if (damageInfo.Unit.FakeFarm(enemy))
+                { 
+                    result = true;
+                }
+            }
+            if (result)
+            {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -278,17 +360,20 @@ internal class LastHitMode : BaseMode
             return;
         }
 
-        if (this.Deny(enemies, allies,
-            availableUnits.Where(x => x.IsDenyEnabled).ToList()))
+        if (!ShouldWait(enemies, allies, availableUnitsForLastHit))
         {
-            return;
-        }
+            if (this.Deny(enemies, allies,
+                          availableUnits.Where(x => x.IsDenyEnabled).ToList()))
+            {
+                return;
+            }
+            
+            availableUnits = this.GetAvailableUnitsForHarass(enemies, allies, availableUnits);
 
-        availableUnits = this.GetAvailableUnitsForHarass(enemies, allies, availableUnits);
-
-        if (this.Harass(enemies, allies, availableUnits))
-        {
-            return;
+            if (this.Harass(enemies, allies, availableUnits))
+            {
+                return;
+            }
         }
 
         this.MoveToMouse(myUnits);
