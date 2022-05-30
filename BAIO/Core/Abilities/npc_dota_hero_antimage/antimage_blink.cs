@@ -27,15 +27,7 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_antimage
         {
             get
             {
-                var range = this.Ability.GetAbilitySpecialData("AbilityCastRange");
-
-                var talent = this.Owner.GetAbilityById(AbilityId.special_bonus_unique_antimage_3);
-                if (talent?.Level > 0)
-                {
-                    range += talent.GetAbilitySpecialData("value");
-                }
-
-                return range;
+                return this.Ability.GetAbilitySpecialDataWithTalent(this.Owner, "AbilityCastRange", AbilityId.special_bonus_unique_antimage_3);
             }
         }
     }
