@@ -30,7 +30,7 @@ public static class UnitDatabase
         var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BAIO.Core.Resources.UnitDatabase.json");
         var reader = new StreamReader(stream);
 
-        var json = JsonNode.Parse(reader.ReadToEnd());
+        var json = JsonNode.Parse(reader.ReadToEnd(), null, new() { CommentHandling = JsonCommentHandling.Skip });
         Units = JsonSerializer.Deserialize<AttackAnimationData[]>(json[nameof(Units)]).ToList();
     }
 

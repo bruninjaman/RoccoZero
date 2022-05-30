@@ -143,8 +143,8 @@
                 }
 
                 this.Factory = rootMenu.CreateMenu(GameManager.GetLocalize(heroId.ToString())).SetHeroImage(heroId);
-                this.ItemMenu = Factory.CreateMenu("Items", "items");
-                this.LinkenBreakerMenu = ItemMenu.CreateMenu("Linken Breakers", "linkenbreakers");
+                this.ItemMenu = Factory.CreateMenu("items", "Items");
+                this.LinkenBreakerMenu = ItemMenu.CreateMenu("linkenbreakers", "Linken Breakers");
                 this.LinkenBreakerTogglerMenu = LinkenBreakerMenu.CreateAbilityToggler("AbilityToggler", "", LinkenAbilityTogglerDic, true);
 
                 this.UnitController = Factory.CreateMenu(Translations[2]).SetImage("npc_dota_neutral_centaur_khan", MenuImageType.Unit);

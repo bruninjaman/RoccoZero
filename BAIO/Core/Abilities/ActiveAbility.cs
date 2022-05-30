@@ -40,7 +40,7 @@ namespace Ensage.SDK.Abilities
 
                 if ((GameManager.RawGameTime - this.LastCastAttempt) < 0.1f)
                 {
-                    //Log.Debug($"blocked {this}");
+                    //LogManager.Debug($"blocked {this}");
                     return false;
                 }
 
@@ -95,6 +95,11 @@ namespace Ensage.SDK.Abilities
         /// <returns>Time in ms until the cast.</returns>
         public virtual int GetCastDelay(Unit target)
         {
+            if (target == null)
+            {
+                return GetCastDelay();
+            }
+
             return (int)(((this.CastPoint + this.Owner.TurnTime(target.Position)) * 1000.0f) + GameManager.Ping);
         }
 
@@ -183,7 +188,7 @@ namespace Ensage.SDK.Abilities
         {
             if (!this.CanBeCasted)
             {
-                LogManager.Debug($"blocked {this}");
+                //LogManager.Debug($"blocked {this}");
                 return false;
             }
 
@@ -200,7 +205,7 @@ namespace Ensage.SDK.Abilities
         {
             if (!this.CanBeCasted)
             {
-                LogManager.Debug($"blocked {this}");
+                //LogManager.Debug($"blocked {this}");
                 return false;
             }
 
@@ -230,7 +235,7 @@ namespace Ensage.SDK.Abilities
         {
             if (!this.CanBeCasted)
             {
-                LogManager.Debug($"blocked {this}");
+                //LogManager.Debug($"blocked {this}");
                 return false;
             }
 
@@ -247,7 +252,7 @@ namespace Ensage.SDK.Abilities
         {
             if (!this.CanBeCasted)
             {
-                LogManager.Debug($"blocked {this}");
+                //LogManager.Debug($"blocked {this}");
                 return false;
             }
 
@@ -273,7 +278,7 @@ namespace Ensage.SDK.Abilities
         {
             if (!this.CanBeCasted)
             {
-                LogManager.Debug($"blocked {this}");
+                //LogManager.Debug($"blocked {this}");
                 return false;
             }
 

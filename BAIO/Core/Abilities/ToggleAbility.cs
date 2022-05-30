@@ -22,7 +22,7 @@ namespace Ensage.SDK.Abilities
             {
                 if (!this.CanBeCasted)
                 {
-                    LogManager.Debug($"blocked {this}");
+                    //LogManager.Debug($"blocked {this}");
                     return;
                 }
 

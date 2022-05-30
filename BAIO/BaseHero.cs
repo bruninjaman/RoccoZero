@@ -16,6 +16,7 @@ using Divine.Entity.Entities.Players;
 using Divine.Entity.Entities.Units;
 using Divine.Entity.Entities.Units.Heroes;
 using Divine.Entity.Entities.Units.Heroes.Components;
+using Divine.Entity.EventArgs;
 using Divine.Extensions;
 using Divine.Game;
 using Divine.Menu.EventArgs;
@@ -483,6 +484,12 @@ namespace BAIO
                 {
                     this.WardsHandler = TaskHandler.Run(WardsAttack);
                 }
+
+                UpdateManager.BeginInvoke(() =>
+                {
+                    EntityManager.EntityAdded += OnEntityAdded;
+                    EntityManager.EntityRemoved += OnEntityRemoved;
+                });
             }
             catch (TaskCanceledException)
             {
@@ -514,6 +521,32 @@ namespace BAIO
 
             this.Context.Dispose();
 
+            EntityManager.EntityAdded -= OnEntityAdded;
+            EntityManager.EntityRemoved -= OnEntityRemoved;
+        }
+
+        private protected virtual void OnMenuHeroChange(HeroId heroId, bool add)
+        {
+        }
+
+        private void OnEntityAdded(EntityAddedEventArgs e)
+        {
+            if (e.Entity is not Hero hero || hero.IsIllusion || hero.IsAlly(Owner))
+            {
+                return;
+            }
+
+            OnMenuHeroChange(hero.HeroId, true);
+        }
+
+        private void OnEntityRemoved(EntityRemovedEventArgs e)
+        {
+            if (e.Entity is not Hero hero || hero.IsIllusion || hero.IsAlly(Owner))
+            {
+                return;
+            }
+
+            OnMenuHeroChange(hero.HeroId, false);
         }
 
         public void Activate()

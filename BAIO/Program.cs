@@ -3,6 +3,10 @@
     using System;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.CompilerServices;
+
+    using BAIO.Core.AbilityInfo;
+    using BAIO.Core.UnitData;
 
     using Divine.Entity;
     using Divine.Entity.Entities.Units.Heroes;
@@ -54,20 +58,23 @@
             HeroId.npc_dota_hero_snapfire
         };
 
-        private readonly HeroId[] ExcludeFromDynamicCombo = new[] { HeroId.npc_dota_hero_phantom_lancer, HeroId.npc_dota_hero_broodmother };
-
         protected override void OnActivate()
         {
             Owner = EntityManager.LocalHero;
 
-            if (SupportedHeroes.Contains(this.Owner.HeroId))
+            if (!SupportedHeroes.Contains(this.Owner.HeroId))
             {
-                var type = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.GetCustomAttribute<ExportHeroAttribute>()?.Id == Owner.HeroId);
-                if (type != null)
-                {
-                    this.Hero = (IHero)Activator.CreateInstance(type);
-                    this.Hero.Activate();
-                }
+                return;
+            }
+
+            var type = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.GetCustomAttribute<ExportHeroAttribute>()?.Id == Owner.HeroId);
+            if (type != null)
+            {
+                RuntimeHelpers.RunClassConstructor(typeof(AbilityDatabase).TypeHandle);
+                RuntimeHelpers.RunClassConstructor(typeof(UnitDatabase).TypeHandle);
+
+                this.Hero = (IHero)Activator.CreateInstance(type);
+                this.Hero.Activate();
             }
         }
 

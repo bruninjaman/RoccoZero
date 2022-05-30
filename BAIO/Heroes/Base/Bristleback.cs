@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,25 +10,21 @@ using BAIO.Modes;
 using Divine.Entity;
 using Divine.Entity.Entities.Units.Heroes;
 using Divine.Entity.Entities.Units.Heroes.Components;
-using Divine.Entity.EventArgs;
-using Divine.Extensions;
 using Divine.Game;
 using Divine.Menu.Items;
 
 using Ensage.SDK.Abilities.Items;
-using Ensage.SDK.Abilities.npc_dota_hero_antimage;
+using Ensage.SDK.Abilities.npc_dota_hero_bristleback;
 using Ensage.SDK.Inventory.Metadata;
 
 namespace BAIO.Heroes.Base
 {
-    [ExportHero(HeroId.npc_dota_hero_antimage)]
-    internal class AntiMage : BaseHero
+    [ExportHero(HeroId.npc_dota_hero_bristleback)]
+    internal class Bristleback : BaseHero
     {
-        public antimage_blink Blink { get; private set; }
+        public bristleback_quill_spray QuillSpray { get; private set; }
 
-        public antimage_mana_void ManaVoid { get; private set; }
-
-        // public antimage_counterspell CounterSpell { get; private set; }
+        public bristleback_viscous_nasal_goo NasalGoo { get; private set; }
 
         [ItemBinding]
         public item_abyssal_blade AbyssalBlade { get; private set; }
@@ -114,31 +111,31 @@ namespace BAIO.Heroes.Base
         public item_power_treads Treads { get; private set; }
 
         public MenuHeroToggler AbyssalBladeHeroes;
+
         public MenuHeroToggler MantaHeroes;
+
         public MenuHeroToggler NullifierHeroes;
 
         public MenuSlider MinimumBlinkRange;
-        public MenuHeroToggler BlinkHeroes;
 
         protected override ComboMode GetComboMode()
         {
-            return new AntiMageCombo(this);
+            return new BristlebackCombo(this);
         }
 
         protected override void OnActivate()
         {
             base.OnActivate();
 
-            this.Blink = this.Context.AbilityFactory.GetAbility<antimage_blink>();
-            this.ManaVoid = this.Context.AbilityFactory.GetAbility<antimage_mana_void>();
+            this.QuillSpray = this.Context.AbilityFactory.GetAbility<bristleback_quill_spray>();
+            this.NasalGoo = this.Context.AbilityFactory.GetAbility<bristleback_viscous_nasal_goo>();
 
             var factory = this.Config.Hero.Factory;
             var itemMenu = this.Config.Hero.ItemMenu;
 
-            this.MinimumBlinkRange = factory.CreateSlider("Minimum Blink Range", 400, 0, 1450);
-            this.BlinkHeroes = factory.CreateHeroToggler("Blink Heroes", new());
+            /* this.TurnTheOtherCheek = factory.Item("Turn The Other Cheek", new KeyBind(70));
+             this.TurnTheOtherCheek.Item.Tooltip = "Will try to turn back to enemies."; */
 
-            this.MantaHeroes = itemMenu.CreateHeroToggler("Manta", new());
             this.NullifierHeroes = itemMenu.CreateHeroToggler("Nullifier", new());
             this.AbyssalBladeHeroes = itemMenu.CreateHeroToggler("Abyssal Blade", new());
         }
@@ -147,15 +144,11 @@ namespace BAIO.Heroes.Base
         {
             if (add)
             {
-                BlinkHeroes.AddValue(heroId, true);
-                MantaHeroes.AddValue(heroId, true);
                 NullifierHeroes.AddValue(heroId, true);
                 AbyssalBladeHeroes.AddValue(heroId, true);
             }
             else
             {
-                BlinkHeroes.RemoveValue(heroId);
-                MantaHeroes.RemoveValue(heroId);
                 NullifierHeroes.RemoveValue(heroId);
                 AbyssalBladeHeroes.RemoveValue(heroId);
             }
@@ -163,7 +156,7 @@ namespace BAIO.Heroes.Base
 
         protected override async Task KillStealAsync(CancellationToken token)
         {
-            if (GameManager.IsPaused || !this.Owner.IsAlive || !this.ManaVoid.CanBeCasted)
+            if (GameManager.IsPaused || !this.Owner.IsAlive || !this.QuillSpray.CanBeCasted)
             {
                 await Task.Delay(125, token);
                 return;
@@ -173,15 +166,14 @@ namespace BAIO.Heroes.Base
                 x => x.IsAlive
                      && (x.Team != this.Owner.Team)
                      && !x.IsIllusion
-                     && !x.IsMagicImmune()
-                     && this.ManaVoid.CanHit(x)
-                     && this.ManaVoid.GetDamage(x) > x.Health);
+                     && this.QuillSpray.CanHit(x)
+                     && this.QuillSpray.GetDamage(x) > x.Health);
 
             if (killstealTarget != null)
             {
-                if (this.ManaVoid.UseAbility(killstealTarget))
+                if (this.QuillSpray.UseAbility())
                 {
-                    await this.AwaitKillstealDelay(this.ManaVoid.GetCastDelay(killstealTarget), token);
+                    await this.AwaitKillstealDelay(this.QuillSpray.GetCastDelay(), token);
                 }
             }
             await Task.Delay(125, token);

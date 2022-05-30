@@ -48,7 +48,7 @@ namespace BAIO.UnitManager
                         && unit != EntityManager.LocalHero)
                     {
                         allUnits[unit.Handle] = new UnitManager(_main, unit);
-                        //Log.Debug($"new unit found");
+                        //LogManager.Debug($"new unit found");
                     }
                 }
 
@@ -78,7 +78,7 @@ namespace BAIO.UnitManager
                 if (!allUnits.ContainsKey(unit.Handle))
                 {
                     allUnits[unit.Handle] = new UnitManager(_main, unit);
-                    //Log.Debug($"new unit added");
+                    //LogManager.Debug($"new unit added");
                 }
             }
         }

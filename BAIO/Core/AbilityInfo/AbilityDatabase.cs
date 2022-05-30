@@ -18,7 +18,7 @@ public static class AbilityDatabase
         var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BAIO.Core.Resources.AbilityDatabase.json");
         var reader = new StreamReader(stream);
 
-        var json = JsonNode.Parse(reader.ReadToEnd());
+        var json = JsonNode.Parse(reader.ReadToEnd(), null, new() { CommentHandling = JsonCommentHandling.Skip });
         spells = JsonSerializer.Deserialize<AbilityInfo[]>(json["Abilities"]).ToList();
     }
 
