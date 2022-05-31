@@ -1,6 +1,7 @@
 ﻿namespace BAIO
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
@@ -30,7 +31,7 @@
 
         private IHero Hero;
 
-        private readonly HeroId[] SupportedHeroes =
+        private readonly HashSet<HeroId> SupportedHeroes = new()
         {
             HeroId.npc_dota_hero_huskar,
             HeroId.npc_dota_hero_rattletrap,
@@ -62,19 +63,25 @@
         {
             Owner = EntityManager.LocalHero;
 
-            if (!SupportedHeroes.Contains(this.Owner.HeroId))
+            if (SupportedHeroes.Contains(this.Owner.HeroId))
             {
-                return;
+                var type = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.GetCustomAttribute<ExportHeroAttribute>()?.Id == Owner.HeroId);
+                if (type != null)
+                {
+                    RuntimeHelpers.RunClassConstructor(typeof(AbilityDatabase).TypeHandle);
+                    RuntimeHelpers.RunClassConstructor(typeof(UnitDatabase).TypeHandle);
+
+                    this.Hero = (IHero)Activator.CreateInstance(type);
+                    this.Hero.Activate();
+                }
+                else
+                {
+                    _ = new Config(this.Owner.HeroId, false);
+                }
             }
-
-            var type = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.GetCustomAttribute<ExportHeroAttribute>()?.Id == Owner.HeroId);
-            if (type != null)
+            else
             {
-                RuntimeHelpers.RunClassConstructor(typeof(AbilityDatabase).TypeHandle);
-                RuntimeHelpers.RunClassConstructor(typeof(UnitDatabase).TypeHandle);
-
-                this.Hero = (IHero)Activator.CreateInstance(type);
-                this.Hero.Activate();
+                _ = new Config(this.Owner.HeroId, false);
             }
         }
 

@@ -12,17 +12,18 @@
     using Divine.Input;
     using Divine.Menu;
     using Divine.Menu.Items;
+    using Divine.Numerics;
     using Divine.Service;
 
     public class Config : IDisposable
     {
         private bool disposed;
 
-        public Config(HeroId id)
+        public Config(HeroId id, bool supported = true)
         {
             this.RootMenu = MenuManager.CreateRootMenu("BAIO");
             this.General = new GeneralMenu(this.RootMenu);
-            this.Hero = new HeroMenu(this.RootMenu, id);
+            this.Hero = new HeroMenu(this.RootMenu, id, supported);
         }
 
         public RootMenu RootMenu { get; }
@@ -121,8 +122,16 @@
             private bool disposed;
             public Dictionary<int, string> Translations { get; set; }
 
-            public HeroMenu(RootMenu rootMenu, HeroId heroId)
+            public HeroMenu(RootMenu rootMenu, HeroId heroId, bool supported)
             {
+                if (!supported)
+                {
+                    this.Factory = rootMenu.CreateMenu($"{GameManager.GetLocalize(heroId.ToString())} - not supported!")
+                        .SetHeroImage(heroId)
+                        .SetFontColor(Color.Orange);
+                    return;
+                }
+
                 var assembly = Assembly.GetExecutingAssembly();
 
                 var lang = DivineService.Language;
