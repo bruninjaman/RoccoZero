@@ -143,7 +143,7 @@ namespace BAIO.Heroes.Base
             this.AbyssalBladeHeroes = itemMenu.CreateHeroToggler("Abyssal Blade", new());
         }
 
-        private protected override void OnMenuHeroChange(HeroId heroId, bool add)
+        private protected override void OnMenuEnemyHeroChange(HeroId heroId, bool add)
         {
             if (add)
             {

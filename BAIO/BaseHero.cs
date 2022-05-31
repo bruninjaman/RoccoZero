@@ -525,28 +525,46 @@ namespace BAIO
             EntityManager.EntityRemoved -= OnEntityRemoved;
         }
 
-        private protected virtual void OnMenuHeroChange(HeroId heroId, bool add)
+        private protected virtual void OnMenuAllyHeroChange(HeroId heroId, bool add)
+        {
+        }
+
+        private protected virtual void OnMenuEnemyHeroChange(HeroId heroId, bool add)
         {
         }
 
         private void OnEntityAdded(EntityAddedEventArgs e)
         {
-            if (e.Entity is not Hero hero || hero.IsIllusion || hero.IsAlly(Owner))
+            if (e.Entity is not Hero hero || hero.IsIllusion)
             {
                 return;
             }
 
-            OnMenuHeroChange(hero.HeroId, true);
+            if (hero.IsAlly(Owner))
+            {
+                OnMenuAllyHeroChange(hero.HeroId, true);
+            }
+            else
+            {
+                OnMenuEnemyHeroChange(hero.HeroId, true);
+            }
         }
 
         private void OnEntityRemoved(EntityRemovedEventArgs e)
         {
-            if (e.Entity is not Hero hero || hero.IsIllusion || hero.IsAlly(Owner))
+            if (e.Entity is not Hero hero || hero.IsIllusion)
             {
                 return;
             }
 
-            OnMenuHeroChange(hero.HeroId, false);
+            if (hero.IsAlly(Owner))
+            {
+                OnMenuAllyHeroChange(hero.HeroId, false);
+            }
+            else
+            {
+                OnMenuEnemyHeroChange(hero.HeroId, false);
+            }
         }
 
         public void Activate()

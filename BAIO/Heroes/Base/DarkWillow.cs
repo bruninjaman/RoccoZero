@@ -240,7 +240,7 @@
             base.OnDeactivate();
         }
 
-        private protected override void OnMenuHeroChange(HeroId heroId, bool add)
+        private protected override void OnMenuEnemyHeroChange(HeroId heroId, bool add)
         {
             if (add)
             {
