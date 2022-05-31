@@ -208,6 +208,48 @@ internal class ArcWarden : ControllableUnit, IPushUnit
             return true;
         }
 
+        if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWardenMagneticField") && this.magneticFieldAbility.shouldForceUse())
+        {
+            if (abilityHelper.UseAbility(this.magneticFieldAbility))
+            {
+                Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticField", 550);
+
+                return true;
+            }
+        }
+
+        if (abilityHelper.UseAbility(this.hex))
+        {
+            return true;
+        }
+        
+        if (abilityHelper.UseAbility(this.bloodthorn))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.orchid))
+        {
+            return true;
+        }
+        
+        if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWardenMagneticNullifier") &&
+            abilityHelper.UseAbility(this.nullifier))
+        {
+            Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticNullifier", 2000);
+
+            return true;
+        }
+
+        if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWardenMagneticSilverEdge") &&
+            abilityHelper.UseAbility(this.silver))
+        {
+            Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticSilverEdge", 5000);
+            this.ComboSleeper.Sleep(0.5f);
+
+            return true;
+        }
+        
         if (!isMainHero && !this.Owner.HasModifier(this.magneticFieldAbility.Shield.ShieldModifierName) &&
             abilityHelper.UseAbility(this.force, 500, 300))
         {
@@ -246,38 +288,6 @@ internal class ArcWarden : ControllableUnit, IPushUnit
             abilityHelper.UseAbility(this.abyssal))
         {
             Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticRootDisable", 2000);
-
-            return true;
-        }
-
-        if (abilityHelper.UseAbility(this.hex))
-        {
-            return true;
-        }
-
-        if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWardenMagneticNullifier") &&
-            abilityHelper.UseAbility(this.nullifier))
-        {
-            Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticNullifier", 2000);
-
-            return true;
-        }
-
-        if (abilityHelper.UseAbility(this.bloodthorn))
-        {
-            return true;
-        }
-
-        if (abilityHelper.UseAbility(this.orchid))
-        {
-            return true;
-        }
-
-        if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ArcWardenMagneticSilverEdge") &&
-            abilityHelper.UseAbility(this.silver))
-        {
-            Divine.Helpers.MultiSleeper<string>.Sleep("ArcWardenMagneticSilverEdge", 5000);
-            this.ComboSleeper.Sleep(0.5f);
 
             return true;
         }

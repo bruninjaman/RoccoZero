@@ -82,13 +82,13 @@
         public override bool UseAbility(TargetManager targetManager, Sleeper comboSleeper, bool aoe)
         {
             var heroes = EntityManager9.Units.Where(x => x.IsHero && x.IsAlive && !x.IsIllusion && x.IsVisible)
-                .ToList();
+                                       .ToList();
 
             var allies = heroes.Where(x => !x.IsInvulnerable && x.IsAlly(this.Owner))
-                .ToList();
+                               .ToList();
 
             var enemies = heroes.Where(x => !x.IsInvulnerable && x.IsEnemy(this.Owner))
-                .ToList();
+                                .ToList();
 
             var abilityOwner = this.Owner;
             var mainHero = EntityManager9.Owner;
@@ -96,8 +96,8 @@
             var isMainHero = abilityOwner.Equals(mainHero);
 
             if (enemies.Count(x =>
-                    x.Distance(abilityOwner) < abilityOwner.GetAttackRange() ||
-                    x.Distance(mainHero) < mainHero.Hero.GetAttackRange()) < 1)
+                                  x.Distance(abilityOwner) < abilityOwner.GetAttackRange() ||
+                                  x.Distance(mainHero) < mainHero.Hero.GetAttackRange()) < 1)
             {
                 return false;
             }
@@ -135,5 +135,31 @@
 
             return this.Ability.UseAbility(abilityOwner, allies, HitChance.Medium);
         }
+        
+        public bool shouldForceUse()
+        {
+            var mainHero = EntityManager9.Owner;
+
+            var heroes = EntityManager9.Units.Where(x => x.IsHero && x.IsAlive && !x.IsIllusion && x.IsVisible)
+                                       .ToList();
+
+            var enemies = heroes.Where(x => !x.IsInvulnerable && x.IsEnemy(this.Owner))
+                                .ToList();
+            
+            var closestEnemyToMain = enemies.MinBy(x => x.Distance(mainHero));
+
+            if (closestEnemyToMain != null && closestEnemyToMain.Distance(mainHero) < 300)
+            {
+                var position = mainHero.Hero.Position.Extend2D(closestEnemyToMain.Position, -this.field.Radius);
+
+                if (this.Owner.Distance(position) < this.Ability.CastRange)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
+    
+
 }
