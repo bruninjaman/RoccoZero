@@ -18,6 +18,7 @@ using Divine.Helpers;
 using Divine.Modifier.Modifiers.Exceptions;
 using Divine.Modifier.Modifiers;
 using Divine.Numerics;
+using Divine.Entity.Entities.Components;
 
 internal static class UnitExtensions
 {
@@ -264,5 +265,24 @@ internal static class UnitExtensions
 
         Utils.Sleep(100, "Ensage.Common.FindModifier" + name);
         return modifier;
+    }
+
+    public static bool CanCast(this Unit unit)
+    {
+        return !unit.IsSilenced() && !unit.IsStunned() && unit.IsAlive;
+    }
+
+    public static double AttackBackswing(this Unit unit)
+    {
+        return UnitDatabase.GetAttackBackswing(unit);
+    }
+
+    public static bool IsAttacking(this Unit unit)
+    {
+        var networkActivity = unit.NetworkActivity;
+        return networkActivity == NetworkActivity.Attack || networkActivity == NetworkActivity.Crit
+               || networkActivity == NetworkActivity.Attack2 || networkActivity == NetworkActivity.AttackEvent
+               || networkActivity == NetworkActivity.AttackEventBash
+               || networkActivity == NetworkActivity.EarthshakerTotemAttack;
     }
 }

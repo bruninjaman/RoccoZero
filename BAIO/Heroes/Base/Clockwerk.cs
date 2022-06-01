@@ -268,7 +268,7 @@ using Divine.Entity.Entities.Units.Heroes;
 
         private void MinimumHookChanceValueChanged(MenuSelector selector, SelectorEventArgs e)
         {
-            this.MinimumHookChance = MinimumHookChanceMenu.Value switch
+            this.MinimumHookChance = e.NewValue switch
             {
                 "Medium" => HitChance.Medium,
                 "Low" => HitChance.Low,

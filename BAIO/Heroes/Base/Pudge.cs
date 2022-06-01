@@ -291,7 +291,7 @@ namespace BAIO.Heroes.Base
 
         private void MinimumHookChancePropertyChanged(MenuSelector selector, SelectorEventArgs e)
         {
-            this.MinimumHookChance = MinimumHookChanceItem.Value switch
+            this.MinimumHookChance = e.NewValue switch
             {
                 "Medium" => HitChance.Medium,
                 "Low" => HitChance.Low,
