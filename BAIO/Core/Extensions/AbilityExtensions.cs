@@ -581,6 +581,34 @@ internal static class AbilityExtensions
         }
     }
 
+    public static bool CanBeCasted(this Ability ability, Unit target)
+    {
+        if (ability == null || !ability.IsValid)
+        {
+            return false;
+        }
+
+        if (target == null || !target.IsValid)
+        {
+            return false;
+        }
+
+        if (!target.IsValidTarget())
+        {
+            return false;
+        }
+
+        var canBeCasted = ability.CanBeCasted();
+        if (!target.IsMagicImmune())
+        {
+            return canBeCasted;
+        }
+
+        var data = ability.CommonProperties();
+
+        return data == null ? canBeCasted : data.MagicImmunityPierce;
+    }
+
     public static bool CanHit(this Ability ability, Unit target, string abilityName = null)
     {
         if (ability == null || !ability.IsValid)

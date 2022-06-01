@@ -23,7 +23,12 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_obsidian_destroyer
         {
             get
             {
-                return this.Ability.GetAbilitySpecialData("radius");
+                if (Owner.HasAghanimsScepter())
+                {
+                    return this.Ability.GetAbilitySpecialData("scepter_damage_radius");
+                }
+
+                return 0f;
             }
         }
 
@@ -33,7 +38,14 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_obsidian_destroyer
         {
             get
             {
-                return this.Ability.GetAbilitySpecialData("damage");
+                var bonus = 0f;
+
+                if (Owner.HasAghanimsScepter())
+                {
+                    bonus += this.Ability.GetAbilitySpecialData("scepter_damage_radius");
+                }
+
+                return bonus + this.Ability.GetAbilitySpecialData("damage");
             }
         }
     }
