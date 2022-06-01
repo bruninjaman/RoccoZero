@@ -1,5 +1,7 @@
 namespace Ensage.SDK.TargetSelector
 {
+    using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -12,7 +14,7 @@ namespace Ensage.SDK.TargetSelector
 
     public sealed class TargetSelectorManager : ITargetSelectorManager
     {
-        private IEnumerable<Unit> Targets;
+        private IEnumerable<Unit> Targets = Array.Empty<Unit>();
 
         public TargetSelectorManager()
         {

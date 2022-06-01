@@ -139,13 +139,13 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> AbyssalBladeHeroes;
-//        public MenuItem<HeroToggler> BloodthornOrchidHeroes;
-//        public MenuItem<HeroToggler> NullifierHeroes;
-//        public MenuItem<HeroToggler> InvisHeroes;
-//        public MenuItem<Slider> MinimumUltiHp;
-//        public MenuItem<bool> MinimumUltiToggle;
-//        public MenuItem<bool> DrawPouncePosition;
+//        public MenuHeroToggler AbyssalBladeHeroes;
+//        public MenuHeroToggler BloodthornOrchidHeroes;
+//        public MenuHeroToggler NullifierHeroes;
+//        public MenuHeroToggler InvisHeroes;
+//        public MenuSlider MinimumUltiHp;
+//        public MenuSwitcher MinimumUltiToggle;
+//        public MenuSwitcher DrawPouncePosition;
 //        #endregion
 
 //        private IParticleManager particle;
@@ -492,13 +492,13 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> AbyssalBladeHeroes;
-//        public MenuItem<HeroToggler> BloodthornOrchidHeroes;
-//        public MenuItem<HeroToggler> NullifierHeroes;
-//        public MenuItem<HeroToggler> InvisHeroes;
-//        public MenuItem<Slider> MinimumUltiHp;
-//        public MenuItem<bool> MinimumUltiToggle;
-//        public MenuItem<bool> DrawPouncePosition;
+//        public MenuHeroToggler AbyssalBladeHeroes;
+//        public MenuHeroToggler BloodthornOrchidHeroes;
+//        public MenuHeroToggler NullifierHeroes;
+//        public MenuHeroToggler InvisHeroes;
+//        public MenuSlider MinimumUltiHp;
+//        public MenuSwitcher MinimumUltiToggle;
+//        public MenuSwitcher DrawPouncePosition;
 //        #endregion
 
 //        private IParticleManager particle;
@@ -845,13 +845,13 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> AbyssalBladeHeroes;
-//        public MenuItem<HeroToggler> BloodthornOrchidHeroes;
-//        public MenuItem<HeroToggler> NullifierHeroes;
-//        public MenuItem<HeroToggler> InvisHeroes;
-//        public MenuItem<Slider> MinimumUltiHp;
-//        public MenuItem<bool> MinimumUltiToggle;
-//        public MenuItem<bool> DrawPouncePosition;
+//        public MenuHeroToggler AbyssalBladeHeroes;
+//        public MenuHeroToggler BloodthornOrchidHeroes;
+//        public MenuHeroToggler NullifierHeroes;
+//        public MenuHeroToggler InvisHeroes;
+//        public MenuSlider MinimumUltiHp;
+//        public MenuSwitcher MinimumUltiToggle;
+//        public MenuSwitcher DrawPouncePosition;
 //        #endregion
 
 //        private IParticleManager particle;

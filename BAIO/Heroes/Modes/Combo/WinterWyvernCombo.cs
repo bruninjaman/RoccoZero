@@ -180,7 +180,7 @@
 //                return;
 //            }
 
-//            if ((this.WinterWyvern.HealOnlyInCombo && !this.WinterWyvern.Config.General.ComboKey.Value.Active))
+//            if ((this.WinterWyvern.HealOnlyInCombo && !this.WinterWyvern.Config.General.ComboKey.Value))
 //            {
 //                await Task.Delay(250, token);
 //                return;

@@ -158,13 +158,13 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> HexHeroes;
-//        public MenuItem<HeroToggler> DagonHeroes;
-//        public MenuItem<bool> SniperMode;
-//        public MenuItem<bool> ComboRadiusMenu;
-//        public MenuItem<bool> DrawUltiPosition;
-//        public MenuItem<Slider> AmountMenu;
-//        public MenuItem<KeyBind> PuckEscape;
+//        public MenuHeroToggler HexHeroes;
+//        public MenuHeroToggler DagonHeroes;
+//        public MenuSwitcher SniperMode;
+//        public MenuSwitcher ComboRadiusMenu;
+//        public MenuSwitcher DrawUltiPosition;
+//        public MenuSlider AmountMenu;
+//        public MenuHoldKey PuckEscape;
 //        #endregion
 
 //        protected override ComboMode GetComboMode()
@@ -192,7 +192,7 @@
 //            this.PuckEscape = factory.Item("Escape", new KeyBind(70));
 
 //            this.SniperMode = factory.Item("Sniper Mode", false);
-//            this.SniperMode.Item.Tooltip = "It will use everything and runaway to orb";
+//            this.SniperMode.SetTooltip("It will use everything and runaway to orb";
 //            this.AmountMenu = factory.Item("Amount", new Slider(2, 1, 5));
 //            this.HexHeroes = itemMenu.Item("Hex",
 //                    new HeroToggler(new Dictionary<string, bool>(), true, false, true));

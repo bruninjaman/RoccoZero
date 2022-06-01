@@ -135,10 +135,10 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> BkbHeroes;
-//        public MenuItem<HeroToggler> BtOrchidHeroes;
-//        public MenuItem<HeroToggler> HalberdHeroes;
-//        public MenuItem<bool> UseUltiBefore;
+//        public MenuHeroToggler BkbHeroes;
+//        public MenuHeroToggler BtOrchidHeroes;
+//        public MenuHeroToggler HalberdHeroes;
+//        public MenuSwitcher UseUltiBefore;
 //        #endregion
 
 //        protected override ComboMode GetComboMode()

@@ -134,7 +134,7 @@ namespace BAIO.Heroes.Base
             var itemMenu = this.Config.Hero.ItemMenu;
 
             /* this.TurnTheOtherCheek = factory.Item("Turn The Other Cheek", new KeyBind(70));
-             this.TurnTheOtherCheek.Item.Tooltip = "Will try to turn back to enemies."; */
+             this.TurnTheOtherCheek.SetTooltip("Will try to turn back to enemies."; */
 
             this.NullifierHeroes = itemMenu.CreateHeroToggler("Nullifier", new());
             this.AbyssalBladeHeroes = itemMenu.CreateHeroToggler("Abyssal Blade", new());

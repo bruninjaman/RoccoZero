@@ -312,11 +312,11 @@
 //                return;
 //            }
 
-//            if (this.Nevermore.UltiCombo.Value.Active)
+//            if (this.Nevermore.UltiCombo.Value)
 //            {
 //                if ((this.EulTarget == null) || !this.EulTarget.IsValid || !this.EulTarget.IsAlive)
 //                {
-//                    EulTarget = this.Context.TargetSelector.Active.GetTargets().FirstOrDefault();
+//                    EulTarget = this.Context.TargetSelector.GetTargets().FirstOrDefault();
 //                }
 //            }
 //            else
@@ -327,7 +327,7 @@
 
 //            if (!this.Nevermore.Ulti.CanBeCasted() || EulTarget == null)
 //            {
-//                if (this.Nevermore.UltiCombo.Value.Active)
+//                if (this.Nevermore.UltiCombo.Value)
 //                {
 //                    this.Context.Orbwalker.OrbwalkTo(null);
 //                    return;
@@ -336,7 +336,7 @@
 //                return;
 //            }
 
-//            if (this.Nevermore.UltiCombo.Value.Active && EulTarget != null)
+//            if (this.Nevermore.UltiCombo.Value && EulTarget != null)
 //            {
 //                try
 //                {
@@ -425,7 +425,7 @@
 //                            veil.Cast(EulTarget.Position);
 //                            await Task.Delay(veil.GetCastDelay(), token);
 //                        }
-//                        if (bkb != null && bkb.CanBeCasted && !this.Owner.IsInvisible() && this.Nevermore.BkbToggle.Value.Active)
+//                        if (bkb != null && bkb.CanBeCasted && !this.Owner.IsInvisible() && this.Nevermore.BkbToggle.Value)
 //                        {
 //                            bkb.Cast();
 //                            await Task.Delay(bkb.GetCastDelay(), token);
@@ -466,7 +466,7 @@
 //                        await Task.Delay(100, token);
 //                    }
 
-//                    if (bkb != null && bkb.CanBeCasted && !this.Owner.IsInvisible() && this.Nevermore.BkbToggle.Value.Active)
+//                    if (bkb != null && bkb.CanBeCasted && !this.Owner.IsInvisible() && this.Nevermore.BkbToggle.Value)
 //                    {
 //                        bkb.Cast();
 //                        await Task.Delay(bkb.GetCastDelay(), token);

@@ -150,14 +150,14 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> AbyssalBladeHeroes;
-//        public MenuItem<HeroToggler> HexHeroes;
-//        public MenuItem<HeroToggler> NullifierHeroes;
-//        public MenuItem<HeroToggler> OrchidHeroes;
+//        public MenuHeroToggler AbyssalBladeHeroes;
+//        public MenuHeroToggler HexHeroes;
+//        public MenuHeroToggler NullifierHeroes;
+//        public MenuHeroToggler OrchidHeroes;
 
-//        public MenuItem<Slider> MinimumBlinkRange;
-//        public MenuItem<Slider> ResonantPulseCount;
-//        public MenuItem<bool> RandomlyJump;
+//        public MenuSlider MinimumBlinkRange;
+//        public MenuSlider ResonantPulseCount;
+//        public MenuSwitcher RandomlyJump;
 
 //        #endregion
 

@@ -165,20 +165,20 @@
 
 //        #region MenuItems
 
-//        public MenuItem<KeyBind> UltiCombo;
-//        public MenuItem<bool> DrawRazeRange;
-//        public MenuItem<bool> PriRaze;
-//        public MenuItem<Slider> DrawingX;
-//        public MenuItem<Slider> DrawingY;
-//        public MenuItem<KeyBind> BkbToggle { get; private set; }
-//        public MenuItem<HeroToggler> EtherealHeroes;
-//        public MenuItem<HeroToggler> VeilOfDiscordHeroes;
-//        public MenuItem<HeroToggler> HexHeroes;
-//        public MenuItem<HeroToggler> OrchidBloodthornHeroes;
-//        public MenuItem<HeroToggler> AtosHeroes;
-//        public MenuItem<HeroToggler> HalberdHeroes;
-//        public MenuItem<bool> UseBlink;
-//        public MenuItem<bool> EullessUlti;
+//        public MenuHoldKey UltiCombo;
+//        public MenuSwitcher DrawRazeRange;
+//        public MenuSwitcher PriRaze;
+//        public MenuSlider DrawingX;
+//        public MenuSlider DrawingY;
+//        public MenuHoldKey BkbToggle { get; private set; }
+//        public MenuHeroToggler EtherealHeroes;
+//        public MenuHeroToggler VeilOfDiscordHeroes;
+//        public MenuHeroToggler HexHeroes;
+//        public MenuHeroToggler OrchidBloodthornHeroes;
+//        public MenuHeroToggler AtosHeroes;
+//        public MenuHeroToggler HalberdHeroes;
+//        public MenuSwitcher UseBlink;
+//        public MenuSwitcher EullessUlti;
 //        #endregion
 
 //        public bool IsRazeModifier { get; set; }
@@ -214,14 +214,14 @@
 //            var factory = this.Config.Hero.Factory;
 //            var itemMenu = this.Config.Hero.ItemMenu;
 //            this.DrawRazeRange = factory.Item("Draw Raze Indicators", true);
-//            this.DrawRazeRange.Item.Tooltip = "When enabled, will draw raze indicators.";
+//            this.DrawRazeRange.SetTooltip("When enabled, will draw raze indicators.";
 //            this.PriRaze = factory.Item("Make sure razes hit", true);
 //            this.PriRaze.Item.Tooltip =
 //                "When enabled, will stop razes if not guaranteed hit, but skip some attacks in return.";
 //            this.UltiCombo = factory.Item("Ulti Key", new KeyBind(70));
-//            this.UltiCombo.Item.Tooltip = "Will use ulti with available items on target.";
+//            this.UltiCombo.SetTooltip("Will use ulti with available items on target.";
 //            this.EullessUlti = factory.Item("Use ulti without eul too", false);
-//            this.EullessUlti.Item.Tooltip = "Will use ulti without euls too. Only activate with good ping/fps";
+//            this.EullessUlti.SetTooltip("Will use ulti without euls too. Only activate with good ping/fps";
 //            this.DrawingX = factory.Item("Drawing X", new Slider(0, 0, 1800));
 //            this.DrawingY = factory.Item("Drawing Y", new Slider(0, 0, 1800));
 
@@ -481,7 +481,7 @@
 //            Vector2 screenPos;
 //            var drawPos = new Vector2(DrawingX, DrawingY);
 //            var mousePos = GameManager.MousePosition;
-//            var value = BkbToggle.Value.Active;
+//            var value = BkbToggle.Value;
 
 //            if (Drawing.WorldToScreen(mousePos, out screenPos))
 //            {

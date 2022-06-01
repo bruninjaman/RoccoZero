@@ -331,7 +331,7 @@
 
 //        private async Task OnUpdate(CancellationToken token)
 //        {
-//            if (GameManager.IsPaused || !this.Juggernaut.Config.General.ComboKey.Value.Active)
+//            if (GameManager.IsPaused || !this.Juggernaut.Config.General.ComboKey.Value)
 //            {
 //                await Task.Delay(250, token);
 //                return;

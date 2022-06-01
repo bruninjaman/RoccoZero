@@ -331,7 +331,7 @@
 //        {
 //            if (GameManager.IsPaused || !this.Owner.IsAlive)
 //            {
-//                if (this.Puck.PuckEscape.Value.Active)
+//                if (this.Puck.PuckEscape.Value)
 //                {
 //                    this.Context.Orbwalker.OrbwalkTo(null);
 //                    return;
@@ -340,7 +340,7 @@
 //                return;
 //            }
 
-//            if (this.Puck.PuckEscape.Value.Active)
+//            if (this.Puck.PuckEscape.Value)
 //            {
 //                fountain =
 //                    EntityManager.GetEntities<Unit>()

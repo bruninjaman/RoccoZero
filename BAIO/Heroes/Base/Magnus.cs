@@ -142,15 +142,15 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> AbyssalBladeHeroes;
-//        public MenuItem<HeroToggler> NullifierHeroes;
-//        public MenuItem<HeroToggler> OrchidBloodthornHeroes;
-//        public MenuItem<HeroToggler> InvisHeroes;
-//        public MenuItem<HeroToggler> EmpowerHeroes;
-//        public MenuItem<Slider> Amount;
+//        public MenuHeroToggler AbyssalBladeHeroes;
+//        public MenuHeroToggler NullifierHeroes;
+//        public MenuHeroToggler OrchidBloodthornHeroes;
+//        public MenuHeroToggler InvisHeroes;
+//        public MenuHeroToggler EmpowerHeroes;
+//        public MenuSlider Amount;
 //        public MenuItem<StringList> SkewerPrefMenu { get; private set; }
-//        public MenuItem<bool> AutoCombo;
-//        public MenuItem<bool> DebugDrawings;
+//        public MenuSwitcher AutoCombo;
+//        public MenuSwitcher DebugDrawings;
 //        public MenuItem<KeyBind> SkewerStandalone;
 //        #endregion
 

@@ -108,7 +108,7 @@ namespace BAIO.Heroes.Modes.Combo
 
         /*private async Task OnUpdate(CancellationToken token)
         {
-            if (GameManager.IsPaused || !this.Bristleback.TurnTheOtherCheek.Value.Active)
+            if (GameManager.IsPaused || !this.Bristleback.TurnTheOtherCheek.Value)
             {
                 await Task.Delay(250, token);
                 return;

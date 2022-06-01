@@ -131,12 +131,12 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> HexHeroes;
-//        public MenuItem<HeroToggler> NullifierHeroes;
-//        public MenuItem<HeroToggler> HalberdHeroes;
-//        public MenuItem<HeroToggler> OrchidHeroes;
+//        public MenuHeroToggler HexHeroes;
+//        public MenuHeroToggler NullifierHeroes;
+//        public MenuHeroToggler HalberdHeroes;
+//        public MenuHeroToggler OrchidHeroes;
 
-//        public MenuItem<KeyBind> UltiCombo;
+//        public MenuHoldKey UltiCombo;
 //        #endregion
 
 //        protected override ComboMode GetComboMode()
@@ -159,7 +159,7 @@
 //            var itemMenu = this.Config.Hero.ItemMenu;
 
 //            this.UltiCombo = factory.Item("Ulti Key", new KeyBind(70));
-//            this.UltiCombo.Item.Tooltip = "Will use ulti on target.";
+//            this.UltiCombo.SetTooltip("Will use ulti on target.";
 
 //            this.NullifierHeroes = itemMenu.Item("Nullifier",
 //                    new HeroToggler(new Dictionary<string, bool>(), true, false, true));

@@ -142,17 +142,17 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> AbyssalBladeHeroes;
-//        public MenuItem<HeroToggler> OmniHeroes;
-//        public MenuItem<HeroToggler> MantaHeroes;
-//        public MenuItem<HeroToggler> NullifierHeroes;
-//        public MenuItem<HeroToggler> DiffusalHeroes;
+//        public MenuHeroToggler AbyssalBladeHeroes;
+//        public MenuHeroToggler OmniHeroes;
+//        public MenuHeroToggler MantaHeroes;
+//        public MenuHeroToggler NullifierHeroes;
+//        public MenuHeroToggler DiffusalHeroes;
 
-//        public MenuItem<bool> BladeFuryOnlyChase { get; private set; }
-//        public MenuItem<bool> BladeFuryOnCombo { get; private set; }
-//        public MenuItem<bool> ControlWardMenu { get; set; }
-//        public MenuItem<bool> OmnislashBlinkMenu { get; private set; }
-//        public MenuItem<HeroToggler> InvisHeroes;
+//        public MenuSwitcher BladeFuryOnlyChase { get; private set; }
+//        public MenuSwitcher BladeFuryOnCombo { get; private set; }
+//        public MenuSwitcher ControlWardMenu { get; set; }
+//        public MenuSwitcher OmnislashBlinkMenu { get; private set; }
+//        public MenuHeroToggler InvisHeroes;
 
 //        #endregion
 
@@ -187,18 +187,18 @@
 //                    new HeroToggler(new Dictionary<string, bool>(), true, false, true));
 
 //            this.OmnislashBlinkMenu = factory.Item("Use Dagger with Ulti", true);
-//            this.OmnislashBlinkMenu.Item.Tooltip = "Use Dagger with ulti to keep ulti going if target is dead";
+//            this.OmnislashBlinkMenu.SetTooltip("Use Dagger with ulti to keep ulti going if target is dead";
 //            this.OmnislashBlinkMenu.ValueChanged += this.OmniBlinkOnPropertyChanged;
 
 //            this.OmniHeroes = factory.Item("Omnislash Heroes",
 //                new HeroToggler(new Dictionary<string, bool>(), true, false, true));
 
 //            this.ControlWardMenu = factory.Item("Control Healing Ward", true);
-//            this.ControlWardMenu.Item.Tooltip = "Enable it to let script control Healing Ward";
+//            this.ControlWardMenu.SetTooltip("Enable it to let script control Healing Ward";
 //            this.ControlWardMenu.ValueChanged += this.ControlWardOnPropertyChanged;
 
 //            this.BladeFuryOnCombo = factory.Item("Use Bladefurry in combo", true);
-//            this.BladeFuryOnCombo.Item.Tooltip = "If disabled, won't use bladefury in combo.";
+//            this.BladeFuryOnCombo.SetTooltip("If disabled, won't use bladefury in combo.";
 
 
 //            this.BladeFuryOnlyChase = factory.Item("Move to in front of enemy on Blade Fury, don't orbwalk", true);

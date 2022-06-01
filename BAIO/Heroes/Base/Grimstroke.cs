@@ -160,9 +160,9 @@
 //        #endregion
 
 //        #region MenuItems
-//        public MenuItem<HeroToggler> BloodthornOrchidHeroes;
-//        public MenuItem<HeroToggler> NullifierHeroes;
-//        public MenuItem<HeroToggler> PortraitToggler;
+//        public MenuHeroToggler BloodthornOrchidHeroes;
+//        public MenuHeroToggler NullifierHeroes;
+//        public MenuHeroToggler PortraitToggler;
 //        #endregion
 
 //        protected override ComboMode GetComboMode()

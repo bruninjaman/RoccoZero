@@ -136,12 +136,12 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> BkbHeroes;
-//        public MenuItem<HeroToggler> BtOrchidHeroes;
-//        public MenuItem<HeroToggler> HalberdHeroes;
-//        public MenuItem<HeroToggler> InvisHeroes;
-//        public MenuItem<bool> UseUltiBefore;
-//        public MenuItem<bool> ForceStaffPush;
+//        public MenuHeroToggler BkbHeroes;
+//        public MenuHeroToggler BtOrchidHeroes;
+//        public MenuHeroToggler HalberdHeroes;
+//        public MenuHeroToggler InvisHeroes;
+//        public MenuSwitcher UseUltiBefore;
+//        public MenuSwitcher ForceStaffPush;
 //        #endregion
 
 //        public bool UserUseStun;

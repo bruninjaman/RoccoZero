@@ -196,7 +196,7 @@
 
 //        private async Task OnUpdate(CancellationToken token)
 //        {
-//            var target = this.Context.TargetSelector.Active.GetTargets().FirstOrDefault();
+//            var target = this.Context.TargetSelector.GetTargets().FirstOrDefault();
 //            if (GameManager.IsPaused || !this.Owner.IsAlive || target == null)
 //            {
 //                await Task.Delay(250, token);
@@ -205,7 +205,7 @@
 
 //            //if (!this.Snapfire.Kiss.CanBeCasted || UltiTarget == null)
 //            //{
-//            //    if (this.Snapfire.UltiCombo.Value.Active)
+//            //    if (this.Snapfire.UltiCombo.Value)
 //            //    {
 //            //        this.Context.Orbwalker.OrbwalkTo(null);
 //            //        return;
@@ -214,7 +214,7 @@
 //            //    return;
 //            //}
 
-//            if (this.Snapfire.UltiCombo.Value.Active && target != null && target.Distance2D(this.Owner) >= 600
+//            if (this.Snapfire.UltiCombo.Value && target != null && target.Distance2D(this.Owner) >= 600
 //                && !Ensage.SDK.Extensions.UnitExtensions.HasModifier(this.Owner,"modifier_snapfire_mortimer_kisses"))
 //            {
 //                var input = new PredictionInput(this.Owner, target, this.Snapfire.Kiss.GetCastDelay(target) / 1000f, this.Snapfire.Kiss.Ability.GetAbilitySpecialData("projectile_speed"), 3000, 250);
@@ -230,7 +230,7 @@
 //                    }
 //                }
 //            }
-//            if (this.Snapfire.UltiCombo.Value.Active && target != null && Ensage.SDK.Extensions.UnitExtensions.HasModifier(this.Owner, "modifier_snapfire_mortimer_kisses"))
+//            if (this.Snapfire.UltiCombo.Value && target != null && Ensage.SDK.Extensions.UnitExtensions.HasModifier(this.Owner, "modifier_snapfire_mortimer_kisses"))
 //            {
 //                var input = new PredictionInput(this.Owner, target, this.Snapfire.Kiss.GetCastDelay(target) / 1000f, this.Snapfire.Kiss.Ability.GetAbilitySpecialData("projectile_speed"), 3000, 250);
 //                var output = this.Snapfire.Context.Prediction.GetPrediction(input);

@@ -129,16 +129,16 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> AbyssalBladeHeroes;
-//        public MenuItem<HeroToggler> MantaHeroes;
-//        public MenuItem<HeroToggler> NullifierHeroes;
-//        public MenuItem<bool> UseBlink;
-//        public MenuItem<bool> HealOnlyInCombo;
+//        public MenuHeroToggler AbyssalBladeHeroes;
+//        public MenuHeroToggler MantaHeroes;
+//        public MenuHeroToggler NullifierHeroes;
+//        public MenuSwitcher UseBlink;
+//        public MenuSwitcher HealOnlyInCombo;
 
-//        public MenuItem<HeroToggler> HeroestoHeal;
-//        public MenuItem<HeroToggler> HeroestoUlti;
-//        public MenuItem<Slider> HeroCountToUlti;
-//        public MenuItem<Slider> HealThreshold;
+//        public MenuHeroToggler HeroestoHeal;
+//        public MenuHeroToggler HeroestoUlti;
+//        public MenuSlider HeroCountToUlti;
+//        public MenuSlider HealThreshold;
 
 //        #endregion
 
@@ -161,14 +161,14 @@
 
 //            this.HeroestoHeal = factory.Item("Heroes to heal: ",
 //                new HeroToggler(new Dictionary<string, bool>(), false, true, true));
-//            HeroestoHeal.Item.Tooltip = "Will only use Heal if combo key is pressed.";
+//            HeroestoHeal.SetTooltip("Will only use Heal if combo key is pressed.";
 //            this.HealThreshold = factory.Item("Heal Threshold", new Slider(50, 0, 100));
 //            this.HealOnlyInCombo = factory.Item("Heal only combo active", false);
 
 //            this.HeroestoUlti = factory.Item("Heroes to Ulti: ",
 //                new HeroToggler(new Dictionary<string, bool>(), true, false, true));
 //            this.HeroCountToUlti = factory.Item("Hero count to ult", new Slider(1, 0, 5));
-//            this.HeroCountToUlti.Item.Tooltip = "Will only use ulti if target has that many heroes around him";
+//            this.HeroCountToUlti.SetTooltip("Will only use ulti if target has that many heroes around him";
 //            this.MantaHeroes = itemMenu.Item("Manta",
 //                    new HeroToggler(new Dictionary<string, bool>(), true, false, true));
 //            this.NullifierHeroes = itemMenu.Item("Nullifier",

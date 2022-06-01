@@ -136,13 +136,13 @@
 
 //        #region MenuItems
 
-//        public MenuItem<HeroToggler> AbyssalBladeHeroes;
-//        public MenuItem<HeroToggler> MantaHeroes;
-//        public MenuItem<HeroToggler> NullifierHeroes;
-//        public MenuItem<HeroToggler> DiffusalHeroes;
+//        public MenuHeroToggler AbyssalBladeHeroes;
+//        public MenuHeroToggler MantaHeroes;
+//        public MenuHeroToggler NullifierHeroes;
+//        public MenuHeroToggler DiffusalHeroes;
 
-//        public MenuItem<bool> KillstealWithUlti { get; private set; }
-//        public MenuItem<Slider> MinimumUltiDistance { get; private set; }
+//        public MenuSwitcher KillstealWithUlti { get; private set; }
+//        public MenuSlider MinimumUltiDistance { get; private set; }
 //        #endregion
 
 //        protected override ComboMode GetComboMode()

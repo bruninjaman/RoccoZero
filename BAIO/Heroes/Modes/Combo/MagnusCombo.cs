@@ -459,7 +459,7 @@
 //            var target = this.Context.TargetSelector.GetTargets().FirstOrDefault();
 //            if (GameManager.IsPaused || !this.Owner.IsAlive || this.Magnus.Skewer.Ability.Cooldown > 5 || target == null || this.Owner.Distance2D(target) > 1200)
 //            {
-//                if (this.Magnus.SkewerStandalone.Value.Active)
+//                if (this.Magnus.SkewerStandalone.Value)
 //                {
 //                    this.Magnus.Context.Orbwalker.OrbwalkTo(null);
 //                    return;
@@ -495,7 +495,7 @@
 //                    skewerOnlySkewerPosition = fountain.Position;
 //                }
 
-//                if (this.Magnus.SkewerStandalone.Value.Active)
+//                if (this.Magnus.SkewerStandalone.Value)
 //                {
 //                    if (this.Owner.Distance2D(target) >= 500 && !this.Owner.IsChanneling())
 //                    {
