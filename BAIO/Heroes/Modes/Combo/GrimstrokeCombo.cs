@@ -35,7 +35,7 @@
 
 //        private float sofStartCastTime;
 
-//        private readonly IUpdateHandler sofUpdateHandler;
+//        private readonly UpdateHandler sofUpdateHandler;
 
 //        private IParticleManager particle { get; set; }
 
@@ -47,7 +47,7 @@
 //            Entity.OnBoolPropertyChange += this.OnSofCast;
 //            particle = this.Context.Particle;
 //            this.IllusionHandler = TaskHandler.Run(OnUpdate);
-//            this.sofUpdateHandler = UpdateManager.Subscribe(this.SofHitCheck, 0, false);
+//            this.sofUpdateHandler = UpdateManager.CreateIngameUpdate(this.SofHitCheck, 0, false);
 //        }
 
 //        public override async Task ExecuteAsync(CancellationToken token)
@@ -426,7 +426,7 @@
 //            {
 //                try
 //                {
-//                    List<KeyValuePair<string, uint>> breakerChanger = new List<KeyValuePair<string, uint>>();
+//                    List<KeyValuePair<AbilityId, bool>> breakerChanger = new List<KeyValuePair<AbilityId, bool>>();
 
 //                    if (this.CurrentTarget.IsLinkensProtected())
 //                    {

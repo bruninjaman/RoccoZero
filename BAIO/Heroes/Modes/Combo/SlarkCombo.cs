@@ -218,7 +218,7 @@
 //            {
 //                try
 //                {
-//                    List<KeyValuePair<string, uint>> breakerChanger = new List<KeyValuePair<string, uint>>();
+//                    List<KeyValuePair<AbilityId, bool>> breakerChanger = new List<KeyValuePair<AbilityId, bool>>();
 
 //                    if (this.CurrentTarget.IsLinkensProtected())
 //                    {

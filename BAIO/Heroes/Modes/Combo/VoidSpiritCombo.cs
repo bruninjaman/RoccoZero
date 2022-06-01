@@ -122,7 +122,7 @@
 //                    if (remnant.CanBeCasted && EntityExtensions.Distance2D(this.Owner, this.CurrentTarget) <= remnant.CastRange)
 //                    {
 //                        var input = remnant.GetPredictionInput(this.CurrentTarget);
-//                        var output = this.VoidSpirit.Context.Prediction.GetPrediction(input);
+//                        var output = this.VoidSpirit.Context.PredictionManager.GetPrediction(input);
 
 //                        if (output.HitChance >= HitChance.Medium)
 //                        {
@@ -140,7 +140,7 @@
 //                        {
 //                            var input = new PredictionInput(this.Owner, this.CurrentTarget, ulti.GetCastDelay() / 1000f, float.MaxValue, ulti.Ability.GetAbilitySpecialData("max_travel_distance")
 //                                , ulti.Radius);
-//                            var output = this.VoidSpirit.Context.Prediction.GetPrediction(input);
+//                            var output = this.VoidSpirit.Context.PredictionManager.GetPrediction(input);
 //                            if (output.HitChance >= HitChance.Medium)
 //                            {
 //                                for (int i = 0; i < 1; i++)
@@ -158,7 +158,7 @@
 //                        {
 //                            var input = new PredictionInput(this.Owner, this.CurrentTarget, ulti.GetCastDelay() / 1000f, float.MaxValue, ulti.Ability.GetAbilitySpecialData("max_travel_distance")
 //                                , ulti.Radius);
-//                            var output = this.VoidSpirit.Context.Prediction.GetPrediction(input);
+//                            var output = this.VoidSpirit.Context.PredictionManager.GetPrediction(input);
 //                            if (output.HitChance >= HitChance.Medium)
 //                            {
 //                                if (ulti.Cast(output.CastPosition))
@@ -346,7 +346,7 @@
 //            {
 //                try
 //                {
-//                    List<KeyValuePair<string, uint>> breakerChanger = new List<KeyValuePair<string, uint>>();
+//                    List<KeyValuePair<AbilityId, bool>> breakerChanger = new List<KeyValuePair<AbilityId, bool>>();
 
 //                    if (UnitExtensions.IsLinkensProtected(this.CurrentTarget))
 //                    {

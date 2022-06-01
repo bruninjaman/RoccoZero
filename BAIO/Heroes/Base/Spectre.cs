@@ -173,7 +173,7 @@
 
 //            this.KillstealWithUlti = factory.Item("Killsteal with ulti", true);
 //            this.MinimumUltiDistance = factory.Item("Minimum Ult Distance", new Slider(2000, 0, 10000));
-//            this.MinimumUltiDistance.Item.Tooltip =
+//            this.MinimumUltiDistance.SetTooltip(
 //                "Will only use ulti if distance to the target is bigger than that value";
 //        }
 

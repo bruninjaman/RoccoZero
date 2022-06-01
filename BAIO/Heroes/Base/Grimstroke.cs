@@ -19,7 +19,7 @@
 //using Ensage.SDK.Inventory.Metadata;
 //using Ensage.SDK.Menu;
 //using Ensage.SDK.Prediction;
-//using Ensage.SDK.Prediction.Collision;
+//using Ensage.SDK.PredictionManager.Collision;
 //using Ensage.SDK.Renderer.Particle;
 //using log4net;
 //using PlaySharp.Toolkit.Helper.Annotations;

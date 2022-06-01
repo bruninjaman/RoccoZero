@@ -139,7 +139,7 @@
 //                x.Distance2D(this.CurrentTarget) <= 600 && x.Distance2D(this.Owner) <= 1200).ToList();
 
 //                var input = new PredictionInput(this.Owner, this.CurrentTarget, stun.GetCastDelay() / 1000f, float.MaxValue, 1200, 350, PredictionSkillshotType.SkillshotCircle, true, targets, true);
-//                var output = this.Slardar.Context.Prediction.GetPrediction(input);
+//                var output = this.Slardar.Context.PredictionManager.GetPrediction(input);
 //                if (output.HitChance >= HitChance.Medium)
 //                {
 //                    blink.Cast(output.CastPosition);
@@ -282,7 +282,7 @@
 //            {
 //                try
 //                {
-//                    List<KeyValuePair<string, uint>> breakerChanger = new List<KeyValuePair<string, uint>>();
+//                    List<KeyValuePair<AbilityId, bool>> breakerChanger = new List<KeyValuePair<AbilityId, bool>>();
 
 //                    if (this.CurrentTarget.IsLinkensProtected())
 //                    {

@@ -48,7 +48,7 @@
 //            this.Magnus = hero;
 //            this.StunHandler = TaskHandler.Run(this.AntiFail);
 //            this.SkewerHandler = TaskHandler.Run(this.SkewerStandalone);
-//            UpdateManager.Subscribe(OnUpdate, 25);
+//            UpdateManager.CreateIngameUpdate(OnUpdate, 25);
 //        }
 
 //        public override async Task ExecuteAsync(CancellationToken token)
@@ -236,7 +236,7 @@
 //                    skewer.Speed,
 //                    skewer.CastRange,
 //                    skewer.Radius);
-//                var skewerOutput = this.Magnus.Context.Prediction.GetPrediction(skewerInput);
+//                var skewerOutput = this.Magnus.Context.PredictionManager.GetPrediction(skewerInput);
 
 //                if (skewer.CanBeCasted && ulti.CanBeCasted && this.Owner.Distance2D(this.CurrentTarget) >= 600)
 //                {
@@ -361,7 +361,7 @@
 //                Input = new PredictionInput(this.Owner, this.CurrentTarget,
 //                    this.Magnus.ReversePolarity.GetCastDelay() / 1000f, float.MaxValue, 1200, 410,
 //                    PredictionSkillshotType.SkillshotCircle, true, targets, true);
-//                Output = this.Magnus.Context.Prediction.GetPrediction(Input);
+//                Output = this.Magnus.Context.PredictionManager.GetPrediction(Input);
 //            }
 
 //            if (CurrentTarget != null && Output != null && CurrentTarget.Distance2D(Output.CastPosition) <= 1000 &&
@@ -559,7 +559,7 @@
 //            {
 //                try
 //                {
-//                    List<KeyValuePair<string, uint>> breakerChanger = new List<KeyValuePair<string, uint>>();
+//                    List<KeyValuePair<AbilityId, bool>> breakerChanger = new List<KeyValuePair<AbilityId, bool>>();
 
 //                    if (this.CurrentTarget.IsLinkensProtected())
 //                    {

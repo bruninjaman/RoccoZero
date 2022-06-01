@@ -17,7 +17,7 @@
 //using Ensage.SDK.Inventory.Metadata;
 //using Ensage.SDK.Menu;
 //using Ensage.SDK.Prediction;
-//using Ensage.SDK.Prediction.Collision;
+//using Ensage.SDK.PredictionManager.Collision;
 //using Ensage.SDK.Renderer.Particle;
 //using log4net;
 //using PlaySharp.Toolkit.Helper.Annotations;
@@ -163,7 +163,7 @@
 //            this.Pounce = this.Owner.GetAbilityById(AbilityId.slark_pounce);
 //            this.ShadowDance = this.Owner.GetAbilityById(AbilityId.slark_shadow_dance);
 
-//            UpdateManager.Subscribe(OnPounce, 20);
+//            UpdateManager.CreateIngameUpdate(OnPounce, 20);
 
 //            var factory = this.Config.Hero.Factory;
 //            var itemMenu = this.Config.Hero.ItemMenu;
@@ -187,7 +187,7 @@
 //        protected override void OnDeactivate()
 //        {
 //            base.OnDeactivate();
-//            UpdateManager.Unsubscribe(OnPounce);
+//            UpdateManager.DestroyIngameUpdate(OnPounce);
 //        }
 
 //        private void OnPounce()
@@ -347,7 +347,7 @@
 //        {
 //            return
 //                (int)
-//                (((ability.GetCastPoint(ability.Level - 1) + Owner.TurnTime(targetto.Position)) * 1000.0f) +
+//                (((ability.AbilityData.GetCastPoint(ability.Level - 1) + Owner.TurnTime(targetto.Position)) * 1000.0f) +
 //                 GameManager.Ping);
 //        }*/
 //    }
@@ -370,7 +370,7 @@
 //using Ensage.SDK.Inventory.Metadata;
 //using Ensage.SDK.Menu;
 //using Ensage.SDK.Prediction;
-//using Ensage.SDK.Prediction.Collision;
+//using Ensage.SDK.PredictionManager.Collision;
 //using Ensage.SDK.Renderer.Particle;
 //using log4net;
 //using PlaySharp.Toolkit.Helper.Annotations;
@@ -516,7 +516,7 @@
 //            this.Pounce = this.Owner.GetAbilityById(AbilityId.slark_pounce);
 //            this.ShadowDance = this.Owner.GetAbilityById(AbilityId.slark_shadow_dance);
 
-//            UpdateManager.Subscribe(OnPounce, 20);
+//            UpdateManager.CreateIngameUpdate(OnPounce, 20);
 
 //            var factory = this.Config.Hero.Factory;
 //            var itemMenu = this.Config.Hero.ItemMenu;
@@ -540,7 +540,7 @@
 //        protected override void OnDeactivate()
 //        {
 //            base.OnDeactivate();
-//            UpdateManager.Unsubscribe(OnPounce);
+//            UpdateManager.DestroyIngameUpdate(OnPounce);
 //        }
 
 //        private void OnPounce()
@@ -700,7 +700,7 @@
 //        {
 //            return
 //                (int)
-//                (((ability.GetCastPoint(ability.Level - 1) + Owner.TurnTime(targetto.Position)) * 1000.0f) +
+//                (((ability.AbilityData.GetCastPoint(ability.Level - 1) + Owner.TurnTime(targetto.Position)) * 1000.0f) +
 //                 GameManager.Ping);
 //        }*/
 //    }
@@ -723,7 +723,7 @@
 //using Ensage.SDK.Inventory.Metadata;
 //using Ensage.SDK.Menu;
 //using Ensage.SDK.Prediction;
-//using Ensage.SDK.Prediction.Collision;
+//using Ensage.SDK.PredictionManager.Collision;
 //using Ensage.SDK.Renderer.Particle;
 //using log4net;
 //using PlaySharp.Toolkit.Helper.Annotations;
@@ -869,7 +869,7 @@
 //            this.Pounce = this.Owner.GetAbilityById(AbilityId.slark_pounce);
 //            this.ShadowDance = this.Owner.GetAbilityById(AbilityId.slark_shadow_dance);
 
-//            UpdateManager.Subscribe(OnPounce, 20);
+//            UpdateManager.CreateIngameUpdate(OnPounce, 20);
 
 //            var factory = this.Config.Hero.Factory;
 //            var itemMenu = this.Config.Hero.ItemMenu;
@@ -893,7 +893,7 @@
 //        protected override void OnDeactivate()
 //        {
 //            base.OnDeactivate();
-//            UpdateManager.Unsubscribe(OnPounce);
+//            UpdateManager.DestroyIngameUpdate(OnPounce);
 //        }
 
 //        private void OnPounce()
@@ -1053,7 +1053,7 @@
 //        {
 //            return
 //                (int)
-//                (((ability.GetCastPoint(ability.Level - 1) + Owner.TurnTime(targetto.Position)) * 1000.0f) +
+//                (((ability.AbilityData.GetCastPoint(ability.Level - 1) + Owner.TurnTime(targetto.Position)) * 1000.0f) +
 //                 GameManager.Ping);
 //        }*/
 //    }

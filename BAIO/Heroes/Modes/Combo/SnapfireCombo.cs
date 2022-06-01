@@ -110,7 +110,7 @@
 //                    if (scatterblast.CanBeCasted && EntityExtensions.Distance2D(this.Owner, this.CurrentTarget) <= scatterblast.CastRange)
 //                    {
 //                        var input = scatterblast.GetPredictionInput(this.CurrentTarget);
-//                        var output = this.Snapfire.Context.Prediction.GetPrediction(input);
+//                        var output = this.Snapfire.Context.PredictionManager.GetPrediction(input);
 
 //                        if (output.HitChance >= HitChance.Medium)
 //                        {
@@ -133,7 +133,7 @@
 //                            }
 
 //                            var input = new PredictionInput(this.Owner, ally, ally == this.Owner ? 0.3f : this.Owner.Distance2D(ally) / 1000, 1000, 450, 350);
-//                            var output = this.Snapfire.Context.Prediction.GetPrediction(input);
+//                            var output = this.Snapfire.Context.PredictionManager.GetPrediction(input);
 
 //                            if (output.HitChance >= HitChance.Medium)
 //                            {
@@ -218,7 +218,7 @@
 //                && !Ensage.SDK.Extensions.UnitExtensions.HasModifier(this.Owner,"modifier_snapfire_mortimer_kisses"))
 //            {
 //                var input = new PredictionInput(this.Owner, target, this.Snapfire.Kiss.GetCastDelay(target) / 1000f, this.Snapfire.Kiss.Ability.GetAbilitySpecialData("projectile_speed"), 3000, 250);
-//                var output = this.Snapfire.Context.Prediction.GetPrediction(input);
+//                var output = this.Snapfire.Context.PredictionManager.GetPrediction(input);
 //                if (target.Distance2D(this.Owner) <= this.Snapfire.Kiss.CastRange)
 //                {
 //                    if (this.Snapfire.Kiss.CanBeCasted && !Ensage.SDK.Extensions.UnitExtensions.IsMagicImmune(target))
@@ -233,7 +233,7 @@
 //            if (this.Snapfire.UltiCombo.Value && target != null && Ensage.SDK.Extensions.UnitExtensions.HasModifier(this.Owner, "modifier_snapfire_mortimer_kisses"))
 //            {
 //                var input = new PredictionInput(this.Owner, target, this.Snapfire.Kiss.GetCastDelay(target) / 1000f, this.Snapfire.Kiss.Ability.GetAbilitySpecialData("projectile_speed"), 3000, 250);
-//                var output = this.Snapfire.Context.Prediction.GetPrediction(input);
+//                var output = this.Snapfire.Context.PredictionManager.GetPrediction(input);
 //                if (lastCastPosition.Distance2D(output.CastPosition) > 25)
 //                {
 //                    if (this.Owner.Move(output.CastPosition))
@@ -256,7 +256,7 @@
 //            {
 //                try
 //                {
-//                    List<KeyValuePair<string, uint>> breakerChanger = new List<KeyValuePair<string, uint>>();
+//                    List<KeyValuePair<AbilityId, bool>> breakerChanger = new List<KeyValuePair<AbilityId, bool>>();
 
 //                    if (UnitExtensions.IsLinkensProtected(this.CurrentTarget))
 //                    {

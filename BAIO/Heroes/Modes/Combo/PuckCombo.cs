@@ -14,7 +14,7 @@
 //using Ensage.SDK.Handlers;
 //using Ensage.SDK.Helpers;
 //using Ensage.SDK.Prediction;
-//using Ensage.SDK.Prediction.Collision;
+//using Ensage.SDK.PredictionManager.Collision;
 //using Ensage.SDK.Renderer.Particle;
 //using log4net;
 //using PlaySharp.Toolkit.Logging;
@@ -40,13 +40,13 @@
 //            : base(hero)
 //        {
 //            this.Puck = hero;
-//            UpdateManager.Subscribe(OnUpdate, 25);
+//            UpdateManager.CreateIngameUpdate(OnUpdate, 25);
 //            EscapeHandler = TaskHandler.Run(PuckPrisonBreak);
 //        }
 
 //        protected override void OnDeactivate()
 //        {
-//            UpdateManager.Unsubscribe(this.OnUpdate);
+//            UpdateManager.DestroyIngameUpdate(this.OnUpdate);
 
 //            base.OnDeactivate();
 //        }
@@ -288,7 +288,7 @@
 //                        CollisionTypes = CollisionTypes.None
 //                    };
 
-//                output = this.Puck.Context.Prediction.GetPrediction(Input);
+//                output = this.Puck.Context.PredictionManager.GetPrediction(Input);
 //            }
 
 //            if (UltiTarget != null && this.Puck.DreamCoil.CanBeCasted && this.Puck.DrawUltiPosition
@@ -420,7 +420,7 @@
 //            {
 //                try
 //                {
-//                    List<KeyValuePair<string, uint>> breakerChanger = new List<KeyValuePair<string, uint>>();
+//                    List<KeyValuePair<AbilityId, bool>> breakerChanger = new List<KeyValuePair<AbilityId, bool>>();
 
 //                    if (this.CurrentTarget.IsLinkensProtected())
 //                    {
