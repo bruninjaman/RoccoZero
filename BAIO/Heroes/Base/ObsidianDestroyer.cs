@@ -250,7 +250,7 @@
             {
                 if (astralled.Count() >= 1 && this.AutoEqu)
                 {
-                    this.Equilibrium.UseAbility();
+                    this.Equilibrium.Cast();
                     await Task.Delay(this.Equilibrium.GetCastDelay(), token);
                 }
                 else
@@ -281,7 +281,7 @@
 
         public async Task UseArcaneOrb(Unit target, CancellationToken token = default(CancellationToken))
         {
-            this.ArcaneOrb.UseAbility(target);
+            this.ArcaneOrb.Cast(target);
             await Task.Delay(this.ArcaneOrb.GetCastDelay(target), token);
         }
 
@@ -304,7 +304,7 @@
 
             if (killstealTarget != null)
             {
-                if (this.Astral.UseAbility(killstealTarget))
+                if (this.Astral.Cast(killstealTarget))
                 {
                     await this.AwaitKillstealDelay(this.Astral.GetCastDelay(killstealTarget), token);
                 }

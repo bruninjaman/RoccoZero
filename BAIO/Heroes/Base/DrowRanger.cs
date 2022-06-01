@@ -239,7 +239,7 @@
         {
             this.LastTarget = target;
             this.LastTargetHitTime = GameManager.GameTime;
-            this.FrostArrows.UseAbility(target);
+            this.FrostArrows.Cast(target);
             await Task.Delay(this.FrostArrows.GetCastDelay(target), token);
         }
 

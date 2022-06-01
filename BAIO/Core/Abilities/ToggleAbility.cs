@@ -53,7 +53,7 @@ namespace Ensage.SDK.Abilities
         ///     Toggles the ability to the opposite of its current state.
         /// </summary>
         /// <returns>Will always return true.</returns>
-        public override bool UseAbility()
+        public override bool Cast()
         {
             this.Enabled = !this.Enabled;
             return true; // TODO: return if setter was successful?

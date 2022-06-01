@@ -184,7 +184,7 @@ namespace Ensage.SDK.Abilities
             return this.GetCastDelay(position) + (int)((time + this.ActivationDelay) * 1000.0f);
         }
 
-        public virtual bool UseAbility()
+        public virtual bool Cast()
         {
             if (!this.CanBeCasted)
             {
@@ -201,7 +201,7 @@ namespace Ensage.SDK.Abilities
             return result;
         }
 
-        public virtual bool UseAbility(Unit target)
+        public virtual bool Cast(Unit target)
         {
             if (!this.CanBeCasted)
             {
@@ -231,7 +231,7 @@ namespace Ensage.SDK.Abilities
             return result;
         }
 
-        public virtual bool UseAbility(Tree target)
+        public virtual bool Cast(Tree target)
         {
             if (!this.CanBeCasted)
             {
@@ -248,7 +248,7 @@ namespace Ensage.SDK.Abilities
             return result;
         }
 
-        public virtual bool UseAbility(Vector3 position)
+        public virtual bool Cast(Vector3 position)
         {
             if (!this.CanBeCasted)
             {
@@ -274,7 +274,7 @@ namespace Ensage.SDK.Abilities
             return result;
         }
 
-        public virtual bool UseAbility(Rune target)
+        public virtual bool Cast(Rune target)
         {
             if (!this.CanBeCasted)
             {

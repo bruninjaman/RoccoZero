@@ -107,7 +107,7 @@
                 var distance = this.Owner.Distance2D(this.CurrentTarget);
                 var blinkPosition = this.CurrentTarget.Position.Extend(this.Owner.Position,
                     Math.Max(100, distance - blink.CastRange));
-                blink.UseAbility(blinkPosition);
+                blink.Cast(blinkPosition);
 
                 if (ult.CanBeCasted && blinkPosition.Distance2D(this.CurrentTarget.Position) <= ult.CastRange)
                 {
@@ -115,7 +115,7 @@
 
                     if (!linkens)
                     {
-                        ult.UseAbility(this.CurrentTarget);
+                        ult.Cast(this.CurrentTarget);
                         await Task.Delay(ult.GetCastDelay(this.CurrentTarget) + 500, token);
                     }
                     else
@@ -140,7 +140,7 @@
                     await Task.Delay((int)(this.Owner.TurnTime(turnPosition) * 1000) + 200, token);
                 }
 
-                forceStaff.UseAbility(this.Owner);
+                forceStaff.Cast(this.Owner);
                 await Task.Delay((int)((forceStaff.PushLength / forceStaff.PushSpeed) * 1000), token);
             }
 
@@ -151,8 +151,8 @@
                 && (this.Pudge.HookModifierDetected || this.Owner.Distance2D(this.CurrentTarget) < 300) && !linkens &&
                 !ult.IsChanneling)
             {
-                urn?.UseAbility(this.CurrentTarget);
-                vessel?.UseAbility(this.CurrentTarget);
+                urn?.Cast(this.CurrentTarget);
+                vessel?.Cast(this.CurrentTarget);
             }
 
             if (rot.CanBeCasted && !rot.Enabled && (this.Pudge.HookModifierDetected || rot.CanHit(this.CurrentTarget)))
@@ -170,20 +170,20 @@
                 this.Pudge.EbHeroes[((Hero)CurrentTarget).HeroId] &&
                 (this.Pudge.EtherealBlade.CanHit(this.CurrentTarget) || this.Pudge.HookModifierDetected))
             {
-                this.Pudge.EtherealBlade.UseAbility(this.CurrentTarget);
+                this.Pudge.EtherealBlade.Cast(this.CurrentTarget);
                 await Task.Delay(this.Pudge.EtherealBlade.GetCastDelay(this.CurrentTarget), token);
             }
 
             if (this.Pudge.Dagon != null && Pudge.EtherealBlade != null && !linkens && !ult.IsChanneling && this.Pudge.Dagon.CanBeCasted &&
                 (this.Pudge.Dagon.CanHit(this.CurrentTarget) || this.Pudge.HookModifierDetected))
             {
-                this.Pudge.Dagon.UseAbility(this.CurrentTarget);
+                this.Pudge.Dagon.Cast(this.CurrentTarget);
                 await Task.Delay(this.Pudge.Dagon.GetCastDelay(this.CurrentTarget), token);
             }
 
             if (ult.CanBeCasted && (ult.CanHit(this.CurrentTarget) || this.Pudge.HookModifierDetected) && !linkens && this.Owner.Distance2D(this.CurrentTarget) <= 200)
             {
-                ult.UseAbility(this.CurrentTarget);
+                ult.Cast(this.CurrentTarget);
                 await Task.Delay(ult.GetCastDelay(this.CurrentTarget) + 500, token);
             }
 
@@ -195,7 +195,7 @@
                     if (remainingTime <= (float)(this.Owner.Distance2D(this.CurrentTarget) / hook.Speed) + (float)(hook.GetCastDelay(this.CurrentTarget.Position) / 1000f))
                     {
                         this.hookCastPosition = this.CurrentTarget.Position;
-                        hook.UseAbility(this.hookCastPosition);
+                        hook.Cast(this.hookCastPosition);
                         await Task.Delay(hook.GetHitTime(this.hookCastPosition), token);
                     }
                 }
@@ -214,7 +214,7 @@
                     if ((hookPreAtosOutput.HitChance != HitChance.OutOfRange) &&
                         (hookPreAtosOutput.HitChance != HitChance.Collision))
                     {
-                        atos.UseAbility(this.CurrentTarget);
+                        atos.Cast(this.CurrentTarget);
                         await Task.Delay(atos.GetHitTime(this.CurrentTarget), token);
                     }
                 }
@@ -225,7 +225,7 @@
                 if (this.ShouldCastHook(hookOutput))
                 {
                     this.hookCastPosition = hookOutput.UnitPosition;
-                    hook.UseAbility(this.hookCastPosition);
+                    hook.Cast(this.hookCastPosition);
                     await Task.Delay(hook.GetHitTime(this.hookCastPosition), token);
                 }
             }
@@ -238,21 +238,21 @@
                 if (bladeMail != null && bladeMail.CanBeCasted && this.Owner.Distance2D(CurrentTarget) <= 200 &&
                     this.Pudge.BladeMailUsage)
                 {
-                    bladeMail.UseAbility();
+                    bladeMail.Cast();
                     await Task.Delay(bladeMail.GetCastDelay(), token);
                 }
 
                 var lotusOrb = this.Pudge.Lotus;
                 if (lotusOrb != null && lotusOrb.CanBeCasted && this.Owner.Distance2D(CurrentTarget) <= 200)
                 {
-                    lotusOrb.UseAbility(this.Owner);
+                    lotusOrb.Cast(this.Owner);
                     await Task.Delay(lotusOrb.GetCastDelay(), token);
                 }
 
                 var solar = this.Pudge.SolarCrest;
                 if (solar != null && solar.CanBeCasted && solar.CanHit(CurrentTarget))
                 {
-                    solar.UseAbility(this.CurrentTarget);
+                    solar.Cast(this.CurrentTarget);
                     await Task.Delay(solar.GetCastDelay(), token);
                 }
 
@@ -260,7 +260,7 @@
                 if (nullifier != null && nullifier.CanBeCasted && nullifier.CanHit(CurrentTarget) && !linkens &&
                     this.Pudge.NullifierHeroes[((Hero)CurrentTarget).HeroId])
                 {
-                    nullifier.UseAbility(CurrentTarget);
+                    nullifier.Cast(CurrentTarget);
                     await Task.Delay(nullifier.GetCastDelay(), token);
                 }
 
@@ -268,7 +268,7 @@
                 if (halberd != null && halberd.CanBeCasted && halberd.CanHit(CurrentTarget) && !linkens &&
                     this.Pudge.HalberdHeroes[((Hero)CurrentTarget).HeroId])
                 {
-                    halberd.UseAbility(CurrentTarget);
+                    halberd.Cast(CurrentTarget);
                     await Task.Delay(halberd.GetCastDelay(), token);
                 }
             }
@@ -304,7 +304,7 @@
                 if (this.ShouldCastHook(hookOutput))
                 {
                     this.hookCastPosition = hookOutput.UnitPosition;
-                    hook.UseAbility(this.hookCastPosition);
+                    hook.Cast(this.hookCastPosition);
                     await Task.Delay(hook.GetHitTime(this.hookCastPosition), token);
                 }
             }
@@ -404,7 +404,7 @@
                             && euls.Item.Id == order.Key
                             && euls.CanBeCasted && euls.CanHit(this.CurrentTarget))
                         {
-                            euls.UseAbility(this.CurrentTarget);
+                            euls.Cast(this.CurrentTarget);
                             await Task.Delay(euls.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -414,7 +414,7 @@
                             && force.Item.Id == order.Key
                             && force.CanBeCasted && force.CanHit(this.CurrentTarget))
                         {
-                            force.UseAbility(this.CurrentTarget);
+                            force.Cast(this.CurrentTarget);
                             await Task.Delay(force.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -424,7 +424,7 @@
                             && orchid.Item.Id == order.Key
                             && orchid.CanBeCasted && orchid.CanHit(this.CurrentTarget))
                         {
-                            orchid.UseAbility(this.CurrentTarget);
+                            orchid.Cast(this.CurrentTarget);
                             await Task.Delay(orchid.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -434,7 +434,7 @@
                             && bloodthorn.Item.Id == order.Key
                             && bloodthorn.CanBeCasted && bloodthorn.CanHit(this.CurrentTarget))
                         {
-                            bloodthorn.UseAbility(this.CurrentTarget);
+                            bloodthorn.Cast(this.CurrentTarget);
                             await Task.Delay(bloodthorn.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -444,7 +444,7 @@
                             && nullifier.Item.Id == order.Key
                             && nullifier.CanBeCasted && nullifier.CanHit(this.CurrentTarget))
                         {
-                            nullifier.UseAbility(this.CurrentTarget);
+                            nullifier.Cast(this.CurrentTarget);
                             await Task.Delay(
                                 nullifier.GetCastDelay(this.CurrentTarget) + nullifier.GetHitTime(this.CurrentTarget),
                                 token);
@@ -456,7 +456,7 @@
                             && atos.Item.Id == order.Key
                             && atos.CanBeCasted && atos.CanHit(this.CurrentTarget))
                         {
-                            atos.UseAbility(this.CurrentTarget);
+                            atos.Cast(this.CurrentTarget);
                             await Task.Delay(
                                 atos.GetCastDelay(this.CurrentTarget) + atos.GetHitTime(this.CurrentTarget), token);
                             return;
@@ -467,7 +467,7 @@
                             && hex.Item.Id == order.Key
                             && hex.CanBeCasted && hex.CanHit(this.CurrentTarget))
                         {
-                            hex.UseAbility(this.CurrentTarget);
+                            hex.Cast(this.CurrentTarget);
                             await Task.Delay(hex.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -477,7 +477,7 @@
                             && diff.Item.Id == order.Key
                             && diff.CanBeCasted && diff.CanHit(this.CurrentTarget))
                         {
-                            diff.UseAbility(this.CurrentTarget);
+                            diff.Cast(this.CurrentTarget);
                             await Task.Delay(diff.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }

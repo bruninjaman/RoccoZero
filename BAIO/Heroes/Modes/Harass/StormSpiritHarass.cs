@@ -42,7 +42,7 @@
                 var ultiPos = this.StormSpirit.UltiPos(this.HarassTarget);
                 if (!this.StormSpirit.InOverload && this.StormSpirit.Ulti.CanBeCasted)
                 {
-                    this.StormSpirit.Ulti.UseAbility(ultiPos);
+                    this.StormSpirit.Ulti.Cast(ultiPos);
                     await Task.Delay(this.StormSpirit.Ulti.GetCastDelay() + 500, token);
                 }
 

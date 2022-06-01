@@ -50,7 +50,7 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_void_spirit
             }
         }
 
-        public bool UseAbility(Vector3 startPosition, Vector3 direction)
+        public bool Cast(Vector3 startPosition, Vector3 direction)
         {
             if (!this.CanBeCasted)
             {
@@ -67,12 +67,12 @@ namespace Ensage.SDK.Abilities.npc_dota_hero_void_spirit
             return result;
         }
 
-        public override bool UseAbility(Vector3 position)
+        public override bool Cast(Vector3 position)
         {
             var distance = Math.Max(this.Owner.AttackRange(), this.Owner.Distance2D(position) - this.CastRange);
             var startPosition = position.Extend(this.Owner.Position, distance);
 
-            return this.UseAbility(startPosition, position);
+            return this.Cast(startPosition, position);
         }
     }
 }

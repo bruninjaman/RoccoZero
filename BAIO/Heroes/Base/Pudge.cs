@@ -316,7 +316,7 @@ namespace BAIO.Heroes.Base
             var sender = modifier.Owner;
             if ((sender is Hero) && this.Owner.IsEnemy(sender) && (modifier.Name == this.Hook.TargetModifierName))
             {
-                //Log.Debug($"Hook used");
+                //LogManager.Debug($"Hook used");
                 this.HookModifierDetected = true;
             }
         }
@@ -366,7 +366,7 @@ namespace BAIO.Heroes.Base
 
             if (killstealTargetDagon != null)
             {
-                if (this.Dagon.UseAbility(killstealTargetDagon))
+                if (this.Dagon.Cast(killstealTargetDagon))
                 {
                     await this.AwaitKillstealDelay(this.Dagon.GetCastDelay(killstealTargetDagon), token);
                 }
@@ -414,7 +414,7 @@ namespace BAIO.Heroes.Base
 
                 if (healTarget != null && this.Dismember.CanBeCasted)
                 {
-                    if (this.Dismember.UseAbility(healTarget))
+                    if (this.Dismember.Cast(healTarget))
                     {
                         await Task.Delay(this.Dismember.GetCastDelay(healTarget) + 200, token);
                     }

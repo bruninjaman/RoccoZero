@@ -179,7 +179,7 @@ namespace BAIO.Heroes.Base
 
             if (killstealTarget != null)
             {
-                if (this.ManaVoid.UseAbility(killstealTarget))
+                if (this.ManaVoid.Cast(killstealTarget))
                 {
                     await this.AwaitKillstealDelay(this.ManaVoid.GetCastDelay(killstealTarget), token);
                 }

@@ -292,7 +292,7 @@ namespace BAIO.Heroes.Base
             var sender = modifier.Owner;
             if ((sender is Hero) && this.Owner == sender && (modifier.Name == "modifier_storm_spirit_overload"))
             {
-                //Log.Debug($"InOverload");
+                //LogManager.Debug($"InOverload");
                 this.InOverload = true;
             }
         }
@@ -314,7 +314,7 @@ namespace BAIO.Heroes.Base
             if ((sender is Hero) && this.Owner == sender &&
                 (modifier.Name == "modifier_storm_spirit_ball_lightning"))
             {
-                //Log.Debug($"OnUlti");
+                //LogManager.Debug($"OnUlti");
                 this.InUlti = true;
             }
         }
@@ -353,7 +353,7 @@ namespace BAIO.Heroes.Base
                     {
                         if (Extensions.PositionCamera(fountainPosition.X, fountainPosition.Y))
                         {
-                            if (this.Ulti.UseAbility(fountainPosition))
+                            if (this.Ulti.Cast(fountainPosition))
                             {
                                 await Task.Delay(150, token);
                             }
@@ -398,12 +398,12 @@ namespace BAIO.Heroes.Base
                             .FirstOrDefault(x => x != null && x.IsValid && x.IsAlive && x.Team != this.Owner.Team && x.Distance2D(this.Owner) <= 1000);
                         if (closestEnemy != null)
                         {
-                            this.Ulti.UseAbility(UltiPos(closestEnemy));
+                            this.Ulti.Cast(UltiPos(closestEnemy));
                             await Task.Delay(delay, token);
                         }
                         else
                         {
-                            this.Ulti.UseAbility(UltiPos(Extensions.FacePosition(this.Owner)));
+                            this.Ulti.Cast(UltiPos(Extensions.FacePosition(this.Owner)));
                             await Task.Delay(delay, token);
                         }
                     }

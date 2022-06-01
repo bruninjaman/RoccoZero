@@ -171,7 +171,7 @@ namespace BAIO.Heroes.Base
 
             if (killstealTarget != null)
             {
-                if (this.QuillSpray.UseAbility())
+                if (this.QuillSpray.Cast())
                 {
                     await this.AwaitKillstealDelay(this.QuillSpray.GetCastDelay(), token);
                 }

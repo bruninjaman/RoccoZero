@@ -79,7 +79,7 @@
 
             if (this.Huskar.Ulti.CanBeCasted && this.Huskar.Ulti.CanHit())
             {
-                this.Huskar.Ulti.UseAbility(CurrentTarget);
+                this.Huskar.Ulti.Cast(CurrentTarget);
                 await Task.Delay(Huskar.Ulti.GetCastDelay(), token);
             }
 
@@ -121,7 +121,7 @@
 
                 if (hurricanePike.CanBeCasted && hurricanePike.CanHit(this.CurrentTarget))
                 {
-                    hurricanePike.UseAbility(this.CurrentTarget);
+                    hurricanePike.Cast(this.CurrentTarget);
                     await Task.Delay(hurricanePike.GetCastDelay(this.CurrentTarget), token);
                     return;
                 }
@@ -131,7 +131,7 @@
             if (halberd != null && halberd.CanBeCasted && halberd.CanHit(CurrentTarget) && !linkens &&
                 this.Huskar.HalberdHeroes[((Hero)CurrentTarget).HeroId])
             {
-                halberd.UseAbility(CurrentTarget);
+                halberd.Cast(CurrentTarget);
                 await Task.Delay(halberd.GetCastDelay(), token);
             }
 
@@ -139,7 +139,7 @@
             if (solarCrest != null && solarCrest.CanBeCasted && solarCrest.CanHit(CurrentTarget) &&
                 this.Huskar.MedallionHeroes[((Hero)CurrentTarget).HeroId])
             {
-                solarCrest.UseAbility(CurrentTarget);
+                solarCrest.Cast(CurrentTarget);
                 await Task.Delay(solarCrest.GetCastDelay(), token);
             }
 
@@ -147,7 +147,7 @@
             if (medallion != null && medallion.CanBeCasted && medallion.CanHit(CurrentTarget) &&
                 this.Huskar.MedallionHeroes[((Hero)CurrentTarget).HeroId])
             {
-                medallion.UseAbility(CurrentTarget);
+                medallion.Cast(CurrentTarget);
                 await Task.Delay(medallion.GetCastDelay(), token);
             }
 
@@ -155,14 +155,14 @@
             if (bloodThorn != null && bloodThorn.CanBeCasted && bloodThorn.CanHit(CurrentTarget) && !linkens &&
                 this.Huskar.BloodthornHeroes[((Hero)CurrentTarget).HeroId])
             {
-                bloodThorn.UseAbility(CurrentTarget);
+                bloodThorn.Cast(CurrentTarget);
                 await Task.Delay(bloodThorn.GetCastDelay(), token);
             }
 
             var mom = this.Huskar.Mom;
             if (mom != null && mom.CanBeCasted && !this.Huskar.Ulti.CanBeCasted)
             {
-                mom.UseAbility();
+                mom.Cast();
                 await Task.Delay(mom.GetCastDelay(), token);
             }
 
@@ -170,14 +170,14 @@
             if (satanic != null && satanic.CanBeCasted &&
                 (this.Owner.HealthPercent() < this.Huskar.SatanicPercent.Value / 100f))
             {
-                satanic.UseAbility();
+                satanic.Cast();
                 await Task.Delay(satanic.GetCastDelay(), token);
             }
 
             var mjollnir = this.Huskar.Mjollnir;
             if (mjollnir != null && mjollnir.CanBeCasted)
             {
-                mjollnir.UseAbility(this.Owner);
+                mjollnir.Cast(this.Owner);
                 await Task.Delay(mjollnir.GetCastDelay(), token);
             }
 
@@ -239,7 +239,7 @@
             if (Huskar.InnerFire != null && this.Huskar.InnerFire.CanBeCasted &&
                 (((float)this.Owner.Health / this.Owner.MaximumHealth) * 100f) <= this.Huskar.InnerFireThreshold.Value)
             {
-                this.Huskar.InnerFire.UseAbility();
+                this.Huskar.InnerFire.Cast();
                 await Task.Delay(this.Huskar.InnerFire.GetCastDelay(), token);
             }
 
@@ -266,7 +266,7 @@
                             && euls.Item.Id == order.Key
                             && euls.CanBeCasted && euls.CanHit(this.CurrentTarget))
                         {
-                            euls.UseAbility(this.CurrentTarget);
+                            euls.Cast(this.CurrentTarget);
                             await Task.Delay(euls.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -276,7 +276,7 @@
                             && force.Item.Id == order.Key
                             && force.CanBeCasted && force.CanHit(this.CurrentTarget))
                         {
-                            force.UseAbility(this.CurrentTarget);
+                            force.Cast(this.CurrentTarget);
                             await Task.Delay(force.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -286,7 +286,7 @@
                             && orchid.Item.Id == order.Key
                             && orchid.CanBeCasted && orchid.CanHit(this.CurrentTarget))
                         {
-                            orchid.UseAbility(this.CurrentTarget);
+                            orchid.Cast(this.CurrentTarget);
                             await Task.Delay(orchid.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -296,7 +296,7 @@
                             && bloodthorn.Item.Id == order.Key
                             && bloodthorn.CanBeCasted && bloodthorn.CanHit(this.CurrentTarget))
                         {
-                            bloodthorn.UseAbility(this.CurrentTarget);
+                            bloodthorn.Cast(this.CurrentTarget);
                             await Task.Delay(bloodthorn.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -306,7 +306,7 @@
                             && nullifier.Item.Id == order.Key
                             && nullifier.CanBeCasted && nullifier.CanHit(this.CurrentTarget))
                         {
-                            nullifier.UseAbility(this.CurrentTarget);
+                            nullifier.Cast(this.CurrentTarget);
                             await Task.Delay(nullifier.GetCastDelay(this.CurrentTarget) + nullifier.GetHitTime(this.CurrentTarget), token);
                             return;
                         }
@@ -316,7 +316,7 @@
                             && atos.Item.Id == order.Key
                             && atos.CanBeCasted && atos.CanHit(this.CurrentTarget))
                         {
-                            atos.UseAbility(this.CurrentTarget);
+                            atos.Cast(this.CurrentTarget);
                             await Task.Delay(atos.GetCastDelay(this.CurrentTarget) + atos.GetHitTime(this.CurrentTarget), token);
                             return;
                         }
@@ -326,7 +326,7 @@
                             && hex.Item.Id == order.Key
                             && hex.CanBeCasted && hex.CanHit(this.CurrentTarget))
                         {
-                            hex.UseAbility(this.CurrentTarget);
+                            hex.Cast(this.CurrentTarget);
                             await Task.Delay(hex.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -336,7 +336,7 @@
                             && diff.Item.Id == order.Key
                             && diff.CanBeCasted && diff.CanHit(this.CurrentTarget))
                         {
-                            diff.UseAbility(this.CurrentTarget);
+                            diff.Cast(this.CurrentTarget);
                             await Task.Delay(diff.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }

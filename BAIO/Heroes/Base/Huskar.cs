@@ -153,7 +153,7 @@
 
         public async Task UseFireSpear(Unit target, CancellationToken token = default(CancellationToken))
         {
-            this.FireSpear.UseAbility(target);
+            this.FireSpear.Cast(target);
             await Task.Delay(this.FireSpear.GetCastDelay(target), token);
         }
 

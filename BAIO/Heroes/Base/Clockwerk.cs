@@ -202,7 +202,7 @@ using Divine.Entity.Entities.Units.Heroes;
 
             this.RocketHandler = TaskHandler.Run(this.OnUpdate);
             this.MinimumHookChanceMenu.ValueChanged += this.MinimumHookChanceValueChanged;
-           // this.RocketPush.PropertyChanged += this.RocketPushPropertyChanged;
+           // this.RocketPush.ValueChanged += this.RocketPushPropertyChanged;
             ModifierManager.ModifierAdded += this.OnHookAdded;
             ModifierManager.ModifierRemoved += this.OnHookRemoved;
             RendererManager.Draw += OnDraw;
@@ -251,7 +251,7 @@ using Divine.Entity.Entities.Units.Heroes;
         protected override void OnDeactivate()
         {
             this.MinimumHookChanceMenu.ValueChanged -= this.MinimumHookChanceValueChanged;
-            // this.RocketPush.PropertyChanged -= this.RocketPushPropertyChanged;
+            // this.RocketPush.ValueChanged -= this.RocketPushPropertyChanged;
 
             ModifierManager.ModifierAdded -= this.OnHookAdded;
             ModifierManager.ModifierRemoved -= this.OnHookRemoved;
@@ -326,7 +326,7 @@ using Divine.Entity.Entities.Units.Heroes;
 
                 if (output.HitChance >= HitChance.Medium)
                 {
-                    Rocket.UseAbility(output.CastPosition);
+                    Rocket.Cast(output.CastPosition);
                     await this.AwaitKillstealDelay(Rocket.GetCastDelay(), token);
                 }
             }
@@ -362,7 +362,7 @@ using Divine.Entity.Entities.Units.Heroes;
 
                 if (output.HitChance >= HitChance.Medium)
                 {
-                    Rocket.UseAbility(output.CastPosition);
+                    Rocket.Cast(output.CastPosition);
                     await Task.Delay(Rocket.GetCastDelay(), token);
                 }
             }

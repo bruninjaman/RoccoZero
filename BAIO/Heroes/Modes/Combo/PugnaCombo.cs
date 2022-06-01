@@ -151,7 +151,7 @@ namespace BAIO.Heroes.Modes.Combo
                     var y = (posA.Y + (l * posB.Y)) / (1 + l);
                     var position = new Vector3((int) x, (int) y, posA.Z);
 
-                    this.Pugna.BlinkDagger.UseAbility(position);
+                    this.Pugna.BlinkDagger.Cast(position);
                     await Task.Delay((int) this.Pugna.BlinkDagger.GetCastDelay(position), token);
                 }
 
@@ -241,7 +241,7 @@ namespace BAIO.Heroes.Modes.Combo
                     this.CurrentTarget != null && !Owner.IsChanneling() &&
                     this.Pugna.BloodThorn.Item.CanBeCasted(this.CurrentTarget))
                 {
-                    this.Pugna.BloodThorn.UseAbility(this.CurrentTarget);
+                    this.Pugna.BloodThorn.Cast(this.CurrentTarget);
                     await Task.Delay(this.Pugna.BloodThorn.GetCastDelay(this.CurrentTarget), token);
                 }
 
@@ -250,7 +250,7 @@ namespace BAIO.Heroes.Modes.Combo
                     this.CurrentTarget != null && !Owner.IsChanneling() &&
                     this.Pugna.Sheepstick.Item.CanBeCasted(this.CurrentTarget))
                 {
-                    this.Pugna.Sheepstick.UseAbility(this.CurrentTarget);
+                    this.Pugna.Sheepstick.Cast(this.CurrentTarget);
                     await Task.Delay(this.Pugna.Sheepstick.GetCastDelay(this.CurrentTarget), token);
                 }
 
@@ -259,7 +259,7 @@ namespace BAIO.Heroes.Modes.Combo
                     this.CurrentTarget != null && !Owner.IsChanneling() &&
                     this.Pugna.Dagon.Item.CanBeCasted(this.CurrentTarget))
                 {
-                    this.Pugna.Dagon.UseAbility(this.CurrentTarget);
+                    this.Pugna.Dagon.Cast(this.CurrentTarget);
                     await Task.Delay(this.Pugna.Dagon.GetCastDelay(this.CurrentTarget), token);
                 }
 
@@ -268,7 +268,7 @@ namespace BAIO.Heroes.Modes.Combo
                     this.CurrentTarget != null && !Owner.IsChanneling() &&
                     this.Pugna.Orchid.Item.CanBeCasted(this.CurrentTarget))
                 {
-                    this.Pugna.Orchid.UseAbility(this.CurrentTarget);
+                    this.Pugna.Orchid.Cast(this.CurrentTarget);
                     await Task.Delay(this.Pugna.Orchid.GetCastDelay(this.CurrentTarget), token);
                 }
 
@@ -277,7 +277,7 @@ namespace BAIO.Heroes.Modes.Combo
                     this.CurrentTarget != null && !Owner.IsChanneling() &&
                     this.Pugna.RodOfAtos.Item.CanBeCasted(this.CurrentTarget))
                 {
-                    this.Pugna.RodOfAtos.UseAbility(this.CurrentTarget);
+                    this.Pugna.RodOfAtos.Cast(this.CurrentTarget);
                     await Task.Delay(this.Pugna.RodOfAtos.GetCastDelay(this.CurrentTarget), token);
                 }
 
@@ -286,7 +286,7 @@ namespace BAIO.Heroes.Modes.Combo
                     this.CurrentTarget != null && !Owner.IsChanneling() &&
                     this.Pugna.VeilOfDiscord.Item.CanBeCasted())
                 {
-                    this.Pugna.VeilOfDiscord.UseAbility(this.CurrentTarget.Position);
+                    this.Pugna.VeilOfDiscord.Cast(this.CurrentTarget.Position);
                     await Task.Delay(this.Pugna.VeilOfDiscord.GetCastDelay(this.CurrentTarget), token);
                 }
 
@@ -296,7 +296,7 @@ namespace BAIO.Heroes.Modes.Combo
                     this.Pugna.ShivasGuard.Item.CanBeCasted() &&
                     Owner.Distance2D(this.CurrentTarget) <= 900)
                 {
-                    this.Pugna.ShivasGuard.UseAbility();
+                    this.Pugna.ShivasGuard.Cast();
                     await Task.Delay((int) GameManager.Ping, token);
                 }
 
@@ -366,7 +366,7 @@ namespace BAIO.Heroes.Modes.Combo
                             && euls.Item.Id == order.Key
                             && euls.CanBeCasted && euls.CanHit(this.CurrentTarget))
                         {
-                            euls.UseAbility(this.CurrentTarget);
+                            euls.Cast(this.CurrentTarget);
                             await Task.Delay(euls.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -376,7 +376,7 @@ namespace BAIO.Heroes.Modes.Combo
                             && force.Item.Id == order.Key
                             && force.CanBeCasted && force.CanHit(this.CurrentTarget))
                         {
-                            force.UseAbility(this.CurrentTarget);
+                            force.Cast(this.CurrentTarget);
                             await Task.Delay(force.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -386,7 +386,7 @@ namespace BAIO.Heroes.Modes.Combo
                             && orchid.Item.Id == order.Key
                             && orchid.CanBeCasted && orchid.CanHit(this.CurrentTarget))
                         {
-                            orchid.UseAbility(this.CurrentTarget);
+                            orchid.Cast(this.CurrentTarget);
                             await Task.Delay(orchid.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -396,7 +396,7 @@ namespace BAIO.Heroes.Modes.Combo
                             && bloodthorn.Item.Id == order.Key
                             && bloodthorn.CanBeCasted && bloodthorn.CanHit(this.CurrentTarget))
                         {
-                            bloodthorn.UseAbility(this.CurrentTarget);
+                            bloodthorn.Cast(this.CurrentTarget);
                             await Task.Delay(bloodthorn.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -406,7 +406,7 @@ namespace BAIO.Heroes.Modes.Combo
                             && nullifier.Item.Id == order.Key
                             && nullifier.CanBeCasted && nullifier.CanHit(this.CurrentTarget))
                         {
-                            nullifier.UseAbility(this.CurrentTarget);
+                            nullifier.Cast(this.CurrentTarget);
                             await Task.Delay(
                                 nullifier.GetCastDelay(this.CurrentTarget) + nullifier.GetHitTime(this.CurrentTarget),
                                 token);
@@ -418,7 +418,7 @@ namespace BAIO.Heroes.Modes.Combo
                             && atos.Item.Id == order.Key
                             && atos.CanBeCasted && atos.CanHit(this.CurrentTarget))
                         {
-                            atos.UseAbility(this.CurrentTarget);
+                            atos.Cast(this.CurrentTarget);
                             await Task.Delay(
                                 atos.GetCastDelay(this.CurrentTarget) + atos.GetHitTime(this.CurrentTarget), token);
                             return;
@@ -429,7 +429,7 @@ namespace BAIO.Heroes.Modes.Combo
                             && hex.Item.Id == order.Key
                             && hex.CanBeCasted && hex.CanHit(this.CurrentTarget))
                         {
-                            hex.UseAbility(this.CurrentTarget);
+                            hex.Cast(this.CurrentTarget);
                             await Task.Delay(hex.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }
@@ -439,7 +439,7 @@ namespace BAIO.Heroes.Modes.Combo
                             && diff.Item.Id == order.Key
                             && diff.CanBeCasted && diff.CanHit(this.CurrentTarget))
                         {
-                            diff.UseAbility(this.CurrentTarget);
+                            diff.Cast(this.CurrentTarget);
                             await Task.Delay(diff.GetCastDelay(this.CurrentTarget), token);
                             return;
                         }

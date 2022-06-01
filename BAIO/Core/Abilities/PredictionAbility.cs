@@ -78,7 +78,7 @@
             return PredictionManager.GetPrediction(input);
         }
 
-        public bool UseAbility(Unit target, HitChance minimChance)
+        public bool Cast(Unit target, HitChance minimChance)
         {
             if (!this.CanBeCasted)
             {
@@ -102,12 +102,12 @@
                 return false;
             }
 
-            return this.UseAbility(output.CastPosition);
+            return this.Cast(output.CastPosition);
         }
 
-        public override bool UseAbility(Unit target)
+        public override bool Cast(Unit target)
         {
-            return this.UseAbility(target, HitChance.Medium); // TODO: get prediction config hitchance value
+            return this.Cast(target, HitChance.Medium); // TODO: get prediction config hitchance value
         }
 
         // TODO: add other UseAbility overload without parameter etc to automatically get best position for clock rockets, magnus ult etc?
