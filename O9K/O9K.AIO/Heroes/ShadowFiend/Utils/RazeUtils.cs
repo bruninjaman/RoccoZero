@@ -2,9 +2,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
+using Core.Entities.Abilities.Base;
 using Core.Managers.Entity;
 using Core.Managers.Menu.EventArgs;
+using Core.Managers.Menu.Items;
 
 using Divine.Entity.Entities.Abilities.Components;
 using Divine.Entity.Entities.Units;
@@ -19,8 +22,7 @@ using Divine.Particle;
 using Divine.Particle.Components;
 using Divine.Renderer;
 
-using O9K.AIO.Menu;
-using O9K.Core.Managers.Menu.Items;
+using Menu;
 
 using TargetManager;
 
@@ -40,6 +42,16 @@ internal class RazeUtils
     private static TargetManager targetManager;
 
     private static MenuSwitcher Enabled;
+
+    private static AbilityId[] razes = { AbilityId.nevermore_shadowraze1,  AbilityId.nevermore_shadowraze2,  AbilityId.nevermore_shadowraze3, };
+
+    private static List<Ability9> StaticRazes
+    {
+        get
+        {
+            return EntityManager9.Owner.Hero.Abilities.Where(ability9 => ability9.Id.In(razes)).ToList();
+        }
+    }
 
     public static void Init(TargetManager targetManager, MenuManager menu)
     {
@@ -160,7 +172,6 @@ internal class RazeUtils
             return;
         }
 
-        var chosen = Colours[ShadowFiendBase.colourSelector];
         var owner = EntityManager9.Owner;
 
         if (owner.HeroId != HeroId.npc_dota_hero_nevermore)
@@ -168,19 +179,24 @@ internal class RazeUtils
             return;
         }
 
-        int[] razes = { 200, 450, 700 };
+        int[] razesRanges = { 200, 450, 700 };
 
         for (var i = 0; i < 3; i++)
         {
-            var inFront = InFront(owner, razes[i]);
-
+            var chosenColour = Colours[ShadowFiendBase.colourSelector];
+            if (StaticRazes[i]?.IsReady == false)
+            {
+                chosenColour = Colours[ShadowFiendBase.colourAfterUsedSelector];
+            }
+            
+            var inFront = InFront(owner, razesRanges[i]);
             ParticleManager.CreateParticle(
                 $"DrawRaze_{i}",
                 "materials/ensage_ui/particles/alert_range.vpcf",
                 Attachment.AbsOrigin,
                 owner,
                 new ControlPoint(0, inFront),
-                new ControlPoint(1, chosen),
+                new ControlPoint(1, chosenColour),
                 new ControlPoint(2, 250, 255, 7));
         }
     }

@@ -22,7 +22,6 @@ using Divine.Entity.Entities.Abilities.Components;
 using Divine.Entity.Entities.Units.Heroes.Components;
 using Divine.Game;
 using Divine.Order;
-using Divine.Particle;
 
 using Modes.Combo;
 
