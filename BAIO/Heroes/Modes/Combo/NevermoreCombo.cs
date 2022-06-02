@@ -456,7 +456,8 @@ namespace BAIO.Heroes.Modes.Combo
                         await Task.Delay(shadowBlade.GetCastDelay(), token);
                     }
 
-                    var remainingTime = modifier.RemainingTime - ping - 1.60f;
+                    var castPoint = Owner.HasModifier("modifier_item_arcane_blink_buff") ? 1.60f / 2f : 1.60f;
+                    var remainingTime = modifier.RemainingTime - ping - castPoint;
                     remainingTime *= 1000f;
                     await Task.Delay(Math.Max((int)remainingTime, 0), token);
 

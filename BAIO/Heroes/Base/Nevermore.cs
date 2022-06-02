@@ -364,7 +364,6 @@ namespace BAIO.Heroes.Base
             }
         }
 
-
         public bool CanHit(Ability ability, Unit targetsama, float customDelay, bool checkForFace = true)
         {
             var modifs = targetsama.HasModifiers(new string[] { "modifier_puck_phase_shift", "modifier_cyclone", "modifier_obsidian_destroyer_astral_imprisonment_prison" }, false);
