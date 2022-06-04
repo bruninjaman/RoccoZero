@@ -56,10 +56,6 @@ internal abstract class BaseMode : IDisposable
 
     public void AttackCanceled(FarmUnit target)
     {
-        if (!FarmManager.IsFarmActive())
-        {
-            return;
-        }
 
         var myFarmUnits = this.units.Where(x => x.IsControllable);
 
