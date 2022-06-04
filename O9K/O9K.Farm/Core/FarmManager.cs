@@ -191,11 +191,6 @@ internal class FarmManager : IDisposable
 
     private void OnAttackCanceled(object sender, UnitDamage damage)
     {
-        if (!IsFarmActive())
-        {
-            return;
-        }
-
         foreach (var farmMode in farmModes)
         {
             farmMode.AttackCanceled(damage.Target);
