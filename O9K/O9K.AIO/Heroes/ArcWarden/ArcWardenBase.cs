@@ -13,7 +13,6 @@
     using CustomUnitManager;
 
     using Divine.Entity.Entities.Units.Heroes.Components;
-    using Divine.Input;
     using Divine.Renderer;
 
     using Draw;
@@ -29,7 +28,7 @@
         {
             this.pushMode = new PushMode(this, new KeyPressModeMenu(this.Menu.RootMenu, "Push mode"));
             RendererManager.Draw += ArcWardenPanel.OnDraw;
-            InputManager.MouseKeyDown += ArcWardenPanel.OnMouseKeyDown;
+            // InputManager.MouseKeyDown += ArcWardenPanel.OnMouseKeyDown;
             var menuPanelSetting = this.Menu.RootMenu.Add(new Menu("Panel settings"));
 
             menuPanelSetting.Add(ArcWardenPanel.positionSliderX);

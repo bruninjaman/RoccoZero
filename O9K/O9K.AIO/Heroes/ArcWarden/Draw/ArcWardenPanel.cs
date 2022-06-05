@@ -1,6 +1,5 @@
 ﻿namespace O9K.AIO.Heroes.ArcWarden.Draw
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -9,10 +8,7 @@
     using Core.Managers.Renderer.Utils;
 
     using Divine.Entity.Entities.Abilities.Components;
-    using Divine.Extensions;
     using Divine.Game;
-    using Divine.Input;
-    using Divine.Input.EventArgs;
     using Divine.Numerics;
     using Divine.Renderer;
 
@@ -24,7 +20,7 @@
     {
         public static Lane lane;
 
-        private static readonly int _optionsCount = Enum.GetNames(typeof(Lane)).Length;
+        // private static readonly int _optionsCount = Enum.GetNames(typeof(Lane)).Length;
 
         private static readonly Dictionary<Lane, Vector4> vector4PosClick = new();
 
@@ -40,27 +36,29 @@
 
         public static bool pushComboStatus { get; set; } = false;
 
+        public static bool cloneComboStatus { get; set; } = false;
+        
         private static List<AbilityId> CloneItems { get; } =
             new()
             {
                 AbilityId.item_hand_of_midas,
                 AbilityId.item_tpscroll,
             };
-        public static void OnMouseKeyDown(MouseEventArgs e)
-        {
-            if (e.MouseKey != MouseKey.Left)
-            {
-                return;
-            }
-
-            for (var i = 0; i < _optionsCount; i++)
-            {
-                if (e.Position.IsUnderRectangle(new RectangleF(vector4PosClick[(Lane)i].X - 5, vector4PosClick[(Lane)i].Y - 5, vector4PosClick[(Lane)i].Z, vector4PosClick[(Lane)i].W)))
-                {
-                    lane = (Lane)i;
-                }
-            }
-        }
+        // public static void OnMouseKeyDown(MouseEventArgs e)
+        // {
+        //     if (e.MouseKey != MouseKey.Left)
+        //     {
+        //         return;
+        //     }
+        //
+        //     for (var i = 0; i < _optionsCount; i++)
+        //     {
+        //         if (e.Position.IsUnderRectangle(new RectangleF(vector4PosClick[(Lane)i].X - 5, vector4PosClick[(Lane)i].Y - 5, vector4PosClick[(Lane)i].Z, vector4PosClick[(Lane)i].W)))
+        //         {
+        //             lane = (Lane)i;
+        //         }
+        //     }
+        // }
 
         public static void OnDraw()
         {
@@ -72,23 +70,23 @@
             }
 
             var scaling = RendererManager.Scaling;
-            var optionsCount = _optionsCount;
+            var optionsCount = 4;
             var positionX = positionSliderX;
             var positionY = positionSliderY;
             var sizeMenu = size * scaling;
             var indent = sizeMenu * 0.2f;
             var halfIndent = indent * 0.5f;
-            var menuWidth = sizeMenu * optionsCount + indent * 2;
-            var menuHeight = sizeMenu * 5.8f + indent * 2;
+            var menuWidth = sizeMenu * optionsCount + indent;
+            var menuHeight = sizeMenu * 5f + indent;
 
             //Draw main rect without ident
             var mainRect = new RectangleF(
                 positionX - indent,
                 positionY - indent,
-                menuWidth + indent * 2,
-                menuHeight + indent * 2);
+                menuWidth + indent,
+                menuHeight + indent);
 
-            RendererManager.DrawFilledRectangle(mainRect, new Color(10, 10, 10, 255));
+            RendererManager.DrawFilledRectangle(mainRect, new Color(10, 10, 10, 100));
 
             //Draw rect with identst
             var rect = new RectangleF(
@@ -117,84 +115,84 @@
             var farmStatusTextWidth = rect.Width;
             var farmStatusTextHeight = imgHalfSize;
             var farmStatusTextRect = new RectangleF(inRectPosX, inRectPosY, farmStatusTextWidth, farmStatusTextHeight);
-            var farmStatusTextSize = sizeMenu * 0.4f;
-            // RendererManager.DrawRectangle(farmStatusTextRect, Color.DarkKhaki);
-            RendererManager.DrawText("FARM STATUS", farmStatusTextRect, Color.White, FontFlags.Center | FontFlags.VerticalCenter, farmStatusTextSize);
+            var farmStatusTextSize = sizeMenu * 0.35f;
+            // // RendererManager.DrawRectangle(farmStatusTextRect, Color.DarkKhaki);
+            RendererManager.DrawText("CLONE STATUS", farmStatusTextRect, Color.White, FontFlags.Center | FontFlags.VerticalCenter, farmStatusTextSize);
             inRectPosY += farmStatusTextHeight + halfIndent;
             inRectPosX = rect.X;
-
-            //Draw farm status
+            //
+            // //Draw farm status
             var farmStatusHeight = imgHalfSize * 1.2f;
             var farmStatusRect = new RectangleF(inRectPosX, inRectPosY, rect.Width, farmStatusHeight);
             var farmStatusSize = sizeMenu * 0.5f;
-            string pushText;
+            string cloneStatus;
             Color pushColor;
-
-            if (pushComboStatus)
+            
+            if (cloneComboStatus)
             {
-                pushText = "ACTIVE";
+                cloneStatus = "ACTIVE";
                 pushColor = Color.Green;
             }
             else
             {
-                pushText = "NOT ACTIVE";
+                cloneStatus = "IDLE";
                 pushColor = Color.Red;
             }
-
-            // RendererManager.DrawFilledRectangle(farmStatusRect, new Color(255, 255, 255, 50));
-            RendererManager.DrawText(pushText, farmStatusRect, pushColor, FontFlags.Center | FontFlags.VerticalCenter, farmStatusSize);
-
+            //
+            // // RendererManager.DrawFilledRectangle(farmStatusRect, new Color(255, 255, 255, 50));
+            RendererManager.DrawText(cloneStatus, farmStatusRect, pushColor, FontFlags.Center | FontFlags.VerticalCenter, farmStatusSize);
+            
             inRectPosY += farmStatusHeight + indent;
             inRectPosX = rect.X;
-
-            //Draw text: "LINE SELECT FARM"
-            var lineTextWidth = rect.Width;
-            var lineTextHeight = imgHalfSize;
-            var lineTextRect = new RectangleF(inRectPosX, inRectPosY, lineTextWidth, lineTextHeight);
-            var lineTextSize = farmStatusTextSize;
-
-            RendererManager.DrawLine(
-                new Vector2(lineTextRect.X, lineTextRect.Y),
-                new Vector2(lineTextRect.X + lineTextRect.Width, lineTextRect.Y),
-                Color.Gray);
-
-            RendererManager.DrawText("LINE SELECT FARM", lineTextRect, Color.White, FontFlags.Center | FontFlags.VerticalCenter, lineTextSize);
-            inRectPosY += lineTextHeight + halfIndent;
-            inRectPosX = rect.X;
-
-            //Draw modes for clone farm
-            var buttonFontSize = sizeMenu * 0.35f;
-            var buttonWidth = imgSize;
-            var buttonHeight = imgHalfSize;
-
-            for (var i = 0; i < optionsCount; i++)
-            {
-                vector4PosClick.Add((Lane)i, new Vector4(inRectPosX, inRectPosY, buttonWidth, buttonHeight));
-
-                var rectBorderImage = new RectangleF(
-                    inRectPosX,
-                    inRectPosY,
-                    buttonWidth,
-                    buttonHeight);
-
-                if ((Lane)i == lane)
-                {
-                    RendererManager.DrawRectangle(rectBorderImage, Color.Green);
-
-                    RendererManager.DrawText(((Lane)i).ToString(), rectBorderImage, Color.Green, FontFlags.Center | FontFlags.VerticalCenter, buttonFontSize);
-                }
-                else
-                {
-                    RendererManager.DrawRectangle(rectBorderImage, Color.Red);
-
-                    RendererManager.DrawText(((Lane)i).ToString(), rectBorderImage, Color.White, FontFlags.Center | FontFlags.VerticalCenter, buttonFontSize);
-                }
-
-                inRectPosX += buttonWidth + indent * 0.68f;
-            }
-
-            inRectPosX = rect.X;
-            inRectPosY += buttonHeight + indent;
+            //
+            // //Draw text: "LINE SELECT FARM"
+            // var lineTextWidth = rect.Width;
+            // var lineTextHeight = imgHalfSize;
+            // var lineTextRect = new RectangleF(inRectPosX, inRectPosY, lineTextWidth, lineTextHeight);
+            // var lineTextSize = farmStatusTextSize;
+            //
+            // RendererManager.DrawLine(
+            //     new Vector2(lineTextRect.X, lineTextRect.Y),
+            //     new Vector2(lineTextRect.X + lineTextRect.Width, lineTextRect.Y),
+            //     Color.Gray);
+            //
+            // RendererManager.DrawText("LINE SELECT FARM", lineTextRect, Color.White, FontFlags.Center | FontFlags.VerticalCenter, lineTextSize);
+            // inRectPosY += lineTextHeight + halfIndent;
+            // inRectPosX = rect.X;
+            //
+            // //Draw modes for clone farm
+            // var buttonFontSize = sizeMenu * 0.35f;
+            // var buttonWidth = imgSize;
+            // var buttonHeight = imgHalfSize;
+            //
+            // for (var i = 0; i < optionsCount; i++)
+            // {
+            //     vector4PosClick.Add((Lane)i, new Vector4(inRectPosX, inRectPosY, buttonWidth, buttonHeight));
+            //
+            //     var rectBorderImage = new RectangleF(
+            //         inRectPosX,
+            //         inRectPosY,
+            //         buttonWidth,
+            //         buttonHeight);
+            //
+            //     if ((Lane)i == lane)
+            //     {
+            //         RendererManager.DrawRectangle(rectBorderImage, Color.Green);
+            //
+            //         RendererManager.DrawText(((Lane)i).ToString(), rectBorderImage, Color.Green, FontFlags.Center | FontFlags.VerticalCenter, buttonFontSize);
+            //     }
+            //     else
+            //     {
+            //         RendererManager.DrawRectangle(rectBorderImage, Color.Red);
+            //
+            //         RendererManager.DrawText(((Lane)i).ToString(), rectBorderImage, Color.White, FontFlags.Center | FontFlags.VerticalCenter, buttonFontSize);
+            //     }
+            //
+            //     inRectPosX += buttonWidth + indent * 0.68f;
+            // }
+            //
+            // inRectPosX = rect.X;
+            // inRectPosY += buttonHeight + indent;
 
             //Draw text: "ARC TARGET COMBO"
             var targetTextWidth = rect.Width;

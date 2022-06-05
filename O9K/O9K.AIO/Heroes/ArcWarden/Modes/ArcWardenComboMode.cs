@@ -87,6 +87,7 @@
                 {
                     if (this.ComboModeMenu.SimplifiedName == this.cloneCombo_SimplefiedName)
                     {
+                        ArcWardenPanel.cloneComboStatus = true;
                         var tempestAbility = EntityManager9.Owner.Hero.Abilities
                                                            .FirstOrDefault(ability9 => ability9.Id == AbilityId.arc_warden_tempest_double && ability9.CanBeCasted());
                         
@@ -95,6 +96,8 @@
                             tempestAbility.BaseAbility.Cast();
                             MultiSleeper<string>.Sleep("ArcWardenTempestCast", 2000);
                         }
+                        
+                        ForceSetTargetIfCloneAlive(arcUnitManager);
 
                         if (!arcUnitManager.CloneControllableUnits.Any() && !MultiSleeper<string>.Sleeping("ArcWardenTempestCast"))
                         {
@@ -116,7 +119,10 @@
 
                     if (this.ComboModeMenu.SimplifiedName == this.cloneCombo_SimplefiedName)
                     {
-                        arcUnitManager.CloneOrbwalk(this.ComboModeMenu);
+                        if (TargetManager.HasValidTarget)
+                        {
+                            arcUnitManager.CloneOrbwalk(this.ComboModeMenu);
+                        }
                     }
                     else
                     {
@@ -126,6 +132,21 @@
                 catch (Exception e)
                 {
                     Logger.Error(e);
+                }
+            }
+        }
+
+        private void ForceSetTargetIfCloneAlive(ArcWardenUnitManager arcUnitManager)
+        {
+            var owner = arcUnitManager.CloneControllableUnits.FirstOrDefault()?.Owner;
+
+            if (owner != null)
+            {
+                var possibleEnemy = EntityManager9.EnemyHeroes.FirstOrDefault(x => x.IsAlive && x.Distance(owner) < 1000);
+
+                if (!this.TargetManager.HasValidTarget && possibleEnemy != null)
+                {
+                    this.TargetManager.ForceSetTarget(possibleEnemy);
                 }
             }
         }
@@ -201,7 +222,7 @@
             this.UpdateHandler.IsEnabled = false;
             TargetManager.TargetLocked = false;
             ArcWardenPanel.unitName = null;
-
+            ArcWardenPanel.cloneComboStatus = false;
             this.ComboEnd();
         }
     }
