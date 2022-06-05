@@ -87,6 +87,7 @@
                 {
                     if (this.ComboModeMenu.SimplifiedName == this.cloneCombo_SimplefiedName)
                     {
+                        ArcWardenPanel.cloneComboStatus = true;
                         var tempestAbility = EntityManager9.Owner.Hero.Abilities
                                                            .FirstOrDefault(ability9 => ability9.Id == AbilityId.arc_warden_tempest_double && ability9.CanBeCasted());
                         
@@ -221,7 +222,7 @@
             this.UpdateHandler.IsEnabled = false;
             TargetManager.TargetLocked = false;
             ArcWardenPanel.unitName = null;
-
+            ArcWardenPanel.cloneComboStatus = false;
             this.ComboEnd();
         }
     }
