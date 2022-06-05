@@ -8,28 +8,29 @@ using Core.Entities.Abilities.Base;
 using Core.Entities.Abilities.Base.Components;
 using Core.Entities.Abilities.Base.Types;
 using Core.Extensions;
+using Core.Geometry;
 using Core.Helpers;
 using Core.Logger;
 using Core.Managers.Entity;
 using Core.Managers.Menu.EventArgs;
 using Core.Prediction.Data;
+
+using Divine.Entity.Entities;
+using Divine.Entity.Entities.Abilities.Components;
+using Divine.Entity.Entities.EventArgs;
+using Divine.Extensions;
 using Divine.Game;
 using Divine.Numerics;
 using Divine.Order;
-using Divine.Update;
-using Divine.Entity.Entities;
 using Divine.Order.EventArgs;
-using Divine.Entity.Entities.EventArgs;
 using Divine.Order.Orders.Components;
-using Divine.Entity.Entities.Abilities.Components;
+using Divine.Update;
 
 using Heroes.Base;
 
 using KillStealer;
 
 using Modes.Base;
-
-using O9K.Core.Geometry;
 
 internal class FailSafe : BaseMode
 {
@@ -315,6 +316,10 @@ internal class FailSafe : BaseMode
 
                 if (!target.IsAlive || output.HitChance == HitChance.Impossible || !polygon.IsInside(output.TargetPosition))
                 {
+                    if (!Divine.Helpers.MultiSleeper<string>.Sleeping("FailSafe.Razes") && CheckForSFRazes(ability))
+                    {
+                        Divine.Helpers.MultiSleeper<string>.Sleep("FailSafe.Razes", 2000);
+                    }
                     this.Sleeper.Sleep(0.15f);
                     this.abilityTimings.Remove(ability);
                     this.abilityPositions.Remove(ability.Handle);
@@ -334,4 +339,21 @@ internal class FailSafe : BaseMode
             Logger.Error(e);
         }
     }
+
+    private static bool CheckForSFRazes(ActiveAbility ability)
+    {
+        if (ability.Id.In(razes))
+        {
+            if (razeCount > 1)
+            {
+                razeCount = 0;
+                return true;
+            }
+            razeCount++;
+        }
+        return false;
+    }
+
+    private static int razeCount = 0; 
+    private static AbilityId[] razes = { AbilityId.nevermore_shadowraze1,  AbilityId.nevermore_shadowraze2,  AbilityId.nevermore_shadowraze3, };
 }

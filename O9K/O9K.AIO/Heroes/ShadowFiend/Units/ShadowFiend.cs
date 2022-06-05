@@ -72,7 +72,7 @@ internal class ShadowFiend : ControllableUnit
             {
                 AbilityId.nevermore_shadowraze1, x =>
                 {
-                    var raze = new NukeAbility(x);
+                    var raze = new ShadowRaze(x);
                     this.razes.Add(raze);
 
                     return raze;
@@ -81,7 +81,7 @@ internal class ShadowFiend : ControllableUnit
             {
                 AbilityId.nevermore_shadowraze2, x =>
                 {
-                    var raze = new NukeAbility(x);
+                    var raze = new ShadowRaze(x);
                     this.razes.Add(raze);
 
                     return raze;
@@ -90,7 +90,7 @@ internal class ShadowFiend : ControllableUnit
             {
                 AbilityId.nevermore_shadowraze3, x =>
                 {
-                    var raze = new NukeAbility(x);
+                    var raze = new ShadowRaze(x);
                     this.razes.Add(raze);
 
                     return raze;
@@ -202,19 +202,36 @@ internal class ShadowFiend : ControllableUnit
 
         foreach (var raze in orderedRazes)
         {
-            var predictedPosition = target.GetPredictedPosition(1.5f);
-            var distance = this.Owner.Distance(predictedPosition);
+
+            // var razeAbility = raze.Ability;
+            // var castDelay = raze.Ability.GetCastDelay() + 0.2f;
+            // var predictedPosition = target.GetPredictedPosition(castDelay);
+            // var distance = this.Owner.Distance(predictedPosition);
+            //
+            // if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.AIO.MoveToDirection") &&
+            //     razeAbility.IsReady &&
+            //     razeAbility.CastRange + raze.Ability.Radius > distance &&
+            //     razeAbility.CastRange - raze.Ability.Radius < distance &&
+            //     this.Owner.GetAngle(predictedPosition) > 0.4)
+            // {
+            //     Console.WriteLine("MOVE FOR RAIZE");
+            //     // this.MoveSleeper.Sleep(razeAbility.GetCastDelay() * 2 + this.Owner.GetTurnTime(predictedPosition));
+            //     this.Owner.BaseUnit.MoveToDirection(predictedPosition);
+            //     raze.Ability.BaseAbility.Cast();
+            //     Divine.Helpers.MultiSleeper<string>.Sleep("ShadowFiend.AIO.MoveToDirection", 500);
+            //     return true;
+            // }
 
             if (!this.abilityHelper.CanBeCasted(raze))
             {
                 continue;
             }
-
+            
             if (this.RazeCanWaitAttack(raze, target))
             {
                 continue;
             }
-
+            
             if (this.abilityHelper.UseAbility(raze))
             {
                 return true;
