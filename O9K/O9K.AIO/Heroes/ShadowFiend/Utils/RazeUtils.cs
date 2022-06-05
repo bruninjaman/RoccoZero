@@ -49,7 +49,7 @@ internal class RazeUtils
     {
         get
         {
-            return EntityManager9.Owner.Hero.Abilities.Where(ability9 => ability9.Id.In(razes)).ToList();
+            return EntityManager9.Owner.Hero.Abilities.Where(ability9 => ability9.Id.In(razes)).OrderBy(x=> x.Name).ToList();
         }
     }
 

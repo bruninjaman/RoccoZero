@@ -75,18 +75,24 @@ internal class LastHitMode : BaseMode
             {
                 continue;
             }
-
+            
+            bool result = false;
             foreach (var damageInfo in attack
-                                       // .Where(x => x.IsInAttackRange)
-                                       .OrderByDescending(x => x.Delay))
+                         // .Where(x => x.IsInAttackRange)
+                         .OrderByDescending(x => x.Delay))
             {
                 //todo force attack if target will die soon
 
                 if (damageInfo.Unit.Farm(ally))
                 {
+                    result = true;
                 }
             }
-            return true;
+
+            if (result)
+            {
+                return true;
+            }
         }
 
         return false;
