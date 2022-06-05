@@ -53,7 +53,7 @@ public class Unit9 : Entity9
     private readonly List<Modifier> immobilityModifiers = new();
 
     private readonly List<Modifier> invulnerabilityModifiers = new();
-    
+
     private readonly List<Modifier> strongDisableModifiers = new();
 
     private readonly List<IHasPassiveDamageIncrease> passiveDamageAbilities = new();
@@ -86,8 +86,6 @@ public class Unit9 : Entity9
         this.HullRadius = baseUnit.HullRadius;
         this.MoveCapability = baseUnit.MoveCapability;
         this.AttackCapability = baseUnit.AttackCapability;
-        this.AttackType = baseUnit.AttackDamageType;
-        this.ArmorType = baseUnit.ArmorType;
         this.IsCreep = baseUnit is Creep;
         this.IsAncient = baseUnit.IsAncient;
         this.IsLaneCreep = baseUnit.UnitType == 1152;
@@ -111,8 +109,6 @@ public class Unit9 : Entity9
 
     public virtual float Agility { get; } = 0;
 
-    public ArmorType ArmorType { get; }
-
     public AttackCapability AttackCapability { get; }
 
     public float AttacksPerSecond
@@ -122,8 +118,6 @@ public class Unit9 : Entity9
             return this.BaseUnit.AttacksPerSecond;
         }
     }
-
-    public AttackDamageType AttackType { get; }
 
     public Inventory BaseInventory
     {
@@ -1036,11 +1030,11 @@ public class Unit9 : Entity9
 
         var outAmp = source.amplifiers
             .Where(x => x.IsValid && (x.AmplifiesDamage & AmplifiesDamage.Outgoing) != 0 && (x.AmplifierDamageType & damageType) != 0)
-            .Sum(x => x.AmplifierValue(this, source));
+            .Sum(x => x.AmplifierValue(this, source, AmplifiesDamage.Outgoing));
 
         var inAmp = this.amplifiers
             .Where(x => x.IsValid && (x.AmplifiesDamage & AmplifiesDamage.Incoming) != 0 && (x.AmplifierDamageType & damageType) != 0)
-            .Sum(x => x.AmplifierValue(source, this));
+            .Sum(x => x.AmplifierValue(source, this, AmplifiesDamage.Incoming));
 
         amp *= Math.Max(1 + outAmp, 0) * Math.Max(1 + inAmp, 0);
 
@@ -1085,7 +1079,7 @@ public class Unit9 : Entity9
 
         return modifiers.Max(x => x.RemainingTime);
     }
-    
+
     public virtual float GetStrongDisableDuration()
     {
         var modifiers = this.strongDisableModifiers.Where(x => x.IsValid && x.ElapsedTime > 0.1f).ToList();
@@ -1097,7 +1091,7 @@ public class Unit9 : Entity9
 
         return modifiers.Max(x => x.RemainingTime);
     }
-    
+
     public virtual float GetInvulnerabilityDuration()
     {
         var modifiers = this.invulnerabilityModifiers.Where(x => x.IsValid && x.ElapsedTime > 0.1f).ToList();
@@ -1444,7 +1438,7 @@ public class Unit9 : Entity9
         }
 
         damage[DamageType.Physical] += multipliedPhysDamage * physCritMultiplier + additionalPhysicalDamage;
-        damage[DamageType.Physical] *= DamageExtensions.GetMeleeDamageMultiplier(this, target);
+        //damage[DamageType.Physical] *= DamageExtensions.GetMeleeDamageMultiplier(this, target); // obsoluty
 
         return damage;
     }

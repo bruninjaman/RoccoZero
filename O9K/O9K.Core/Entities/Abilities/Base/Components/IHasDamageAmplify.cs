@@ -33,4 +33,9 @@ public interface IHasDamageAmplify
     bool IsValid { get; }
 
     float AmplifierValue(Unit9 source, Unit9 target);
+
+    float AmplifierValue(Unit9 source, Unit9 target, AmplifiesDamage amplifiesDamage)
+    {
+        return AmplifierValue(source, target);
+    }
 }
