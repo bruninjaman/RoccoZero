@@ -33,7 +33,7 @@ public class VisibleByEnemyPlus : Bootstrapper
 
     private int Alpha => Config.AlphaItem;
 
-    private readonly Hero Owner = EntityManager.LocalHero;
+    private Hero Owner;
 
     protected override void OnActivate()
     {
@@ -44,6 +44,8 @@ public class VisibleByEnemyPlus : Bootstrapper
         Config.GreenItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, e.NewValue, Blue, Alpha); };
         Config.BlueItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, Green, e.NewValue, Alpha); };
         Config.AlphaItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, Green, Blue, e.NewValue); };
+
+        Owner = EntityManager.LocalHero;
 
         EntityManager.EntityAdded += OnEntityAdded;
         EntityManager.EntityRemoved += OnEntityRemoved;
