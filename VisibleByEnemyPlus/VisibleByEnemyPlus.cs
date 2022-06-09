@@ -1,16 +1,12 @@
 ﻿namespace VisibleByEnemyPlus;
 
-using System;
 using System.Collections.Generic;
 
 using Divine.Entity;
-using Divine.Entity.Entities;
-using Divine.Entity.Entities.EventArgs;
 using Divine.Entity.Entities.Units;
 using Divine.Entity.Entities.Units.Heroes;
 using Divine.Entity.EventArgs;
 using Divine.Extensions;
-using Divine.Helpers;
 using Divine.Numerics;
 using Divine.Particle;
 using Divine.Particle.Components;
@@ -19,7 +15,7 @@ using Divine.Update;
 
 public class VisibleByEnemyPlus : Bootstrapper
 {
-    private readonly Dictionary<uint, Tuple<Unit, Sleeper>> Units = new();
+    private readonly HashSet<Unit> Units = new();
 
     private Config Config { get; set; }
 
@@ -50,30 +46,39 @@ public class VisibleByEnemyPlus : Bootstrapper
         EntityManager.EntityAdded += OnEntityAdded;
         EntityManager.EntityRemoved += OnEntityRemoved;
 
-        Entity.NetworkPropertyChanged += OnNetworkPropertyChanged;
         UpdateManager.CreateIngameUpdate(50, OnIngameUpdate);
     }
 
     private void OnEntityAdded(EntityAddedEventArgs e)
     {
         var entity = e.Entity;
-        if (entity is not Hero and not Courier || !entity.IsAlly(Owner))
+        if (entity is not Unit unit)
         {
             return;
         }
 
-        Units[entity.Handle] = new((Unit)entity, new Sleeper());
+        if (unit is not Hero and not Courier || !unit.IsAlly(Owner))
+        {
+            return;
+        }
+
+        Units.Add(unit);
     }
 
     private void OnEntityRemoved(EntityRemovedEventArgs e)
     {
         var entity = e.Entity;
-        if (entity is not Hero and not Courier)
+        if (entity is not Unit unit)
         {
             return;
         }
 
-        Units.Remove(entity.Handle);
+        if (unit is not Hero and not Courier)
+        {
+            return;
+        }
+
+        Units.Remove(unit);
     }
 
     protected override void OnDeactivate()
@@ -116,34 +121,11 @@ public class VisibleByEnemyPlus : Bootstrapper
         }
     }
 
-    private void OnNetworkPropertyChanged(Entity sender, NetworkPropertyChangedEventArgs e)
-    {
-        if (e.PropertyName != "m_flStartSequenceCycle")
-        {
-            return;
-        }
-
-        UpdateManager.BeginInvoke(() =>
-        {
-            if (sender is not Hero and not Courier || !sender.IsAlly(Owner))
-            {
-                return;
-            }
-
-            if (!Units.TryGetValue(sender.Handle, out var value))
-            {
-                return;
-            }
-
-            value.Item2.Sleep(100);
-        });
-    }
-
     private void OnIngameUpdate()
     {
-        foreach (var (_, tuple) in Units)
+        foreach (var unit in Units)
         {
-            HandleEffect(tuple.Item1, !tuple.Item2.Sleeping);
+            HandleEffect(unit, unit.IsVisibleToEnemies);
         }
     }
 

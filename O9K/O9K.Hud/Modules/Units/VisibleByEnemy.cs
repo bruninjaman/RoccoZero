@@ -298,9 +298,7 @@ internal class VisibleByEnemy : IHudModule
                             continue;
                         }
 
-                        this.particles.Add(
-                            unit,
-                            ParticleManager.CreateParticle(this.effects[this.effectName], Attachment.AbsOriginFollow, unit.BaseUnit));
+                        this.particles.Add(unit, ParticleManager.CreateParticle(this.effects[this.effectName], Attachment.AbsOriginFollow, unit.BaseUnit));
                     }
                 }
             }
