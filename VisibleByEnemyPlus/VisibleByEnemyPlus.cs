@@ -1,14 +1,16 @@
 ﻿namespace VisibleByEnemyPlus;
 
+using System;
+using System.Collections.Generic;
+
 using Divine.Entity;
 using Divine.Entity.Entities;
-using Divine.Entity.Entities.Components;
+using Divine.Entity.Entities.EventArgs;
 using Divine.Entity.Entities.Units;
-using Divine.Entity.Entities.Units.Buildings;
-using Divine.Entity.Entities.Units.Creeps.Neutrals;
 using Divine.Entity.Entities.Units.Heroes;
-using Divine.Entity.Entities.Units.Wards;
-using Divine.Game;
+using Divine.Entity.EventArgs;
+using Divine.Extensions;
+using Divine.Helpers;
 using Divine.Numerics;
 using Divine.Particle;
 using Divine.Particle.Components;
@@ -17,6 +19,8 @@ using Divine.Update;
 
 public class VisibleByEnemyPlus : Bootstrapper
 {
+    private readonly Dictionary<uint, Tuple<Unit, Sleeper>> Units = new();
+
     private Config Config { get; set; }
 
     private bool AddEffectType { get; set; }
@@ -29,6 +33,8 @@ public class VisibleByEnemyPlus : Bootstrapper
 
     private int Alpha => Config.AlphaItem;
 
+    private readonly Hero Owner = EntityManager.LocalHero;
+
     protected override void OnActivate()
     {
         Config = new Config();
@@ -39,7 +45,33 @@ public class VisibleByEnemyPlus : Bootstrapper
         Config.BlueItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, Green, e.NewValue, Alpha); };
         Config.AlphaItem.ValueChanged += (slider, e) => { UpdateMenu(Config.EffectTypeItem, Red, Green, Blue, e.NewValue); };
 
-        UpdateManager.IngameUpdate += OnIngameUpdate;
+        EntityManager.EntityAdded += OnEntityAdded;
+        EntityManager.EntityRemoved += OnEntityRemoved;
+
+        Entity.NetworkPropertyChanged += OnNetworkPropertyChanged;
+        UpdateManager.CreateIngameUpdate(50, OnIngameUpdate);
+    }
+
+    private void OnEntityAdded(EntityAddedEventArgs e)
+    {
+        var entity = e.Entity;
+        if (entity is not Hero and not Courier || !entity.IsAlly(Owner))
+        {
+            return;
+        }
+
+        Units[entity.Handle] = new((Unit)entity, new Sleeper());
+    }
+
+    private void OnEntityRemoved(EntityRemovedEventArgs e)
+    {
+        var entity = e.Entity;
+        if (entity is not Hero and not Courier)
+        {
+            return;
+        }
+
+        Units.Remove(entity.Handle);
     }
 
     protected override void OnDeactivate()
@@ -82,72 +114,34 @@ public class VisibleByEnemyPlus : Bootstrapper
         }
     }
 
-    private static bool IsMine(Entity sender)
+    private void OnNetworkPropertyChanged(Entity sender, NetworkPropertyChangedEventArgs e)
     {
-        return sender.ClassId == ClassId.CDOTA_NPC_TechiesMines;
-    }
+        if (e.PropertyName != "m_flStartSequenceCycle")
+        {
+            return;
+        }
 
-    private static bool IsUnit(Unit sender)
-    {
-        return (sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Lane
-               && sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Siege
-               || sender.IsControllable)
-               && sender.ClassId != ClassId.CDOTA_NPC_TechiesMines
-               && sender.ClassId != ClassId.CDOTA_NPC_Observer_Ward
-               && sender.ClassId != ClassId.CDOTA_NPC_Observer_Ward_TrueSight
-               && sender.ClassId != ClassId.CDOTA_BaseNPC_Healer;
-    }
+        UpdateManager.BeginInvoke(() =>
+        {
+            if (sender is not Hero and not Courier || !sender.IsAlly(Owner))
+            {
+                return;
+            }
 
-    private float LastTime;
+            if (!Units.TryGetValue(sender.Handle, out var value))
+            {
+                return;
+            }
+
+            value.Item2.Sleep(100);
+        });
+    }
 
     private void OnIngameUpdate()
     {
-        if (GameManager.RawGameTime - LastTime < 0.25f)
+        foreach (var (_, tuple) in Units)
         {
-            return;
-        }
-
-        LastTime = GameManager.RawGameTime;
-
-        var localHero = EntityManager.LocalHero;
-        if (localHero == null || !localHero.IsValid)
-        {
-            return;
-        }
-
-        foreach (var unit in EntityManager.GetEntities<Unit>())
-        {
-            if (unit.Team == localHero.Team)
-            {
-                if (Config.AlliedHeroesItem && unit is Hero)
-                {
-                    HandleEffect(unit, unit.IsVisibleToEnemies);
-                }
-                else if (Config.BuildingsItem && unit is Building)
-                {
-                    HandleEffect(unit, unit.IsVisibleToEnemies);
-                }
-                else if (Config.WardsItem && unit is ObserverWard)
-                {
-                    HandleEffect(unit, unit.IsVisibleToEnemies);
-                }
-                else if (Config.MinesItem && IsMine(unit))
-                {
-                    HandleEffect(unit, unit.IsVisibleToEnemies);
-                }
-                else if (Config.OutpostsItem && unit is Outpost)
-                {
-                    HandleEffect(unit, unit.IsVisibleToEnemies);
-                }
-                else if (Config.UnitsItem && IsUnit(unit))
-                {
-                    HandleEffect(unit, unit.IsVisibleToEnemies);
-                }
-            }
-            else if (Config.NeutralsItem && unit is Neutral)
-            {
-                HandleEffect(unit, unit.IsVisibleToEnemies);
-            }
+            HandleEffect(tuple.Item1, !tuple.Item2.Sleeping);
         }
     }
 
@@ -170,7 +164,7 @@ public class VisibleByEnemyPlus : Bootstrapper
         }
         else if (AddEffectType)
         {
-            ParticleManager.RemoveParticle($"VisibleByEnemyPlus.{unit.Handle}");
+            ParticleManager.DestroyParticle($"VisibleByEnemyPlus.{unit.Handle}");
         }
     }
 }

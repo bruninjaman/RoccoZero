@@ -9,19 +9,19 @@ using Divine.Numerics;
 
 internal sealed class Config
 {
-    public MenuSwitcher AlliedHeroesItem { get; }
+    //public MenuSwitcher AlliedHeroesItem { get; }
 
-    public MenuSwitcher WardsItem { get; }
+    //public MenuSwitcher WardsItem { get; }
 
-    public MenuSwitcher MinesItem { get; }
+    //public MenuSwitcher MinesItem { get; }
 
-    public MenuSwitcher OutpostsItem { get; }
+    //public MenuSwitcher OutpostsItem { get; }
 
-    public MenuSwitcher NeutralsItem { get; }
+    //public MenuSwitcher NeutralsItem { get; }
 
-    public MenuSwitcher UnitsItem { get; }
+    //public MenuSwitcher UnitsItem { get; }
 
-    public MenuSwitcher BuildingsItem { get; }
+    //public MenuSwitcher BuildingsItem { get; }
 
     public MenuSelector EffectTypeItem { get; }
 
@@ -60,13 +60,13 @@ internal sealed class Config
             AlphaItem.SetFontColor(new Color(185, 176, 163, AlphaItem));
         }
 
-        AlliedHeroesItem = rootMenu.CreateSwitcher("Allied Heroes");
-        WardsItem = rootMenu.CreateSwitcher("Wards");
-        MinesItem = rootMenu.CreateSwitcher("Mines");
-        OutpostsItem = rootMenu.CreateSwitcher("Outposts");
-        NeutralsItem = rootMenu.CreateSwitcher("Neutrals");
-        UnitsItem = rootMenu.CreateSwitcher("Units");
-        BuildingsItem = rootMenu.CreateSwitcher("Buildings");
+        //AlliedHeroesItem = rootMenu.CreateSwitcher("Allied Heroes");
+        //WardsItem = rootMenu.CreateSwitcher("Wards");
+        //MinesItem = rootMenu.CreateSwitcher("Mines");
+        //OutpostsItem = rootMenu.CreateSwitcher("Outposts");
+        //NeutralsItem = rootMenu.CreateSwitcher("Neutrals");
+        //UnitsItem = rootMenu.CreateSwitcher("Units");
+        //BuildingsItem = rootMenu.CreateSwitcher("Buildings");
     }
 
     public Dictionary<string, string> Effects { get; } = new Dictionary<string, string>
