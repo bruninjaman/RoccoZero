@@ -37,7 +37,7 @@ internal sealed class MiranaArrow : Base
 
     public override bool Particle(Particle particle, string name)
     {
-        if (!name.Contains("mirana_spell_arrow"))
+        if (!name.Contains("mirana") || !name.Contains("arrow"))
         {
             return false;
         }
@@ -53,7 +53,7 @@ internal sealed class MiranaArrow : Base
             return true;
         }
 
-        UpdateManager.BeginInvoke(() => 
+        UpdateManager.BeginInvoke(() =>
         {
             var position = particle.GetControlPoint(0);
 
@@ -101,7 +101,7 @@ internal sealed class MiranaArrow : Base
         DrawRangeRemove($"ArrowEnd_{id}");
         DrawRangeRemove($"ArrowMove_{id}");
         DrawLineRemove($"Arrow_{id}");
-    }   
+    }
 
     private void DisplayMessage()
     {
