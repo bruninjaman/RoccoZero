@@ -8,6 +8,7 @@
     using Base;
 
     using Divine.Game;
+    using Divine.Helpers;
     using Divine.Numerics;
 
     using UnitManager;
@@ -18,6 +19,9 @@
             : base(baseHero)
         {
         }
+
+        private Sleeper unitSwitchSleeper = new();
+        private ControllableUnit lastUnit;
 
         public IEnumerable<ControllableUnit> CloneControllableUnits
         {
@@ -42,7 +46,7 @@
         {
             foreach (var controllable in this.CloneControllableUnits)
             {
-                if (controllable.ComboSleeper.IsSleeping)
+                if (controllable.ComboSleeper.IsSleeping || (unitSwitchSleeper.Sleeping && lastUnit != controllable))
                 {
                     continue;
                 }
@@ -55,6 +59,8 @@
                 if (controllable.Combo(this.targetManager, comboModeMenu))
                 {
                     controllable.LastMovePosition = Vector3.Zero;
+                    lastUnit = controllable;
+                    unitSwitchSleeper.Sleep(200);
                 }
             }
         }
