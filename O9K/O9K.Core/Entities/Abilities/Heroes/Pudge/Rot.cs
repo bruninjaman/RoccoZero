@@ -31,6 +31,19 @@ public class Rot : ToggleAbility, IDebuff
 
     public override SkillShotType SkillShotType { get; } = SkillShotType.AreaOfEffect;
 
+    public float Radius
+    {
+        get
+        {
+            var radius = this.RadiusData.GetValue(this.Level);
+            if (this.Owner.HasAghanimsScepter)
+            {
+                radius += 225;
+            }
+            return radius;
+        }
+    }
+
     public override bool CanHit(Unit9 target)
     {
         if (target.IsMagicImmune && ((target.IsEnemy(this.Owner) && !this.CanHitSpellImmuneEnemy)
