@@ -135,7 +135,7 @@ internal class LegionCommander : ControllableUnit
                 }
             }
 
-            if (!abilityHelper.CanBeCasted(this.duel) && abilityHelper.CanBeCasted(this.blink, false))
+            if (abilityHelper.CanBeCasted(this.duel) && abilityHelper.CanBeCasted(this.blink, false))
             {
                 if (abilityHelper.ForceUseAbility(this.blink))
                 {

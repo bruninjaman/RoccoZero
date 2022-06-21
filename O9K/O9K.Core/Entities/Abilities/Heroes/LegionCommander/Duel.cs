@@ -34,14 +34,6 @@ public class Duel : RangedAbility, IHasDamageAmplify, IDisable, IAppliesImmobili
 
     public bool IsAmplifierPermanent { get; } = false;
 
-    protected override float BaseCastRange
-    {
-        get
-        {
-            return base.BaseCastRange + 100;
-        }
-    }
-
     public float AmplifierValue(Unit9 source, Unit9 target)
     {
         if (!this.Owner.HasAghanimsScepter)
