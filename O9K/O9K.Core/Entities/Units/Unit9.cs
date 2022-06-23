@@ -1197,7 +1197,7 @@ public class Unit9 : Entity9
     public bool IsEnemy(Team team)
     {
         return !IsAlly(team);
-        //return team == this.EnemyTeam; TODO Check
+        //return team == this.EnemyTeam; // TODO Check
     }
 
     public bool Move(Unit9 toTarget)
