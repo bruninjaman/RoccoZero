@@ -3666,13 +3666,6 @@ internal class AbilityData
             }
         },
         {
-            "particles/units/heroes/hero_viper/viper_poison_debuff.vpcf", new AbilityFullData
-            {
-                AbilityId = AbilityId.viper_poison_attack,
-                SearchOwner = true
-            }
-        },
-        {
             "particles/units/heroes/hero_viper/viper_nethertoxin_proj.vpcf", new AbilityFullData
             {
                 AbilityId = AbilityId.viper_nethertoxin,
