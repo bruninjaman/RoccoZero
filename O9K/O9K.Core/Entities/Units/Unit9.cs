@@ -1191,12 +1191,13 @@ public class Unit9 : Entity9
 
     public bool IsEnemy(Unit9 unit)
     {
-        return unit.Team == this.EnemyTeam;
+        return IsEnemy(unit.Team);
     }
 
     public bool IsEnemy(Team team)
     {
-        return team == this.EnemyTeam;
+        return !IsAlly(team);
+        //return team == this.EnemyTeam; TODO Check
     }
 
     public bool Move(Unit9 toTarget)
