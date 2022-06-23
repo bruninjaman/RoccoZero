@@ -50,9 +50,12 @@ internal class DrawableAbility : IDrawableAbility
             return;
         }
 
-        RendererManager.DrawImage("o9k.outline_red", position * 1.12f);
-        RendererManager.DrawImage(this.HeroTexture, position, UnitImageType.RoundUnit);
+        if (this.HeroTexture != null)
+        {
+            RendererManager.DrawImage("o9k.outline_red", position * 1.12f);
+            RendererManager.DrawImage(this.HeroTexture, position, UnitImageType.RoundUnit);
 
+        }
         var abilityTexturePosition = position * 0.5f;
         abilityTexturePosition.X += abilityTexturePosition.Width * 0.8f;
         abilityTexturePosition.Y += abilityTexturePosition.Height * 0.6f;
@@ -63,6 +66,10 @@ internal class DrawableAbility : IDrawableAbility
 
     public virtual void DrawOnMinimap(IMinimap minimap)
     {
+        if (this.MinimapHeroTexture == null)
+        {
+            return;
+        }
         var position = minimap.WorldToMinimap(this.Position, 25 * Hud.Info.ScreenRatio);
         if (position.IsZero)
         {
