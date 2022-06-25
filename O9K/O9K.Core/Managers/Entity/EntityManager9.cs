@@ -80,7 +80,7 @@ public static class EntityManager9
         EntityManager.EntityAdded += OnEntityAdded;
         EntityManager.EntityRemoved += OnEntityRemoved;
 
-        UpdateManager.BeginInvoke(2000, DemoModeCheck);
+        //UpdateManager.BeginInvoke(2000, DemoModeCheck);
         UpdateManager.BeginInvoke(5000, LoadCheck);
     }
 
@@ -751,16 +751,16 @@ public static class EntityManager9
         }
     }
 
-    private static void DemoModeCheck()
-    {
-        if (GameManager.GameMode != GameMode.Custom)
-        {
-            return;
-        }
+    //private static void DemoModeCheck()
+    //{
+    //    if (GameManager.GameMode != GameMode.Custom)
+    //    {
+    //        return;
+    //    }
 
-        Hud.DisplayWarning("O9K // Some assemblies will not work correctly in demo mode", 600);
-        Hud.DisplayWarning("O9K // Use custom lobby instead", 600);
-    }
+    //    Hud.DisplayWarning("O9K // Some assemblies will not work correctly in demo mode", 600);
+    //    Hud.DisplayWarning("O9K // Use custom lobby instead", 600);
+    //}
 
     private static void LoadCheck()
     {

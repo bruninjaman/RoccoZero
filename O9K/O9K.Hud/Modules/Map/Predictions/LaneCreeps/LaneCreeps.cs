@@ -106,15 +106,15 @@ internal class LaneCreeps : IHudModule
     {
         if (e.NewValue)
         {
-            if (e.OldValue)
-            {
-                //todo delete
-                if (AppDomain.CurrentDomain.GetAssemblies()
-                    .Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("PredictedCreepsLocation")))
-                {
-                    Hud.DisplayWarning("O9K.Hud // PredictedCreepsLocation is already included in O9K.Hud");
-                }
-            }
+            //if (e.OldValue)
+            //{
+            //    //todo delete
+            //    if (AppDomain.CurrentDomain.GetAssemblies()
+            //        .Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("PredictedCreepsLocation")))
+            //    {
+            //        Hud.DisplayWarning("O9K.Hud // PredictedCreepsLocation is already included in O9K.Hud");
+            //    }
+            //}
 
             EntityManager9.UnitAdded += this.OnUnitAdded;
             EntityManager9.UnitRemoved += this.OnUnitRemoved;

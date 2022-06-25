@@ -140,15 +140,15 @@ internal class VisibleByEnemy : IHudModule
     {
         if (e.NewValue)
         {
-            if (e.OldValue)
-            {
-                //todo delete
-                if (AppDomain.CurrentDomain.GetAssemblies()
-                    .Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("VisibleByEnemy")))
-                {
-                    Hud.DisplayWarning("O9K.Hud // VisibleByEnemy is already included in O9K.Hud");
-                }
-            }
+            //if (e.OldValue)
+            //{
+            //    //todo delete
+            //    if (AppDomain.CurrentDomain.GetAssemblies()
+            //        .Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("VisibleByEnemy")))
+            //    {
+            //        Hud.DisplayWarning("O9K.Hud // VisibleByEnemy is already included in O9K.Hud");
+            //    }
+            //}
 
             this.effectName.ValueChange += this.EffectNameOnValueChange;
             EntityManager9.UnitAdded += this.OnUnitAdded;

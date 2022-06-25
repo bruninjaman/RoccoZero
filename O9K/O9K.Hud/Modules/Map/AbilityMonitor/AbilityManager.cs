@@ -198,19 +198,19 @@ internal class AbilityManager : IHudModule
     {
         if (e.NewValue)
         {
-            if (e.OldValue)
-            {
-                //todo delete
-                if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.GetName().Name.Contains("VisionControl")))
-                {
-                    Hud.DisplayWarning("O9K.Hud // VisionControl is already included in O9K.Hud");
-                }
+            //if (e.OldValue)
+            //{
+            //    //todo delete
+            //    if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.GetName().Name.Contains("VisionControl")))
+            //    {
+            //        Hud.DisplayWarning("O9K.Hud // VisionControl is already included in O9K.Hud");
+            //    }
 
-                if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.GetName().Name.Contains("BeAware")))
-                {
-                    Hud.DisplayWarning("O9K.Hud // BeAware is already included in O9K.Hud");
-                }
-            }
+            //    if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.GetName().Name.Contains("BeAware")))
+            //    {
+            //        Hud.DisplayWarning("O9K.Hud // BeAware is already included in O9K.Hud");
+            //    }
+            //}
 
             EntityManager9.UnitAdded += this.OnUnitAdded;
             EntityManager9.UnitRemoved += this.OnUnitRemoved;

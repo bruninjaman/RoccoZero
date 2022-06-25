@@ -145,11 +145,11 @@ internal class Abilities : IHudModule
         RendererManager.Draw += this.OnDraw;
         this.itemsToggler.ValueChange += this.ItemsTogglerOnValueChange;
 
-        //todo delete
-        if (AppDomain.CurrentDomain.GetAssemblies().Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("OverlayInformation")))
-        {
-            Hud.DisplayWarning("O9K.Hud // OverlayInformation is already included in O9K.Hud");
-        }
+        ////todo delete
+        //if (AppDomain.CurrentDomain.GetAssemblies().Any(x => !x.GlobalAssemblyCache && x.GetName().Name.Contains("OverlayInformation")))
+        //{
+        //    Hud.DisplayWarning("O9K.Hud // OverlayInformation is already included in O9K.Hud");
+        //}
     }
 
     public void Dispose()
