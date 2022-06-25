@@ -1,28 +1,28 @@
-﻿namespace O9K.Hud.Helpers;
+﻿//namespace O9K.Hud.Helpers;
 
-using System.Collections.Generic;
+//using System.Collections.Generic;
 
-using Divine.GameConsole;
+//using Divine.GameConsole;
 
-using Modules;
+//using Modules;
 
-internal class ConsoleCommands : IHudModule
-{
-    private readonly Dictionary<string, int> consoleCommands = new Dictionary<string, int>
-    {
-        { "dota_use_particle_fow", 0 },
-        { "fog_enable", 0 },
-    };
+//internal class ConsoleCommands : IHudModule
+//{
+//    private readonly Dictionary<string, int> consoleCommands = new Dictionary<string, int>
+//    {
+//        { "dota_use_particle_fow", 0 },
+//        { "fog_enable", 0 },
+//    };
 
-    public void Activate()
-    {
-        foreach (var cmd in this.consoleCommands)
-        {
-            GameConsoleManager.SetValue(cmd.Key, cmd.Value);
-        }
-    }
+//    public void Activate()
+//    {
+//        foreach (var cmd in this.consoleCommands)
+//        {
+//            GameConsoleManager.SetValue(cmd.Key, cmd.Value);
+//        }
+//    }
 
-    public void Dispose()
-    {
-    }
-}
+//    public void Dispose()
+//    {
+//    }
+//}
