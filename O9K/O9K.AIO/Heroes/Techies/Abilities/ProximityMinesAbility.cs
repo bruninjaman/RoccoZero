@@ -1,11 +1,10 @@
 ﻿using System.Linq;
+using Divine.Extensions;
 using Divine.Numerics;
 using O9K.AIO.Abilities;
-using O9K.AIO.Modes.Combo;
 using O9K.Core.Entities.Abilities.Base;
 using O9K.Core.Entities.Abilities.Heroes.Techies;
 using O9K.Core.Entities.Units;
-using O9K.Core.Extensions;
 using O9K.Core.Helpers;
 using O9K.Core.Managers.Entity;
 
@@ -23,20 +22,33 @@ internal class ProximityMinesAbility : AoeAbility
 
     public uint Charges => baseAbility.Charges;
 
-    private Vector3 Plant(Unit9 target)
+    private Vector2 Plant(Unit9 target)
     {
         var mePos = Owner.BasePosition;
-        var targetPos = target.BasePosition;
-        var extend2D = targetPos.Extend2D(mePos, 150);
-        var closestMine = EntityManager9.Units.FirstOrDefault(z =>
-            z.IsValid && z.IsAlive && z.IsAlly(Owner) && z.Name == EntityName && z.Distance(extend2D) <= 500);
-        if (closestMine != null)
+        var targetPos = target.BasePosition.ToVector2();
+        var targetDirection = target.BaseUnit.Direction().ToVector2().Rotated(180);
+        var closestMines = EntityManager9.Units.Where(z =>
+            z.IsValid && z.IsAlive && z.IsAlly(Owner) && z.Name == EntityName && z.Distance(target) <= 380);
+        var perpendicular = Vector2.Zero;
+        var count = closestMines.Count();
+        if (count > 2) 
         {
-            extend2D = closestMine.BasePosition.Extend2D(targetPos, 501);
-            return extend2D;
+            return Vector2.Zero;
         }
-
-        return Charges == 1 ? Vector3.Zero : extend2D;
+        if (count == 0)
+        {
+            perpendicular = targetDirection.Perpendicular().Normalized();
+            return targetPos + targetDirection * 180 + perpendicular * 180;
+        }
+        var mineOnePos = closestMines.ElementAt(0).Position.ToVector2();
+        if (count > 1)
+        {
+            var mineTwoPos = closestMines.ElementAt(1).Position.ToVector2();
+            perpendicular = (mineOnePos - mineTwoPos).Perpendicular().Normalized();
+            return mineOnePos.Extend(mineTwoPos, 180) + perpendicular * 360;
+        }
+        perpendicular = (targetPos - mineOnePos).Normalized().Rotated(MathUtil.DegreesToRadians(45));
+        return targetPos + perpendicular * 180;
     }
 
     public override bool UseAbility(TargetManager.TargetManager targetManager, Sleeper comboSleeper, bool aoe)
@@ -44,15 +56,15 @@ internal class ProximityMinesAbility : AoeAbility
         var plantPos = Plant(targetManager.Target);
         if (plantPos.IsZero)
         {
-            return base.UseAbility(targetManager, comboSleeper, aoe);
+            return false;
         }
 
-        if (!Ability.UseAbility(plantPos, false, true))
+        if (!Ability.UseAbility(plantPos.ToVector3(), false, true))
         {
             return false;
         }
 
-        var delay = Ability.GetCastDelay(plantPos);
+        var delay = Ability.GetCastDelay(plantPos.ToVector3());
         comboSleeper.Sleep(delay);
         Sleeper.Sleep(delay);
         OrbwalkSleeper.Sleep(delay + 0.5f);
