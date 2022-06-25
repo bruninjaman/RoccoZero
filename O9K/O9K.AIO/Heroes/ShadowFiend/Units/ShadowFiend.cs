@@ -202,28 +202,25 @@ internal class ShadowFiend : ControllableUnit
 
         foreach (var raze in orderedRazes)
         {
-
-            // var razeAbility = raze.Ability;
-            // var castDelay = raze.Ability.GetCastDelay() + 0.2f;
-            // var predictedPosition = target.GetPredictedPosition(castDelay);
-            // var distance = this.Owner.Distance(predictedPosition);
-            //
-            // if (!Divine.Helpers.MultiSleeper<string>.Sleeping("ShadowFiend.AIO.MoveToDirection") &&
-            //     razeAbility.IsReady &&
-            //     razeAbility.CastRange + raze.Ability.Radius > distance &&
-            //     razeAbility.CastRange - raze.Ability.Radius < distance &&
-            //     this.Owner.GetAngle(predictedPosition) > 0.4)
-            // {
-            //     Console.WriteLine("MOVE FOR RAIZE");
-            //     // this.MoveSleeper.Sleep(razeAbility.GetCastDelay() * 2 + this.Owner.GetTurnTime(predictedPosition));
-            //     this.Owner.BaseUnit.MoveToDirection(predictedPosition);
-            //     raze.Ability.BaseAbility.Cast();
-            //     Divine.Helpers.MultiSleeper<string>.Sleep("ShadowFiend.AIO.MoveToDirection", 500);
-            //     return true;
-            // }
-
-            if (!this.abilityHelper.CanBeCasted(raze))
+            if (!this.abilityHelper.CanBeCasted(raze, false))
             {
+                continue;
+            }
+            if (!raze.CanHit(targetManager, comboModeMenu))
+            {
+
+                var razeAbility = raze.Ability;
+                var predictionInput = razeAbility.GetPredictionInput(target);
+                var output = razeAbility.GetPredictionOutput(predictionInput);
+                var predictedPosition = output.TargetPosition;
+                var distance = this.Owner.Distance(predictedPosition);
+                if (distance < razeAbility.Range + razeAbility.Radius * 0.2f
+                    && distance > razeAbility.Range - razeAbility.Radius * 0.2f)
+                {
+                    this.Owner.MoveToDirection(predictedPosition);
+                    this.ComboSleeper.Sleep(this.Owner.GetTurnTime(predictedPosition));
+                    return true;
+                }
                 continue;
             }
             
