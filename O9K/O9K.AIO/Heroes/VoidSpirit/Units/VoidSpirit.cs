@@ -65,6 +65,8 @@ internal class VoidSpirit : ControllableUnit
 
     private DebuffAbility vessel;
 
+    private EtherealBlade ethereal;
+
     public VoidSpirit(Unit9 owner, MultiSleeper abilitySleeper, Sleeper orbwalkSleeper, ControllableUnitMenu menu)
         : base(owner, abilitySleeper, orbwalkSleeper, menu)
     {
@@ -87,6 +89,7 @@ internal class VoidSpirit : ControllableUnit
             { AbilityId.item_dagon_5, x => this.dagon = new NukeAbility(x) },
             { AbilityId.item_spirit_vessel, x => this.vessel = new DebuffAbility(x) },
             { AbilityId.item_urn_of_shadows, x => this.urn = new DebuffAbility(x) },
+            { AbilityId.item_ethereal_blade, x => this.ethereal = new EtherealBlade(x) },
             { AbilityId.item_nullifier, x => this.nullifier = new Nullifier(x) },
             { AbilityId.item_sheepstick, x => this.hex = new DisableAbility(x) },
         };
@@ -124,6 +127,11 @@ internal class VoidSpirit : ControllableUnit
         }
 
         if (abilityHelper.UseAbility(this.veil))
+        {
+            return true;
+        }
+
+        if (abilityHelper.UseAbility(this.ethereal))
         {
             return true;
         }
@@ -173,7 +181,7 @@ internal class VoidSpirit : ControllableUnit
             return true;
         }
 
-        if (this.Owner.Distance(targetManager.Target) > 300)
+        if (this.Owner.Distance(targetManager.Target) > 300 || step.Ability.Charges > 1)
         {
             if (abilityHelper.UseAbility(this.step))
             {
