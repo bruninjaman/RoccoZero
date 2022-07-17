@@ -10,7 +10,7 @@ using Helpers;
 using Metadata;
 
 [AbilityId(AbilityId.kunkka_torrent_storm)]
-public class TorrentStorm : ActiveAbility
+public class TorrentStorm : AreaOfEffectAbility
 {
     public TorrentStorm(Ability baseAbility)
         : base(baseAbility)

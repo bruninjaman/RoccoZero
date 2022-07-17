@@ -1,9 +1,7 @@
 ﻿namespace O9K.Core.Prediction.Data;
 
 using System.Collections.Generic;
-
 using Collision;
-
 using Entities.Units;
 
 public class PredictionInput9
@@ -35,4 +33,6 @@ public class PredictionInput9
     public Unit9 Target { get; set; }
 
     public bool UseBlink { get; set; }
+
+    public float ExtraRangeFromCaster { get; set; } = 0f;
 }

@@ -3,15 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Abilities;
-
 using AIO.Abilities;
 using AIO.Abilities.Items;
 using AIO.Modes.Combo;
-
 using Base;
-
 using Core.Entities.Abilities.Base;
 using Core.Entities.Metadata;
 using Core.Entities.Units;
@@ -19,7 +15,6 @@ using Core.Extensions;
 using Core.Helpers;
 using Core.Logger;
 using Core.Managers.Entity;
-
 using Divine.Entity.Entities.Abilities.Components;
 using Divine.Entity.Entities.Units.Heroes.Components;
 using Divine.Game;
@@ -32,9 +27,7 @@ using Divine.Order.Orders.Components;
 using Divine.Particle;
 using Divine.Particle.EventArgs;
 using Divine.Update;
-
 using O9K.Core.Managers.Context;
-
 using TargetManager;
 
 [UnitName(nameof(HeroId.npc_dota_hero_kunkka))]
@@ -58,6 +51,10 @@ internal class Kunkka : ControllableUnit, IDisposable
 
     private Torrent torrent;
 
+    private TidalWave tidalWave;
+
+    private TorrentStorm torrentStorm;
+
     private XMark xMark;
 
     private UntargetableAbility xReturn;
@@ -69,18 +66,27 @@ internal class Kunkka : ControllableUnit, IDisposable
 
         this.ComboAbilities = new Dictionary<AbilityId, Func<ActiveAbility, UsableAbility>>
         {
-            { AbilityId.kunkka_torrent, x => this.torrent = new Torrent(x) },
-            { AbilityId.kunkka_tidebringer, x => this.tidebringer = new TargetableAbility(x) },
-            { AbilityId.kunkka_x_marks_the_spot, x => this.xMark = new XMark(x) },
-            { AbilityId.kunkka_return, x => this.xReturn = new UntargetableAbility(x) },
-            { AbilityId.kunkka_ghostship, x => this.ship = new Ghostship(x) },
+            {AbilityId.kunkka_torrent, x => this.torrent = new Torrent(x)},
+            {AbilityId.kunkka_tidebringer, x => this.tidebringer = new TargetableAbility(x)},
+            {AbilityId.kunkka_x_marks_the_spot, x => this.xMark = new XMark(x)},
+            {AbilityId.kunkka_return, x => this.xReturn = new UntargetableAbility(x)},
+            {AbilityId.kunkka_ghostship, x => this.ship = new Ghostship(x)},
+            {AbilityId.kunkka_torrent_storm, x => this.torrentStorm = new TorrentStorm(x)},
+            {
+                AbilityId.kunkka_tidal_wave, x =>
+                {
+                    this.tidalWave = new TidalWave(x);
+                    tidalWave.FailSafe = this.FailSafe;
+                    return tidalWave;
+                }
+            },
 
-            { AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x) },
-            { AbilityId.item_armlet, x => this.armlet = new BuffAbility(x) },
-            { AbilityId.item_blink, x => this.blink = new BlinkAbility(x) },
-            { AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x) },
-            { AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x) },
-            { AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x) },
+            {AbilityId.item_phase_boots, x => this.phase = new SpeedBuffAbility(x)},
+            {AbilityId.item_armlet, x => this.armlet = new BuffAbility(x)},
+            {AbilityId.item_blink, x => this.blink = new BlinkAbility(x)},
+            {AbilityId.item_swift_blink, x => this.blink = new BlinkAbility(x)},
+            {AbilityId.item_arcane_blink, x => this.blink = new BlinkAbility(x)},
+            {AbilityId.item_overwhelming_blink, x => this.blink = new BlinkAbility(x)},
         };
 
         this.ancientCamps = Context9.JungleManager.JungleCamps.Where(x => x.Id != 2 && x.Id != 18).Select(x => x.CreepsPosition).ToArray();
@@ -130,7 +136,7 @@ internal class Kunkka : ControllableUnit, IDisposable
 
         if (abilityHelper.CanBeCasted(this.blink) && !abilityHelper.CanBeCasted(this.xReturn))
         {
-            var blinkEnemyRange = 0f;
+            var blinkEnemyRange = 50f;
 
             if (!abilityHelper.CanBeCasted(this.xMark))
             {
@@ -138,7 +144,7 @@ internal class Kunkka : ControllableUnit, IDisposable
                 {
                     blinkEnemyRange = Math.Min(
                         this.xMark.Ability.CastRange - 100,
-                        Math.Max(this.Owner.Distance(targetManager.Target) - this.xMark.Ability.CastRange, 0));
+                        Math.Max(this.Owner.Distance(targetManager.Target) - this.xMark.Ability.CastRange, blinkEnemyRange));
                 }
 
                 if (abilityHelper.UseAbility(this.blink, 500, blinkEnemyRange))
@@ -193,6 +199,16 @@ internal class Kunkka : ControllableUnit, IDisposable
             }
 
             if (abilityHelper.UseAbility(this.ship))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.tidalWave))
+            {
+                return true;
+            }
+
+            if (abilityHelper.UseAbility(this.torrentStorm))
             {
                 return true;
             }
@@ -403,16 +419,17 @@ internal class Kunkka : ControllableUnit, IDisposable
             {
                 case "particles/units/heroes/hero_kunkka/kunkka_spell_x_spot.vpcf":
                 case "particles/econ/items/kunkka/divine_anchor/hero_kunkka_dafx_skills/kunkka_spell_x_spot_fxset.vpcf":
-                    {
-                        UpdateManager.BeginInvoke(() => this.xMark.Position = particle.GetControlPoint(0));
-                        break;
-                    }
+                {
+                    UpdateManager.BeginInvoke(() => this.xMark.Position = particle.GetControlPoint(0));
+                    break;
+                }
                 case "particles/units/heroes/hero_kunkka/kunkka_ghostship_marker.vpcf":
-                    {
-                        var time = GameManager.RawGameTime - (GameManager.Ping / 2000);
-                        UpdateManager.BeginInvoke(() => this.ship.CalculateTimings(particle.GetControlPoint(0), time));
-                        break;
-                    }
+                {
+                    var time = GameManager.RawGameTime;
+
+                    UpdateManager.BeginInvoke(() => { ship.CalculateTimings(particle.GetControlPoint(0), time); });
+                    break;
+                }
             }
         }
         catch (Exception ex)

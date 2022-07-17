@@ -32,7 +32,7 @@ internal class Ghostship : NukeAbility
     public void CalculateTimings(Vector3 position, float time)
     {
         this.Position = position;
-        this.HitTime = (time + this.ghostship.ActivationDelay) - 0.1f;
+        this.HitTime = time + ghostship.ActivationDelay;
     }
 
     public override bool CanHit(TargetManager targetManager, IComboModeMenu comboMenu)

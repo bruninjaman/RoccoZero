@@ -3,20 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Collision;
-
 using Data;
-
 using Divine.Extensions;
 using Divine.Numerics;
-
 using Entities.Units;
-
 using Extensions;
-
 using Geometry;
-
 using Managers.Entity;
 
 public class PredictionManager9 : IPredictionManager9
@@ -26,21 +19,21 @@ public class PredictionManager9 : IPredictionManager9
     public PredictionOutput9 GetPrediction(PredictionInput9 input)
     {
         var output = this.GetSimplePrediction(input);
-
+        var casterPosition = input.Caster.Position;
         if (input.AreaOfEffect)
         {
             this.GetAreaOfEffectPrediction(input, output);
         }
         else if (input.SkillShotType == SkillShotType.AreaOfEffect)
         {
-            output.CastPosition = input.CastRange > 0 ? input.Caster.InFront(input.CastRange) : input.Caster.Position;
+            output.CastPosition = input.CastRange > 0 ? input.Caster.InFront(input.CastRange) : casterPosition;
         }
 
         GetProperCastPosition(input, output);
 
         if (input.SkillShotType == SkillShotType.Line && !input.AreaOfEffect && input.UseBlink)
         {
-            output.BlinkLinePosition = output.TargetPosition.Extend2D(input.Caster.Position, 200);
+            output.BlinkLinePosition = output.TargetPosition.Extend2D(casterPosition, 200);
             output.CastPosition = output.TargetPosition;
         }
 
@@ -59,6 +52,7 @@ public class PredictionManager9 : IPredictionManager9
         var target = input.Target;
         var targetPosition = input.Target.Position;
         var caster = input.Caster;
+        var casterPosition = input.Caster.Position;
         var targetIsVisible = target.IsVisible;
         var totalDelay = input.Delay;
 
@@ -82,7 +76,7 @@ public class PredictionManager9 : IPredictionManager9
 
         if (input.Speed > 0)
         {
-            totalDelay += caster.Distance(targetPosition) / input.Speed;
+            totalDelay += casterPosition.Extend2D(targetPosition, input.ExtraRangeFromCaster).Distance(targetPosition) / input.Speed;
         }
 
         var predicted = target.GetPredictedPosition(totalDelay);
@@ -131,7 +125,7 @@ public class PredictionManager9 : IPredictionManager9
 
         if (input.UseBlink && input.SkillShotType == SkillShotType.Line)
         {
-            if (input.Caster.Distance(output.CastPosition) > input.CastRange + input.Range)
+            if (input.Caster.Position.Extend2D(output.CastPosition, input.ExtraRangeFromCaster).Distance(output.CastPosition) > input.CastRange + input.Range)
             {
                 output.HitChance = HitChance.Impossible;
                 return false;
@@ -140,8 +134,8 @@ public class PredictionManager9 : IPredictionManager9
             return true;
         }
 
-        if (input.Caster.Distance(output.CastPosition) > input.CastRange
-            && (input.SkillShotType == SkillShotType.RangedAreaOfEffect || input.Caster.Distance(output.TargetPosition) > input.Range))
+        if (input.Caster.Position.Extend2D(output.CastPosition, input.ExtraRangeFromCaster).Distance(output.CastPosition) > input.CastRange
+            && (input.SkillShotType == SkillShotType.RangedAreaOfEffect || input.Caster.Position.Extend2D(output.CastPosition, input.ExtraRangeFromCaster).Distance(output.TargetPosition) > input.Range))
         {
             output.HitChance = HitChance.Impossible;
             return false;
@@ -169,8 +163,8 @@ public class PredictionManager9 : IPredictionManager9
         }
 
         var caster = input.Caster;
-        var casterPosition = caster.Position;
         var castPosition = output.CastPosition;
+        var casterPosition = caster.Position.Extend2D(castPosition, input.ExtraRangeFromCaster);
         var distance = casterPosition.Distance2D(castPosition);
         var range = input.CastRange;
 
@@ -254,7 +248,7 @@ public class PredictionManager9 : IPredictionManager9
             //}
 
             var collisionResult = Collision.Collision.GetCollision(
-                caster.Position.ToVector2(),
+                caster.Position.Extend2D(output.CastPosition, input.ExtraRangeFromCaster).ToVector2(),
                 output.CastPosition.ToVector2(),
                 input.Radius,
                 collisionObjects);
@@ -288,7 +282,7 @@ public class PredictionManager9 : IPredictionManager9
             var aoeTargetOutput = this.GetSimplePrediction(aoeTargetInput);
             var range = input.SkillShotType == SkillShotType.Line ? input.Range + input.CastRange : input.Range;
 
-            if (input.Caster.Distance(aoeTargetOutput.CastPosition) < range)
+            if (input.Caster.Position.Extend2D(output.CastPosition, input.ExtraRangeFromCaster).Distance(aoeTargetOutput.CastPosition) < range)
             {
                 targets.Add(aoeTargetOutput);
             }
@@ -431,13 +425,13 @@ public class PredictionManager9 : IPredictionManager9
 
                         var max = positions.Max(
                             x => input.UseBlink
-                                     ? output.TargetPosition.Distance(x.TargetPosition)
-                                     : input.Caster.Distance(x.TargetPosition));
+                                ? output.TargetPosition.Distance(x.TargetPosition)
+                                : input.Caster.Distance(x.TargetPosition));
                         var range = Math.Min(input.UseBlink ? input.Range : input.CastRange, max);
 
                         output.CastPosition = input.UseBlink
-                                                  ? output.TargetPosition.Extend2D(center, range)
-                                                  : input.Caster.Position.Extend2D(center, range);
+                            ? output.TargetPosition.Extend2D(center, range)
+                            : input.Caster.Position.Extend2D(center, range);
                         output.AoeTargetsHit = polygon.Value;
                     }
                 }
@@ -454,8 +448,8 @@ public class PredictionManager9 : IPredictionManager9
                 if (input.UseBlink)
                 {
                     output.BlinkLinePosition = input.Caster.Distance(output.TargetPosition) > input.CastRange
-                                                   ? input.Caster.Position.Extend2D(output.TargetPosition, input.CastRange)
-                                                   : output.TargetPosition.Extend2D(output.CastPosition, -100);
+                        ? input.Caster.Position.Extend2D(output.TargetPosition, input.CastRange)
+                        : output.TargetPosition.Extend2D(output.CastPosition, -100);
 
                     if (input.Caster.Distance(output.BlinkLinePosition) > input.CastRange)
                     {
@@ -517,9 +511,10 @@ public class PredictionManager9 : IPredictionManager9
 
                         foreach (var predictionOutput in targets)
                         {
-                            var endPosition = startPosition.Extend2D(predictionOutput.TargetPosition, input.Range);
+                            var fixedStartPosition = startPosition.Extend2D(predictionOutput.TargetPosition, input.ExtraRangeFromCaster);
+                            var endPosition = fixedStartPosition.Extend2D(predictionOutput.TargetPosition, input.Range);
 
-                            var rec = new Polygon9.Rectangle(startPosition, endPosition, input.Radius * 1.3f);
+                            var rec = new Polygon9.Rectangle(fixedStartPosition, endPosition, input.Radius * 1.3f);
 
                             if (rec.IsOutside(output.TargetPosition.ToVector2()))
                             {
@@ -544,13 +539,13 @@ public class PredictionManager9 : IPredictionManager9
 
                         var max = positions.Max(
                             x => input.UseBlink
-                                     ? output.TargetPosition.Distance(x.TargetPosition)
-                                     : input.Caster.Distance(x.TargetPosition));
+                                ? output.TargetPosition.Distance(x.TargetPosition)
+                                : input.Caster.Position.Extend2D(output.CastPosition, input.ExtraRangeFromCaster).Distance(x.TargetPosition));
                         var range = Math.Min(input.UseBlink ? input.Range : input.CastRange, max);
 
                         output.CastPosition = input.UseBlink
-                                                  ? output.TargetPosition.Extend2D(center, range)
-                                                  : input.Caster.Position.Extend2D(center, range);
+                            ? output.TargetPosition.Extend2D(center, range)
+                            : input.Caster.Position.Extend2D(center, range);
                         output.AoeTargetsHit = polygon.Value;
                     }
                 }
@@ -567,8 +562,8 @@ public class PredictionManager9 : IPredictionManager9
                 if (input.UseBlink)
                 {
                     output.BlinkLinePosition = input.Caster.Distance(output.TargetPosition) > input.CastRange
-                                                   ? input.Caster.Position.Extend2D(output.TargetPosition, input.CastRange)
-                                                   : output.TargetPosition.Extend2D(output.CastPosition, -100);
+                        ? input.Caster.Position.Extend2D(output.TargetPosition, input.CastRange)
+                        : output.TargetPosition.Extend2D(output.CastPosition, -100);
 
                     if (input.Caster.Distance(output.BlinkLinePosition) > input.CastRange)
                     {

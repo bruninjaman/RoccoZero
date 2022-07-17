@@ -36,11 +36,6 @@ public class Ghostship : CircleAbility, IHasDamageAmplify, IHarass
         {
             var delay = base.ActivationDelay;
 
-            if (this.Owner.HasAghanimsScepter)
-            {
-                delay /= 2f;
-            }
-
             return delay;
         }
     }
