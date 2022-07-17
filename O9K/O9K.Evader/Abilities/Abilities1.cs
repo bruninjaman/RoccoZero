@@ -149,6 +149,7 @@ internal static partial class Abilities
         AbilityId.skywrath_mage_arcane_bolt,
         AbilityId.snapfire_scatterblast,
         AbilityId.sniper_shrapnel,
+        AbilityId.sniper_concussive_grenade,
         AbilityId.spectre_spectral_dagger,
         AbilityId.terrorblade_reflection,
         AbilityId.tinker_heat_seeking_missile,
@@ -346,6 +347,7 @@ internal static partial class Abilities
         AbilityId.skywrath_mage_arcane_bolt,
         AbilityId.snapfire_scatterblast,
         AbilityId.sniper_shrapnel,
+        AbilityId.sniper_concussive_grenade,
         AbilityId.spectre_spectral_dagger,
         AbilityId.sven_storm_bolt,
         AbilityId.terrorblade_reflection,
@@ -471,6 +473,7 @@ internal static partial class Abilities
     {
         AbilityId.invoker_deafening_blast,
         AbilityId.item_heavens_halberd,
+        AbilityId.sniper_concussive_grenade,
         AbilityId.tinker_laser,
         AbilityId.huskar_inner_fire,
         AbilityId.item_ethereal_blade,

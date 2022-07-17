@@ -1,4 +1,6 @@
-﻿namespace O9K.Core.Entities.Abilities.Heroes.Sniper;
+﻿using O9K.Core.Entities.Abilities.Base.Types;
+
+namespace O9K.Core.Entities.Abilities.Heroes.Sniper;
 
 using Base;
 using Base.Components;
@@ -14,7 +16,7 @@ using Helpers.Range;
 using Metadata;
 
 [AbilityId(AbilityId.sniper_take_aim)]
-public class TakeAim : ActiveAbility, IHasRangeIncrease
+public class TakeAim : ActiveAbility, IHasRangeIncrease, IBuff
 {
     private readonly SpecialData attackRange;
 
@@ -34,4 +36,8 @@ public class TakeAim : ActiveAbility, IHasRangeIncrease
     {
         return this.attackRange.GetValue(this.Level);
     }
+
+    public string BuffModifierName { get; } = "modifier_sniper_take_aim_bonus";
+    public bool BuffsAlly { get; } = false;
+    public bool BuffsOwner { get; } = true;
 }
