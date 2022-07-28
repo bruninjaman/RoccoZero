@@ -23,6 +23,15 @@ public class HitsManager : IHitsManager
         UpdateManager.IngameUpdate += TargetUpdater;
         Entity.AnimationChanged += AnimationTracker;
         UpdateManager.IngameUpdate += UnitsRegisterer;
+        UpdateManager.CreateIngameUpdate(1000, UnitsCleaner);
+    }
+
+    private void UnitsCleaner()
+    {
+        foreach (var unit in Units.ToList().Where(unit => !unit.IsValid))
+        {
+            Units.Remove(unit);
+        }
     }
 
     private static Hero Owner => EntityManager.LocalHero!;

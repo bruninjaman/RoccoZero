@@ -1,4 +1,5 @@
 ﻿using Divine.Entity.Entities.Units;
+using Divine.Entity.Entities.Units.Buildings;
 using Divine.Entity.Entities.Units.Heroes;
 using Divine.Extensions;
 using Divine.Game;
@@ -30,7 +31,7 @@ public record Hit
             _target = value;
             if (value == null) return;
             Damage = Owner.GetAttackDamage(value, true);
-            Logger.Log($"New hit from {Owner.Name} | {Owner.Handle} | AttackPoint: {Owner.AttackPoint()}. HitIn: {HitAfter - GameManager.RawGameTime}");
+            Logger.Log($"New hit from {Owner.Name} | {Owner.Handle} | AttackPoint: {Owner.AttackPoint()}. HitIn: {HitTime - GameManager.RawGameTime}");
         }
     }
 
@@ -54,14 +55,16 @@ public record Hit
         }
     }
 
-    public float HitAfter
+    public float HitTime
     {
         get
         {
             // Logger.Log($"AttackIn: {GameManager.RawGameTime - (CreatedAt + Owner.AttackPoint())} ");
             if (IsMelee || Projectile == null && Target == null)
+            {
                 // Logger.Log($"Hit in: {GameManager.RawGameTime - (CreatedAt + Owner.AttackPoint())} ITS MELEE {!(Projectile == null && Target == null)}");
                 return CreatedAt + Owner.AttackPoint() + 0.05f;
+            }
 
             if (Projectile == null)
             {
@@ -69,9 +72,14 @@ public record Hit
             }
 
             var dist = Projectile.Position.Distance2D(Projectile.TargetPosition) - (Projectile.Target as Unit)!.HullRadius;
-            var hitDelay = Owner.AttackPoint() + dist / Projectile.Speed;
+            var hitDelay = dist / Projectile.Speed;
             // Logger.Log($"Dist: {Projectile.Position.Distance(Projectile.TargetPosition)} Hit in - {hitDelay}");
-            return CreatedAt + hitDelay + 0.05f;
+            var result = CreatedAt + Owner.AttackPoint() + hitDelay + 0.05f;
+            if (Owner is Tower)
+            {
+                result += 1.3f;
+            }
+            return result;
         }
     }
 
@@ -83,7 +91,7 @@ public record Hit
         set
         {
             _projectile = value;
-            if (value != null) Logger.Log($"Set projectile from {Owner.Name} | {Owner.Handle} to {value.Target} | AttackPoint: {Owner.AttackPoint()}. HitIn: {HitAfter - GameManager.RawGameTime}");
+            if (value != null) Logger.Log($"Set projectile from {Owner.Name} | {Owner.Handle} to {value.Target} | AttackPoint: {Owner.AttackPoint()}. HitIn: {HitTime - GameManager.RawGameTime}");
         }
     }
 }

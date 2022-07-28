@@ -1,4 +1,5 @@
 ﻿using Divine.Entity.Entities.Units;
+using Divine.Entity.Entities.Units.Buildings;
 using Divine.Extensions;
 using Divine.Numerics;
 using Divine.Renderer;
@@ -31,10 +32,15 @@ public static class UnitExtension
 
     public static Vector2 HealthBarPositionCorrectionInternal { get; set; }
 
-    public static float PredictProjectileArrivalTime(this Unit owner, Unit target)
+    public static float PredictProjectileArrivalTime(this Unit? owner, Unit? target)
     {
+        if (target == null || owner == null || !target.IsValid || !owner.IsValid)
+        {
+            return 0;
+        }
+
         var tPos = target.Position;
-        var ext = owner.Position.Extend(tPos, owner.ProjectileCollisionSize);
+        var ext = owner is Tower ? owner.Position : owner.Position.Extend(tPos, owner.ProjectileCollisionSize);
         var dist = ext.Distance2D(tPos) - target.HullRadius;
         var hitDelay = owner.AttackPoint() + dist / owner.ProjectileSpeed();
         return hitDelay;

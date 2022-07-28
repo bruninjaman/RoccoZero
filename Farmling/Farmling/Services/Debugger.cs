@@ -57,8 +57,8 @@ public class Debugger
             if (target != null)
                 foreach (var hit in hits)
                     if (hit.Projectile != null)
-                        RendererManager.DrawText($"{GameManager.RawGameTime - hit.HitAfter}", RendererManager.WorldToScreen(target.Position) + new Vector2(0, 50), Color.White, 15f);
-                    else if (hit.IsMelee) RendererManager.DrawText($"{GameManager.RawGameTime - hit.HitAfter}", RendererManager.WorldToScreen(target.Position) + new Vector2(0, 50), Color.White, 15f);
+                        RendererManager.DrawText($"{GameManager.RawGameTime - hit.HitTime}", RendererManager.WorldToScreen(target.Position) + new Vector2(0, 50), Color.White, 15f);
+                    else if (hit.IsMelee) RendererManager.DrawText($"{GameManager.RawGameTime - hit.HitTime}", RendererManager.WorldToScreen(target.Position) + new Vector2(0, 50), Color.White, 15f);
         });
 
         var predictionDataDictionary = _farmService.PredictionData;
@@ -74,8 +74,11 @@ public class Debugger
                 var pos = RendererManager.WorldToScreen(target.Position) + new Vector2(-50, 30);
                 foreach (var predictionDataAllHit in predictionData.AllHits)
                 {
-                    RendererManager.DrawText($"Hit: {predictionDataAllHit.Owner.Name} - {predictionDataAllHit.Damage} - {Math.Abs(predictionDataAllHit.HitAfter - GameManager.RawGameTime)}", pos, Color.White, 15);
-                    pos.Y += 20;
+                    if (predictionDataAllHit.IsValid && predictionDataAllHit.Owner.IsValid)
+                    {
+                        RendererManager.DrawText($"Hit: {predictionDataAllHit.Owner.Name} - {predictionDataAllHit.Damage} - {predictionDataAllHit.HitTime - GameManager.RawGameTime}", pos, Color.White, 15);
+                        pos.Y += 20;
+                    }
                 }
             }
         }

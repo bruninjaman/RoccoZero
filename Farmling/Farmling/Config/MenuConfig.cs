@@ -13,10 +13,13 @@ public sealed class MenuConfig
             .CreateRootMenu("Farmling");
 
 
+        Enabled = RootMenu.CreateSwitcher("Enabled");
         FarmKey = RootMenu.CreateHoldKey("Farm");
         MoveToMouse = RootMenu.CreateSwitcher("Move to mouse");
         Debugger = RootMenu.CreateSwitcher("Debugger");
     }
+
+    public MenuSwitcher Enabled { get; set; }
 
     public MenuSwitcher MoveToMouse { get; set; }
 

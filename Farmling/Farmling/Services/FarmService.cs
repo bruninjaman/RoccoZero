@@ -33,28 +33,37 @@ public class FarmService : IFarmService
             handler.IsEnabled = args.Value && _config.MoveToMouse;
             if (args.Value)
             {
-                UpdateManager.IngameUpdate += DamageCalculation;
-                UpdateManager.IngameUpdate += SkamChecking;
-                ParticleManager.CreateRangeParticle($"{Owner.Handle} attack-range", Owner, Owner.AttackRange(), Color.White);
+
                 RendererManager.Draw += OnDrawHandler;
+                ParticleManager.CreateRangeParticle($"{Owner.Handle} attack-range", Owner, Owner.AttackRange(), Color.White);
             }
             else
             {
-                UpdateManager.IngameUpdate -= DamageCalculation;
-                UpdateManager.IngameUpdate -= SkamChecking;
                 ParticleManager.DestroyParticle($"{Owner.Handle} attack-range");
                 RendererManager.Draw -= OnDrawHandler;
+
+            }
+        };
+        _config.Enabled.ValueChanged += (key, args) =>
+        {
+            if (args.Value)
+            {
+                UpdateManager.IngameUpdate += DamageCalculation;
+                UpdateManager.IngameUpdate += SkamChecking;
+            }
+            else
+            {
+                UpdateManager.IngameUpdate -= SkamChecking;
+                UpdateManager.IngameUpdate -= DamageCalculation;
             }
         };
     }
-
-    public Vector2 healthBarSize { get; set; }
 
     public Hero Owner { get; set; }
 
     public float GetTimeToHitTarget(Unit target)
     {
-        return (Owner.IsMelee ? Owner.AttackPoint() : Owner.PredictProjectileArrivalTime(target)) - 0.05f;
+        return (Owner.IsMelee ? Owner.AttackPoint() : Owner.PredictProjectileArrivalTime(target)) - 0.05f + GameManager.Ping / 1000;
     }
 
     public Dictionary<uint, PredictionData> PredictionData { get; set; } = new();
@@ -104,15 +113,13 @@ public class FarmService : IFarmService
             var timeBeforeHit = GameManager.RawGameTime + hitTime - 0.01f;
             if (allHits.TryGetValue(target, out var hits))
             {
-                if (target is Tower) Logger.Log($"Hits in calculation: [{target.Handle}] {hits.Count}");
-
-                var healthBeforeHit = hits.Where(x => x.HitAfter < timeBeforeHit).ToList();
+                var healthBeforeHit = hits.Where(x => x.HitTime < timeBeforeHit).ToList();
                 var totalDamage = healthBeforeHit.Sum(x => x.Damage);
                 var healthBeforeIHit = target.Health - totalDamage;
                 var willDie = healthBeforeIHit - GetMyDamage(target) < 0;
                 dict.Add(target.Handle, new PredictionData(healthBeforeIHit, hitTime, willDie, hits, healthBeforeHit));
 
-                if (willDie && Owner.CanAttack(target))
+                if (willDie && Owner.CanAttack(target) && Owner.IsInAttackRange(target, 50) && _config.FarmKey.Value)
                 {
                     Logger.Log($"Damage: {GetMyDamage(target)} -> CurrentHealth: {target.Health} HealthWhenHitPanneded: {healthBeforeIHit}");
                     if (Owner.IsInAttackRange(target)) Owner.Attack(target);
@@ -122,7 +129,7 @@ public class FarmService : IFarmService
             {
                 var willDie = target.Health - GetMyDamage(target) < 0;
                 dict.Add(target.Handle, new PredictionData(target.Health, hitTime, willDie));
-                if (willDie && Owner.CanAttack(target) && Owner.IsInAttackRange(target, 50))
+                if (willDie && Owner.CanAttack(target) && Owner.IsInAttackRange(target, 50) && _config.FarmKey.Value)
                 {
                     Logger.Log($"Damage: {GetMyDamage(target)} -> CurrentHealth: {target.Health} ");
                     Owner.Attack(target);
