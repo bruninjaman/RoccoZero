@@ -101,8 +101,9 @@ public class Debugger
                         ParticleManager.DestroyParticle($"{handle} - lastAttack - target");
 
                     if (hit.Projectile != null)
-                        ParticleManager.CreateCircleParticle($"{handle} - projectile", hit.Projectile.Position, 50, Color.Aqua);
-                    else if (!hit.IsMelee) ParticleManager.DestroyParticle($"{handle} - projectile");
+                        ParticleManager.CreateCircleParticle($"{handle} - projectile - {hit.Projectile.Handle}", hit.Projectile.Position, 50, Color.Aqua);
+                    else if (!hit.IsMelee)
+                        ParticleManager.DestroyParticle($"{handle} - projectile");
                 }
         });
     }

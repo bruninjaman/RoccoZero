@@ -111,13 +111,16 @@ public class FarmService : IFarmService
             if (!target.IsValid || !target.IsAlive) continue;
             var hitTime = GetTimeToHitTarget(target);
             var timeBeforeHit = GameManager.RawGameTime + hitTime - 0.01f;
+
             if (allHits.TryGetValue(target, out var hits))
             {
-                var healthBeforeHit = hits.Where(x => x.HitTime < timeBeforeHit).ToList();
-                var totalDamage = healthBeforeHit.Sum(x => x.Damage);
+                var hitsThatCanHitBeforeHeroCanHit = hits.Where(x => x.HitTime < timeBeforeHit).ToList();
+                // var allHitsTiming = string.Join(",", hits.Select(x => $"HitTime: {x.HitTime - GameManager.RawGameTime}"));
+                // Logger.Log($"timeBeforeHit: {hitTime}. Total: {hits.Count} CanHit: {hitsThatCanHitBeforeHeroCanHit.Count}, {allHitsTiming}");
+                var totalDamage = hitsThatCanHitBeforeHeroCanHit.Sum(x => x.Damage);
                 var healthBeforeIHit = target.Health - totalDamage;
                 var willDie = healthBeforeIHit - GetMyDamage(target) < 0;
-                dict.Add(target.Handle, new PredictionData(healthBeforeIHit, hitTime, willDie, hits, healthBeforeHit));
+                dict.Add(target.Handle, new PredictionData(healthBeforeIHit, hitTime, willDie, hits, hitsThatCanHitBeforeHeroCanHit));
 
                 if (willDie && Owner.CanAttack(target) && Owner.IsInAttackRange(target, 50) && _config.FarmKey.Value)
                 {

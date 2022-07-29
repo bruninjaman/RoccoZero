@@ -68,17 +68,17 @@ public record Hit
 
             if (Projectile == null)
             {
-                return CreatedAt + Owner.PredictProjectileArrivalTime(Target!);
+                return CreatedAt + Owner.AttackPoint() + Owner.PredictProjectileArrivalTime(Target!);
             }
 
             var dist = Projectile.Position.Distance2D(Projectile.TargetPosition) - (Projectile.Target as Unit)!.HullRadius;
             var hitDelay = dist / Projectile.Speed;
-            // Logger.Log($"Dist: {Projectile.Position.Distance(Projectile.TargetPosition)} Hit in - {hitDelay}");
-            var result = CreatedAt + Owner.AttackPoint() + hitDelay + 0.05f;
-            if (Owner is Tower)
-            {
-                result += 1.3f;
-            }
+            var result = GameManager.RawGameTime + hitDelay + 0.05f;
+            // Logger.Log($"Dist: {Projectile.Position.Distance(Projectile.TargetPosition)} Hit in - {hitDelay}. AP: {Owner.AttackPoint()} FinalResult: {result - GameManager.RawGameTime}");
+            // if (Owner is Tower)
+            // {
+            //     result += 1.3f;
+            // }
             return result;
         }
     }
