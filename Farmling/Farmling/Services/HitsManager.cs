@@ -1,5 +1,7 @@
-﻿using Divine.Entity;
+﻿using System.Linq;
+using Divine.Entity;
 using Divine.Entity.Entities;
+using Divine.Entity.Entities.Components;
 using Divine.Entity.Entities.EventArgs;
 using Divine.Entity.Entities.Units;
 using Divine.Entity.Entities.Units.Buildings;
@@ -9,6 +11,7 @@ using Divine.Extensions;
 using Divine.Game;
 using Divine.Projectile.Projectiles;
 using Divine.Update;
+using Farmling.Global;
 using Farmling.Interfaces;
 using Farmling.LoggerService;
 using Farmling.Models;
@@ -24,9 +27,49 @@ public class HitsManager : IHitsManager
         _damageCalculateService = damageCalculateService;
         projectileTrackManager.Notify += AddProjectileToHit;
         UpdateManager.IngameUpdate += TargetUpdater;
-        Entity.AnimationChanged += AnimationTracker;
+        // Entity.AnimationChanged += AnimationTracker;
         UpdateManager.IngameUpdate += UnitsRegisterer;
         UpdateManager.CreateIngameUpdate(1000, UnitsCleaner);
+        Entity.NetworkPropertyChanged += OnEntityOnNetworkPropertyChanged;
+    }
+
+    private readonly HashSet<NetworkActivity> attackActivities = new HashSet<NetworkActivity>
+    {
+        NetworkActivity.Attack,
+        NetworkActivity.Attack2,
+        NetworkActivity.Crit,
+        NetworkActivity.AttackEvent,
+        NetworkActivity.AttackEventBash
+    };
+
+    private void OnEntityOnNetworkPropertyChanged(Entity entity, NetworkPropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != "m_NetworkActivity")
+        {
+            return;
+        }
+
+        var activity = (NetworkActivity) e.NewValue.GetInt32();
+        var oldActivity = (NetworkActivity) e.OldValue.GetInt32();
+
+        if (activity == oldActivity)
+        {
+            return;
+        }
+
+        UpdateManager.BeginInvoke(() =>
+        {
+            if (entity is not Unit unit || !Units.Contains(unit)) return;
+
+            if (attackActivities.Contains(activity))
+            {
+                AddHit(unit);
+            }
+            else
+            {
+                RemoveHit(unit);
+            }
+        });
     }
 
     private static Hero Owner => EntityManager.LocalHero!;
@@ -51,7 +94,10 @@ public class HitsManager : IHitsManager
 
     private void UnitsCleaner()
     {
-        foreach (var unit in Units.ToList().Where(unit => !unit.IsValid)) Units.Remove(unit);
+        foreach (var unit in Units.ToList().Where(unit => !unit.IsValid || !Owner.IsInRange(unit, 1500)))
+        {
+            Units.Remove(unit);
+        }
     }
 
     private void UnitsRegisterer()
@@ -63,16 +109,21 @@ public class HitsManager : IHitsManager
     private void AnimationTracker(Entity sender, AnimationChangedEventArgs e)
     {
         var attackName = "attack";
-
         if (sender is Unit unit)
         {
             if (e.Name.StartsWith(attackName))
             {
-                AddHit(unit);
+                if (Units.Contains(unit))
+                {
+                    AddHit(unit);
+                }
             }
             else if (e.Name.EndsWith(attackName))
             {
-                AddHit(unit);
+                if (Units.Contains(unit))
+                {
+                    AddHit(unit);
+                }
             }
             else
             {
@@ -139,7 +190,7 @@ public class HitsManager : IHitsManager
         var handle = unit.Handle;
         if (HitSources.TryGetValue(handle, out var hits))
         {
-            var hit = hits.Where(x => x.Owner.Handle.Equals(handle)).MaxBy(x => x.CreatedAt);
+            var hit = hits.Where(x => x.IsValid && x.Owner.Handle.Equals(handle)).MaxBy(x => x.CreatedAt);
             if (hit != null)
             {
                 if (hit.IsMelee)
@@ -164,7 +215,12 @@ public class HitsManager : IHitsManager
         if (unit == null)
             // TODO: throw
             return;
+        if (!attackActivities.Contains(unit.NetworkActivity))
+        {
+            return;
+        }
 
+        GlobalStatsService.SaveProjectileToStatistics(projectile);
         var handle = unit.Handle;
         if (HitSources.TryGetValue(handle, out var hits))
         {

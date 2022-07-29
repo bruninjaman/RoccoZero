@@ -16,4 +16,8 @@ public static class Logger
         if (IsEnabled)
             Console.WriteLine($"[{GameManager.RawGameTime}]: {message}");
     }
+    public static void LogError(Exception ex, string message)
+    {
+        Console.WriteLine($"[{GameManager.RawGameTime}]: Exception: Message: {message}");
+    }
 }

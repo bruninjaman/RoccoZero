@@ -27,13 +27,13 @@ public class DamageCalculateService : IDamageCalculateService
             damage *= itemById2.GetAbilitySpecialData(isMelee ? "quelling_bonus" : "quelling_bonus_ranged") / 100f;
         if (attackerEntity.EntityType != DamageEntityType.Hero)
         {
-            Logger.Log($"Amp: {attackerEntity.Ability.GetIncomingAmp(target)}");
+            // Logger.Log($"Amp: {attackerEntity.Ability.GetIncomingAmp(target)}");
             damage += damage * attackerEntity.Ability.GetIncomingAmp(target);
         }
 
         if (targetEntity.EntityType != DamageEntityType.Hero)
         {
-            Logger.Log($"Out: {targetEntity.Ability.GetOutgoingAmp(attacker)}");
+            // Logger.Log($"Out: {targetEntity.Ability.GetOutgoingAmp(attacker)}");
             damage += damage * targetEntity.Ability.GetOutgoingAmp(attacker);
         }
         Logger.Log($"TotalDamage [{attacker.Name} -> {target.Name}]: {damage}");

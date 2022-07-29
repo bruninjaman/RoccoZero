@@ -4,6 +4,7 @@ using Divine.Entity.Entities.Units.Creeps;
 using Divine.Entity.Entities.Units.Heroes;
 using Divine.Extensions;
 using Divine.Game;
+using Divine.Helpers;
 using Divine.Numerics;
 using Divine.Particle;
 using Divine.Renderer;
@@ -47,13 +48,13 @@ public class FarmService : IFarmService
         {
             if (args.Value)
             {
-                UpdateManager.IngameUpdate += DamageCalculation;
+                UpdateManager.Update += DamageCalculation;
                 UpdateManager.IngameUpdate += SkamChecking;
             }
             else
             {
                 UpdateManager.IngameUpdate -= SkamChecking;
-                UpdateManager.IngameUpdate -= DamageCalculation;
+                UpdateManager.Update -= DamageCalculation;
             }
         };
     }
@@ -62,7 +63,8 @@ public class FarmService : IFarmService
 
     public float GetTimeToHitTarget(Unit target)
     {
-        return (Owner.IsMelee ? Owner.AttackPoint() : Owner.PredictProjectileArrivalTime(target)) - 0.05f + GameManager.Ping / 1000;
+        // Console.WriteLine($"Ping {GameManager.Ping} {GameManager.Ping / 2000} HitTIme{Owner.PredictProjectileArrivalTime(target)}");
+        return (Owner.IsMelee ? Owner.AttackPoint() : Owner.PredictProjectileArrivalTime(target)) - 0.05f - GameManager.Ping / 2000;
     }
 
     public Dictionary<uint, PredictionData> PredictionData { get; set; } = new();
@@ -78,6 +80,8 @@ public class FarmService : IFarmService
                 var predictedHealth = predictionData.PredictedHealth;
                 var maxHealth = target.MaximumHealth;
                 var pos = target.GetHealthBarPosition();
+                if (pos.IsZero)
+                    continue;
                 var baseRect = new RectangleF(pos.X, pos.Y, UnitExtension.HealthBarSize.X, UnitExtension.HealthBarSize.Y);
                 var percent = predictedHealth / maxHealth;
                 baseRect.Width *= Math.Max(percent, 0.01f);
@@ -120,20 +124,25 @@ public class FarmService : IFarmService
                 var willDie = healthBeforeIHit - GetMyDamage(target) < 0;
                 dict.Add(target.Handle, new PredictionData(healthBeforeIHit, hitTime, willDie, hits, hitsThatCanHitBeforeHeroCanHit));
 
-                if (willDie && Owner.CanAttack(target) && Owner.IsInAttackRange(target, 50) && _config.FarmKey.Value)
+                if (willDie && Owner.CanAttack(target) && Owner.IsInAttackRange(target, 50) && _config.FarmKey.Value && !MultiSleeper<string>.Sleeping("Farmlink"))
                 {
-                    Logger.Log($"Damage: {GetMyDamage(target)} -> CurrentHealth: {target.Health} HealthWhenHitPanneded: {healthBeforeIHit}");
-                    if (Owner.IsInAttackRange(target)) Owner.Attack(target);
+                    if (Owner.IsInAttackRange(target))
+                    {
+                        Logger.Log($"Damage: {GetMyDamage(target)} -> CurrentHealth: {target.Health} HealthWhenHitPanneded: {healthBeforeIHit}");
+                        Owner.Attack(target);
+                        MultiSleeper<string>.Sleep("Farmlink", Owner.AttackPoint() * 1000);
+                    }
                 }
             }
             else
             {
                 var willDie = target.Health - GetMyDamage(target) < 0;
                 dict.Add(target.Handle, new PredictionData(target.Health, hitTime, willDie));
-                if (willDie && Owner.CanAttack(target) && Owner.IsInAttackRange(target, 50) && _config.FarmKey.Value)
+                if (willDie && Owner.CanAttack(target) && Owner.IsInAttackRange(target, 50) && _config.FarmKey.Value && !MultiSleeper<string>.Sleeping("Farmlink"))
                 {
                     Logger.Log($"Damage: {GetMyDamage(target)} -> CurrentHealth: {target.Health} ");
                     Owner.Attack(target);
+                    MultiSleeper<string>.Sleep("Farmlink", Owner.AttackPoint() * 1000);
                 }
             }
         }

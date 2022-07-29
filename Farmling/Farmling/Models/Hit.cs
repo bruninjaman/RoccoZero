@@ -55,11 +55,20 @@ public record Hit
     {
         get
         {
-            if (Owner == null || !Owner.IsValid || Target != null && (!Target.IsValid || !Target.IsAlive)) return false;
+            try
+            {
+                if (Owner == null || !Owner.IsValid || Target != null && (!Target.IsValid || !Target.IsAlive)) return false;
 
-            if (IsMelee) return GameManager.RawGameTime <= SimpleHitAfter;
+                // Logger.Log($"Check is Melee {Owner?.Name}");
+                if (IsMelee) return GameManager.RawGameTime <= SimpleHitAfter;
 
-            return true;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, $"Error in IsValid check {Owner?.Name}");
+                return false;
+            }
         }
     }
 

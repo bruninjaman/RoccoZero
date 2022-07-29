@@ -3,6 +3,7 @@ using Divine.Entity.Entities.Units.Buildings;
 using Divine.Extensions;
 using Divine.Numerics;
 using Divine.Renderer;
+using Farmling.Global;
 
 namespace Farmling.Extensions;
 
@@ -35,9 +36,9 @@ public static class UnitExtension
     public static float PredictProjectileArrivalTime(this Unit? owner, Unit? target)
     {
         if (target == null || owner == null || !target.IsValid || !owner.IsValid) return 0;
-
+        var extra = GlobalStatsService.PredictProjectileExtraRange(owner);
         var tPos = target.Position;
-        var ext = owner is Tower ? owner.Position : owner.Position.Extend(tPos, owner.ProjectileCollisionSize);
+        var ext = owner is Tower ? owner.Position : owner.Position.Extend(tPos, owner.ProjectileCollisionSize + owner.HullRadius + extra);
         var dist = ext.Distance2D(tPos) - target.HullRadius;
         var hitDelay = owner.AttackPoint() + dist / owner.ProjectileSpeed();
         return hitDelay;
