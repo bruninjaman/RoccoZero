@@ -1,5 +1,4 @@
 ﻿using Divine.Entity.Entities.Units;
-using Divine.Entity.Entities.Units.Buildings;
 using Divine.Entity.Entities.Units.Heroes;
 using Divine.Extensions;
 using Divine.Game;
@@ -11,6 +10,7 @@ namespace Farmling.Models;
 
 public record Hit
 {
+    private float _damage;
     private TrackingProjectile? _projectile;
     private Unit? _target;
 
@@ -30,12 +30,20 @@ public record Hit
         {
             _target = value;
             if (value == null) return;
-            Damage = Owner.GetAttackDamage(value, true);
-            Logger.Log($"New hit from {Owner.Name} | {Owner.Handle} | AttackPoint: {Owner.AttackPoint()}. HitIn: {HitTime - GameManager.RawGameTime}");
+            // Damage = Owner.GetAttackDamage2(value, true);
+            Logger.Log($"New hit from {Owner.Name} | {Owner.Handle}| AttackPoint: {Owner.AttackPoint()}. HitIn: {HitTime - GameManager.RawGameTime}");
         }
     }
 
-    public float Damage { get; private set; }
+    public float Damage
+    {
+        get => _damage;
+        set
+        {
+            _damage = value;
+            Logger.Log($"Calculate damage for hit: {value}. [{Owner.Name}] -> [{Target?.Name}]");
+        }
+    }
 
     public bool IsMelee => Owner.IsMelee;
     public float CreatedAt { get; init; }
@@ -61,15 +69,10 @@ public record Hit
         {
             // Logger.Log($"AttackIn: {GameManager.RawGameTime - (CreatedAt + Owner.AttackPoint())} ");
             if (IsMelee || Projectile == null && Target == null)
-            {
                 // Logger.Log($"Hit in: {GameManager.RawGameTime - (CreatedAt + Owner.AttackPoint())} ITS MELEE {!(Projectile == null && Target == null)}");
                 return CreatedAt + Owner.AttackPoint() + 0.05f;
-            }
 
-            if (Projectile == null)
-            {
-                return CreatedAt + Owner.AttackPoint() + Owner.PredictProjectileArrivalTime(Target!);
-            }
+            if (Projectile == null) return CreatedAt + Owner.AttackPoint() + Owner.PredictProjectileArrivalTime(Target!);
 
             var dist = Projectile.Position.Distance2D(Projectile.TargetPosition) - (Projectile.Target as Unit)!.HullRadius;
             var hitDelay = dist / Projectile.Speed;

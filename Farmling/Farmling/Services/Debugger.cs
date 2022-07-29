@@ -73,13 +73,11 @@ public class Debugger
                 RendererManager.DrawText($"Health Predicted: {healthBeforeIHit} Hit in: {timeBeforeHit} Die? {targetDie}", RendererManager.WorldToScreen(target.Position) + new Vector2(-50, 10), Color.White, 20);
                 var pos = RendererManager.WorldToScreen(target.Position) + new Vector2(-50, 30);
                 foreach (var predictionDataAllHit in predictionData.AllHits)
-                {
                     if (predictionDataAllHit.IsValid && predictionDataAllHit.Owner.IsValid)
                     {
                         RendererManager.DrawText($"Hit: {predictionDataAllHit.Owner.Name} - {predictionDataAllHit.Damage} - {predictionDataAllHit.HitTime - GameManager.RawGameTime}", pos, Color.White, 15);
                         pos.Y += 20;
                     }
-                }
             }
         }
     }

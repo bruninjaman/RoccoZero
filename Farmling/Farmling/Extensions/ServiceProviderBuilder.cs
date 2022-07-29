@@ -28,6 +28,7 @@ public static class ServiceProviderBuilder
         sc.AddSingleton<IProjectileTrackManager, ProjectileTrackManager>();
         sc.AddSingleton<IHitsManager, HitsManager>();
         sc.AddSingleton<IFarmService, FarmService>();
+        sc.AddSingleton<IDamageCalculateService, DamageCalculateService>();
     }
 
     private static void RegisterCombos(this IServiceCollection sc)

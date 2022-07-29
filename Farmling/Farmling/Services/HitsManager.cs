@@ -17,21 +17,16 @@ namespace Farmling.Services;
 
 public class HitsManager : IHitsManager
 {
-    public HitsManager(IProjectileTrackManager projectileTrackManager)
+    private readonly IDamageCalculateService _damageCalculateService;
+
+    public HitsManager(IProjectileTrackManager projectileTrackManager, IDamageCalculateService damageCalculateService)
     {
+        _damageCalculateService = damageCalculateService;
         projectileTrackManager.Notify += AddProjectileToHit;
         UpdateManager.IngameUpdate += TargetUpdater;
         Entity.AnimationChanged += AnimationTracker;
         UpdateManager.IngameUpdate += UnitsRegisterer;
         UpdateManager.CreateIngameUpdate(1000, UnitsCleaner);
-    }
-
-    private void UnitsCleaner()
-    {
-        foreach (var unit in Units.ToList().Where(unit => !unit.IsValid))
-        {
-            Units.Remove(unit);
-        }
     }
 
     private static Hero Owner => EntityManager.LocalHero!;
@@ -54,9 +49,14 @@ public class HitsManager : IHitsManager
         return Units;
     }
 
+    private void UnitsCleaner()
+    {
+        foreach (var unit in Units.ToList().Where(unit => !unit.IsValid)) Units.Remove(unit);
+    }
+
     private void UnitsRegisterer()
     {
-        var units = EntityManager.GetEntities<Unit>().Where(x => x.IsValid && x.IsAlive && x.IsInRange(Owner, 1500) && x.IsSpawned && !x.Equals(Owner) && x is Creep or Hero or Tower);
+        var units = EntityManager.GetEntities<Unit>().Where(x => x.IsValid && x.IsAlive && x.IsInRange(Owner, 1500) && x.IsSpawned && !x.Equals(Owner) && (x is Creep or Hero or Tower || x.Name.Equals("npc_dota_goodguys_siege")));
         foreach (var unit in units) TryToAddEntity(unit);
     }
 
@@ -70,9 +70,8 @@ public class HitsManager : IHitsManager
             {
                 AddHit(unit);
             }
-            else if (unit is Tower tower && e.Name.EndsWith(attackName))
+            else if (e.Name.EndsWith(attackName))
             {
-                Logger.Log($"---------NEW HIT: {attackName}");
                 AddHit(unit);
             }
             else
@@ -96,13 +95,21 @@ public class HitsManager : IHitsManager
                     if (unit is Tower tower)
                     {
                         if (lastHit.Target != tower.AttackTarget)
+                        {
                             lastHit.Target = tower.AttackTarget;
+                            if (tower.AttackTarget != null)
+                                lastHit.Damage = _damageCalculateService.GetDamage(unit, tower.AttackTarget);
+                        }
                     }
                     else
                     {
                         var attackEntity = EntityManager.GetEntities<Unit>().Where(x => x.IsValid && x.IsSpawned && !x.Equals(unit) && x.IsAlive && x is Hero or Creep or Tower).MinBy(x => unit.FindRotationAngle(x.Position));
                         if (lastHit.Target != attackEntity)
+                        {
                             lastHit.Target = attackEntity;
+                            if (attackEntity != null)
+                                lastHit.Damage = _damageCalculateService.GetDamage(unit, attackEntity);
+                        }
                     }
                 }
             }

@@ -1,6 +1,5 @@
 ﻿using Divine.Entity;
 using Divine.Entity.Entities.Units;
-using Divine.Entity.Entities.Units.Buildings;
 using Divine.Entity.Entities.Units.Creeps;
 using Divine.Entity.Entities.Units.Heroes;
 using Divine.Extensions;
@@ -21,6 +20,8 @@ public class FarmService : IFarmService
 {
     private readonly MenuConfig _config;
     private readonly IHitsManager _hitsManager;
+    private readonly Color CanKillColor = new(50, 255, 50, 100);
+    private readonly Color NoKillColor = new(255, 255, 255, 100);
 
     public FarmService(IHitsManager hitsManager, MenuConfig config)
     {
@@ -33,7 +34,6 @@ public class FarmService : IFarmService
             handler.IsEnabled = args.Value && _config.MoveToMouse;
             if (args.Value)
             {
-
                 RendererManager.Draw += OnDrawHandler;
                 ParticleManager.CreateRangeParticle($"{Owner.Handle} attack-range", Owner, Owner.AttackRange(), Color.White);
             }
@@ -41,7 +41,6 @@ public class FarmService : IFarmService
             {
                 ParticleManager.DestroyParticle($"{Owner.Handle} attack-range");
                 RendererManager.Draw -= OnDrawHandler;
-
             }
         };
         _config.Enabled.ValueChanged += (key, args) =>
@@ -77,13 +76,12 @@ public class FarmService : IFarmService
             if (target != null)
             {
                 var predictedHealth = predictionData.PredictedHealth;
-                var currentHealth = target.Health;
                 var maxHealth = target.MaximumHealth;
                 var pos = target.GetHealthBarPosition();
                 var baseRect = new RectangleF(pos.X, pos.Y, UnitExtension.HealthBarSize.X, UnitExtension.HealthBarSize.Y);
                 var percent = predictedHealth / maxHealth;
                 baseRect.Width *= Math.Max(percent, 0.01f);
-                RendererManager.DrawFilledRectangle(baseRect, new Color(255, 255, 255, 100));
+                RendererManager.DrawFilledRectangle(baseRect, predictionData.WillTargetDie ? CanKillColor : NoKillColor);
             }
         }
     }
