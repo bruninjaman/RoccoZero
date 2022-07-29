@@ -16,7 +16,7 @@ public sealed class MenuConfig
         Enabled = RootMenu.CreateSwitcher("Enabled");
         FarmKey = RootMenu.CreateHoldKey("Farm");
         MoveToMouse = RootMenu.CreateSwitcher("Move to mouse");
-        Debugger = RootMenu.CreateSwitcher("Debugger");
+        Debugger = RootMenu.CreateSwitcher("Debugger", false);
     }
 
     public MenuSwitcher Enabled { get; set; }
