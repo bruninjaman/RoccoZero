@@ -31,9 +31,30 @@ public class HitsManager : IHitsManager
         UpdateManager.IngameUpdate += UnitsRegisterer;
         UpdateManager.CreateIngameUpdate(1000, UnitsCleaner);
         Entity.NetworkPropertyChanged += OnEntityOnNetworkPropertyChanged;
+        UpdateManager.CreateUpdate(500, () =>
+        {
+            HitSources.ToDictionary(x=>x.Key, x=>x.Value).ForEach(pair =>
+            {
+                var handle = pair.Key;
+                var entity = EntityManager.GetEntityByHandle(handle);
+                if (entity == null || !entity.IsValid)
+                {
+                    HitSources.Remove(handle);
+                    Logger.Log($"Remove handle from hit sources");
+                }
+                foreach (var hit in pair.Value.ToList())
+                {
+                    if (hit == null || hit.Owner==null || !hit.Owner.IsValid || (hit.Target != null && !hit.Target.IsValid) ||!hit.IsValid)
+                    {
+                        pair.Value.Remove(hit);
+                        Logger.Log($"Remove hit from hits list");
+                    }
+                }
+            });
+        });
     }
 
-    private readonly HashSet<NetworkActivity> attackActivities = new HashSet<NetworkActivity>
+    private readonly HashSet<NetworkActivity> _attackActivities = new()
     {
         NetworkActivity.Attack,
         NetworkActivity.Attack2,
@@ -61,7 +82,7 @@ public class HitsManager : IHitsManager
         {
             if (entity is not Unit unit || !Units.Contains(unit)) return;
 
-            if (attackActivities.Contains(activity))
+            if (_attackActivities.Contains(activity))
             {
                 AddHit(unit);
             }
@@ -215,7 +236,7 @@ public class HitsManager : IHitsManager
         if (unit == null)
             // TODO: throw
             return;
-        if (!attackActivities.Contains(unit.NetworkActivity))
+        if (!_attackActivities.Contains(unit.NetworkActivity))
         {
             return;
         }
