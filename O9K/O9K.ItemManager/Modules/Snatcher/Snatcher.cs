@@ -71,7 +71,8 @@ internal class Snatcher : IModule
         { "item_rapier", AbilityId.item_rapier },
         { "item_cheese", AbilityId.item_cheese },
         { "item_refresher_shard", AbilityId.item_refresher_shard },
-        { "item_ultimate_scepter_2", AbilityId.item_ultimate_scepter_2 },
+        { "item_ultimate_scepter_roshan", AbilityId.item_ultimate_scepter_roshan },
+        { "item_aghanims_shard_roshan", AbilityId.item_aghanims_shard_roshan },
         { "item_gem", AbilityId.item_gem },
         { "item_seer_stone", AbilityId.item_seer_stone },
     };
@@ -320,7 +321,8 @@ internal class Snatcher : IModule
         this.aegisDummyToggler.AddAbility(AbilityId.item_aegis);
         this.aegisDummyToggler.AddAbility(AbilityId.item_cheese);
         this.aegisDummyToggler.AddAbility(AbilityId.item_refresher_shard);
-        this.aegisDummyToggler.AddAbility(AbilityId.item_ultimate_scepter_2);
+        this.aegisDummyToggler.AddAbility(AbilityId.item_ultimate_scepter_roshan);
+        this.aegisDummyToggler.AddAbility(AbilityId.item_aghanims_shard_roshan);
     }
 
     private void OnAbilityAdded(Ability9 ability)

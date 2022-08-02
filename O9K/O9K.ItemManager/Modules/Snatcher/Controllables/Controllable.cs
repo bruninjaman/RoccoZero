@@ -77,13 +77,10 @@ internal class Controllable
                 return true;
             }
             case AbilityId.item_cheese:
-            case AbilityId.item_ultimate_scepter_2 when this.Unit.HasAghanimsScepter:
+            case AbilityId.item_ultimate_scepter_roshan:
+            case AbilityId.item_aghanims_shard_roshan:
             {
                 return this.Unit.BaseInventory.FreeMainSlots.Any() || this.Unit.BaseInventory.FreeBackpackSlots.Any();
-            }
-            case AbilityId.item_ultimate_scepter_2:
-            {
-                return true;
             }
         }
 
