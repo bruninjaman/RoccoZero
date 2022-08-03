@@ -12,12 +12,17 @@ public sealed class MenuConfig
         RootMenu = MenuManager
             .CreateRootMenu("Farmling");
 
-
         Enabled = RootMenu.CreateSwitcher("Enabled");
         FarmKey = RootMenu.CreateHoldKey("Farm");
         MoveToMouse = RootMenu.CreateSwitcher("Move to mouse");
+        FarmCreeps = RootMenu.CreateSwitcher("Farm enemy creeps");
+        DenyCreeps = RootMenu.CreateSwitcher("Deny ally creeps");
         Debugger = RootMenu.CreateSwitcher("Debugger", false);
     }
+
+    public MenuSwitcher DenyCreeps { get; set; }
+
+    public MenuSwitcher FarmCreeps { get; set; }
 
     public MenuSwitcher Enabled { get; set; }
 

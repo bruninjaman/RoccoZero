@@ -2,13 +2,14 @@
 
 public record PredictionData
 {
-    public PredictionData(float predictedHealth, float timeBeforeHit, bool willTargetDie, List<Hit> allHits, List<Hit> comingHits)
+    public PredictionData(float predictedHealth, float timeBeforeHit, bool willTargetDie, List<Hit> allHits, List<Hit> comingHits, float myDamage)
     {
         PredictedHealth = predictedHealth;
         TimeBeforeHit = timeBeforeHit;
         WillTargetDie = willTargetDie;
         AllHits = allHits;
         ComingHits = comingHits;
+        MyDamage = myDamage;
     }
 
     public PredictionData(float predictedHealth, float timeBeforeHit, bool willTargetDie)
@@ -25,4 +26,5 @@ public record PredictionData
     public bool WillTargetDie { get; }
     public List<Hit> AllHits { get; }
     public List<Hit> ComingHits { get; }
+    public float MyDamage { get; }
 }

@@ -3,7 +3,6 @@ using Divine.Entity.Entities.Units;
 using Divine.Extensions;
 using Farmling.CreepAbilities.Factory;
 using Farmling.Interfaces;
-using Farmling.LoggerService;
 using Farmling.Models;
 
 namespace Farmling.Services;
@@ -16,7 +15,6 @@ public class DamageCalculateService : IDamageCalculateService
     {
         var attackerEntity = GetEntity(attacker);
         var targetEntity = GetEntity(target);
-
         float damage = attacker.MinimumDamage + attacker.BonusDamage;
         var itemById1 = attacker.GetItemById(AbilityId.item_quelling_blade);
         var isMelee = attacker.IsMelee;
@@ -36,7 +34,9 @@ public class DamageCalculateService : IDamageCalculateService
             // Logger.Log($"Out: {targetEntity.Ability.GetOutgoingAmp(attacker)}");
             damage += damage * targetEntity.Ability.GetOutgoingAmp(attacker);
         }
-        Logger.Log($"TotalDamage [{attacker.Name} -> {target.Name}]: {damage}");
+
+        damage *= 1 - target.PhysicalDamageResistance;
+        // Logger.Log($"TotalDamage [{attacker.Name} -> {target.Name}]: {damage}");
         return damage;
     }
 

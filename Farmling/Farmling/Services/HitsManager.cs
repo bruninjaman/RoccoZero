@@ -123,7 +123,12 @@ public class HitsManager : IHitsManager
 
     private void UnitsRegisterer()
     {
-        var units = EntityManager.GetEntities<Unit>().Where(x => x.IsValid && x.IsAlive && x.IsInRange(Owner, 1500) && x.IsSpawned && !x.Equals(Owner) && (x is Creep or Hero or Tower || x.Name.Equals("npc_dota_goodguys_siege")));
+        var units = EntityManager.GetEntities<Unit>()
+            .Where(x => x.IsValid
+                        && x.IsAlive
+                        && x.IsInRange(Owner, 1500)
+                        && x.IsSpawned && !x.Equals(Owner)
+                        && (x is Creep or Hero or Tower || x.Name.Equals("npc_dota_goodguys_siege")));
         foreach (var unit in units) TryToAddEntity(unit);
     }
 
@@ -236,11 +241,10 @@ public class HitsManager : IHitsManager
         if (unit == null)
             // TODO: throw
             return;
-        if (!_attackActivities.Contains(unit.NetworkActivity))
-        {
-            return;
-        }
-
+        // if (!_attackActivities.Contains(unit.NetworkActivity))
+        // {
+        //     return;
+        // }
         GlobalStatsService.SaveProjectileToStatistics(projectile);
         var handle = unit.Handle;
         if (HitSources.TryGetValue(handle, out var hits))
@@ -249,7 +253,9 @@ public class HitsManager : IHitsManager
             {
                 var hit = hits.FirstOrDefault(x => x.Owner.Handle.Equals(handle) && Math.Abs(x.CreatedAt - GameManager.RawGameTime) <= 100);
                 if (hit != null)
+                {
                     hit.Projectile = projectile;
+                }
                 else
                     //TODO: unexpected projectile. Throw
                     Logger.Log($"Unexpected projectile: {unit.Name} | {unit.Handle} -> Proj: {projectile.Handle}");

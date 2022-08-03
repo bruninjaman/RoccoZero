@@ -11,15 +11,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Reference Include="Divine, Version=6.0.0.0, Culture=neutral, PublicKeyToken=e16b0df00fb22432">
-            <HintPath>..\..\..\..\..\..\Program Files\Divine\References\Divine.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.Extensions.DependencyInjection, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
-            <HintPath>..\..\..\..\..\..\Program Files\Divine\References\Microsoft.Extensions.DependencyInjection.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
-            <HintPath>..\..\..\..\..\..\Program Files\Divine\References\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-        </Reference>
+      <Reference Include="Divine">
+        <HintPath>C:\Program Files\Divine\References\Divine.dll</HintPath>
+      </Reference>
+      <Reference Include="Microsoft.Extensions.DependencyInjection">
+        <HintPath>C:\Program Files\Divine\References\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+      </Reference>
+      <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+        <HintPath>C:\Program Files\Divine\References\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
   <Target Name="Compiler" AfterTargets="PostBuildEvent">

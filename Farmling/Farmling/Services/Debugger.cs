@@ -69,12 +69,11 @@ public class Debugger
         foreach (var (handle, predictionData) in predictionDataDictionary)
         {
             var healthBeforeIHit = predictionData.PredictedHealth;
-            var targetDie = predictionData.WillTargetDie;
             var timeBeforeHit = predictionData.TimeBeforeHit;
             var target = EntityManager.GetEntityByHandle(handle) as Unit;
             if (target != null)
             {
-                RendererManager.DrawText($"Health Predicted: {healthBeforeIHit} Hit in: {timeBeforeHit} Die? {targetDie}", RendererManager.WorldToScreen(target.Position) + new Vector2(-50, 10), Color.White, 20);
+                RendererManager.DrawText($"Health: {healthBeforeIHit} Hit in: {timeBeforeHit}", RendererManager.WorldToScreen(target.Position) + new Vector2(-50, 10), Color.White, 20);
                 var pos = RendererManager.WorldToScreen(target.Position) + new Vector2(-50, 30);
                 foreach (var predictionDataAllHit in predictionData.AllHits)
                     if (predictionDataAllHit.IsValid && predictionDataAllHit.Owner.IsValid)
