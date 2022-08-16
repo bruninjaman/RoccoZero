@@ -279,7 +279,7 @@ internal class Abilities : IHudModule
 
             var abilityOwner = ability.Owner;
 
-            if (!abilityOwner.IsHero)
+            if (!abilityOwner.IsHero && abilityOwner is not Core.Entities.Units.Unique.Roshan)
             {
                 return;
             }

@@ -17,14 +17,14 @@ using Helpers.Notificator;
 
 using MainMenu;
 
-[AbilityId(AbilityId.item_sphere)]
-internal class LinkensSphere : AbilityModule
+[AbilityId(AbilityId.roshan_spell_block)]
+internal class RoshanSpellBlock : AbilityModule
 {
     private readonly Dictionary<uint, Particle> effects = new Dictionary<uint, Particle>();
 
     private readonly List<Unit9> units = new List<Unit9>();
 
-    public LinkensSphere(INotificator notificator, IHudMenu hudMenu)
+    public RoshanSpellBlock(INotificator notificator, IHudMenu hudMenu)
         : base(notificator, hudMenu)
     {
     }
@@ -55,7 +55,7 @@ internal class LinkensSphere : AbilityModule
     {
         try
         {
-            if (!hero.IsHero || hero.IsIllusion || hero.Team == this.OwnerTeam)
+            if (hero is not Core.Entities.Units.Unique.Roshan)
             {
                  return;
             }
@@ -72,7 +72,7 @@ internal class LinkensSphere : AbilityModule
     {
         try
         {
-            if (!hero.IsHero || hero.IsIllusion || hero.Team == this.OwnerTeam)
+            if (hero is not Core.Entities.Units.Unique.Roshan)
             {
                 return;
             }
@@ -96,7 +96,15 @@ internal class LinkensSphere : AbilityModule
                     continue;
                 }
 
-                if (unit.IsLinkensProtected && unit.IsVisible && unit.IsAlive)
+                bool roshanIsblockingSpells = false;
+
+                foreach (var ability in unit.Abilities)
+                {
+                    if (ability.Id == AbilityId.roshan_spell_block)
+                        if (ability.IsReady)
+                            roshanIsblockingSpells = true;
+                }
+                if (roshanIsblockingSpells && unit.IsVisible && unit.IsAlive)
                 {
                     if (this.effects.ContainsKey(unit.Handle))
                     {
